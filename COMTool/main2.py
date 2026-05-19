@@ -84,6 +84,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         self.loadPluginsInfoList()
         self.loadPluginItems()
         log.i("load plugin items complete")
+        self.updateFunctionalButton()
         self.initEvent()
 
     def initVar(self):
@@ -452,6 +453,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         if item:
             self.config["currItem"] = item.name
             item.plugin.onActive()
+        self.updateFunctionalButton()
 
     def closeTab(self, idx):
         # only one, ignore
@@ -652,15 +654,22 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         widget = self.getCurrentItem().functionalWidget
         if not widget is None:
             widget.show()
-        self.functionalButton.setStyleSheet(
-            parameters.strStyleShowHideButtonRight.replace("$DataPath",self.DataPath))
+        self.updateFunctionalButton()
 
     def hideFunctional(self):
         widget = self.getCurrentItem().functionalWidget
         if not widget is None:
             widget.hide()
-        self.functionalButton.setStyleSheet(
-            parameters.strStyleShowHideButtonLeft.replace("$DataPath", self.DataPath))
+        self.updateFunctionalButton()
+
+    def updateFunctionalButton(self):
+        item = self.getCurrentItem()
+        if item and item.functionalWidget and item.functionalWidget.isVisible():
+            self.functionalButton.setStyleSheet(
+                parameters.strStyleShowHideButtonRight.replace("$DataPath",self.DataPath))
+        else:
+            self.functionalButton.setStyleSheet(
+                parameters.strStyleShowHideButtonLeft.replace("$DataPath", self.DataPath))
 
     def skinChange(self):
         idx = self.skinButton.currentIndex()

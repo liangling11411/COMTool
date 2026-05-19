@@ -112,6 +112,12 @@ class Plugin_Base(QObject):
         '''
         return None
 
+    def onFunctionalWidgetDefaultVisible(self):
+        '''
+            Show functional widget by default or not.
+        '''
+        return False
+
     def onWidgetStatusBar(self, parent):
         self.statusBar = statusBar(rxTxCount=False)
         return self.statusBar

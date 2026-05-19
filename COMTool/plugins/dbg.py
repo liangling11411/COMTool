@@ -23,14 +23,79 @@ try:
 except Exception:
     from .base import Plugin_Base
 
-from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins
+from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QMimeData
 from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
-                             QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSpinBox)
-from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor
+                             QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSpinBox, QSizePolicy)
+from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QDrag
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
 import os, threading, time, re, json
 from datetime import datetime
+
+
+class CustomSendItemWidget(QWidget):
+    MIME_TYPE = "application/x-comtool-custom-send-index"
+
+    def __init__(self, plugin, parent=None):
+        super().__init__(parent)
+        self.plugin = plugin
+        self.dragStartPosition = None
+        self.setAcceptDrops(True)
+        self.setObjectName("customSendItem")
+
+    def startDrag(self):
+        idx = self.plugin.customSendItemsLayout.indexOf(self)
+        if idx < 0:
+            return
+        mimeData = QMimeData()
+        mimeData.setData(self.MIME_TYPE, str(idx).encode("utf-8"))
+        drag = QDrag(self)
+        drag.setMimeData(mimeData)
+        drag.exec_(Qt.MoveAction)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasFormat(self.MIME_TYPE):
+            event.acceptProposedAction()
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasFormat(self.MIME_TYPE):
+            event.acceptProposedAction()
+
+    def dropEvent(self, event):
+        if not event.mimeData().hasFormat(self.MIME_TYPE):
+            return
+        try:
+            fromIdx = int(bytes(event.mimeData().data(self.MIME_TYPE)).decode("utf-8"))
+        except Exception:
+            return
+        toIdx = self.plugin.customSendItemsLayout.indexOf(self)
+        self.plugin.swapCustomSendItems(fromIdx, toIdx)
+        event.acceptProposedAction()
+
+
+class CustomSendDragHandle(QPushButton):
+    def __init__(self, itemWidget, parent=None):
+        super().__init__("", parent)
+        self.itemWidget = itemWidget
+        self.dragStartPosition = None
+        self.setCursor(Qt.OpenHandCursor)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.dragStartPosition = event.pos()
+            self.setCursor(Qt.ClosedHandCursor)
+        super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        if not (event.buttons() & Qt.LeftButton) or self.dragStartPosition is None:
+            return super().mouseMoveEvent(event)
+        if (event.pos() - self.dragStartPosition).manhattanLength() < QApplication.startDragDistance():
+            return
+        self.itemWidget.startDrag()
+
+    def mouseReleaseEvent(self, event):
+        self.setCursor(Qt.OpenHandCursor)
+        super().mouseReleaseEvent(event)
 
 class Plugin(Plugin_Base):
     '''
@@ -242,6 +307,9 @@ class Plugin(Plugin_Base):
         self.receiveEscape.clicked.connect(lambda: self.bindVar(self.receiveEscape, self.config, "receiveEscape"))
         return widget
 
+    def onFunctionalWidgetDefaultVisible(self):
+        return True
+
     def switchRxMode(self, ascii):
         if ascii:
             self.receiveSettingsAscii.setChecked(True)
@@ -273,6 +341,10 @@ class Plugin(Plugin_Base):
         self.exportCustomSendButton = QPushButton(_("Export"))
         utils_ui.setButtonIcon(self.importCustomSendButton, "fa.folder-open")
         utils_ui.setButtonIcon(self.exportCustomSendButton, "fa.save")
+        self.customSendSearch = QLineEdit()
+        self.customSendSearch.setClearButtonEnabled(True)
+        self.customSendSearch.setPlaceholderText(_("Search remark or command"))
+        self.customSendSearch.setToolTip(_("Search custom send items by remark or command"))
         self.fileSendGroupBox = QGroupBox(_("Send File"))
         fileSendGridLayout = QGridLayout()
         fileSendGridLayout.addWidget(self.filePathWidget, 0, 0, 1, 1)
@@ -289,10 +361,12 @@ class Plugin(Plugin_Base):
         #   scroll
 
         self.customSendScroll = QScrollArea()
-        self.customSendScroll.setMinimumHeight(parameters.customSendItemHeight + 20)
+        self.customSendScroll.setMinimumHeight(320)
+        self.customSendScroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.customSendScroll.setWidgetResizable(True)
         self.customSendScroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         #   add scroll to groupbox
+        customSendItemsLayout0.addWidget(self.customSendSearch)
         customSendItemsLayout0.addWidget(self.customSendScroll)
         #   wrapper widget
         cutomSendItemsWraper = QWidget()
@@ -332,9 +406,10 @@ class Plugin(Plugin_Base):
         sendFunctionalLayout.addWidget(self.logFileGroupBox)
         sendFunctionalLayout.addWidget(self.fileSendGroupBox)
         sendFunctionalLayout.addWidget(self.clearHistoryButton)
-        sendFunctionalLayout.addWidget(customSendGroupBox)
-        sendFunctionalLayout.addStretch(1)
+        sendFunctionalLayout.addWidget(customSendGroupBox, 1)
         self.funcWidget = QWidget()
+        self.funcWidget.setMinimumWidth(360)
+        self.funcWidget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.funcWidget.setLayout(sendFunctionalLayout)
         # event
         self.sendFileButton.clicked.connect(self.sendFile)
@@ -345,6 +420,7 @@ class Plugin(Plugin_Base):
         self.addButton.clicked.connect(self.customSendAdd)
         self.importCustomSendButton.clicked.connect(self.importCustomSendItems)
         self.exportCustomSendButton.clicked.connect(self.exportCustomSendItems)
+        self.customSendSearch.textChanged.connect(self.filterCustomSendItems)
         self.clearHistoryButton.clicked.connect(self.clearHistory)
         self.fontSizeInput.valueChanged.connect(self.changeFontSize)
         self.funcParent = parent
@@ -396,6 +472,7 @@ class Plugin(Plugin_Base):
         for item in paramObj["customSendItems"]:
             customSendItems.append(self.insertSendItem(item, load=True))
         paramObj["customSendItems"] = customSendItems
+        self.filterCustomSendItems()
         self.fontSizeInput.setValue(paramObj["fontSize"])  # Default font size
 
         self.receiveProcess = threading.Thread(target=self.receiveDataProcess)
@@ -568,42 +645,38 @@ class Plugin(Plugin_Base):
             text = item.get("text", "")
             remark = item.get("remark", "")
             icon = item.get("icon", None)
+            highlight = item.get("highlight", False)
         else:
             text = item
             remark = ""
             icon = None
+            highlight = False
         return {
             "text": "" if text is None else str(text),
             "remark": "" if remark is None else str(remark),
-            "icon": icon or "fa.send"
+            "icon": icon or "fa.send",
+            "highlight": bool(highlight)
         }
 
     def insertSendItem(self, customItem=None, load = False):
         customItem = self.normalizeCustomSendItem(customItem)
-        itemsNum = self.customSendItemsLayout.count() + 1
-        # TODO: here auto set scroll area height is ugly, maybe have better way
-        height = parameters.customSendItemHeight * (itemsNum + 1) + 20
-        topHeight = self.fileSendGroupBox.height() + self.logFileGroupBox.height() + 100
-        # print("1:", parameters.customSendItemHeight, itemsNum + 1, height, topHeight)
-        # print("2:", height + topHeight, self.funcParent.height())
-        # if height + topHeight > self.funcParent.height():
-        #     height = self.funcParent.height() - topHeight
-        # if height < 0:
-        #     height = self.funcParent.height() // 3
-        screenH = QApplication.desktop().screenGeometry().height()
-        screenH -= screenH // 3
-        if height + topHeight >= screenH:
-            height = screenH - topHeight
-        if height < 0:
-            height = self.funcParent.height() // 3
-        self.customSendScroll.setMinimumHeight(height)
-        item = QWidget()
+        item = CustomSendItemWidget(self)
         layout = QHBoxLayout()
-        layout.setContentsMargins(0,0,0,0)
+        layout.setContentsMargins(2,2,2,2)
         item.setLayout(layout)
+        dragHandle = CustomSendDragHandle(item)
+        utils_ui.setButtonIcon(dragHandle, "fa.bars")
+        dragHandle.setProperty("class", "remark")
+        dragHandle.setToolTip(_("Drag to swap order"))
         cmd = QLineEdit(customItem["text"])
         send = QPushButton(customItem["remark"])
         utils_ui.setButtonIcon(send, customItem["icon"])
+        highlight = QPushButton("")
+        highlight.setCheckable(True)
+        highlight.setChecked(customItem["highlight"])
+        highlight.setProperty("class", "remark")
+        highlight.setToolTip(_("Highlight"))
+        self.updateHighlightButton(highlight, customItem["highlight"])
         editRemark = QPushButton("")
         editRemark.setObjectName("editRemark")
         utils_ui.setButtonIcon(editRemark, "ei.pencil")
@@ -616,11 +689,14 @@ class Plugin(Plugin_Base):
         delete = QPushButton("")
         utils_ui.setButtonIcon(delete, "fa.close")
         delete.setProperty("class", "deleteBtn")
-        layout.addWidget(cmd)
-        layout.addWidget(send)
+        layout.addWidget(dragHandle)
+        layout.addWidget(cmd, 3)
+        layout.addWidget(send, 2)
+        layout.addWidget(highlight)
         layout.addWidget(editRemark)
         layout.addWidget(delete)
         delete.clicked.connect(lambda: self.deleteSendItem(self.customSendItemsLayout.indexOf(item), item))
+        highlight.clicked.connect(lambda checked: self.setCustomItemHighlight(self.customSendItemsLayout.indexOf(item), item, highlight, checked))
         def changeRemark(idx, obj):
             customItem = self.config["customSendItems"][idx]
             ok, remark, icon, _shortcut = EditRemarDialog(
@@ -633,10 +709,14 @@ class Plugin(Plugin_Base):
                     obj.setIcon(QIcon())
                 self.config["customSendItems"][idx]["remark"] = remark
                 self.config["customSendItems"][idx]["icon"] = icon
+                self.filterCustomSendItems()
         editRemark.clicked.connect(lambda: changeRemark(self.customSendItemsLayout.indexOf(item), send))
         self.customSendItemsLayout.addWidget(item)
         if not load:
             self.config["customSendItems"].append(customItem)
+        self.applyCustomItemStyle(item, customItem["highlight"])
+        if not load:
+            self.filterCustomSendItems()
         return customItem
 
     def deleteSendItem(self, idx, item):
@@ -644,17 +724,7 @@ class Plugin(Plugin_Base):
             utils_ui.clearButtonIcon(obj)
         item.setParent(None)
         self.config["customSendItems"].pop(idx)
-        # TODO: here auto set scroll area height is ugly, maybe have better way
-        itemsNum = self.customSendItemsLayout.count()
-        height = parameters.customSendItemHeight * (itemsNum + 1) + 20
-        topHeight = self.fileSendGroupBox.height() + self.logFileGroupBox.height() + 100
-        # if height + topHeight > self.funcParent.height():
-        #     height = self.funcParent.height() - topHeight
-        screenH = QApplication.desktop().screenGeometry().height()
-        screenH -= screenH // 3
-        if height + topHeight >= screenH:
-            height = screenH - topHeight
-        self.customSendScroll.setMinimumHeight(height)
+        self.filterCustomSendItems()
 
     def onCustomItemChange(self, idx, edit, send):
         text = edit.text()
@@ -664,6 +734,7 @@ class Plugin(Plugin_Base):
             "text": text,
             "remark": send.text()
         })
+        self.filterCustomSendItems()
 
     def sendCustomItem(self, item):
         text = item.get("text", "") if isinstance(item, dict) else item
@@ -671,6 +742,65 @@ class Plugin(Plugin_Base):
 
     def customSendAdd(self):
         self.insertSendItem()
+
+    def updateHighlightButton(self, button, highlighted):
+        utils_ui.setButtonIcon(button, "fa.star" if highlighted else "fa.star-o")
+
+    def applyCustomItemStyle(self, item, highlighted):
+        if highlighted:
+            item.setStyleSheet(
+                "QWidget#customSendItem {"
+                "background: rgba(255, 193, 7, 45);"
+                "border: 1px solid #f0ad00;"
+                "border-radius: 4px;"
+                "}"
+            )
+        else:
+            item.setStyleSheet(
+                "QWidget#customSendItem {"
+                "background: transparent;"
+                "border: 1px solid transparent;"
+                "border-radius: 4px;"
+                "}"
+            )
+
+    def setCustomItemHighlight(self, idx, item, button, highlighted):
+        if idx < 0 or idx >= len(self.config["customSendItems"]):
+            return
+        self.config["customSendItems"][idx]["highlight"] = highlighted
+        self.updateHighlightButton(button, highlighted)
+        self.applyCustomItemStyle(item, highlighted)
+
+    def filterCustomSendItems(self):
+        if not hasattr(self, "customSendSearch"):
+            return
+        keyword = self.customSendSearch.text().strip().lower()
+        for idx in range(self.customSendItemsLayout.count()):
+            layoutItem = self.customSendItemsLayout.itemAt(idx)
+            widget = layoutItem.widget()
+            if widget is None or idx >= len(self.config["customSendItems"]):
+                continue
+            item = self.normalizeCustomSendItem(self.config["customSendItems"][idx])
+            text = item.get("text", "")
+            remark = item.get("remark", "")
+            matched = (not keyword) or keyword in remark.lower() or keyword in text.lower()
+            widget.setVisible(matched)
+
+    def refreshCustomSendItems(self):
+        items = [item.copy() for item in self.config["customSendItems"]]
+        self.loadCustomSendItems(items)
+        self.filterCustomSendItems()
+
+    def swapCustomSendItems(self, fromIdx, toIdx):
+        if fromIdx == toIdx:
+            return
+        if fromIdx < 0 or toIdx < 0:
+            return
+        if fromIdx >= len(self.config["customSendItems"]) or toIdx >= len(self.config["customSendItems"]):
+            return
+        items = self.config["customSendItems"]
+        items[fromIdx], items[toIdx] = items[toIdx], items[fromIdx]
+        self.refreshCustomSendItems()
 
     def clearCustomSendItemsWidgets(self):
         while self.customSendItemsLayout.count():

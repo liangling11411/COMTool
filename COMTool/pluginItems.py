@@ -134,7 +134,7 @@ class PluginItem:
         shareConfigBtn.clicked.connect(lambda : self.selectSharefile())
         pluginFuncWidget = self.plugin.onWidgetFunctional(widget)
         if not pluginFuncWidget is None:
-            layout3.addWidget(pluginFuncWidget)
+            layout3.addWidget(pluginFuncWidget, 1)
         layout3.addStretch()
         # add to frame
         widget.addWidget(self.settingWidget)
@@ -143,7 +143,11 @@ class PluginItem:
         widget.setStretchFactor(0, 1)
         widget.setStretchFactor(1, 2)
         widget.setStretchFactor(2, 1)
-        self.functionalWidget.hide()
+        defaultFunctionalVisible = getattr(self.plugin, "onFunctionalWidgetDefaultVisible", lambda: False)
+        if defaultFunctionalVisible():
+            self.functionalWidget.show()
+        else:
+            self.functionalWidget.hide()
         # UI init done
         self.plugin.onUiInitDone()
         return wrapper
