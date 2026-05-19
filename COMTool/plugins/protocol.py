@@ -77,6 +77,7 @@ class Plugin(Plugin_Base):
             "useCRLF" : False,
             "sendRecord" : False,
             "sendEscape" : True,
+            "wrap": False,
             "code": defaultProtocols.copy(),
             "currCode": "default",
             "customSendItems": [
@@ -237,6 +238,12 @@ class Plugin(Plugin_Base):
         rootLayout = QVBoxLayout()
         rootLayout.setContentsMargins(0,0,0,0)
         root.setLayout(rootLayout)
+        receiveGroup = QGroupBox(_("Receive settings"))
+        receiveLayout = QGridLayout()
+        receiveGroup.setLayout(receiveLayout)
+        self.receiveSettingsWrap = QCheckBox(_("Display wrap"))
+        self.receiveSettingsWrap.setToolTip(_("When content in a line is too long, always auto wrap to show, and no scroll bar"))
+        receiveLayout.addWidget(self.receiveSettingsWrap, 0, 0, 1, 1)
         setingGroup = QGroupBox(_("En-decoding settings"))
         layout = QGridLayout()
         setingGroup.setLayout(layout)
@@ -277,9 +284,11 @@ class Plugin(Plugin_Base):
         serialSendSettingsLayout.addWidget(self.sendSettingsEscape, 1, 1, 1, 1)
         serialSendSettingsLayout.addWidget(self.sendSettingsRecord, 2, 0, 1, 1)
 
+        rootLayout.addWidget(receiveGroup)
         rootLayout.addWidget(sendGroup)
         rootLayout.addWidget(setingGroup)
         # event
+        self.receiveSettingsWrap.clicked.connect(self.onSettingWrap)
         self.sendSettingsAscii.clicked.connect(lambda : self.bindVar(self.sendSettingsAscii, self.config, "sendAscii", bool))
         self.sendSettingsHex.clicked.connect(lambda : self.bindVar(self.sendSettingsHex, self.config, "sendAscii", bool, invert=True))
         self.sendSettingsRecord.clicked.connect(lambda : self.bindVar(self.sendSettingsRecord, self.config, "sendRecord", bool))
@@ -309,6 +318,8 @@ class Plugin(Plugin_Base):
         self.sendSettingsRecord.setChecked(self.config["sendRecord"])
         self.sendSettingsCRLF.setChecked(self.config["useCRLF"])
         self.sendSettingsEscape.setChecked(self.config["sendEscape"])
+        self.receiveSettingsWrap.setChecked(self.config["wrap"])
+        self.receiveWidget.setLineWrapMode(TextEdit.WidgetWidth if self.config["wrap"] else TextEdit.NoWrap)
         self.showReceiveDataSignal.connect(self.showReceivedData)
         # init decoder and encoder
         for k in self.config["code"]:
@@ -368,6 +379,11 @@ class Plugin(Plugin_Base):
 
     def onKeyReleaseEvent(self, event):
         pass
+
+    def onSettingWrap(self):
+        wrap = self.receiveSettingsWrap.isChecked()
+        self.config["wrap"] = wrap
+        self.receiveWidget.setLineWrapMode(TextEdit.WidgetWidth if wrap else TextEdit.NoWrap)
 
     def insertSendItem(self, item = None, load = False):
         # itemsNum = self.customSendItemsLayout.count() + 1
