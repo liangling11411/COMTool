@@ -118,6 +118,12 @@ class Plugin_Base(QObject):
         '''
         return False
 
+    def onConfigButtonsInSettings(self):
+        '''
+            Put load/share config buttons in settings widget.
+        '''
+        return False
+
     def onWidgetStatusBar(self, parent):
         self.statusBar = statusBar(rxTxCount=False)
         return self.statusBar

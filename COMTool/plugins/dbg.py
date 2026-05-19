@@ -26,7 +26,8 @@ except Exception:
 from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QMimeData
 from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
-                             QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSpinBox, QSizePolicy)
+                             QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSpinBox, QSizePolicy,
+                             QColorDialog)
 from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QDrag
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
 import os, threading, time, re, json
@@ -51,15 +52,24 @@ class CustomSendItemWidget(QWidget):
         mimeData.setData(self.MIME_TYPE, str(idx).encode("utf-8"))
         drag = QDrag(self)
         drag.setMimeData(mimeData)
+        drag.setPixmap(self.grab())
+        drag.setHotSpot(self.rect().center())
         drag.exec_(Qt.MoveAction)
+        self.plugin.clearCustomSendDropTarget()
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat(self.MIME_TYPE):
+            self.plugin.setCustomSendDropTarget(self)
             event.acceptProposedAction()
 
     def dragMoveEvent(self, event):
         if event.mimeData().hasFormat(self.MIME_TYPE):
+            self.plugin.setCustomSendDropTarget(self)
             event.acceptProposedAction()
+
+    def dragLeaveEvent(self, event):
+        self.plugin.clearCustomSendDropTarget(self)
+        super().dragLeaveEvent(event)
 
     def dropEvent(self, event):
         if not event.mimeData().hasFormat(self.MIME_TYPE):
@@ -69,7 +79,8 @@ class CustomSendItemWidget(QWidget):
         except Exception:
             return
         toIdx = self.plugin.customSendItemsLayout.indexOf(self)
-        self.plugin.swapCustomSendItems(fromIdx, toIdx)
+        self.plugin.clearCustomSendDropTarget(self)
+        self.plugin.moveCustomSendItemBefore(fromIdx, toIdx)
         event.acceptProposedAction()
 
 
@@ -95,6 +106,22 @@ class CustomSendDragHandle(QPushButton):
 
     def mouseReleaseEvent(self, event):
         self.setCursor(Qt.OpenHandCursor)
+        super().mouseReleaseEvent(event)
+
+
+class CustomSendColorButton(QPushButton):
+    def __init__(self, plugin, itemWidget, sendButton, parent=None):
+        super().__init__("", parent)
+        self.plugin = plugin
+        self.itemWidget = itemWidget
+        self.sendButton = sendButton
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.RightButton:
+            idx = self.plugin.customSendItemsLayout.indexOf(self.itemWidget)
+            self.plugin.setCustomItemColor(idx, self.itemWidget, self.sendButton, self, "")
+            event.accept()
+            return
         super().mouseReleaseEvent(event)
 
 class Plugin(Plugin_Base):
@@ -174,6 +201,7 @@ class Plugin(Plugin_Base):
                 self.config[k] = default[k]
         self.lastShowTail = ''
         self.justSent = False # sent data before received data flag
+        self.customSendDropTarget = None
 
     def onWidgetMain(self, parent):
         self.mainWidget = QSplitter(Qt.Vertical)
@@ -284,9 +312,14 @@ class Plugin(Plugin_Base):
         serialSendSettingsLayout.addWidget(self.sendSettingsRecord, 4, 1, 1, 1)
         serialSendSettingsGroupBox.setLayout(serialSendSettingsLayout)
         layout.addWidget(serialSendSettingsGroupBox)
+        self.createFunctionalSettings(layout)
 
         widget = QWidget()
         widget.setLayout(layout)
+        settingsScroll = QScrollArea()
+        settingsScroll.setWidgetResizable(True)
+        settingsScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        settingsScroll.setWidget(widget)
         layout.setContentsMargins(0,0,0,0)
         # event
         self.receiveSettingsTimestamp.clicked.connect(self.onTimeStampClicked)
@@ -305,10 +338,59 @@ class Plugin(Plugin_Base):
         self.sendSettingsScheduledCheckBox.clicked.connect(lambda: self.bindVar(self.sendSettingsScheduledCheckBox, self.config, "sendScheduled"))
         self.receiveSettingsWrap.clicked.connect(self.onSettingWrap)
         self.receiveEscape.clicked.connect(lambda: self.bindVar(self.receiveEscape, self.config, "receiveEscape"))
-        return widget
+        self.sendFileButton.clicked.connect(self.sendFile)
+        self.saveLogCheckbox.clicked.connect(self.setSaveLog)
+        self.logFileBtn.clicked.connect(self.selectLogFile)
+        self.saveLogAutoNew.clicked.connect(lambda: self.bindVar(self.saveLogAutoNew, self.config, "saveLogAutoNew"))
+        self.openFileButton.clicked.connect(self.selectFile)
+        self.clearHistoryButton.clicked.connect(self.clearHistory)
+        self.fontSizeInput.valueChanged.connect(self.changeFontSize)
+        return settingsScroll
 
     def onFunctionalWidgetDefaultVisible(self):
         return True
+
+    def onConfigButtonsInSettings(self):
+        return True
+
+    def createFunctionalSettings(self, parentLayout):
+        self.fontSizeLayout = QHBoxLayout()
+        self.fontSizeLabel = QLabel(_("Font Size"))
+        self.fontSizeInput = QSpinBox()
+        self.fontSizeInput.setRange(1, 100)
+        self.fontSizeLayout.addWidget(self.fontSizeLabel)
+        self.fontSizeLayout.addWidget(self.fontSizeInput)
+
+        self.filePathWidget = QLineEdit()
+        self.openFileButton = QPushButton(_("Open File"))
+        self.sendFileButton = QPushButton(_("Send File"))
+        self.clearHistoryButton = QPushButton(_("Clear History"))
+        self.fileSendGroupBox = QGroupBox(_("Send File"))
+        fileSendGridLayout = QGridLayout()
+        fileSendGridLayout.addWidget(self.filePathWidget, 0, 0, 1, 1)
+        fileSendGridLayout.addWidget(self.openFileButton, 0, 1, 1, 1)
+        fileSendGridLayout.addWidget(self.sendFileButton, 1, 0, 1, 2)
+        self.fileSendGroupBox.setLayout(fileSendGridLayout)
+
+        self.logFileGroupBox = QGroupBox(_("Save log"))
+        logFileWrapper = QVBoxLayout()
+        logFileLayout = QHBoxLayout()
+        self.saveLogCheckbox = QCheckBox()
+        self.logFilePath = QLineEdit()
+        self.logFileBtn = QPushButton(_("Log path"))
+        self.saveLogAutoNew = QCheckBox(_("Auto new file"))
+        self.saveLogAutoNew.setToolTip(_("When start a new connection, will automatically create a new log file"))
+        logFileLayout.addWidget(self.saveLogCheckbox)
+        logFileLayout.addWidget(self.logFilePath)
+        logFileLayout.addWidget(self.logFileBtn)
+        logFileWrapper.addLayout(logFileLayout)
+        logFileWrapper.addWidget(self.saveLogAutoNew)
+        self.logFileGroupBox.setLayout(logFileWrapper)
+
+        parentLayout.addLayout(self.fontSizeLayout)
+        parentLayout.addWidget(self.logFileGroupBox)
+        parentLayout.addWidget(self.fileSendGroupBox)
+        parentLayout.addWidget(self.clearHistoryButton)
 
     def switchRxMode(self, ascii):
         if ascii:
@@ -324,17 +406,6 @@ class Plugin(Plugin_Base):
     def onWidgetFunctional(self, parent):
         sendFunctionalLayout = QVBoxLayout()
         sendFunctionalLayout.setContentsMargins(0,0,0,0)
-        # right functional layout
-        self.filePathWidget = QLineEdit()
-        self.openFileButton = QPushButton(_("Open File"))
-        self.sendFileButton = QPushButton(_("Send File"))
-        self.clearHistoryButton = QPushButton(_("Clear History"))
-        self.fontSizeLayout = QHBoxLayout()
-        self.fontSizeLabel = QLabel(_("Font Size"))
-        self.fontSizeInput = QSpinBox()
-        self.fontSizeInput.setRange(1, 100)  # Set range for font size
-        self.fontSizeLayout.addWidget(self.fontSizeLabel)
-        self.fontSizeLayout.addWidget(self.fontSizeInput)
         self.addButton = QPushButton("")
         utils_ui.setButtonIcon(self.addButton, "fa.plus")
         self.importCustomSendButton = QPushButton(_("Import"))
@@ -345,13 +416,6 @@ class Plugin(Plugin_Base):
         self.customSendSearch.setClearButtonEnabled(True)
         self.customSendSearch.setPlaceholderText(_("Search remark or command"))
         self.customSendSearch.setToolTip(_("Search custom send items by remark or command"))
-        self.fileSendGroupBox = QGroupBox(_("Send File"))
-        fileSendGridLayout = QGridLayout()
-        fileSendGridLayout.addWidget(self.filePathWidget, 0, 0, 1, 1)
-        fileSendGridLayout.addWidget(self.openFileButton, 0, 1, 1, 1)
-        fileSendGridLayout.addWidget(self.sendFileButton, 1, 0, 1, 2)
-        self.fileSendGroupBox.setLayout(fileSendGridLayout)
-        self.logFileGroupBox = QGroupBox(_("Save log"))
         # cumtom send zone
         #   groupbox
         customSendGroupBox = QGroupBox(_("Cutom send"))
@@ -388,41 +452,16 @@ class Plugin(Plugin_Base):
         #   set wrapper widget
         self.customSendScroll.setWidget(cutomSendItemsWraper)
         self.customSendScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        #
-        logFileWrapper = QVBoxLayout()
-        logFileLayout = QHBoxLayout()
-        self.saveLogCheckbox = QCheckBox()
-        self.logFilePath = QLineEdit()
-        self.logFileBtn = QPushButton(_("Log path"))
-        self.saveLogAutoNew = QCheckBox(_("Auto new file"))
-        self.saveLogAutoNew.setToolTip(_("When start a new connection, will automatically create a new log file"))
-        logFileLayout.addWidget(self.saveLogCheckbox)
-        logFileLayout.addWidget(self.logFilePath)
-        logFileLayout.addWidget(self.logFileBtn)
-        logFileWrapper.addLayout(logFileLayout)
-        logFileWrapper.addWidget(self.saveLogAutoNew)
-        self.logFileGroupBox.setLayout(logFileWrapper)
-        sendFunctionalLayout.addLayout(self.fontSizeLayout)
-        sendFunctionalLayout.addWidget(self.logFileGroupBox)
-        sendFunctionalLayout.addWidget(self.fileSendGroupBox)
-        sendFunctionalLayout.addWidget(self.clearHistoryButton)
         sendFunctionalLayout.addWidget(customSendGroupBox, 1)
         self.funcWidget = QWidget()
         self.funcWidget.setMinimumWidth(360)
         self.funcWidget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.funcWidget.setLayout(sendFunctionalLayout)
         # event
-        self.sendFileButton.clicked.connect(self.sendFile)
-        self.saveLogCheckbox.clicked.connect(self.setSaveLog)
-        self.logFileBtn.clicked.connect(self.selectLogFile)
-        self.saveLogAutoNew.clicked.connect(lambda: self.bindVar(self.saveLogAutoNew, self.config, "saveLogAutoNew"))
-        self.openFileButton.clicked.connect(self.selectFile)
         self.addButton.clicked.connect(self.customSendAdd)
         self.importCustomSendButton.clicked.connect(self.importCustomSendItems)
         self.exportCustomSendButton.clicked.connect(self.exportCustomSendItems)
         self.customSendSearch.textChanged.connect(self.filterCustomSendItems)
-        self.clearHistoryButton.clicked.connect(self.clearHistory)
-        self.fontSizeInput.valueChanged.connect(self.changeFontSize)
         self.funcParent = parent
         return self.funcWidget
 
@@ -646,16 +685,21 @@ class Plugin(Plugin_Base):
             remark = item.get("remark", "")
             icon = item.get("icon", None)
             highlight = item.get("highlight", False)
+            color = item.get("color", "")
         else:
             text = item
             remark = ""
             icon = None
             highlight = False
+            color = ""
+        if highlight and not color:
+            color = "#ffc107"
         return {
             "text": "" if text is None else str(text),
             "remark": "" if remark is None else str(remark),
             "icon": icon or "fa.send",
-            "highlight": bool(highlight)
+            "highlight": bool(highlight),
+            "color": "" if color is None else str(color)
         }
 
     def insertSendItem(self, customItem=None, load = False):
@@ -667,16 +711,14 @@ class Plugin(Plugin_Base):
         dragHandle = CustomSendDragHandle(item)
         utils_ui.setButtonIcon(dragHandle, "fa.bars")
         dragHandle.setProperty("class", "remark")
-        dragHandle.setToolTip(_("Drag to swap order"))
+        dragHandle.setToolTip(_("Drag before another item to reorder"))
         cmd = QLineEdit(customItem["text"])
         send = QPushButton(customItem["remark"])
         utils_ui.setButtonIcon(send, customItem["icon"])
-        highlight = QPushButton("")
-        highlight.setCheckable(True)
-        highlight.setChecked(customItem["highlight"])
-        highlight.setProperty("class", "remark")
-        highlight.setToolTip(_("Highlight"))
-        self.updateHighlightButton(highlight, customItem["highlight"])
+        colorButton = CustomSendColorButton(self, item, send)
+        colorButton.setProperty("class", "remark")
+        colorButton.setToolTip(_("Click to set button color, right click to clear"))
+        self.updateColorButton(colorButton, customItem["color"])
         editRemark = QPushButton("")
         editRemark.setObjectName("editRemark")
         utils_ui.setButtonIcon(editRemark, "ei.pencil")
@@ -692,11 +734,11 @@ class Plugin(Plugin_Base):
         layout.addWidget(dragHandle)
         layout.addWidget(cmd, 3)
         layout.addWidget(send, 2)
-        layout.addWidget(highlight)
+        layout.addWidget(colorButton)
         layout.addWidget(editRemark)
         layout.addWidget(delete)
         delete.clicked.connect(lambda: self.deleteSendItem(self.customSendItemsLayout.indexOf(item), item))
-        highlight.clicked.connect(lambda checked: self.setCustomItemHighlight(self.customSendItemsLayout.indexOf(item), item, highlight, checked))
+        colorButton.clicked.connect(lambda: self.selectCustomItemColor(self.customSendItemsLayout.indexOf(item), item, send, colorButton))
         def changeRemark(idx, obj):
             customItem = self.config["customSendItems"][idx]
             ok, remark, icon, _shortcut = EditRemarDialog(
@@ -714,7 +756,10 @@ class Plugin(Plugin_Base):
         self.customSendItemsLayout.addWidget(item)
         if not load:
             self.config["customSendItems"].append(customItem)
-        self.applyCustomItemStyle(item, customItem["highlight"])
+        item.customSendData = customItem
+        item.sendButton = send
+        item.colorButton = colorButton
+        self.applyCustomItemColor(item, send, customItem["color"])
         if not load:
             self.filterCustomSendItems()
         return customItem
@@ -743,19 +788,46 @@ class Plugin(Plugin_Base):
     def customSendAdd(self):
         self.insertSendItem()
 
-    def updateHighlightButton(self, button, highlighted):
-        utils_ui.setButtonIcon(button, "fa.star" if highlighted else "fa.star-o")
+    def updateColorButton(self, button, color):
+        utils_ui.setButtonIcon(button, "fa.paint-brush")
+        if color:
+            button.setStyleSheet("background-color: {}; border-color: {};".format(color, color))
+        else:
+            button.setStyleSheet("")
 
-    def applyCustomItemStyle(self, item, highlighted):
-        if highlighted:
+    def buttonTextColor(self, color):
+        qcolor = QColor(color)
+        if not qcolor.isValid():
+            return "white"
+        luminance = 0.299 * qcolor.red() + 0.587 * qcolor.green() + 0.114 * qcolor.blue()
+        return "black" if luminance > 160 else "white"
+
+    def applyCustomItemColor(self, item, sendButton, color):
+        qcolor = QColor(color)
+        if color and qcolor.isValid():
+            textColor = self.buttonTextColor(color)
+            sendButton.setStyleSheet(
+                "QPushButton {"
+                "background-color: %s;"
+                "border-color: %s;"
+                "color: %s;"
+                "}"
+                "QPushButton:hover {"
+                "background-color: %s;"
+                "border-color: %s;"
+                "}"
+                % (color, color, textColor, color, color)
+            )
             item.setStyleSheet(
                 "QWidget#customSendItem {"
-                "background: rgba(255, 193, 7, 45);"
-                "border: 1px solid #f0ad00;"
+                "background: rgba(%d, %d, %d, 38);"
+                "border: 1px solid %s;"
                 "border-radius: 4px;"
                 "}"
+                % (qcolor.red(), qcolor.green(), qcolor.blue(), color)
             )
         else:
+            sendButton.setStyleSheet("")
             item.setStyleSheet(
                 "QWidget#customSendItem {"
                 "background: transparent;"
@@ -764,12 +836,52 @@ class Plugin(Plugin_Base):
                 "}"
             )
 
-    def setCustomItemHighlight(self, idx, item, button, highlighted):
+    def selectCustomItemColor(self, idx, item, sendButton, colorButton):
         if idx < 0 or idx >= len(self.config["customSendItems"]):
             return
-        self.config["customSendItems"][idx]["highlight"] = highlighted
-        self.updateHighlightButton(button, highlighted)
-        self.applyCustomItemStyle(item, highlighted)
+        current = self.config["customSendItems"][idx].get("color") or "#ffc107"
+        color = QColorDialog.getColor(QColor(current), self.funcWidget, _("Select color"))
+        if color.isValid():
+            self.setCustomItemColor(idx, item, sendButton, colorButton, color.name())
+
+    def setCustomItemColor(self, idx, item, sendButton, colorButton, color):
+        if idx < 0 or idx >= len(self.config["customSendItems"]):
+            return
+        self.config["customSendItems"][idx]["color"] = color
+        self.config["customSendItems"][idx]["highlight"] = bool(color)
+        if hasattr(item, "customSendData"):
+            item.customSendData["color"] = color
+            item.customSendData["highlight"] = bool(color)
+        self.updateColorButton(colorButton, color)
+        self.applyCustomItemColor(item, sendButton, color)
+
+    def setCustomSendDropTarget(self, item):
+        if self.customSendDropTarget is item:
+            return
+        self.clearCustomSendDropTarget()
+        self.customSendDropTarget = item
+        item.setMinimumHeight(max(item.sizeHint().height() + 16, parameters.customSendItemHeight + 16))
+        item.setStyleSheet(
+            "QWidget#customSendItem {"
+            "background: rgba(33, 150, 243, 55);"
+            "border: 2px solid #2196f3;"
+            "border-radius: 4px;"
+            "}"
+        )
+
+    def clearCustomSendDropTarget(self, item=None):
+        if item is not None and self.customSendDropTarget is not item:
+            return
+        target = self.customSendDropTarget
+        self.customSendDropTarget = None
+        if target is None:
+            return
+        target.setMinimumHeight(0)
+        color = ""
+        if hasattr(target, "customSendData"):
+            color = target.customSendData.get("color", "")
+        if hasattr(target, "sendButton"):
+            self.applyCustomItemColor(target, target.sendButton, color)
 
     def filterCustomSendItems(self):
         if not hasattr(self, "customSendSearch"):
@@ -791,7 +903,7 @@ class Plugin(Plugin_Base):
         self.loadCustomSendItems(items)
         self.filterCustomSendItems()
 
-    def swapCustomSendItems(self, fromIdx, toIdx):
+    def moveCustomSendItemBefore(self, fromIdx, toIdx):
         if fromIdx == toIdx:
             return
         if fromIdx < 0 or toIdx < 0:
@@ -799,7 +911,10 @@ class Plugin(Plugin_Base):
         if fromIdx >= len(self.config["customSendItems"]) or toIdx >= len(self.config["customSendItems"]):
             return
         items = self.config["customSendItems"]
-        items[fromIdx], items[toIdx] = items[toIdx], items[fromIdx]
+        item = items.pop(fromIdx)
+        if fromIdx < toIdx:
+            toIdx -= 1
+        items.insert(toIdx, item)
         self.refreshCustomSendItems()
 
     def clearCustomSendItemsWidgets(self):

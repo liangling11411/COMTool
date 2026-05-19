@@ -128,8 +128,13 @@ class PluginItem:
         self.functionalWidget.setLayout(layout3)
         loadConfigBtn = QPushButton(_("Load config"))
         shareConfigBtn = QPushButton(_("Share config"))
-        layout3.addWidget(loadConfigBtn)
-        layout3.addWidget(shareConfigBtn)
+        configButtonsInSettings = getattr(self.plugin, "onConfigButtonsInSettings", lambda: False)
+        if configButtonsInSettings():
+            settingLayout.addWidget(loadConfigBtn)
+            settingLayout.addWidget(shareConfigBtn)
+        else:
+            layout3.addWidget(loadConfigBtn)
+            layout3.addWidget(shareConfigBtn)
         loadConfigBtn.clicked.connect(lambda : self.selectLoadfile())
         shareConfigBtn.clicked.connect(lambda : self.selectSharefile())
         pluginFuncWidget = self.plugin.onWidgetFunctional(widget)
