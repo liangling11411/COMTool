@@ -649,45 +649,53 @@ class HelpWidget(QWidget, CustomTitleBarWindowMixin):
 
 
 class EditRemarDialog(QDialog):
-    def __init__(self, remark = "", icon=None, shortcut = [], value=None) -> None:
+    def __init__(self, remark = "", icon=None, shortcut = None, value=None, enableShortcut=True) -> None:
         super().__init__()
         self.remark = remark
         self.icon = icon
         self.ok = False
         self.settingShortcut = False
-        self.shortcut = shortcut
+        self.shortcut = shortcut or []
         self.value = value
+        self.enableShortcut = enableShortcut
 
         layout = QGridLayout()
         self.setLayout(layout)
-        layout.addWidget(QLabel(_("Input remark")), 0, 0, 1, 1)
+        row = 0
+        layout.addWidget(QLabel(_("Input remark")), row, 0, 1, 1)
         self.remarkInput = QLineEdit(self.remark)
         if self.value is not None:
             self.valueInput = QLineEdit(self.value)
         self.iconBtn = QPushButton(self.remark)
         if self.icon:
             self.iconBtn.setIcon(qta.icon(self.icon, color="white"))
-        if self.shortcut:
-            name = "+".join([str(name) for v,name in self.shortcut])
-        else:
-            name = _("Record")
-        self.shortcutBtn = QPushButton(name)
-        self.shortcutBtn.setFocusPolicy(Qt.NoFocus)
-        layout.addWidget(self.remarkInput, 0, 1, 1, 1)
+        layout.addWidget(self.remarkInput, row, 1, 1, 1)
+        row += 1
         if self.value is not None:
-            layout.addWidget(QLabel(_("Input value")), 1, 0, 1, 1)
-            layout.addWidget(self.valueInput, 1, 1, 1, 1)
-        layout.addWidget(QLabel(_("Select icon")), 2, 0, 1, 1)
-        layout.addWidget(self.iconBtn, 2, 1, 1, 1)
-        layout.addWidget(QLabel(_("Shortcut")), 3, 0, 1, 1)
-        layout.addWidget(self.shortcutBtn, 3, 1, 1, 1)
-        self.shortcutHint = QLabel(_("Press key to record, or click Cancel"))
-        self.shortcutHint.hide()
-        layout.addWidget(self.shortcutHint, 4, 0, 1, 2)
+            layout.addWidget(QLabel(_("Input value")), row, 0, 1, 1)
+            layout.addWidget(self.valueInput, row, 1, 1, 1)
+            row += 1
+        layout.addWidget(QLabel(_("Select icon")), row, 0, 1, 1)
+        layout.addWidget(self.iconBtn, row, 1, 1, 1)
+        row += 1
+        if self.enableShortcut:
+            if self.shortcut:
+                name = "+".join([str(name) for v,name in self.shortcut])
+            else:
+                name = _("Record")
+            self.shortcutBtn = QPushButton(name)
+            self.shortcutBtn.setFocusPolicy(Qt.NoFocus)
+            layout.addWidget(QLabel(_("Shortcut")), row, 0, 1, 1)
+            layout.addWidget(self.shortcutBtn, row, 1, 1, 1)
+            row += 1
+            self.shortcutHint = QLabel(_("Press key to record, or click Cancel"))
+            self.shortcutHint.hide()
+            layout.addWidget(self.shortcutHint, row, 0, 1, 2)
+            row += 1
         self.okBtn = QPushButton(_("OK"))
         self.cancelBtn = QPushButton(_("Cancel"))
-        layout.addWidget(self.okBtn, 5, 0, 1, 1)
-        layout.addWidget(self.cancelBtn, 5, 1, 1, 1)
+        layout.addWidget(self.okBtn, row, 0, 1, 1)
+        layout.addWidget(self.cancelBtn, row, 1, 1, 1)
 
         def ok():
             self.ok = True
@@ -699,7 +707,8 @@ class EditRemarDialog(QDialog):
             self.iconBtn.setText(self.remark)
         self.remarkInput.textChanged.connect(updateRemark)
         self.iconBtn.clicked.connect(lambda: self.selectIcon())
-        self.shortcutBtn.clicked.connect(self.setShortcut)
+        if self.enableShortcut:
+            self.shortcutBtn.clicked.connect(self.setShortcut)
 
     def selectIcon(self):
         self.icon = selectIcon(parent = self, title = _("Select icon"), btnName = _("OK"), color = utils_ui.getStyleVar("iconSelectorColor"))
@@ -724,7 +733,8 @@ class EditRemarDialog(QDialog):
     def onRecordShortcut(self):
         self.shortcut = []
         self.remarkInput.setEnabled(False)
-        self.valueInput.setEnabled(False)
+        if hasattr(self, "valueInput"):
+            self.valueInput.setEnabled(False)
         self.iconBtn.setEnabled(False)
         self.okBtn.setEnabled(False)
         self.cancelBtn.setEnabled(False)
@@ -736,7 +746,8 @@ class EditRemarDialog(QDialog):
 
     def onRecordShortcutEnd(self, setOk=False):
         self.remarkInput.setEnabled(True)
-        self.valueInput.setEnabled(True)
+        if hasattr(self, "valueInput"):
+            self.valueInput.setEnabled(True)
         self.iconBtn.setEnabled(True)
         self.okBtn.setEnabled(True)
         self.cancelBtn.setEnabled(True)

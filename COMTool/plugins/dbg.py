@@ -7,6 +7,7 @@ try:
     import utils, utils_ui
     from conn.base import ConnectionStatus
     from widgets import statusBar
+    from widgets import EditRemarDialog
 except ImportError:
     from COMTool import parameters,helpAbout,autoUpdate, utils, utils_ui
     from COMTool.Combobox import ComboBox
@@ -15,6 +16,7 @@ except ImportError:
     from COMTool import version
     from COMTool.conn.base import ConnectionStatus
     from COMTool.widgets import statusBar
+    from COMTool.widgets import EditRemarDialog
 
 try:
     from base import Plugin_Base
@@ -27,7 +29,7 @@ from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesk
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSpinBox)
 from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
-import os, threading, time, re
+import os, threading, time, re, json
 from datetime import datetime
 
 class Plugin(Plugin_Base):
@@ -267,6 +269,10 @@ class Plugin(Plugin_Base):
         self.fontSizeLayout.addWidget(self.fontSizeInput)
         self.addButton = QPushButton("")
         utils_ui.setButtonIcon(self.addButton, "fa.plus")
+        self.importCustomSendButton = QPushButton(_("Import"))
+        self.exportCustomSendButton = QPushButton(_("Export"))
+        utils_ui.setButtonIcon(self.importCustomSendButton, "fa.folder-open")
+        utils_ui.setButtonIcon(self.exportCustomSendButton, "fa.save")
         self.fileSendGroupBox = QGroupBox(_("Send File"))
         fileSendGridLayout = QGridLayout()
         fileSendGridLayout.addWidget(self.filePathWidget, 0, 0, 1, 1)
@@ -298,8 +304,13 @@ class Plugin(Plugin_Base):
         self.customSendItemsLayout = QVBoxLayout()
         self.customSendItemsLayout.setContentsMargins(0,0,0,0)
         customItems.setLayout(self.customSendItemsLayout)
+        customSendButtonsLayout = QHBoxLayout()
+        customSendButtonsLayout.setContentsMargins(0,0,0,0)
+        customSendButtonsLayout.addWidget(self.importCustomSendButton)
+        customSendButtonsLayout.addWidget(self.exportCustomSendButton)
+        customSendButtonsLayout.addWidget(self.addButton)
         customSendItemsLayoutWrapper.addWidget(customItems)
-        customSendItemsLayoutWrapper.addWidget(self.addButton)
+        customSendItemsLayoutWrapper.addLayout(customSendButtonsLayout)
         #   set wrapper widget
         self.customSendScroll.setWidget(cutomSendItemsWraper)
         self.customSendScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -332,6 +343,8 @@ class Plugin(Plugin_Base):
         self.saveLogAutoNew.clicked.connect(lambda: self.bindVar(self.saveLogAutoNew, self.config, "saveLogAutoNew"))
         self.openFileButton.clicked.connect(self.selectFile)
         self.addButton.clicked.connect(self.customSendAdd)
+        self.importCustomSendButton.clicked.connect(self.importCustomSendItems)
+        self.exportCustomSendButton.clicked.connect(self.exportCustomSendItems)
         self.clearHistoryButton.clicked.connect(self.clearHistory)
         self.fontSizeInput.valueChanged.connect(self.changeFontSize)
         self.funcParent = parent
@@ -379,8 +392,10 @@ class Plugin(Plugin_Base):
         self.receiveArea.setLineWrapMode(QTextEdit.WidgetWidth if paramObj["wrap"] else QTextEdit.NoWrap)
         self.sendArea.setLineWrapMode(QTextEdit.WidgetWidth if paramObj["wrap"] else QTextEdit.NoWrap)
         # send items
-        for text in paramObj["customSendItems"]:
-            self.insertSendItem(text, load=True)
+        customSendItems = []
+        for item in paramObj["customSendItems"]:
+            customSendItems.append(self.insertSendItem(item, load=True))
+        paramObj["customSendItems"] = customSendItems
         self.fontSizeInput.setValue(paramObj["fontSize"])  # Default font size
 
         self.receiveProcess = threading.Thread(target=self.receiveDataProcess)
@@ -546,7 +561,25 @@ class Plugin(Plugin_Base):
         if event.key() == Qt.Key_Control:
             self.keyControlPressed = False
 
-    def insertSendItem(self, text="", load = False):
+    def normalizeCustomSendItem(self, item=None):
+        if item is None:
+            item = {}
+        if isinstance(item, dict):
+            text = item.get("text", "")
+            remark = item.get("remark", "")
+            icon = item.get("icon", None)
+        else:
+            text = item
+            remark = ""
+            icon = None
+        return {
+            "text": "" if text is None else str(text),
+            "remark": "" if remark is None else str(remark),
+            "icon": icon or "fa.send"
+        }
+
+    def insertSendItem(self, customItem=None, load = False):
+        customItem = self.normalizeCustomSendItem(customItem)
         itemsNum = self.customSendItemsLayout.count() + 1
         # TODO: here auto set scroll area height is ugly, maybe have better way
         height = parameters.customSendItemHeight * (itemsNum + 1) + 20
@@ -568,11 +601,15 @@ class Plugin(Plugin_Base):
         layout = QHBoxLayout()
         layout.setContentsMargins(0,0,0,0)
         item.setLayout(layout)
-        cmd = QLineEdit(text)
-        send = QPushButton("")
-        utils_ui.setButtonIcon(send, "fa.send")
-        cmd.setToolTip(text)
-        send.setToolTip(text)
+        cmd = QLineEdit(customItem["text"])
+        send = QPushButton(customItem["remark"])
+        utils_ui.setButtonIcon(send, customItem["icon"])
+        editRemark = QPushButton("")
+        editRemark.setObjectName("editRemark")
+        utils_ui.setButtonIcon(editRemark, "ei.pencil")
+        editRemark.setProperty("class", "remark")
+        cmd.setToolTip(customItem["text"])
+        send.setToolTip(customItem["text"])
         cmd.textChanged.connect(lambda: self.onCustomItemChange(self.customSendItemsLayout.indexOf(item), cmd, send))
         send.setProperty("class", "smallBtn")
         send.clicked.connect(lambda: self.sendCustomItem(self.config["customSendItems"][self.customSendItemsLayout.indexOf(item)]))
@@ -581,13 +618,30 @@ class Plugin(Plugin_Base):
         delete.setProperty("class", "deleteBtn")
         layout.addWidget(cmd)
         layout.addWidget(send)
+        layout.addWidget(editRemark)
         layout.addWidget(delete)
         delete.clicked.connect(lambda: self.deleteSendItem(self.customSendItemsLayout.indexOf(item), item))
+        def changeRemark(idx, obj):
+            customItem = self.config["customSendItems"][idx]
+            ok, remark, icon, _shortcut = EditRemarDialog(
+                obj.text(), customItem.get("icon"), shortcut=[], enableShortcut=False).exec()
+            if ok:
+                obj.setText(remark)
+                if icon:
+                    utils_ui.setButtonIcon(obj, icon)
+                else:
+                    obj.setIcon(QIcon())
+                self.config["customSendItems"][idx]["remark"] = remark
+                self.config["customSendItems"][idx]["icon"] = icon
+        editRemark.clicked.connect(lambda: changeRemark(self.customSendItemsLayout.indexOf(item), send))
         self.customSendItemsLayout.addWidget(item)
         if not load:
-            self.config["customSendItems"].append("")
+            self.config["customSendItems"].append(customItem)
+        return customItem
 
     def deleteSendItem(self, idx, item):
+        for obj in item.findChildren(QPushButton):
+            utils_ui.clearButtonIcon(obj)
         item.setParent(None)
         self.config["customSendItems"].pop(idx)
         # TODO: here auto set scroll area height is ugly, maybe have better way
@@ -606,13 +660,66 @@ class Plugin(Plugin_Base):
         text = edit.text()
         edit.setToolTip(text)
         send.setToolTip(text)
-        self.config["customSendItems"][idx] = text
+        self.config["customSendItems"][idx].update({
+            "text": text,
+            "remark": send.text()
+        })
 
-    def sendCustomItem(self, text):
+    def sendCustomItem(self, item):
+        text = item.get("text", "") if isinstance(item, dict) else item
         self.onSendData(data = text)
 
     def customSendAdd(self):
         self.insertSendItem()
+
+    def clearCustomSendItemsWidgets(self):
+        while self.customSendItemsLayout.count():
+            layoutItem = self.customSendItemsLayout.takeAt(0)
+            widget = layoutItem.widget()
+            if widget:
+                for obj in widget.findChildren(QPushButton):
+                    utils_ui.clearButtonIcon(obj)
+                widget.setParent(None)
+                widget.deleteLater()
+
+    def loadCustomSendItems(self, items):
+        self.clearCustomSendItemsWidgets()
+        self.config["customSendItems"] = []
+        for item in items:
+            self.insertSendItem(item)
+
+    def importCustomSendItems(self):
+        fileName_choose, filetype = QFileDialog.getOpenFileName(self.funcWidget,
+                                    _("Import custom send"),
+                                    os.getcwd(),
+                                    _("JSON file (*.json);;All Files (*)"))
+        if fileName_choose == "":
+            return
+        try:
+            with open(fileName_choose, encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, dict) and "customSendItems" in data:
+                data = data["customSendItems"]
+            if not isinstance(data, list):
+                raise ValueError(_("Custom send file must be a JSON list"))
+            self.loadCustomSendItems([self.normalizeCustomSendItem(item) for item in data])
+            self.hintSignal.emit("info", _("OK"), _("Custom send items imported!"))
+        except Exception as e:
+            self.hintSignal.emit("error", _("Error"), _("Import custom send failed!") + " " + str(e))
+
+    def exportCustomSendItems(self):
+        fileName_choose, filetype = QFileDialog.getSaveFileName(self.funcWidget,
+                                    _("Export custom send"),
+                                    os.path.join(os.getcwd(), "custom_send_items.json"),
+                                    _("JSON file (*.json);;All Files (*)"))
+        if fileName_choose == "":
+            return
+        try:
+            with open(fileName_choose, "w", encoding="utf-8") as f:
+                json.dump(self.config["customSendItems"], f, indent=4, ensure_ascii=False)
+            self.hintSignal.emit("info", _("OK"), _("Custom send items exported!"))
+        except Exception as e:
+            self.hintSignal.emit("error", _("Error"), _("Export custom send failed!") + " " + str(e))
 
     def getSendData(self, data=None) -> bytes:
         if data is None:
