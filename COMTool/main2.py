@@ -46,7 +46,8 @@ except ImportError:
 from PyQt5.QtCore import pyqtSignal, Qt, QRect, QMargins, QCoreApplication
 from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
-                             QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QTabWidget, QMenu, QSplashScreen)
+                             QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QTabWidget, QMenu, QSplashScreen,
+                             QInputDialog)
 from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QCloseEvent
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
 import threading
@@ -141,13 +142,6 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
                     setCurr = False
                     if self.config["currItem"] == item["name"]:
                         setCurr = True
-                    # check language change, update item name to current lanuage
-                    old_name_tail = item["name"].split(" ")[-1]
-                    try:
-                        int(old_name_tail)
-                        item["name"] = pluginClass.name + " " + old_name_tail
-                    except Exception: # for no number tailed name
-                        item["name"] = pluginClass.name
                     self.addItem(pluginClass, nameSaved=item["name"], setCurrent=setCurr, connsConfigs = item["config"]["conns"], pluginConfig=item["config"]["plugin"])
         else:  # load builtin plugins
             for id, pluginClass in builtinPlugins.items(): 
@@ -168,12 +162,13 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             numbers = []
             for item in self.items:
                 if item.plugin.id == pluginClass.id:
-                    name = item.name.replace(item.plugin.name, "").split(" ")
-                    if len(name) > 1:
-                        number = int(name[-1])
-                        numbers.append(number)
-                    else:
+                    if item.name == item.plugin.name:
                         numbers.append(0)
+                    elif item.name.startswith(item.plugin.name + " "):
+                        try:
+                            numbers.append(int(item.name.split(" ")[-1]))
+                        except Exception:
+                            pass
             if numbers:
                 numbers = sorted(numbers)
             if (not numbers) or numbers[0] != 0:
@@ -211,7 +206,11 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
 
     def tabAddItem(self, item):
         self.tabWidget.addTab(item.widget, item.name)
-        self.tabWidget.setTabToolTip(self.tabWidget.count() - 1, item.name + _(", Double click to detach as a window"))
+        self.setTabDisplay(self.tabWidget.count() - 1, item)
+
+    def setTabDisplay(self, idx, item):
+        self.tabWidget.setTabText(idx, item.name)
+        self.tabWidget.setTabToolTip(idx, item.name + _(", Double click to detach as a window, right click to rename"))
 
     def onConnChnaged(self, plugin, status:ConnectionStatus, msg):
         for item in self.items:
@@ -348,6 +347,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         # tab widgets
         self.tabWidget = QTabWidget()
         self.tabWidget.setTabsClosable(True)
+        self.tabWidget.tabBar().setContextMenuPolicy(Qt.CustomContextMenu)
         # tab left menu
         tabConerWidget = QWidget()
         tabConerLayout = QHBoxLayout()
@@ -403,6 +403,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         self.tabWidget.currentChanged.connect(self.onSwitchTab)
         self.tabWidget.tabCloseRequested.connect(self.closeTab)
         self.tabWidget.tabBarDoubleClicked.connect(self.onTabDoubleClicked)
+        self.tabWidget.tabBar().customContextMenuRequested.connect(self.showTabContextMenu)
         # others
         self.updateSignal.connect(self.showUpdate)
         self.hintSignal.connect(self.showHint)
@@ -455,6 +456,52 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             item.plugin.onActive()
         self.updateFunctionalButton()
 
+    def itemByTabIndex(self, idx):
+        if idx < 0:
+            return None
+        widget = self.tabWidget.widget(idx)
+        for item in self.items:
+            if item.widget == widget:
+                return item
+        return None
+
+    def showTabContextMenu(self, pos):
+        tabBar = self.tabWidget.tabBar()
+        idx = tabBar.tabAt(pos)
+        item = self.itemByTabIndex(idx)
+        if item is None:
+            return
+        menu = QMenu(self)
+        renameAction = menu.addAction(_("Rename"))
+        action = menu.exec_(tabBar.mapToGlobal(pos))
+        if action == renameAction:
+            self.renameTab(idx)
+
+    def renameTab(self, idx):
+        item = self.itemByTabIndex(idx)
+        if item is None:
+            return
+        newName, ok = QInputDialog.getText(self, _("Rename"), _("Page name"), text=item.name)
+        if not ok:
+            return
+        newName = newName.strip()
+        if not newName or newName == item.name:
+            return
+        for other in self.items:
+            if other is not item and other.name == newName:
+                QMessageBox.warning(self, _("Warning"), _("Page name already exists"))
+                return
+        oldName = item.name
+        item.name = newName
+        for itemConfig in self.config["items"]:
+            if itemConfig["name"] == oldName:
+                itemConfig["name"] = newName
+                break
+        if self.config["currItem"] == oldName:
+            self.config["currItem"] = newName
+        self.setTabDisplay(idx, item)
+        item.widget.setWindowTitle(newName)
+
     def closeTab(self, idx):
         # only one, ignore
         if self.tabWidget.count() == 1:
@@ -488,6 +535,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
     def recoverTab(self, item, parent):
         def add(i):
             self.tabWidget.insertTab(i, item.widget, item.name)
+            self.setTabDisplay(i, item)
             self.tabWidget.setCurrentIndex(i)
             item.widget.setWindowFlag(Qt.Window, False)
             # item.widget.setParent(parent)

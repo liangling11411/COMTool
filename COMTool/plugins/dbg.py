@@ -27,11 +27,13 @@ from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QMimeData, QTimer
 from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSpinBox, QSizePolicy,
-                             QColorDialog)
+                             QColorDialog, QFontComboBox)
 from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QDrag, QTextOption, QPalette
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
 import os, threading, time, re, json
 from datetime import datetime
+
+DEFAULT_TEXT_FONT = "Consolas"
 
 
 class CustomSendItemWidget(QWidget):
@@ -195,6 +197,8 @@ class Plugin(Plugin_Base):
             "saveLogPath" : "",
             "saveLogPath2" : "",
             "saveLog" : False,
+            "saveLogTimed": False,
+            "saveLogDuration": 60,
             "wrap": False,
             "saveLogAutoNew": False,
             "color" : False,
@@ -205,8 +209,12 @@ class Plugin(Plugin_Base):
             "fontSize": 10,
             "receiveFontSize": 10,
             "sendFontSize": 10,
+            "receiveFontFamily": DEFAULT_TEXT_FONT,
+            "sendFontFamily": DEFAULT_TEXT_FONT,
             "receiveFontColor": "#2e7d32",
-            "sendFontColor": "#1976d2"
+            "sendFontColor": "#1976d2",
+            "timestampColor": "#6d6d6d",
+            "timestampNewline": False
         }
         for k in default:
             if not k in self.config:
@@ -219,21 +227,29 @@ class Plugin(Plugin_Base):
         self.lastShowTail = ''
         self.justSent = False # sent data before received data flag
         self.customSendDropTarget = None
+        self.receiveDisplayRecords = []
+        self.rerenderingReceiveArea = False
+        self.saveLogStopTimer = None
 
-    def onWidgetMain(self, parent):
-        self.mainWidget = QSplitter(Qt.Vertical)
-        # widgets receive and send area
-        self.receiveArea = QTextEdit()
-        font = QFont('Menlo,Consolas,Bitstream Vera Sans Mono,Courier New,monospace, Microsoft YaHei', 10)
-        self.receiveArea.setFont(font)
-        self.sendArea = QTextEdit()
-        self.sendArea.setAcceptRichText(False)
+    def ensureMainActionButtons(self):
+        if hasattr(self, "clearReceiveButtion") and hasattr(self, "clearSendButtion"):
+            return
         self.clearReceiveButtion = QPushButton(_("Clear RX"))
         self.clearReceiveButtion.setToolTip(_("Clear receive area"))
         utils_ui.setButtonIcon(self.clearReceiveButtion, "mdi6.broom")
         self.clearSendButtion = QPushButton(_("Clear TX"))
         self.clearSendButtion.setToolTip(_("Clear send input"))
         utils_ui.setButtonIcon(self.clearSendButtion, "mdi6.broom")
+
+    def onWidgetMain(self, parent):
+        self.mainWidget = QSplitter(Qt.Vertical)
+        # widgets receive and send area
+        self.receiveArea = QTextEdit()
+        font = QFont(self.config.get("receiveFontFamily", DEFAULT_TEXT_FONT), self.config["receiveFontSize"])
+        self.receiveArea.setFont(font)
+        self.sendArea = QTextEdit()
+        self.sendArea.setAcceptRichText(False)
+        self.ensureMainActionButtons()
         self.sendButton = QPushButton("")
         utils_ui.setButtonIcon(self.sendButton, "fa.send")
         self.sendHistory = ComboBox()
@@ -241,17 +257,12 @@ class Plugin(Plugin_Base):
         receiveAreaWidgetsLayout = QHBoxLayout()
         receiveAreaWidgetsLayout.setContentsMargins(0,0,0,0)
         receiveWidget.setLayout(receiveAreaWidgetsLayout)
-        receiveButtonLayout = QVBoxLayout()
-        receiveButtonLayout.addWidget(self.clearReceiveButtion)
-        receiveButtonLayout.addStretch(1)
         receiveAreaWidgetsLayout.addWidget(self.receiveArea)
-        receiveAreaWidgetsLayout.addLayout(receiveButtonLayout)
         sendWidget = QWidget()
         sendAreaWidgetsLayout = QHBoxLayout()
         sendAreaWidgetsLayout.setContentsMargins(0,4,0,0)
         sendWidget.setLayout(sendAreaWidgetsLayout)
         buttonLayout = QVBoxLayout()
-        buttonLayout.addWidget(self.clearSendButtion)
         buttonLayout.addStretch(1)
         buttonLayout.addWidget(self.sendButton)
         sendAreaWidgetsLayout.addWidget(self.sendArea)
@@ -300,13 +311,25 @@ class Plugin(Plugin_Base):
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsHex,1,1,1,1)
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsAutoLinefeed, 2, 0, 1, 1)
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsAutoLinefeedTime, 2, 1, 1, 1)
-        serialReceiveSettingsLayout.addWidget(self.receiveSettingsTimestamp, 3, 0, 1, 1)
-        serialReceiveSettingsLayout.addWidget(self.receiveSettingsColor, 3, 1, 1, 1)
+        serialReceiveSettingsLayout.addWidget(self.receiveSettingsColor, 3, 0, 1, 1)
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsWrap, 4, 0, 1, 1)
         serialReceiveSettingsLayout.addWidget(self.receiveEscape, 4, 1, 1, 1)
         serialReceiveSettingsGroupBox.setLayout(serialReceiveSettingsLayout)
         serialReceiveSettingsGroupBox.setAlignment(Qt.AlignHCenter)
         layout.addWidget(serialReceiveSettingsGroupBox)
+
+        timestampSettingsLayout = QGridLayout()
+        timestampSettingsGroupBox = QGroupBox(_("Timestamp"))
+        self.timestampColorButton = QPushButton(_("Color"))
+        self.timestampColorButton.setToolTip(_("Timestamp color in receive area"))
+        self.timestampNewlineCheckbox = QCheckBox(_("Newline after timestamp"))
+        self.timestampNewlineCheckbox.setToolTip(_("Display received data on the next line after timestamp"))
+        timestampSettingsLayout.addWidget(self.receiveSettingsTimestamp, 0, 0, 1, 2)
+        timestampSettingsLayout.addWidget(QLabel(_("Timestamp color")), 1, 0, 1, 1)
+        timestampSettingsLayout.addWidget(self.timestampColorButton, 1, 1, 1, 1)
+        timestampSettingsLayout.addWidget(self.timestampNewlineCheckbox, 2, 0, 1, 2)
+        timestampSettingsGroupBox.setLayout(timestampSettingsLayout)
+        layout.addWidget(timestampSettingsGroupBox)
 
         # serial send settings
         serialSendSettingsLayout = QGridLayout()
@@ -343,6 +366,7 @@ class Plugin(Plugin_Base):
         serialSendSettingsLayout.addWidget(self.sendSettingsRecord, 4, 1, 1, 1)
         serialSendSettingsGroupBox.setLayout(serialSendSettingsLayout)
         layout.addWidget(serialSendSettingsGroupBox)
+        self.ensureMainActionButtons()
         self.createFunctionalSettings(layout)
 
         widget = QWidget()
@@ -350,6 +374,8 @@ class Plugin(Plugin_Base):
         layout.setContentsMargins(0,0,0,0)
         # event
         self.receiveSettingsTimestamp.clicked.connect(self.onTimeStampClicked)
+        self.timestampNewlineCheckbox.clicked.connect(lambda: self.bindVar(self.timestampNewlineCheckbox, self.config, "timestampNewline"))
+        self.timestampColorButton.clicked.connect(self.selectTimestampColor)
         self.receiveSettingsAutoLinefeed.clicked.connect(self.onAutoLinefeedClicked)
         self.receiveSettingsAscii.clicked.connect(lambda : self.switchRxMode(True))
         self.receiveSettingsHex.clicked.connect(lambda : self.switchRxMode(False))
@@ -369,12 +395,20 @@ class Plugin(Plugin_Base):
         self.saveLogCheckbox.clicked.connect(self.setSaveLog)
         self.logFileBtn.clicked.connect(self.selectLogFile)
         self.saveLogAutoNew.clicked.connect(lambda: self.bindVar(self.saveLogAutoNew, self.config, "saveLogAutoNew"))
+        self.saveLogTimed.clicked.connect(self.onSaveLogTimedChanged)
+        self.saveLogDuration.textChanged.connect(self.onSaveLogDurationChanged)
         self.openFileButton.clicked.connect(self.selectFile)
         self.clearHistoryButton.clicked.connect(self.clearHistory)
         self.receiveFontSizeInput.valueChanged.connect(self.changeReceiveFontSize)
         self.sendFontSizeInput.valueChanged.connect(self.changeSendFontSize)
+        self.receiveFontFamilyInput.currentFontChanged.connect(self.changeReceiveFontFamily)
+        self.sendFontFamilyInput.currentFontChanged.connect(self.changeSendFontFamily)
         self.receiveFontColorButton.clicked.connect(lambda: self.selectDefaultFontColor("receiveFontColor"))
         self.sendFontColorButton.clicked.connect(lambda: self.selectDefaultFontColor("sendFontColor"))
+        if self.saveLogStopTimer is None:
+            self.saveLogStopTimer = QTimer(self)
+            self.saveLogStopTimer.setSingleShot(True)
+            self.saveLogStopTimer.timeout.connect(self.stopTimedSaveLog)
         return widget
 
     def onFunctionalWidgetDefaultVisible(self):
@@ -390,18 +424,26 @@ class Plugin(Plugin_Base):
         self.fontSettingsGroupBox = QGroupBox(_("Default font"))
         fontSettingsLayout = QGridLayout()
         self.fontSettingsGroupBox.setLayout(fontSettingsLayout)
+        self.receiveFontFamilyInput = QFontComboBox()
         self.receiveFontSizeInput = NoWheelSpinBox()
         self.receiveFontSizeInput.setRange(1, 100)
         self.receiveFontColorButton = QPushButton(_("Color"))
+        self.sendFontFamilyInput = QFontComboBox()
         self.sendFontSizeInput = NoWheelSpinBox()
         self.sendFontSizeInput.setRange(1, 100)
         self.sendFontColorButton = QPushButton(_("Color"))
-        fontSettingsLayout.addWidget(QLabel(_("Receive size")), 0, 0, 1, 1)
-        fontSettingsLayout.addWidget(self.receiveFontSizeInput, 0, 1, 1, 1)
-        fontSettingsLayout.addWidget(self.receiveFontColorButton, 0, 2, 1, 1)
-        fontSettingsLayout.addWidget(QLabel(_("Send size")), 1, 0, 1, 1)
-        fontSettingsLayout.addWidget(self.sendFontSizeInput, 1, 1, 1, 1)
-        fontSettingsLayout.addWidget(self.sendFontColorButton, 1, 2, 1, 1)
+        fontSettingsLayout.addWidget(QLabel(_("RX font")), 0, 0, 1, 1)
+        fontSettingsLayout.addWidget(self.receiveFontFamilyInput, 0, 1, 1, 3)
+        fontSettingsLayout.addWidget(QLabel(_("RX size")), 1, 0, 1, 1)
+        fontSettingsLayout.addWidget(self.receiveFontSizeInput, 1, 1, 1, 1)
+        fontSettingsLayout.addWidget(QLabel(_("RX color")), 1, 2, 1, 1)
+        fontSettingsLayout.addWidget(self.receiveFontColorButton, 1, 3, 1, 1)
+        fontSettingsLayout.addWidget(QLabel(_("TX font")), 2, 0, 1, 1)
+        fontSettingsLayout.addWidget(self.sendFontFamilyInput, 2, 1, 1, 3)
+        fontSettingsLayout.addWidget(QLabel(_("TX size")), 3, 0, 1, 1)
+        fontSettingsLayout.addWidget(self.sendFontSizeInput, 3, 1, 1, 1)
+        fontSettingsLayout.addWidget(QLabel(_("TX color")), 3, 2, 1, 1)
+        fontSettingsLayout.addWidget(self.sendFontColorButton, 3, 3, 1, 1)
         self.fontSizeInput = self.sendFontSizeInput
 
         self.filePathWidget = QLineEdit()
@@ -423,17 +465,34 @@ class Plugin(Plugin_Base):
         self.logFileBtn = QPushButton(_("Log path"))
         self.saveLogAutoNew = QCheckBox(_("Auto new file"))
         self.saveLogAutoNew.setToolTip(_("When start a new connection, will automatically create a new log file"))
+        self.saveLogTimed = QCheckBox(_("Timed log"))
+        self.saveLogTimed.setToolTip(_("Stop saving log automatically after the configured duration"))
+        self.saveLogDuration = QLineEdit("60")
+        self.saveLogDuration.setProperty("class", "smallInput")
+        self.saveLogDuration.setMaximumWidth(75)
+        self.saveLogDuration.setToolTip(_("Timed log duration, unit: seconds"))
         logFileLayout.addWidget(self.saveLogCheckbox)
         logFileLayout.addWidget(self.logFilePath)
         logFileLayout.addWidget(self.logFileBtn)
+        logTimedLayout = QHBoxLayout()
+        logTimedLayout.addWidget(self.saveLogTimed)
+        logTimedLayout.addWidget(self.saveLogDuration)
+        logTimedLayout.addWidget(QLabel(_("s")))
+        logTimedLayout.addStretch(1)
         logFileWrapper.addLayout(logFileLayout)
         logFileWrapper.addWidget(self.saveLogAutoNew)
+        logFileWrapper.addLayout(logTimedLayout)
         self.logFileGroupBox.setLayout(logFileWrapper)
+
+        clearButtonsLayout = QHBoxLayout()
+        clearButtonsLayout.addWidget(self.clearReceiveButtion)
+        clearButtonsLayout.addWidget(self.clearSendButtion)
 
         parentLayout.addWidget(self.fontSettingsGroupBox)
         parentLayout.addWidget(self.logFileGroupBox)
         parentLayout.addWidget(self.fileSendGroupBox)
         parentLayout.addWidget(self.clearHistoryButton)
+        parentLayout.addLayout(clearButtonsLayout)
 
     def switchRxMode(self, ascii):
         if ascii:
@@ -528,6 +587,8 @@ class Plugin(Plugin_Base):
             interval = 200
         self.receiveSettingsAutoLinefeedTime.setText(str(interval))
         self.receiveSettingsTimestamp.setChecked(paramObj["showTimestamp"])
+        self.timestampNewlineCheckbox.setChecked(paramObj["timestampNewline"])
+        self.updateDefaultFontColorButton(self.timestampColorButton, paramObj["timestampColor"])
         self.receiveSettingsWrap.setChecked(paramObj["wrap"])
         self.sendSettingsHex.setChecked(not paramObj["sendAscii"])
         self.sendSettingsScheduledCheckBox.setChecked(paramObj["sendScheduled"])
@@ -548,6 +609,13 @@ class Plugin(Plugin_Base):
         self.logFilePath.setToolTip(paramObj["saveLogPath"])
         self.saveLogCheckbox.setChecked(paramObj["saveLog"])
         self.saveLogAutoNew.setChecked(paramObj["saveLogAutoNew"])
+        self.saveLogTimed.setChecked(paramObj["saveLogTimed"])
+        try:
+            duration = int(paramObj["saveLogDuration"])
+            paramObj["saveLogDuration"] = duration
+        except Exception:
+            duration = 60
+        self.saveLogDuration.setText(str(duration))
         self.receiveSettingsColor.setChecked(paramObj["color"])
         # wrap
         self.applyWrapMode()
@@ -557,12 +625,15 @@ class Plugin(Plugin_Base):
             customSendItems.append(self.insertSendItem(item, load=True))
         paramObj["customSendItems"] = customSendItems
         self.filterCustomSendItems()
+        self.receiveFontFamilyInput.setCurrentFont(QFont(paramObj["receiveFontFamily"]))
+        self.sendFontFamilyInput.setCurrentFont(QFont(paramObj["sendFontFamily"]))
         self.receiveFontSizeInput.setValue(paramObj["receiveFontSize"])
         self.sendFontSizeInput.setValue(paramObj["sendFontSize"])
         self.updateDefaultFontColorButton(self.receiveFontColorButton, paramObj["receiveFontColor"])
         self.updateDefaultFontColorButton(self.sendFontColorButton, paramObj["sendFontColor"])
         self.applyReceiveFont()
         self.applySendFont()
+        self.startTimedSaveLog()
 
         self.receiveProcess = threading.Thread(target=self.receiveDataProcess)
         self.receiveProcess.setDaemon(True)
@@ -597,15 +668,27 @@ class Plugin(Plugin_Base):
         else:
             self.updateDefaultFontColorButton(self.sendFontColorButton, self.config[configKey])
             self.applySendFont()
+        self.rerenderReceiveArea()
+
+    def selectTimestampColor(self):
+        current = self.config.get("timestampColor") or "#6d6d6d"
+        color = QColorDialog.getColor(QColor(current), self.mainWidget, _("Select color"))
+        if not color.isValid():
+            return
+        self.config["timestampColor"] = color.name()
+        self.updateDefaultFontColorButton(self.timestampColorButton, self.config["timestampColor"])
+        self.rerenderReceiveArea()
 
     def applyReceiveFont(self):
         font = self.receiveArea.currentFont()
+        font.setFamily(self.config.get("receiveFontFamily", DEFAULT_TEXT_FONT))
         font.setPointSize(self.config["receiveFontSize"])
         self.receiveArea.setFont(font)
         self.setTextEditPaletteColor(self.receiveArea, self.config["receiveFontColor"])
 
     def applySendFont(self):
         font = self.sendArea.currentFont()
+        font.setFamily(self.config.get("sendFontFamily", DEFAULT_TEXT_FONT))
         font.setPointSize(self.config["sendFontSize"])
         self.sendArea.setFont(font)
         self.setTextEditPaletteColor(self.sendArea, self.config["sendFontColor"])
@@ -613,10 +696,20 @@ class Plugin(Plugin_Base):
     def changeReceiveFontSize(self, size):
         self.config["receiveFontSize"] = size
         self.applyReceiveFont()
+        self.rerenderReceiveArea()
 
     def changeSendFontSize(self, size):
         self.config["sendFontSize"] = size
         self.config["fontSize"] = size
+        self.applySendFont()
+
+    def changeReceiveFontFamily(self, font):
+        self.config["receiveFontFamily"] = font.family()
+        self.applyReceiveFont()
+        self.rerenderReceiveArea()
+
+    def changeSendFontFamily(self, font):
+        self.config["sendFontFamily"] = font.family()
         self.applySendFont()
 
     def onSendSettingsHexClicked(self):
@@ -703,8 +796,52 @@ class Plugin(Plugin_Base):
     def setSaveLog(self):
         if self.saveLogCheckbox.isChecked():
             self.config["saveLog"] = True
+            self.startTimedSaveLog()
         else:
             self.config["saveLog"] = False
+            self.stopSaveLogTimer()
+
+    def onSaveLogTimedChanged(self):
+        self.bindVar(self.saveLogTimed, self.config, "saveLogTimed")
+        if self.config["saveLog"]:
+            self.startTimedSaveLog()
+        else:
+            self.stopSaveLogTimer()
+
+    def onSaveLogDurationChanged(self):
+        self.bindVar(self.saveLogDuration, self.config, "saveLogDuration", vtype=int,
+                     vErrorMsg=_("Timed log duration error, must be integer"), emptyDefault="60")
+        if self.config["saveLog"] and self.config["saveLogTimed"]:
+            self.startTimedSaveLog()
+
+    def stopSaveLogTimer(self):
+        if self.saveLogStopTimer is not None:
+            self.saveLogStopTimer.stop()
+
+    def startTimedSaveLog(self):
+        if self.saveLogStopTimer is None:
+            return
+        self.stopSaveLogTimer()
+        if not self.config.get("saveLog") or not self.config.get("saveLogTimed"):
+            return
+        try:
+            duration = int(self.config.get("saveLogDuration", 60))
+        except Exception:
+            duration = 60
+            self.config["saveLogDuration"] = duration
+            if hasattr(self, "saveLogDuration"):
+                self.saveLogDuration.setText(str(duration))
+        if duration <= 0:
+            duration = 1
+            self.config["saveLogDuration"] = duration
+            self.saveLogDuration.setText(str(duration))
+        self.saveLogStopTimer.start(duration * 1000)
+
+    def stopTimedSaveLog(self):
+        self.config["saveLog"] = False
+        if hasattr(self, "saveLogCheckbox"):
+            self.saveLogCheckbox.setChecked(False)
+        self.hintSignal.emit("info", _("OK"), _("Timed log stopped"))
 
     def selectFile(self):
         oldPath = self.filePathWidget.text()
@@ -1138,6 +1275,25 @@ class Plugin(Plugin_Base):
                 self.hintSignal.emit("error", _("Error"), _("Time format error"))
         self.isScheduledSending = False
 
+    def displayLineBreak(self):
+        return "\r\n" if self.config["useCRLF"] else "\n"
+
+    def buildRecordHead(self, direction="", showTimestamp=False, isHex=False, leadingLineBreak=False):
+        prefix = self.displayLineBreak() if leadingLineBreak else ""
+        directionPart = "{} ".format(direction) if direction else ""
+        timestampPart = "[{}] ".format(utils.datetime_format_ms(datetime.now())) if showTimestamp else ""
+        hexPart = "[HEX] " if isHex else ""
+        if showTimestamp and self.config.get("timestampNewline", False):
+            firstLine = "{}{}{}".format(prefix, directionPart, timestampPart).rstrip()
+            secondLine = "{}{}".format(directionPart, hexPart)
+            if isHex:
+                secondLine = "{}: ".format(secondLine.rstrip())
+            return firstLine + self.displayLineBreak() + secondLine
+        head = "{}{}{}{}".format(prefix, directionPart, timestampPart, hexPart)
+        if showTimestamp or (direction and isHex):
+            head = "{}: ".format(head.rstrip())
+        return head
+
     def sendData(self, data_bytes = None):
         try:
             if self.isConnected():
@@ -1151,19 +1307,10 @@ class Plugin(Plugin_Base):
                     data += b"\r\n" if self.config["useCRLF"] else b"\n"
                 # record send data
                 if self.config["recordSend"]:
-                    head = '=> '
-                    if self.config["showTimestamp"]:
-                        head += '[{}] '.format(utils.datetime_format_ms(datetime.now()))
                     isHexStr, sendStr, sendStrsColored = self.bytes2String(data, not self.config["receiveAscii"], encoding=self.configGlobal["encoding"])
                     if isHexStr:
                         sendStr = sendStr.upper()
-                        head += "[HEX] "
-                    if self.config["useCRLF"]:
-                        head = "\r\n" + head
-                    else:
-                        head = "\n" + head
-                    if head.strip() != '=>':
-                        head = '{}: '.format(head.rstrip())
+                    head = self.buildRecordHead("=>", self.config["showTimestamp"], isHexStr, leadingLineBreak=True)
                     self.receiveUpdateSignal.emit(head, [sendStr], self.configGlobal["encoding"], True)
                     self.sendRecord.insert(0, head + sendStr)
                 self.send(data_bytes=data, callback = self.onSent)
@@ -1207,26 +1354,57 @@ class Plugin(Plugin_Base):
         qcolor = QColor(color)
         return qcolor if qcolor.isValid() else QColor("#1976d2" if isSend else "#2e7d32")
 
-    def updateReceivedDataDisplay(self, head : str, datas : list, encoding : str, isSend : bool):
+    def timestampDisplayColor(self):
+        qcolor = QColor(self.config.get("timestampColor", "#6d6d6d"))
+        return qcolor if qcolor.isValid() else QColor("#6d6d6d")
+
+    def receiveDisplayFont(self):
+        return QFont(self.config.get("receiveFontFamily", DEFAULT_TEXT_FONT), self.config["receiveFontSize"])
+
+    def insertHeadText(self, cursor, textFormat, head, isSend):
+        timestampPattern = re.compile(r"\[\d{4}[^\]]*\]")
+        directionColor = self.receiveDisplayColor(isSend)
+        timestampColor = self.timestampDisplayColor()
+        p = 0
+        for match in timestampPattern.finditer(head):
+            if match.start() > p:
+                textFormat.setForeground(directionColor)
+                textFormat.setBackground(self.defaultBg)
+                textFormat.setFontWeight(QFont.Bold if isSend else QFont.Normal)
+                cursor.setCharFormat(textFormat)
+                cursor.insertText(head[p:match.start()])
+            textFormat.setForeground(timestampColor)
+            textFormat.setBackground(self.defaultBg)
+            textFormat.setFontWeight(QFont.Bold if isSend else QFont.Normal)
+            cursor.setCharFormat(textFormat)
+            cursor.insertText(match.group(0))
+            p = match.end()
+        if p < len(head):
+            textFormat.setForeground(directionColor)
+            textFormat.setBackground(self.defaultBg)
+            textFormat.setFontWeight(QFont.Bold if isSend else QFont.Normal)
+            cursor.setCharFormat(textFormat)
+            cursor.insertText(head[p:])
+
+    def appendReceivedDataRecord(self, record, preserveScroll=True):
+        datas = record["datas"]
+        encoding = record["encoding"]
+        isSend = record["isSend"]
+        head = record["head"]
         if datas:
             curScrollValue = self.receiveArea.verticalScrollBar().value()
             self.receiveArea.moveCursor(QTextCursor.End)
             endScrollValue = self.receiveArea.verticalScrollBar().value()
             cursor = self.receiveArea.textCursor()
             format = cursor.charFormat()
-            font = QFont('Menlo,Consolas,Bitstream Vera Sans Mono,Courier New,monospace, Microsoft YaHei', self.config["receiveFontSize"])
-            format.setFont(font)
+            format.setFont(self.receiveDisplayFont())
             if not self.defaultColor:
                 self.defaultColor = format.foreground()
             if not self.defaultBg:
                 self.defaultBg = format.background()
             directionColor = self.receiveDisplayColor(isSend)
             if head:
-                format.setForeground(directionColor)
-                format.setBackground(self.defaultBg)
-                format.setFontWeight(QFont.Bold if isSend else QFont.Normal)
-                cursor.setCharFormat(format)
-                cursor.insertText(head)
+                self.insertHeadText(cursor, format, head, isSend)
             format.setFontWeight(QFont.Normal)
             for data in datas:
                 if type(data) == str:
@@ -1254,10 +1432,41 @@ class Plugin(Plugin_Base):
                     format.setBackground(self.defaultBg)
                     cursor.setCharFormat(format)
                     cursor.insertText(data.decode(encoding=encoding, errors="ignore"))
-            if curScrollValue < endScrollValue:
+            if preserveScroll and curScrollValue < endScrollValue:
                 self.receiveArea.verticalScrollBar().setValue(curScrollValue)
             else:
                 self.receiveArea.moveCursor(QTextCursor.End)
+
+    def updateReceivedDataDisplay(self, head : str, datas : list, encoding : str, isSend : bool):
+        if not datas:
+            return
+        record = {
+            "head": head,
+            "datas": datas,
+            "encoding": encoding,
+            "isSend": isSend
+        }
+        self.receiveDisplayRecords.append(record)
+        self.appendReceivedDataRecord(record)
+
+    def rerenderReceiveArea(self):
+        if not hasattr(self, "receiveArea") or self.rerenderingReceiveArea:
+            return
+        self.rerenderingReceiveArea = True
+        scrollBar = self.receiveArea.verticalScrollBar()
+        oldValue = scrollBar.value()
+        atEnd = oldValue >= scrollBar.maximum()
+        records = list(self.receiveDisplayRecords)
+        self.receiveArea.clear()
+        self.defaultColor = None
+        self.defaultBg = None
+        for record in records:
+            self.appendReceivedDataRecord(record, preserveScroll=False)
+        if atEnd:
+            self.receiveArea.moveCursor(QTextCursor.End)
+        else:
+            scrollBar.setValue(min(oldValue, scrollBar.maximum()))
+        self.rerenderingReceiveArea = False
 
     def sendHistoryFindDelete(self,str):
         self.sendHistory.removeItem(self.sendHistory.findText(str))
@@ -1373,7 +1582,9 @@ class Plugin(Plugin_Base):
 
     def clearReceiveBuffer(self):
         self.receiveArea.clear()
-        self.statusBar.clear()
+        self.receiveDisplayRecords.clear()
+        if hasattr(self, "statusBar"):
+            self.statusBar.clear()
 
     def onReceived(self, data : bytes):
         self.lock_op_rx_buff.acquire()
@@ -1394,6 +1605,7 @@ class Plugin(Plugin_Base):
         while(not self.receiveProgressStop):
             logData = None
             head = ""
+            new = b''
             # ok means got new data
             ok = self.lock_wait_rx.acquire(timeout=max(0.001, self.config["receiveAutoLindefeedTime"] / 1000))
             if (not ok) and len(buffer) == 0:
@@ -1453,16 +1665,9 @@ class Plugin(Plugin_Base):
                     # '=> [2021-12-20 11:02:34.02.291]: 123' '<= [2021-12-20 11:02:40.02.783]: 123'
                     # '<= [2021-12-20 11:03:25.03.320] [HEX]: 31 32 33 ' '=> [2021-12-20 11:03:27.03.319] [HEX]: 31 32 33'
                     if new_line:
-                        timeNow = '[{}] '.format(utils.datetime_format_ms(datetime.now()))
-                        if self.config["recordSend"]:
-                            head += "<= "
-                        if self.config["showTimestamp"]:
-                            head += timeNow
-                            head = '{} '.format(head.rstrip())
-                        if hexstr:
-                            head += "[HEX] "
-                        if (self.config["recordSend"] or self.config["showTimestamp"]) and not head.endswith("<= "):
-                            head = head[:-1] + ": "
+                        head += self.buildRecordHead("<=" if self.config["recordSend"] else "",
+                                                     self.config["showTimestamp"],
+                                                     hexstr)
                         new_line = False
                     self.receiveUpdateSignal.emit(head, [colorData], self.configGlobal["encoding"], False)
                     logData = head + data
