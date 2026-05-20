@@ -23,7 +23,7 @@ try:
 except Exception:
     from .base import Plugin_Base
 
-from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QMimeData
+from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QMimeData, QTimer
 from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSpinBox, QSizePolicy,
@@ -316,10 +316,6 @@ class Plugin(Plugin_Base):
 
         widget = QWidget()
         widget.setLayout(layout)
-        settingsScroll = QScrollArea()
-        settingsScroll.setWidgetResizable(True)
-        settingsScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        settingsScroll.setWidget(widget)
         layout.setContentsMargins(0,0,0,0)
         # event
         self.receiveSettingsTimestamp.clicked.connect(self.onTimeStampClicked)
@@ -345,12 +341,15 @@ class Plugin(Plugin_Base):
         self.openFileButton.clicked.connect(self.selectFile)
         self.clearHistoryButton.clicked.connect(self.clearHistory)
         self.fontSizeInput.valueChanged.connect(self.changeFontSize)
-        return settingsScroll
+        return widget
 
     def onFunctionalWidgetDefaultVisible(self):
         return True
 
     def onConfigButtonsInSettings(self):
+        return True
+
+    def onSettingsWidgetScrollTogether(self):
         return True
 
     def createFunctionalSettings(self, parentLayout):
@@ -439,8 +438,10 @@ class Plugin(Plugin_Base):
         cutomSendItemsWraper.setLayout(customSendItemsLayoutWrapper)
         #    custom items
         customItems = QWidget()
+        customItems.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
         self.customSendItemsLayout = QVBoxLayout()
         self.customSendItemsLayout.setContentsMargins(0,0,0,0)
+        self.customSendItemsLayout.setAlignment(Qt.AlignTop)
         customItems.setLayout(self.customSendItemsLayout)
         customSendButtonsLayout = QHBoxLayout()
         customSendButtonsLayout.setContentsMargins(0,0,0,0)
@@ -449,6 +450,7 @@ class Plugin(Plugin_Base):
         customSendButtonsLayout.addWidget(self.addButton)
         customSendItemsLayoutWrapper.addWidget(customItems)
         customSendItemsLayoutWrapper.addLayout(customSendButtonsLayout)
+        customSendItemsLayoutWrapper.addStretch(1)
         #   set wrapper widget
         self.customSendScroll.setWidget(cutomSendItemsWraper)
         self.customSendScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -790,8 +792,25 @@ class Plugin(Plugin_Base):
 
     def updateColorButton(self, button, color):
         utils_ui.setButtonIcon(button, "fa.paint-brush")
-        if color:
-            button.setStyleSheet("background-color: {}; border-color: {};".format(color, color))
+        qcolor = QColor(color)
+        if color and qcolor.isValid():
+            hoverColor = qcolor.darker(110).name()
+            pressedColor = qcolor.darker(135).name()
+            button.setStyleSheet(
+                "QPushButton {"
+                "background-color: %s;"
+                "border-color: %s;"
+                "}"
+                "QPushButton:hover {"
+                "background-color: %s;"
+                "border-color: %s;"
+                "}"
+                "QPushButton:pressed {"
+                "background-color: %s;"
+                "border-color: %s;"
+                "}"
+                % (color, color, hoverColor, hoverColor, pressedColor, pressedColor)
+            )
         else:
             button.setStyleSheet("")
 
@@ -806,6 +825,8 @@ class Plugin(Plugin_Base):
         qcolor = QColor(color)
         if color and qcolor.isValid():
             textColor = self.buttonTextColor(color)
+            hoverColor = qcolor.darker(110).name()
+            pressedColor = qcolor.darker(135).name()
             sendButton.setStyleSheet(
                 "QPushButton {"
                 "background-color: %s;"
@@ -816,7 +837,11 @@ class Plugin(Plugin_Base):
                 "background-color: %s;"
                 "border-color: %s;"
                 "}"
-                % (color, color, textColor, color, color)
+                "QPushButton:pressed {"
+                "background-color: %s;"
+                "border-color: %s;"
+                "}"
+                % (color, color, textColor, hoverColor, hoverColor, pressedColor, pressedColor)
             )
             item.setStyleSheet(
                 "QWidget#customSendItem {"
@@ -903,6 +928,12 @@ class Plugin(Plugin_Base):
         self.loadCustomSendItems(items)
         self.filterCustomSendItems()
 
+    def restoreCustomSendScroll(self, value):
+        if not hasattr(self, "customSendScroll"):
+            return
+        bar = self.customSendScroll.verticalScrollBar()
+        bar.setValue(min(value, bar.maximum()))
+
     def moveCustomSendItemBefore(self, fromIdx, toIdx):
         if fromIdx == toIdx:
             return
@@ -910,12 +941,15 @@ class Plugin(Plugin_Base):
             return
         if fromIdx >= len(self.config["customSendItems"]) or toIdx >= len(self.config["customSendItems"]):
             return
+        scrollValue = self.customSendScroll.verticalScrollBar().value() if hasattr(self, "customSendScroll") else 0
         items = self.config["customSendItems"]
         item = items.pop(fromIdx)
         if fromIdx < toIdx:
             toIdx -= 1
         items.insert(toIdx, item)
         self.refreshCustomSendItems()
+        self.restoreCustomSendScroll(scrollValue)
+        QTimer.singleShot(0, lambda value=scrollValue: self.restoreCustomSendScroll(value))
 
     def clearCustomSendItemsWidgets(self):
         while self.customSendItemsLayout.count():
@@ -1064,6 +1098,9 @@ class Plugin(Plugin_Base):
             print("[Error] onSendData: ", e)
             self.hintSignal.emit("error", _("Error"), _("get data error") + ": " + str(e))
 
+    def receiveDisplayColor(self, isSend):
+        return QColor("#1976d2" if isSend else "#2e7d32")
+
     def updateReceivedDataDisplay(self, head : str, datas : list, encoding : str, isSend : bool):
         if datas:
             curScrollValue = self.receiveArea.verticalScrollBar().value()
@@ -1077,23 +1114,27 @@ class Plugin(Plugin_Base):
                 self.defaultColor = format.foreground()
             if not self.defaultBg:
                 self.defaultBg = format.background()
+            directionColor = self.receiveDisplayColor(isSend)
             if head:
-                format.setForeground(self.defaultColor)
+                format.setForeground(directionColor)
                 format.setBackground(self.defaultBg)
-                if isSend:
-                    format.setFontWeight(QFont.Bold)
+                format.setFontWeight(QFont.Bold if isSend else QFont.Normal)
                 cursor.setCharFormat(format)
                 cursor.insertText(head)
+            format.setFontWeight(QFont.Normal)
             for data in datas:
                 if type(data) == str:
-                    self.receiveArea.insertPlainText(data)
+                    format.setForeground(directionColor)
+                    format.setBackground(self.defaultBg)
+                    cursor.setCharFormat(format)
+                    cursor.insertText(data)
                 elif type(data) == list:
                     for color, bg, text in data:
                         if color:
                             format.setForeground(QColor(color))
                             cursor.setCharFormat(format)
                         else:
-                            format.setForeground(self.defaultColor)
+                            format.setForeground(directionColor)
                             cursor.setCharFormat(format)
                         if bg:
                             format.setBackground(QColor(bg))
@@ -1103,7 +1144,10 @@ class Plugin(Plugin_Base):
                             cursor.setCharFormat(format)
                         cursor.insertText(text)
                 else: # bytes
-                    self.receiveArea.insertPlainText(data.decode(encoding=encoding, errors="ignore"))
+                    format.setForeground(directionColor)
+                    format.setBackground(self.defaultBg)
+                    cursor.setCharFormat(format)
+                    cursor.insertText(data.decode(encoding=encoding, errors="ignore"))
             if curScrollValue < endScrollValue:
                 self.receiveArea.verticalScrollBar().setValue(curScrollValue)
             else:

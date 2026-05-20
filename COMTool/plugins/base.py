@@ -124,6 +124,12 @@ class Plugin_Base(QObject):
         '''
         return False
 
+    def onSettingsWidgetScrollTogether(self):
+        '''
+            Put the whole settings column in one scroll area.
+        '''
+        return False
+
     def onWidgetStatusBar(self, parent):
         self.statusBar = statusBar(rxTxCount=False)
         return self.statusBar

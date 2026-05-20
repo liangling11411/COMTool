@@ -97,8 +97,21 @@ class PluginItem:
         # widgets settings
         self.settingWidget = QWidget()
         self.settingWidget.setProperty("class","settingWidget")
-        settingLayout = QVBoxLayout()
-        self.settingWidget.setLayout(settingLayout)
+        settingWrapperLayout = QVBoxLayout()
+        settingWrapperLayout.setContentsMargins(0, 0, 0, 0)
+        self.settingWidget.setLayout(settingWrapperLayout)
+        settingsScrollTogether = getattr(self.plugin, "onSettingsWidgetScrollTogether", lambda: False)
+        if settingsScrollTogether():
+            settingContentWidget = QWidget()
+            settingLayout = QVBoxLayout()
+            settingContentWidget.setLayout(settingLayout)
+            settingScroll = QScrollArea()
+            settingScroll.setWidgetResizable(True)
+            settingScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            settingScroll.setWidget(settingContentWidget)
+            settingWrapperLayout.addWidget(settingScroll)
+        else:
+            settingLayout = settingWrapperLayout
         #    get connection settings widgets
         if isAddConn:
             connSettingsGroupBox = QGroupBox(_("Connection"))
@@ -119,7 +132,6 @@ class PluginItem:
         subSettingWidget = self.plugin.onWidgetSettings(widget)
         if not subSettingWidget is None:
             settingLayout.addWidget(subSettingWidget)
-        settingLayout.addStretch()
         # widgets main
         self.mainWidget = self.plugin.onWidgetMain(widget)
         # widgets functional
@@ -135,6 +147,7 @@ class PluginItem:
         else:
             layout3.addWidget(loadConfigBtn)
             layout3.addWidget(shareConfigBtn)
+        settingLayout.addStretch()
         loadConfigBtn.clicked.connect(lambda : self.selectLoadfile())
         shareConfigBtn.clicked.connect(lambda : self.selectSharefile())
         pluginFuncWidget = self.plugin.onWidgetFunctional(widget)
