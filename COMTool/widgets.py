@@ -194,6 +194,12 @@ class EventFilter(QObject):
     _moving = False
     _resizeCursor = False
 
+    def isTitleBarDrag(self, window, pos):
+        titleBar = getattr(window, "titleBar", None)
+        if titleBar is None or not titleBar.isVisible():
+            return False
+        return titleBar.geometry().contains(pos)
+
     def listenWindow(self, window):
         self.windows.append(window)
 
@@ -256,7 +262,8 @@ class EventFilter(QObject):
             if obj in self.windows:
                 if event.button() == Qt.LeftButton :
                     if event.type() == QEvent.MouseButtonPress:
-                        self._readyToMove = True
+                        edges = self._get_edges(event.pos(), obj.width(), obj.height())
+                        self._readyToMove = bool(edges) or self.isTitleBarDrag(obj, event.pos())
                     # elif event.type() == QEvent.MouseButtonDblClick:
                     #     print(obj, event.type(), event)
                 elif event.type() == QEvent.MouseMove and self._readyToMove and not self._moving:

@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesk
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSpinBox, QSizePolicy,
                              QColorDialog)
-from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QDrag
+from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QDrag, QTextOption, QPalette
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
 import os, threading, time, re, json
 from datetime import datetime
@@ -124,6 +124,11 @@ class CustomSendColorButton(QPushButton):
             return
         super().mouseReleaseEvent(event)
 
+
+class NoWheelSpinBox(QSpinBox):
+    def wheelEvent(self, event):
+        event.ignore()
+
 class Plugin(Plugin_Base):
     '''
         call sequence:
@@ -172,6 +177,9 @@ class Plugin(Plugin_Base):
         self.keyControlPressed = False
         self.isScheduledSending = False
         self.config = config
+        existingFontSize = self.config.get("fontSize", 10)
+        hasReceiveFontSize = "receiveFontSize" in self.config
+        hasSendFontSize = "sendFontSize" in self.config
         default = {
             "version": 1,
             "receiveAscii" : True,
@@ -194,11 +202,20 @@ class Plugin(Plugin_Base):
             "customSendItems" : [],
             "sendHistoryList" : [],
             "receiveEscape" : False,
-            "fontSize": 10
+            "fontSize": 10,
+            "receiveFontSize": 10,
+            "sendFontSize": 10,
+            "receiveFontColor": "#2e7d32",
+            "sendFontColor": "#1976d2"
         }
         for k in default:
             if not k in self.config:
                 self.config[k] = default[k]
+        if not hasReceiveFontSize:
+            self.config["receiveFontSize"] = 10
+        if not hasSendFontSize:
+            self.config["sendFontSize"] = existingFontSize
+        self.config["fontSize"] = self.config["sendFontSize"]
         self.lastShowTail = ''
         self.justSent = False # sent data before received data flag
         self.customSendDropTarget = None
@@ -211,22 +228,35 @@ class Plugin(Plugin_Base):
         self.receiveArea.setFont(font)
         self.sendArea = QTextEdit()
         self.sendArea.setAcceptRichText(False)
-        self.clearReceiveButtion = QPushButton("")
+        self.clearReceiveButtion = QPushButton(_("Clear RX"))
+        self.clearReceiveButtion.setToolTip(_("Clear receive area"))
         utils_ui.setButtonIcon(self.clearReceiveButtion, "mdi6.broom")
+        self.clearSendButtion = QPushButton(_("Clear TX"))
+        self.clearSendButtion.setToolTip(_("Clear send input"))
+        utils_ui.setButtonIcon(self.clearSendButtion, "mdi6.broom")
         self.sendButton = QPushButton("")
         utils_ui.setButtonIcon(self.sendButton, "fa.send")
         self.sendHistory = ComboBox()
+        receiveWidget = QWidget()
+        receiveAreaWidgetsLayout = QHBoxLayout()
+        receiveAreaWidgetsLayout.setContentsMargins(0,0,0,0)
+        receiveWidget.setLayout(receiveAreaWidgetsLayout)
+        receiveButtonLayout = QVBoxLayout()
+        receiveButtonLayout.addWidget(self.clearReceiveButtion)
+        receiveButtonLayout.addStretch(1)
+        receiveAreaWidgetsLayout.addWidget(self.receiveArea)
+        receiveAreaWidgetsLayout.addLayout(receiveButtonLayout)
         sendWidget = QWidget()
         sendAreaWidgetsLayout = QHBoxLayout()
         sendAreaWidgetsLayout.setContentsMargins(0,4,0,0)
         sendWidget.setLayout(sendAreaWidgetsLayout)
         buttonLayout = QVBoxLayout()
-        buttonLayout.addWidget(self.clearReceiveButtion)
+        buttonLayout.addWidget(self.clearSendButtion)
         buttonLayout.addStretch(1)
         buttonLayout.addWidget(self.sendButton)
         sendAreaWidgetsLayout.addWidget(self.sendArea)
         sendAreaWidgetsLayout.addLayout(buttonLayout)
-        self.mainWidget.addWidget(self.receiveArea)
+        self.mainWidget.addWidget(receiveWidget)
         self.mainWidget.addWidget(sendWidget)
         self.mainWidget.addWidget(self.sendHistory)
         self.mainWidget.setStretchFactor(0, 7)
@@ -235,6 +265,7 @@ class Plugin(Plugin_Base):
         # event
         self.sendButton.clicked.connect(self.onSendData)
         self.clearReceiveButtion.clicked.connect(self.clearReceiveBuffer)
+        self.clearSendButtion.clicked.connect(self.sendArea.clear)
         self.receiveUpdateSignal.connect(self.updateReceivedDataDisplay)
         self.sendHistory.activated.connect(self.onSendHistoryIndexChanged)
 
@@ -340,7 +371,10 @@ class Plugin(Plugin_Base):
         self.saveLogAutoNew.clicked.connect(lambda: self.bindVar(self.saveLogAutoNew, self.config, "saveLogAutoNew"))
         self.openFileButton.clicked.connect(self.selectFile)
         self.clearHistoryButton.clicked.connect(self.clearHistory)
-        self.fontSizeInput.valueChanged.connect(self.changeFontSize)
+        self.receiveFontSizeInput.valueChanged.connect(self.changeReceiveFontSize)
+        self.sendFontSizeInput.valueChanged.connect(self.changeSendFontSize)
+        self.receiveFontColorButton.clicked.connect(lambda: self.selectDefaultFontColor("receiveFontColor"))
+        self.sendFontColorButton.clicked.connect(lambda: self.selectDefaultFontColor("sendFontColor"))
         return widget
 
     def onFunctionalWidgetDefaultVisible(self):
@@ -353,12 +387,22 @@ class Plugin(Plugin_Base):
         return True
 
     def createFunctionalSettings(self, parentLayout):
-        self.fontSizeLayout = QHBoxLayout()
-        self.fontSizeLabel = QLabel(_("Font Size"))
-        self.fontSizeInput = QSpinBox()
-        self.fontSizeInput.setRange(1, 100)
-        self.fontSizeLayout.addWidget(self.fontSizeLabel)
-        self.fontSizeLayout.addWidget(self.fontSizeInput)
+        self.fontSettingsGroupBox = QGroupBox(_("Default font"))
+        fontSettingsLayout = QGridLayout()
+        self.fontSettingsGroupBox.setLayout(fontSettingsLayout)
+        self.receiveFontSizeInput = NoWheelSpinBox()
+        self.receiveFontSizeInput.setRange(1, 100)
+        self.receiveFontColorButton = QPushButton(_("Color"))
+        self.sendFontSizeInput = NoWheelSpinBox()
+        self.sendFontSizeInput.setRange(1, 100)
+        self.sendFontColorButton = QPushButton(_("Color"))
+        fontSettingsLayout.addWidget(QLabel(_("Receive size")), 0, 0, 1, 1)
+        fontSettingsLayout.addWidget(self.receiveFontSizeInput, 0, 1, 1, 1)
+        fontSettingsLayout.addWidget(self.receiveFontColorButton, 0, 2, 1, 1)
+        fontSettingsLayout.addWidget(QLabel(_("Send size")), 1, 0, 1, 1)
+        fontSettingsLayout.addWidget(self.sendFontSizeInput, 1, 1, 1, 1)
+        fontSettingsLayout.addWidget(self.sendFontColorButton, 1, 2, 1, 1)
+        self.fontSizeInput = self.sendFontSizeInput
 
         self.filePathWidget = QLineEdit()
         self.openFileButton = QPushButton(_("Open File"))
@@ -386,7 +430,7 @@ class Plugin(Plugin_Base):
         logFileWrapper.addWidget(self.saveLogAutoNew)
         self.logFileGroupBox.setLayout(logFileWrapper)
 
-        parentLayout.addLayout(self.fontSizeLayout)
+        parentLayout.addWidget(self.fontSettingsGroupBox)
         parentLayout.addWidget(self.logFileGroupBox)
         parentLayout.addWidget(self.fileSendGroupBox)
         parentLayout.addWidget(self.clearHistoryButton)
@@ -506,28 +550,74 @@ class Plugin(Plugin_Base):
         self.saveLogAutoNew.setChecked(paramObj["saveLogAutoNew"])
         self.receiveSettingsColor.setChecked(paramObj["color"])
         # wrap
-        self.receiveArea.setLineWrapMode(QTextEdit.WidgetWidth if paramObj["wrap"] else QTextEdit.NoWrap)
-        self.sendArea.setLineWrapMode(QTextEdit.WidgetWidth if paramObj["wrap"] else QTextEdit.NoWrap)
+        self.applyWrapMode()
         # send items
         customSendItems = []
         for item in paramObj["customSendItems"]:
             customSendItems.append(self.insertSendItem(item, load=True))
         paramObj["customSendItems"] = customSendItems
         self.filterCustomSendItems()
-        self.fontSizeInput.setValue(paramObj["fontSize"])  # Default font size
+        self.receiveFontSizeInput.setValue(paramObj["receiveFontSize"])
+        self.sendFontSizeInput.setValue(paramObj["sendFontSize"])
+        self.updateDefaultFontColorButton(self.receiveFontColorButton, paramObj["receiveFontColor"])
+        self.updateDefaultFontColorButton(self.sendFontColorButton, paramObj["sendFontColor"])
+        self.applyReceiveFont()
+        self.applySendFont()
 
         self.receiveProcess = threading.Thread(target=self.receiveDataProcess)
         self.receiveProcess.setDaemon(True)
         self.receiveProcess.start()
 
-    def changeFontSize(self, size):
+    def setTextEditPaletteColor(self, edit, color):
+        qcolor = QColor(color)
+        if not qcolor.isValid():
+            return
+        palette = edit.palette()
+        palette.setColor(QPalette.Text, qcolor)
+        edit.setPalette(palette)
+        edit.setTextColor(qcolor)
+
+    def updateDefaultFontColorButton(self, button, color):
+        qcolor = QColor(color)
+        if qcolor.isValid():
+            textColor = self.buttonTextColor(color)
+            button.setStyleSheet("background-color: {}; border-color: {}; color: {};".format(color, color, textColor))
+        else:
+            button.setStyleSheet("")
+
+    def selectDefaultFontColor(self, configKey):
+        current = self.config.get(configKey) or ("#1976d2" if configKey == "sendFontColor" else "#2e7d32")
+        color = QColorDialog.getColor(QColor(current), self.mainWidget, _("Select color"))
+        if not color.isValid():
+            return
+        self.config[configKey] = color.name()
+        if configKey == "receiveFontColor":
+            self.updateDefaultFontColorButton(self.receiveFontColorButton, self.config[configKey])
+            self.applyReceiveFont()
+        else:
+            self.updateDefaultFontColorButton(self.sendFontColorButton, self.config[configKey])
+            self.applySendFont()
+
+    def applyReceiveFont(self):
         font = self.receiveArea.currentFont()
-        font.setPointSize(size)
+        font.setPointSize(self.config["receiveFontSize"])
         self.receiveArea.setFont(font)
+        self.setTextEditPaletteColor(self.receiveArea, self.config["receiveFontColor"])
+
+    def applySendFont(self):
         font = self.sendArea.currentFont()
-        font.setPointSize(size)
+        font.setPointSize(self.config["sendFontSize"])
         self.sendArea.setFont(font)
+        self.setTextEditPaletteColor(self.sendArea, self.config["sendFontColor"])
+
+    def changeReceiveFontSize(self, size):
+        self.config["receiveFontSize"] = size
+        self.applyReceiveFont()
+
+    def changeSendFontSize(self, size):
+        self.config["sendFontSize"] = size
         self.config["fontSize"] = size
+        self.applySendFont()
 
     def onSendSettingsHexClicked(self):
         self.config["sendAscii"] = False
@@ -567,11 +657,17 @@ class Plugin(Plugin_Base):
             self.receiveSettingsAutoLinefeed.setChecked(True)
 
     def onSettingWrap(self):
-        wrap = self.receiveSettingsWrap.isChecked()
-        self.config["wrap"] = wrap
+        self.config["wrap"] = self.receiveSettingsWrap.isChecked()
+        self.applyWrapMode()
+
+    def applyWrapMode(self):
+        wrap = self.config["wrap"]
         flag = QTextEdit.WidgetWidth if wrap else QTextEdit.NoWrap
+        wrapMode = QTextOption.WrapAnywhere if wrap else QTextOption.NoWrap
         self.receiveArea.setLineWrapMode(flag)
+        self.receiveArea.setWordWrapMode(wrapMode)
         self.sendArea.setLineWrapMode(flag)
+        self.sendArea.setWordWrapMode(wrapMode)
 
     def onEscapeSendClicked(self):
         self.config["sendEscape"] = self.sendSettingsEscape.isChecked()
@@ -764,6 +860,7 @@ class Plugin(Plugin_Base):
         self.applyCustomItemColor(item, send, customItem["color"])
         if not load:
             self.filterCustomSendItems()
+            QTimer.singleShot(0, self.scrollCustomSendToBottom)
         return customItem
 
     def deleteSendItem(self, idx, item):
@@ -789,6 +886,11 @@ class Plugin(Plugin_Base):
 
     def customSendAdd(self):
         self.insertSendItem()
+
+    def scrollCustomSendToBottom(self):
+        if hasattr(self, "customSendScroll"):
+            bar = self.customSendScroll.verticalScrollBar()
+            bar.setValue(bar.maximum())
 
     def updateColorButton(self, button, color):
         utils_ui.setButtonIcon(button, "fa.paint-brush")
@@ -965,7 +1067,9 @@ class Plugin(Plugin_Base):
         self.clearCustomSendItemsWidgets()
         self.config["customSendItems"] = []
         for item in items:
-            self.insertSendItem(item)
+            normalized = self.insertSendItem(item, load=True)
+            self.config["customSendItems"].append(normalized)
+        self.filterCustomSendItems()
 
     def importCustomSendItems(self):
         fileName_choose, filetype = QFileDialog.getOpenFileName(self.funcWidget,
@@ -1099,7 +1203,9 @@ class Plugin(Plugin_Base):
             self.hintSignal.emit("error", _("Error"), _("get data error") + ": " + str(e))
 
     def receiveDisplayColor(self, isSend):
-        return QColor("#1976d2" if isSend else "#2e7d32")
+        color = self.config["sendFontColor"] if isSend else self.config["receiveFontColor"]
+        qcolor = QColor(color)
+        return qcolor if qcolor.isValid() else QColor("#1976d2" if isSend else "#2e7d32")
 
     def updateReceivedDataDisplay(self, head : str, datas : list, encoding : str, isSend : bool):
         if datas:
@@ -1108,7 +1214,7 @@ class Plugin(Plugin_Base):
             endScrollValue = self.receiveArea.verticalScrollBar().value()
             cursor = self.receiveArea.textCursor()
             format = cursor.charFormat()
-            font = QFont('Menlo,Consolas,Bitstream Vera Sans Mono,Courier New,monospace, Microsoft YaHei', self.config["fontSize"])
+            font = QFont('Menlo,Consolas,Bitstream Vera Sans Mono,Courier New,monospace, Microsoft YaHei', self.config["receiveFontSize"])
             format.setFont(font)
             if not self.defaultColor:
                 self.defaultColor = format.foreground()

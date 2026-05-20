@@ -27,8 +27,9 @@ try:
     from base import COMM, ConnectionStatus
 except Exception:
     from .base import COMM, ConnectionStatus
-import serial, threading, time
+import serial, threading, time, re, sys
 import serial.tools.list_ports
+import serial.tools.list_ports_common
 
 
 
@@ -406,8 +407,47 @@ class Serial(COMM):
         self.widget.update()
 
     def findSerialPort(self):
-        self.port_list = list(serial.tools.list_ports.comports())
+        self.port_list = self.mergeSerialPortsWithRegistry(list(serial.tools.list_ports.comports()))
         return self.port_list
+
+    def mergeSerialPortsWithRegistry(self, ports):
+        if not sys.platform.startswith("win"):
+            return ports
+        known = set(p.device.upper() for p in ports)
+        for device, description in self.registrySerialPorts():
+            if device.upper() in known:
+                continue
+            info = serial.tools.list_ports_common.ListPortInfo(device)
+            info.name = device
+            info.description = description
+            info.hwid = description
+            ports.append(info)
+            known.add(device.upper())
+        return sorted(ports, key=lambda p: self.serialPortSortKey(p.device))
+
+    def registrySerialPorts(self):
+        ports = []
+        try:
+            import winreg
+            with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"HARDWARE\DEVICEMAP\SERIALCOMM") as key:
+                idx = 0
+                while True:
+                    try:
+                        name, device, _valueType = winreg.EnumValue(key, idx)
+                    except OSError:
+                        break
+                    idx += 1
+                    if isinstance(device, str) and device.upper().startswith("COM"):
+                        ports.append((device, "{} ({})".format(name, device)))
+        except Exception as e:
+            print("-- read registry serial ports failed:", e)
+        return ports
+
+    def serialPortSortKey(self, device):
+        match = re.match(r"COM(\d+)$", device.upper())
+        if match:
+            return (0, int(match.group(1)))
+        return (1, device)
 
     def portExits(self, port):
         ports = self.findSerialPort()
