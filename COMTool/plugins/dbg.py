@@ -137,33 +137,6 @@ class NoWheelFontComboBox(QFontComboBox):
     def wheelEvent(self, event):
         event.ignore()
 
-class WrapAwareTextEdit(QTextEdit):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.displayWrapEnabled = False
-
-    def setDisplayWrap(self, wrap):
-        self.displayWrapEnabled = wrap
-        wrapMode = QTextOption.WrapAnywhere if wrap else QTextOption.NoWrap
-        self.setLineWrapMode(QTextEdit.WidgetWidth if wrap else QTextEdit.NoWrap)
-        self.setLineWrapColumnOrWidth(0)
-        self.setWordWrapMode(wrapMode)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff if wrap else Qt.ScrollBarAsNeeded)
-        option = self.document().defaultTextOption()
-        option.setWrapMode(wrapMode)
-        self.document().setDefaultTextOption(option)
-        self.updateDocumentTextWidth()
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.updateDocumentTextWidth()
-
-    def updateDocumentTextWidth(self):
-        if self.displayWrapEnabled:
-            self.document().setTextWidth(max(1, self.viewport().width() - 2))
-        else:
-            self.document().setTextWidth(-1)
-
 class Plugin(Plugin_Base):
     '''
         call sequence:
@@ -280,19 +253,15 @@ class Plugin(Plugin_Base):
     def onWidgetMain(self, parent):
         self.mainWidget = QSplitter(Qt.Vertical)
         # widgets receive and send area
-        self.receiveArea = WrapAwareTextEdit()
-        self.receiveArea.setToolTip(_("Received RX/TX log output"))
+        self.receiveArea = QTextEdit()
         font = QFont(self.config.get("receiveFontFamily", DEFAULT_TEXT_FONT), self.config["receiveFontSize"])
         self.receiveArea.setFont(font)
-        self.sendArea = WrapAwareTextEdit()
-        self.sendArea.setToolTip(_("Input data to send"))
+        self.sendArea = QTextEdit()
         self.sendArea.setAcceptRichText(False)
         self.ensureMainActionButtons()
         self.sendButton = QPushButton("")
-        self.sendButton.setToolTip(_("Send input data"))
         utils_ui.setButtonIcon(self.sendButton, "fa.send")
         self.sendHistory = ComboBox()
-        self.sendHistory.setToolTip(_("Send history"))
         receiveWidget = QWidget()
         receiveAreaWidgetsLayout = QHBoxLayout()
         receiveAreaWidgetsLayout.setContentsMargins(0,0,0,0)
@@ -465,19 +434,13 @@ class Plugin(Plugin_Base):
         fontSettingsLayout = QGridLayout()
         self.fontSettingsGroupBox.setLayout(fontSettingsLayout)
         self.receiveFontFamilyInput = NoWheelFontComboBox()
-        self.receiveFontFamilyInput.setToolTip(_("Font family for received RX text"))
         self.receiveFontSizeInput = NoWheelSpinBox()
         self.receiveFontSizeInput.setRange(1, 100)
-        self.receiveFontSizeInput.setToolTip(_("Font size for received RX text"))
         self.receiveFontColorButton = QPushButton(_("Color"))
-        self.receiveFontColorButton.setToolTip(_("Color for received RX text in the receive area"))
         self.sendFontFamilyInput = NoWheelFontComboBox()
-        self.sendFontFamilyInput.setToolTip(_("Font family for TX input text"))
         self.sendFontSizeInput = NoWheelSpinBox()
         self.sendFontSizeInput.setRange(1, 100)
-        self.sendFontSizeInput.setToolTip(_("Font size for TX input text"))
         self.sendFontColorButton = QPushButton(_("Color"))
-        self.sendFontColorButton.setToolTip(_("Color for TX input text and recorded TX lines"))
         fontSettingsLayout.addWidget(QLabel(_("RX font")), 0, 0, 1, 1)
         fontSettingsLayout.addWidget(self.receiveFontFamilyInput, 0, 1, 1, 3)
         fontSettingsLayout.addWidget(QLabel(_("RX size")), 1, 0, 1, 1)
@@ -493,13 +456,9 @@ class Plugin(Plugin_Base):
         self.fontSizeInput = self.sendFontSizeInput
 
         self.filePathWidget = QLineEdit()
-        self.filePathWidget.setToolTip(_("Path of the file to send"))
         self.openFileButton = QPushButton(_("Open File"))
-        self.openFileButton.setToolTip(_("Select a file to send"))
         self.sendFileButton = QPushButton(_("Send File"))
-        self.sendFileButton.setToolTip(_("Send the selected file over the current connection"))
         self.clearHistoryButton = QPushButton(_("Clear History"))
-        self.clearHistoryButton.setToolTip(_("Clear send history"))
         self.fileSendGroupBox = QGroupBox(_("Send File"))
         fileSendGridLayout = QGridLayout()
         fileSendGridLayout.addWidget(self.filePathWidget, 0, 0, 1, 1)
@@ -511,11 +470,8 @@ class Plugin(Plugin_Base):
         logFileWrapper = QVBoxLayout()
         logFileLayout = QHBoxLayout()
         self.saveLogCheckbox = QCheckBox()
-        self.saveLogCheckbox.setToolTip(_("Enable saving received and recorded sent data to a log file"))
         self.logFilePath = QLineEdit()
-        self.logFilePath.setToolTip(_("Log file path"))
         self.logFileBtn = QPushButton(_("Log path"))
-        self.logFileBtn.setToolTip(_("Select log file path"))
         self.saveLogAutoNew = QCheckBox(_("Auto new file"))
         self.saveLogAutoNew.setToolTip(_("When start a new connection, will automatically create a new log file"))
         self.saveLogTimed = QCheckBox(_("Timed log"))
@@ -526,7 +482,6 @@ class Plugin(Plugin_Base):
         self.saveLogDuration.setPlaceholderText("HH:MM:SS")
         self.saveLogDuration.setToolTip(_("Timed log duration, format: HH:MM:SS"))
         self.saveLogStatusLabel = QLabel(_("Log: 00:00:00 / 0 B"))
-        self.saveLogStatusLabel.setToolTip(_("Current log recording duration and file size"))
         logFileLayout.addWidget(self.saveLogCheckbox)
         logFileLayout.addWidget(self.logFilePath)
         logFileLayout.addWidget(self.logFileBtn)
@@ -568,9 +523,6 @@ class Plugin(Plugin_Base):
         utils_ui.setButtonIcon(self.addButton, "fa.plus")
         self.importCustomSendButton = QPushButton(_("Import"))
         self.exportCustomSendButton = QPushButton(_("Export"))
-        self.addButton.setToolTip(_("Add a custom send item"))
-        self.importCustomSendButton.setToolTip(_("Import custom send items from JSON"))
-        self.exportCustomSendButton.setToolTip(_("Export custom send items to JSON"))
         utils_ui.setButtonIcon(self.importCustomSendButton, "fa.folder-open")
         utils_ui.setButtonIcon(self.exportCustomSendButton, "fa.save")
         self.customSendSearch = QLineEdit()
@@ -582,9 +534,6 @@ class Plugin(Plugin_Base):
         self.batchCustomSendColorButton = QPushButton(_("Color"))
         self.batchCustomSendIconButton = QPushButton(_("Icon"))
         self.batchCustomSendDeleteButton = QPushButton(_("Delete"))
-        self.batchCustomSendColorButton.setToolTip(_("Set color for selected custom send items"))
-        self.batchCustomSendIconButton.setToolTip(_("Set icon for selected custom send items"))
-        self.batchCustomSendDeleteButton.setToolTip(_("Delete selected custom send items"))
         utils_ui.setButtonIcon(self.batchCustomSendColorButton, "fa.paint-brush")
         utils_ui.setButtonIcon(self.batchCustomSendIconButton, "fa.send")
         utils_ui.setButtonIcon(self.batchCustomSendDeleteButton, "fa.trash")
@@ -840,8 +789,19 @@ class Plugin(Plugin_Base):
 
     def applyWrapMode(self):
         wrap = self.config["wrap"]
-        self.receiveArea.setDisplayWrap(wrap)
-        self.sendArea.setDisplayWrap(wrap)
+        flag = QTextEdit.WidgetWidth if wrap else QTextEdit.NoWrap
+        wrapMode = QTextOption.WrapAnywhere if wrap else QTextOption.NoWrap
+        self.receiveArea.setLineWrapMode(flag)
+        self.receiveArea.setLineWrapColumnOrWidth(0)
+        self.receiveArea.setWordWrapMode(wrapMode)
+        self.receiveArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff if wrap else Qt.ScrollBarAsNeeded)
+        option = self.receiveArea.document().defaultTextOption()
+        option.setWrapMode(wrapMode)
+        self.receiveArea.document().setDefaultTextOption(option)
+        self.sendArea.setLineWrapMode(flag)
+        self.sendArea.setLineWrapColumnOrWidth(0)
+        self.sendArea.setWordWrapMode(wrapMode)
+        self.sendArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff if wrap else Qt.ScrollBarAsNeeded)
 
     def onEscapeSendClicked(self):
         self.config["sendEscape"] = self.sendSettingsEscape.isChecked()
@@ -1101,7 +1061,6 @@ class Plugin(Plugin_Base):
         editRemark.setObjectName("editRemark")
         utils_ui.setButtonIcon(editRemark, "ei.pencil")
         editRemark.setProperty("class", "remark")
-        editRemark.setToolTip(_("Edit custom send remark and icon"))
         cmd.setToolTip(customItem["text"])
         send.setToolTip(customItem["text"])
         cmd.textChanged.connect(lambda: self.onCustomItemChange(self.customSendItemsLayout.indexOf(item), cmd, send))
@@ -1110,7 +1069,6 @@ class Plugin(Plugin_Base):
         delete = QPushButton("")
         utils_ui.setButtonIcon(delete, "fa.close")
         delete.setProperty("class", "deleteBtn")
-        delete.setToolTip(_("Delete this custom send item"))
         layout.addWidget(select)
         layout.addWidget(dragHandle)
         layout.addWidget(cmd, 3)
