@@ -8,6 +8,7 @@ try:
     from conn.base import ConnectionStatus
     from widgets import statusBar
     from widgets import EditRemarDialog
+    from qta_icon_browser import selectIcon
 except ImportError:
     from COMTool import parameters,helpAbout,autoUpdate, utils, utils_ui
     from COMTool.Combobox import ComboBox
@@ -17,6 +18,7 @@ except ImportError:
     from COMTool.conn.base import ConnectionStatus
     from COMTool.widgets import statusBar
     from COMTool.widgets import EditRemarDialog
+    from COMTool.qta_icon_browser import selectIcon
 
 try:
     from base import Plugin_Base
@@ -131,6 +133,10 @@ class NoWheelSpinBox(QSpinBox):
     def wheelEvent(self, event):
         event.ignore()
 
+class NoWheelFontComboBox(QFontComboBox):
+    def wheelEvent(self, event):
+        event.ignore()
+
 class Plugin(Plugin_Base):
     '''
         call sequence:
@@ -224,12 +230,15 @@ class Plugin(Plugin_Base):
         if not hasSendFontSize:
             self.config["sendFontSize"] = existingFontSize
         self.config["fontSize"] = self.config["sendFontSize"]
+        self.config["color"] = False
         self.lastShowTail = ''
         self.justSent = False # sent data before received data flag
         self.customSendDropTarget = None
         self.receiveDisplayRecords = []
         self.rerenderingReceiveArea = False
         self.saveLogStopTimer = None
+        self.saveLogStatusTimer = None
+        self.logStartTime = None
 
     def ensureMainActionButtons(self):
         if hasattr(self, "clearReceiveButtion") and hasattr(self, "clearSendButtion"):
@@ -301,8 +310,6 @@ class Plugin(Plugin_Base):
         self.receiveSettingsAutoLinefeedTime.setMaximumWidth(75)
         self.receiveSettingsTimestamp = QCheckBox(_("Timestamp"))
         self.receiveSettingsTimestamp.setToolTip(_("Add timestamp before received data, will automatically enable auto line feed"))
-        self.receiveSettingsColor = QCheckBox(_("Color"))
-        self.receiveSettingsColor.setToolTip(_("Enable unix terminal color support, e.g. \\33[31;43mhello\\33[0m"))
         self.receiveSettingsWrap = QCheckBox(_("Display wrap"))
         self.receiveEscape = QCheckBox(_("Escape"))
         self.receiveEscape.setToolTip(_("Enable escape characters support like \\t \\r \\n \\x01 \\001"))
@@ -311,9 +318,8 @@ class Plugin(Plugin_Base):
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsHex,1,1,1,1)
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsAutoLinefeed, 2, 0, 1, 1)
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsAutoLinefeedTime, 2, 1, 1, 1)
-        serialReceiveSettingsLayout.addWidget(self.receiveSettingsColor, 3, 0, 1, 1)
-        serialReceiveSettingsLayout.addWidget(self.receiveSettingsWrap, 4, 0, 1, 1)
-        serialReceiveSettingsLayout.addWidget(self.receiveEscape, 4, 1, 1, 1)
+        serialReceiveSettingsLayout.addWidget(self.receiveSettingsWrap, 3, 0, 1, 1)
+        serialReceiveSettingsLayout.addWidget(self.receiveEscape, 3, 1, 1, 1)
         serialReceiveSettingsGroupBox.setLayout(serialReceiveSettingsLayout)
         serialReceiveSettingsGroupBox.setAlignment(Qt.AlignHCenter)
         layout.addWidget(serialReceiveSettingsGroupBox)
@@ -385,7 +391,6 @@ class Plugin(Plugin_Base):
         self.sendSettingsAppendNewLine.clicked.connect(lambda: self.bindVar(self.sendSettingsAppendNewLine, self.config, "sendAutoNewline"))
         self.sendSettingsEscape.clicked.connect(lambda: self.bindVar(self.sendSettingsEscape, self.config, "sendEscape"))
         self.sendSettingsCRLF.clicked.connect(lambda: self.bindVar(self.sendSettingsCRLF, self.config, "useCRLF"))
-        self.receiveSettingsColor.clicked.connect(self.onSetColorChanged)
         self.receiveSettingsAutoLinefeedTime.textChanged.connect(lambda: self.bindVar(self.receiveSettingsAutoLinefeedTime, self.config, "receiveAutoLindefeedTime", vtype=int, vErrorMsg=_("Auto line feed value error, must be integer"), emptyDefault = "200"))
         self.sendSettingsScheduled.textChanged.connect(lambda: self.bindVar(self.sendSettingsScheduled, self.config, "sendScheduledTime", vtype=int, vErrorMsg=_("Timed send value error, must be integer"), emptyDefault = "300"))
         self.sendSettingsScheduledCheckBox.clicked.connect(lambda: self.bindVar(self.sendSettingsScheduledCheckBox, self.config, "sendScheduled"))
@@ -396,7 +401,7 @@ class Plugin(Plugin_Base):
         self.logFileBtn.clicked.connect(self.selectLogFile)
         self.saveLogAutoNew.clicked.connect(lambda: self.bindVar(self.saveLogAutoNew, self.config, "saveLogAutoNew"))
         self.saveLogTimed.clicked.connect(self.onSaveLogTimedChanged)
-        self.saveLogDuration.textChanged.connect(self.onSaveLogDurationChanged)
+        self.saveLogDuration.editingFinished.connect(self.onSaveLogDurationChanged)
         self.openFileButton.clicked.connect(self.selectFile)
         self.clearHistoryButton.clicked.connect(self.clearHistory)
         self.receiveFontSizeInput.valueChanged.connect(self.changeReceiveFontSize)
@@ -409,6 +414,10 @@ class Plugin(Plugin_Base):
             self.saveLogStopTimer = QTimer(self)
             self.saveLogStopTimer.setSingleShot(True)
             self.saveLogStopTimer.timeout.connect(self.stopTimedSaveLog)
+        if self.saveLogStatusTimer is None:
+            self.saveLogStatusTimer = QTimer(self)
+            self.saveLogStatusTimer.setInterval(1000)
+            self.saveLogStatusTimer.timeout.connect(self.updateSaveLogStatus)
         return widget
 
     def onFunctionalWidgetDefaultVisible(self):
@@ -424,11 +433,11 @@ class Plugin(Plugin_Base):
         self.fontSettingsGroupBox = QGroupBox(_("Default font"))
         fontSettingsLayout = QGridLayout()
         self.fontSettingsGroupBox.setLayout(fontSettingsLayout)
-        self.receiveFontFamilyInput = QFontComboBox()
+        self.receiveFontFamilyInput = NoWheelFontComboBox()
         self.receiveFontSizeInput = NoWheelSpinBox()
         self.receiveFontSizeInput.setRange(1, 100)
         self.receiveFontColorButton = QPushButton(_("Color"))
-        self.sendFontFamilyInput = QFontComboBox()
+        self.sendFontFamilyInput = NoWheelFontComboBox()
         self.sendFontSizeInput = NoWheelSpinBox()
         self.sendFontSizeInput.setRange(1, 100)
         self.sendFontColorButton = QPushButton(_("Color"))
@@ -467,21 +476,23 @@ class Plugin(Plugin_Base):
         self.saveLogAutoNew.setToolTip(_("When start a new connection, will automatically create a new log file"))
         self.saveLogTimed = QCheckBox(_("Timed log"))
         self.saveLogTimed.setToolTip(_("Stop saving log automatically after the configured duration"))
-        self.saveLogDuration = QLineEdit("60")
+        self.saveLogDuration = QLineEdit("00:01:00")
         self.saveLogDuration.setProperty("class", "smallInput")
-        self.saveLogDuration.setMaximumWidth(75)
-        self.saveLogDuration.setToolTip(_("Timed log duration, unit: seconds"))
+        self.saveLogDuration.setMaximumWidth(90)
+        self.saveLogDuration.setPlaceholderText("HH:MM:SS")
+        self.saveLogDuration.setToolTip(_("Timed log duration, format: HH:MM:SS"))
+        self.saveLogStatusLabel = QLabel(_("Log: 00:00:00 / 0 B"))
         logFileLayout.addWidget(self.saveLogCheckbox)
         logFileLayout.addWidget(self.logFilePath)
         logFileLayout.addWidget(self.logFileBtn)
         logTimedLayout = QHBoxLayout()
         logTimedLayout.addWidget(self.saveLogTimed)
         logTimedLayout.addWidget(self.saveLogDuration)
-        logTimedLayout.addWidget(QLabel(_("s")))
         logTimedLayout.addStretch(1)
         logFileWrapper.addLayout(logFileLayout)
         logFileWrapper.addWidget(self.saveLogAutoNew)
         logFileWrapper.addLayout(logTimedLayout)
+        logFileWrapper.addWidget(self.saveLogStatusLabel)
         self.logFileGroupBox.setLayout(logFileWrapper)
 
         clearButtonsLayout = QHBoxLayout()
@@ -518,6 +529,15 @@ class Plugin(Plugin_Base):
         self.customSendSearch.setClearButtonEnabled(True)
         self.customSendSearch.setPlaceholderText(_("Search remark or command"))
         self.customSendSearch.setToolTip(_("Search custom send items by remark or command"))
+        self.customSendSelectAll = QCheckBox(_("All"))
+        self.customSendSelectAll.setToolTip(_("Select visible custom send items"))
+        self.batchCustomSendColorButton = QPushButton(_("Color"))
+        self.batchCustomSendIconButton = QPushButton(_("Icon"))
+        self.batchCustomSendDeleteButton = QPushButton(_("Delete"))
+        utils_ui.setButtonIcon(self.batchCustomSendColorButton, "fa.paint-brush")
+        utils_ui.setButtonIcon(self.batchCustomSendIconButton, "fa.send")
+        utils_ui.setButtonIcon(self.batchCustomSendDeleteButton, "fa.trash")
+        self.batchCustomSendDeleteButton.setProperty("class", "deleteBtn")
         # cumtom send zone
         #   groupbox
         customSendGroupBox = QGroupBox(_("Cutom send"))
@@ -533,6 +553,13 @@ class Plugin(Plugin_Base):
         self.customSendScroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         #   add scroll to groupbox
         customSendItemsLayout0.addWidget(self.customSendSearch)
+        customSendBatchLayout = QHBoxLayout()
+        customSendBatchLayout.setContentsMargins(0,0,0,0)
+        customSendBatchLayout.addWidget(self.customSendSelectAll)
+        customSendBatchLayout.addWidget(self.batchCustomSendColorButton)
+        customSendBatchLayout.addWidget(self.batchCustomSendIconButton)
+        customSendBatchLayout.addWidget(self.batchCustomSendDeleteButton)
+        customSendItemsLayout0.addLayout(customSendBatchLayout)
         customSendItemsLayout0.addWidget(self.customSendScroll)
         #   wrapper widget
         cutomSendItemsWraper = QWidget()
@@ -567,6 +594,10 @@ class Plugin(Plugin_Base):
         self.importCustomSendButton.clicked.connect(self.importCustomSendItems)
         self.exportCustomSendButton.clicked.connect(self.exportCustomSendItems)
         self.customSendSearch.textChanged.connect(self.filterCustomSendItems)
+        self.customSendSelectAll.clicked.connect(self.setVisibleCustomSendSelection)
+        self.batchCustomSendColorButton.clicked.connect(self.batchSetCustomSendColor)
+        self.batchCustomSendIconButton.clicked.connect(self.batchSetCustomSendIcon)
+        self.batchCustomSendDeleteButton.clicked.connect(self.batchDeleteCustomSendItems)
         self.funcParent = parent
         return self.funcWidget
 
@@ -615,8 +646,8 @@ class Plugin(Plugin_Base):
             paramObj["saveLogDuration"] = duration
         except Exception:
             duration = 60
-        self.saveLogDuration.setText(str(duration))
-        self.receiveSettingsColor.setChecked(paramObj["color"])
+        self.saveLogDuration.setText(self.secondsToHms(duration))
+        self.updateSaveLogStatus()
         # wrap
         self.applyWrapMode()
         # send items
@@ -633,6 +664,9 @@ class Plugin(Plugin_Base):
         self.updateDefaultFontColorButton(self.sendFontColorButton, paramObj["sendFontColor"])
         self.applyReceiveFont()
         self.applySendFont()
+        if paramObj["saveLog"]:
+            self.logStartTime = time.time()
+            self.startSaveLogStatus()
         self.startTimedSaveLog()
 
         self.receiveProcess = threading.Thread(target=self.receiveDataProcess)
@@ -758,15 +792,22 @@ class Plugin(Plugin_Base):
         flag = QTextEdit.WidgetWidth if wrap else QTextEdit.NoWrap
         wrapMode = QTextOption.WrapAnywhere if wrap else QTextOption.NoWrap
         self.receiveArea.setLineWrapMode(flag)
+        self.receiveArea.setLineWrapColumnOrWidth(0)
         self.receiveArea.setWordWrapMode(wrapMode)
+        self.receiveArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff if wrap else Qt.ScrollBarAsNeeded)
+        option = self.receiveArea.document().defaultTextOption()
+        option.setWrapMode(wrapMode)
+        self.receiveArea.document().setDefaultTextOption(option)
         self.sendArea.setLineWrapMode(flag)
+        self.sendArea.setLineWrapColumnOrWidth(0)
         self.sendArea.setWordWrapMode(wrapMode)
+        self.sendArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff if wrap else Qt.ScrollBarAsNeeded)
 
     def onEscapeSendClicked(self):
         self.config["sendEscape"] = self.sendSettingsEscape.isChecked()
 
     def onSetColorChanged(self):
-        self.config["color"] = self.receiveSettingsColor.isChecked()
+        self.config["color"] = False
 
     def onSendHistoryIndexChanged(self, idx):
         self.sendArea.clear()
@@ -796,9 +837,12 @@ class Plugin(Plugin_Base):
     def setSaveLog(self):
         if self.saveLogCheckbox.isChecked():
             self.config["saveLog"] = True
+            self.logStartTime = time.time()
+            self.startSaveLogStatus()
             self.startTimedSaveLog()
         else:
             self.config["saveLog"] = False
+            self.stopSaveLogStatus()
             self.stopSaveLogTimer()
 
     def onSaveLogTimedChanged(self):
@@ -809,8 +853,16 @@ class Plugin(Plugin_Base):
             self.stopSaveLogTimer()
 
     def onSaveLogDurationChanged(self):
-        self.bindVar(self.saveLogDuration, self.config, "saveLogDuration", vtype=int,
-                     vErrorMsg=_("Timed log duration error, must be integer"), emptyDefault="60")
+        text = self.saveLogDuration.text().strip()
+        if not text:
+            text = "00:00:00"
+        try:
+            self.config["saveLogDuration"] = self.parseHmsToSeconds(text)
+        except Exception:
+            self.saveLogDuration.setText(self.secondsToHms(self.config["saveLogDuration"]))
+            self.hintSignal.emit("error", _("Error"), _("Timed log duration error, format: HH:MM:SS"))
+            return
+        self.saveLogDuration.setText(self.secondsToHms(self.config["saveLogDuration"]))
         if self.config["saveLog"] and self.config["saveLogTimed"]:
             self.startTimedSaveLog()
 
@@ -824,24 +876,69 @@ class Plugin(Plugin_Base):
         self.stopSaveLogTimer()
         if not self.config.get("saveLog") or not self.config.get("saveLogTimed"):
             return
-        try:
-            duration = int(self.config.get("saveLogDuration", 60))
-        except Exception:
-            duration = 60
-            self.config["saveLogDuration"] = duration
-            if hasattr(self, "saveLogDuration"):
-                self.saveLogDuration.setText(str(duration))
+        duration = int(self.config.get("saveLogDuration", 60))
         if duration <= 0:
             duration = 1
             self.config["saveLogDuration"] = duration
-            self.saveLogDuration.setText(str(duration))
+            self.saveLogDuration.setText(self.secondsToHms(duration))
         self.saveLogStopTimer.start(duration * 1000)
 
     def stopTimedSaveLog(self):
         self.config["saveLog"] = False
         if hasattr(self, "saveLogCheckbox"):
             self.saveLogCheckbox.setChecked(False)
+        self.stopSaveLogStatus()
         self.hintSignal.emit("info", _("OK"), _("Timed log stopped"))
+
+    def secondsToHms(self, seconds):
+        seconds = max(0, int(seconds))
+        h = seconds // 3600
+        m = (seconds % 3600) // 60
+        s = seconds % 60
+        return "{:02d}:{:02d}:{:02d}".format(h, m, s)
+
+    def parseHmsToSeconds(self, text):
+        parts = text.split(":")
+        if len(parts) != 3:
+            raise ValueError(text)
+        h, m, s = [int(part) for part in parts]
+        if h < 0 or m < 0 or s < 0 or m >= 60 or s >= 60:
+            raise ValueError(text)
+        return h * 3600 + m * 60 + s
+
+    def formatFileSize(self, size):
+        units = ["B", "KB", "MB", "GB"]
+        value = float(max(0, size))
+        unit = units[0]
+        for unit in units:
+            if value < 1024 or unit == units[-1]:
+                break
+            value /= 1024
+        if unit == "B":
+            return "{} B".format(int(value))
+        return "{:.2f} {}".format(value, unit)
+
+    def currentLogPath(self):
+        return self.config["saveLogPath2"] if self.config["saveLogAutoNew"] else self.config["saveLogPath"]
+
+    def startSaveLogStatus(self):
+        if self.logStartTime is None:
+            self.logStartTime = time.time()
+        self.updateSaveLogStatus()
+        if self.saveLogStatusTimer is not None:
+            self.saveLogStatusTimer.start()
+
+    def stopSaveLogStatus(self):
+        if self.saveLogStatusTimer is not None:
+            self.saveLogStatusTimer.stop()
+        self.updateSaveLogStatus()
+
+    def updateSaveLogStatus(self):
+        elapsed = 0 if self.logStartTime is None else int(time.time() - self.logStartTime)
+        path = self.currentLogPath()
+        size = os.path.getsize(path) if path and os.path.exists(path) else 0
+        if hasattr(self, "saveLogStatusLabel"):
+            self.saveLogStatusLabel.setText("{}: {} / {}".format(_("Log"), self.secondsToHms(elapsed), self.formatFileSize(size)))
 
     def selectFile(self):
         oldPath = self.filePathWidget.text()
@@ -885,15 +982,19 @@ class Plugin(Plugin_Base):
 
 
     def onLog(self, text):
-        path = self.config["saveLogPath2"] if self.config["saveLogAutoNew"] else self.config["saveLogPath"]
+        path = self.currentLogPath()
         if self.config["saveLog"] and path:
             with open(path, "a+", encoding=self.configGlobal["encoding"], newline="\n") as f:
                 f.write(text)
+            self.updateSaveLogStatus()
 
     def onConnChanged(self, status:ConnectionStatus, msg:str):
         super().onConnChanged(status, msg)
         if status == ConnectionStatus.CONNECTED and self.config["saveLogAutoNew"]:
             self.updateLogPath()
+            if self.config["saveLog"]:
+                self.logStartTime = time.time()
+                self.startSaveLogStatus()
 
     def onKeyPressEvent(self, event):
         if event.key() == Qt.Key_Control:
@@ -943,6 +1044,8 @@ class Plugin(Plugin_Base):
         layout = QHBoxLayout()
         layout.setContentsMargins(2,2,2,2)
         item.setLayout(layout)
+        select = QCheckBox()
+        select.setToolTip(_("Select for batch edit"))
         dragHandle = CustomSendDragHandle(item)
         utils_ui.setButtonIcon(dragHandle, "fa.bars")
         dragHandle.setProperty("class", "remark")
@@ -966,6 +1069,7 @@ class Plugin(Plugin_Base):
         delete = QPushButton("")
         utils_ui.setButtonIcon(delete, "fa.close")
         delete.setProperty("class", "deleteBtn")
+        layout.addWidget(select)
         layout.addWidget(dragHandle)
         layout.addWidget(cmd, 3)
         layout.addWidget(send, 2)
@@ -974,6 +1078,7 @@ class Plugin(Plugin_Base):
         layout.addWidget(delete)
         delete.clicked.connect(lambda: self.deleteSendItem(self.customSendItemsLayout.indexOf(item), item))
         colorButton.clicked.connect(lambda: self.selectCustomItemColor(self.customSendItemsLayout.indexOf(item), item, send, colorButton))
+        select.stateChanged.connect(self.updateCustomSendSelectionActions)
         def changeRemark(idx, obj):
             customItem = self.config["customSendItems"][idx]
             ok, remark, icon, _shortcut = EditRemarDialog(
@@ -994,6 +1099,7 @@ class Plugin(Plugin_Base):
         item.customSendData = customItem
         item.sendButton = send
         item.colorButton = colorButton
+        item.selectCheckBox = select
         self.applyCustomItemColor(item, send, customItem["color"])
         if not load:
             self.filterCustomSendItems()
@@ -1001,11 +1107,21 @@ class Plugin(Plugin_Base):
         return customItem
 
     def deleteSendItem(self, idx, item):
+        if idx < 0 or idx >= len(self.config["customSendItems"]):
+            return
+        if QMessageBox.question(self.funcWidget, _("Delete"), _("Delete selected custom send item?"),
+                                QMessageBox.Yes | QMessageBox.No, QMessageBox.No) != QMessageBox.Yes:
+            return
+        self.removeCustomSendItem(idx, item)
+        self.filterCustomSendItems()
+
+    def removeCustomSendItem(self, idx, item):
         for obj in item.findChildren(QPushButton):
             utils_ui.clearButtonIcon(obj)
         item.setParent(None)
+        item.deleteLater()
         self.config["customSendItems"].pop(idx)
-        self.filterCustomSendItems()
+        self.updateCustomSendSelectionActions()
 
     def onCustomItemChange(self, idx, edit, send):
         text = edit.text()
@@ -1119,6 +1235,87 @@ class Plugin(Plugin_Base):
         self.updateColorButton(colorButton, color)
         self.applyCustomItemColor(item, sendButton, color)
 
+    def iterCustomSendWidgets(self):
+        for idx in range(self.customSendItemsLayout.count()):
+            layoutItem = self.customSendItemsLayout.itemAt(idx)
+            widget = layoutItem.widget()
+            if widget is not None:
+                yield idx, widget
+
+    def selectedCustomSendIndexes(self):
+        indexes = []
+        for idx, widget in self.iterCustomSendWidgets():
+            if hasattr(widget, "selectCheckBox") and widget.selectCheckBox.isChecked():
+                indexes.append(idx)
+        return indexes
+
+    def updateCustomSendSelectionActions(self):
+        if not hasattr(self, "batchCustomSendColorButton"):
+            return
+        selectedCount = len(self.selectedCustomSendIndexes())
+        enabled = selectedCount > 0
+        self.batchCustomSendColorButton.setEnabled(enabled)
+        self.batchCustomSendIconButton.setEnabled(enabled)
+        self.batchCustomSendDeleteButton.setEnabled(enabled)
+        if hasattr(self, "customSendSelectAll"):
+            visibleWidgets = [widget for _idx, widget in self.iterCustomSendWidgets() if widget.isVisible()]
+            checkedWidgets = [widget for widget in visibleWidgets if hasattr(widget, "selectCheckBox") and widget.selectCheckBox.isChecked()]
+            self.customSendSelectAll.blockSignals(True)
+            self.customSendSelectAll.setChecked(bool(visibleWidgets) and len(visibleWidgets) == len(checkedWidgets))
+            self.customSendSelectAll.blockSignals(False)
+
+    def setVisibleCustomSendSelection(self):
+        checked = self.customSendSelectAll.isChecked()
+        for _idx, widget in self.iterCustomSendWidgets():
+            if hasattr(widget, "selectCheckBox") and widget.isVisible():
+                widget.selectCheckBox.setChecked(checked)
+        self.updateCustomSendSelectionActions()
+
+    def batchSetCustomSendColor(self):
+        indexes = self.selectedCustomSendIndexes()
+        if not indexes:
+            return
+        current = self.config["customSendItems"][indexes[0]].get("color") or "#ffc107"
+        color = QColorDialog.getColor(QColor(current), self.funcWidget, _("Select color"))
+        if not color.isValid():
+            return
+        for idx in indexes:
+            layoutItem = self.customSendItemsLayout.itemAt(idx)
+            widget = layoutItem.widget()
+            if widget:
+                self.setCustomItemColor(idx, widget, widget.sendButton, widget.colorButton, color.name())
+
+    def batchSetCustomSendIcon(self):
+        indexes = self.selectedCustomSendIndexes()
+        if not indexes:
+            return
+        icon = selectIcon(parent=self.funcWidget, title=_("Select icon"), btnName=_("OK"), color=utils_ui.getStyleVar("iconSelectorColor"))
+        if not icon:
+            return
+        icon = icon or "fa.send"
+        for idx in indexes:
+            self.config["customSendItems"][idx]["icon"] = icon
+            layoutItem = self.customSendItemsLayout.itemAt(idx)
+            widget = layoutItem.widget()
+            if widget:
+                widget.customSendData["icon"] = icon
+                utils_ui.setButtonIcon(widget.sendButton, icon)
+
+    def batchDeleteCustomSendItems(self):
+        indexes = self.selectedCustomSendIndexes()
+        if not indexes:
+            return
+        msg = _("Delete selected custom send items?") + " ({})".format(len(indexes))
+        if QMessageBox.question(self.funcWidget, _("Delete"), msg,
+                                QMessageBox.Yes | QMessageBox.No, QMessageBox.No) != QMessageBox.Yes:
+            return
+        for idx in sorted(indexes, reverse=True):
+            layoutItem = self.customSendItemsLayout.itemAt(idx)
+            widget = layoutItem.widget()
+            if widget:
+                self.removeCustomSendItem(idx, widget)
+        self.filterCustomSendItems()
+
     def setCustomSendDropTarget(self, item):
         if self.customSendDropTarget is item:
             return
@@ -1161,6 +1358,7 @@ class Plugin(Plugin_Base):
             remark = item.get("remark", "")
             matched = (not keyword) or keyword in remark.lower() or keyword in text.lower()
             widget.setVisible(matched)
+        self.updateCustomSendSelectionActions()
 
     def refreshCustomSendItems(self):
         items = [item.copy() for item in self.config["customSendItems"]]
@@ -1393,6 +1591,7 @@ class Plugin(Plugin_Base):
         head = record["head"]
         if datas:
             curScrollValue = self.receiveArea.verticalScrollBar().value()
+            curHorizontalValue = self.receiveArea.horizontalScrollBar().value()
             self.receiveArea.moveCursor(QTextCursor.End)
             endScrollValue = self.receiveArea.verticalScrollBar().value()
             cursor = self.receiveArea.textCursor()
@@ -1436,6 +1635,7 @@ class Plugin(Plugin_Base):
                 self.receiveArea.verticalScrollBar().setValue(curScrollValue)
             else:
                 self.receiveArea.moveCursor(QTextCursor.End)
+            self.receiveArea.horizontalScrollBar().setValue(curHorizontalValue)
 
     def updateReceivedDataDisplay(self, head : str, datas : list, encoding : str, isSend : bool):
         if not datas:
@@ -1682,4 +1882,6 @@ class Plugin(Plugin_Base):
 
     def onDel(self):
         self.receiveProgressStop = True
+        self.stopSaveLogTimer()
+        self.stopSaveLogStatus()
 

@@ -249,6 +249,9 @@ class EventFilter(QObject):
 
     def eventFilter(self, obj, event):
         # print(obj, event.type(), obj.isWindowType(), QEvent.MouseMove)
+        if event.type() == QEvent.Wheel and isinstance(obj, QComboBox):
+            event.ignore()
+            return True
         if obj.isWindowType():
             # top window 处理光标样式
             if event.type() == QEvent.MouseMove and obj.windowState() == Qt.WindowNoState:
@@ -491,6 +494,9 @@ class _Combobox(QComboBox):
 
     def mousePressEvent(self, QMouseEvent):
         self.clicked.emit()
+
+    def wheelEvent(self, event):
+        event.ignore()
 
 
 class ButtonCombbox(QWidget):

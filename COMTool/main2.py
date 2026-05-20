@@ -374,7 +374,10 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         if sys.platform == 'darwin':
             self.macOsAddDockMenu()
 
-        self.resize(850, 500)
+        windowSize = self.config["windowSize"] if "windowSize" in self.config else {}
+        width = int(windowSize.get("width", 850)) if isinstance(windowSize, dict) else 850
+        height = int(windowSize.get("height", 500)) if isinstance(windowSize, dict) else 500
+        self.resize(max(640, width), max(420, height))
         self.MoveToCenter()
         self.show()
 
@@ -609,6 +612,12 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         #                              "Are you sure to quit?", QMessageBox.Yes |
         #                              QMessageBox.No, QMessageBox.No)
         if 1: # reply == QMessageBox.Yes:
+            geometry = self.normalGeometry() if self.windowState() != Qt.WindowNoState else self.geometry()
+            if geometry.isValid():
+                self.config["windowSize"] = {
+                    "width": geometry.width(),
+                    "height": geometry.height()
+                }
             self.receiveProgressStop = True
             # inform plugins
             for item in self.items:

@@ -37,4 +37,6 @@ class ComboBox(QComboBox):
     def mousePressEvent(self, QMouseEvent):
         self.clicked.emit()
 
+    def wheelEvent(self, event):
+        event.ignore()
 

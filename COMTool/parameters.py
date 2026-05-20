@@ -63,6 +63,10 @@ class Parameters:
         "locale": "en",
         "encoding": "UTF-8",
         "skipVersion": None,
+        "windowSize": {
+            "width": 850,
+            "height": 500
+        },
         "connId": "serial",
         "pluginsInfo": {          # enabled plugins ID
             "external": {
@@ -118,6 +122,9 @@ class Parameters:
 
     def __setitem__(self, idx, v):
         self.config[idx] = v
+
+    def __contains__(self, idx):
+        return idx in self.config
 
     def __str__(self) -> str:
         return json.dumps(self.config)
