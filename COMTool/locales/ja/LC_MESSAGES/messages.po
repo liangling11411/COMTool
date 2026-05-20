@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: helpAbout.py:40
 msgid "Config path"
@@ -85,17 +85,14 @@ msgstr "接続が失われます！"
 msgid "Disconnected"
 msgstr "接続が失われます！"
 
-#: conn/conn_serial.py:337 conn/conn_ssh.py:296 conn/conn_tcp_udp.py:430
-#: main2.py:248 main2.py:298 main2.py:441 main2.py:446 main2.py:789
-#: pluginItems.py:175 pluginItems.py:178 pluginItems.py:286 pluginItems.py:298
-#: plugins/base.py:176 plugins/base.py:181 plugins/base.py:197
-#: plugins/base.py:206 plugins/dbg.py:463 plugins/dbg.py:472 plugins/dbg.py:625
-#: plugins/dbg.py:642 plugins/dbg.py:699 plugins/dbg.py:707
-#: plugins/graph.py:259 plugins/graph_widget_metasenselite.py:591
+#: conn/conn_serial.py:337 conn/conn_ssh.py:296 conn/conn_tcp_udp.py:430 main2.py:248 main2.py:298
+#: main2.py:441 main2.py:446 main2.py:789 pluginItems.py:175 pluginItems.py:178 pluginItems.py:286
+#: pluginItems.py:298 plugins/base.py:176 plugins/base.py:181 plugins/base.py:197 plugins/base.py:206
+#: plugins/dbg.py:463 plugins/dbg.py:472 plugins/dbg.py:625 plugins/dbg.py:642 plugins/dbg.py:699
+#: plugins/dbg.py:707 plugins/graph.py:259 plugins/graph_widget_metasenselite.py:591
 #: plugins/graph_widgets.py:167 plugins/myplugin.py:62
-#: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
-#: plugins/protocol.py:472 plugins/protocol.py:499 plugins/protocol.py:508
-#: plugins/protocol.py:571
+#: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70 plugins/protocol.py:472
+#: plugins/protocol.py:499 plugins/protocol.py:508 plugins/protocol.py:571
 msgid "Error"
 msgstr "間違い"
 
@@ -108,8 +105,8 @@ msgstr "プラグインの読み込みに失敗しました"
 msgid "Load plugin fail"
 msgstr "プラグインの読み込みに失敗しました"
 
-#: conn/conn_ssh.py:239 main2.py:292 pluginItems.py:155 pluginItems.py:168
-#: plugins/dbg.py:485 plugins/dbg.py:499
+#: conn/conn_ssh.py:239 main2.py:292 pluginItems.py:155 pluginItems.py:168 plugins/dbg.py:485
+#: plugins/dbg.py:499
 msgid "Select file"
 msgstr "ファイルを選択"
 
@@ -187,17 +184,15 @@ msgid "json file (*.json);;config file (*.conf);;All Files (*)"
 msgstr "jsonファイル (*.json);;設定ファイル (*.conf);;すべてのファイル (*)"
 
 #: pluginItems.py:175
-msgid ""
-"Not support load global config file, you can copy config file mannually "
-"to "
+msgid "Not support load global config file, you can copy config file mannually to "
 msgstr ""
 
 #: pluginItems.py:178
 msgid "Config is not for this plugin, config is for plugin:"
 msgstr ""
 
-#: pluginItems.py:181 plugins/dbg.py:421 plugins/dbg.py:628
-#: plugins/protocol.py:593 plugins/protocol.py:615
+#: pluginItems.py:181 plugins/dbg.py:421 plugins/dbg.py:628 plugins/protocol.py:593
+#: plugins/protocol.py:615
 msgid "Warning"
 msgstr "警告"
 
@@ -210,9 +205,7 @@ msgid "now"
 msgstr ""
 
 #: pluginItems.py:184
-msgid ""
-"this maybe lead to some problem, if happened, please remove it manually "
-"from config file"
+msgid "this maybe lead to some problem, if happened, please remove it manually from config file"
 msgstr ""
 
 #: pluginItems.py:201
@@ -313,9 +306,9 @@ msgstr "フロー制御"
 msgid "Check to enable(usually output low level)"
 msgstr "チェックして有効にします（通常は低レベルを出力します）"
 
-#: conn/conn_serial.py:154 conn/conn_serial.py:301 conn/conn_serial.py:393
-#: conn/conn_ssh.py:165 conn/conn_ssh.py:251 conn/conn_ssh.py:339
-#: conn/conn_tcp_udp.py:140 conn/conn_tcp_udp.py:343 conn/conn_tcp_udp.py:462
+#: conn/conn_serial.py:154 conn/conn_serial.py:301 conn/conn_serial.py:393 conn/conn_ssh.py:165
+#: conn/conn_ssh.py:251 conn/conn_ssh.py:339 conn/conn_tcp_udp.py:140 conn/conn_tcp_udp.py:343
+#: conn/conn_tcp_udp.py:462
 msgid "OPEN"
 msgstr "打込み"
 
@@ -323,8 +316,8 @@ msgstr "打込み"
 msgid "Open Failed"
 msgstr "開くことができませんでした"
 
-#: conn/conn_serial.py:396 conn/conn_serial.py:399 conn/conn_ssh.py:342
-#: conn/conn_ssh.py:345 conn/conn_tcp_udp.py:465 conn/conn_tcp_udp.py:468
+#: conn/conn_serial.py:396 conn/conn_serial.py:399 conn/conn_ssh.py:342 conn/conn_ssh.py:345
+#: conn/conn_tcp_udp.py:465 conn/conn_tcp_udp.py:468
 msgid "CLOSE"
 msgstr "関闭"
 
@@ -493,9 +486,7 @@ msgid "ASCII"
 msgstr "ASCII"
 
 #: plugins/dbg.py:154
-msgid ""
-"Show recived data as visible format, select decode method at top right "
-"corner"
+msgid "Show recived data as visible format, select decode method at top right corner"
 msgstr "表示されている文字を使用して受信データを表示し、右上隅でデコード方法を選択します"
 
 #: plugins/dbg.py:155 plugins/dbg.py:189 plugins/protocol.py:263
@@ -525,9 +516,7 @@ msgid "Timestamp"
 msgstr "タイムスタンプ"
 
 #: plugins/dbg.py:166
-msgid ""
-"Add timestamp before received data, will automatically enable auto line "
-"feed"
+msgid "Add timestamp before received data, will automatically enable auto line feed"
 msgstr "受信データの前にタイムスタンプを追加すると、自動改行が自動的に有効になります"
 
 #: plugins/dbg.py:167
@@ -551,9 +540,7 @@ msgid "Enable escape characters support like \\t \\r \\n \\x01 \\001"
 msgstr "\\t \\r \\n \\x01 \\001 のようなエスケープ文字のサポートを有効にする"
 
 #: plugins/dbg.py:172
-msgid ""
-"When content in a line is too long, always auto wrap to show, and no "
-"scroll bar"
+msgid "When content in a line is too long, always auto wrap to show, and no scroll bar"
 msgstr ""
 
 #: plugins/dbg.py:187
@@ -561,9 +548,7 @@ msgid "Send Settings"
 msgstr "送信設定"
 
 #: plugins/dbg.py:190 plugins/protocol.py:264
-msgid ""
-"Get send data as visible format, select encoding method at top right "
-"corner"
+msgid "Get send data as visible format, select encoding method at top right corner"
 msgstr "表示文字形式で送信するデータを取得し、右上隅でエンコード方法を選択します"
 
 #: plugins/dbg.py:191 plugins/protocol.py:265
@@ -732,9 +717,7 @@ msgid "\"$\" means start of frame, end with \"\\n\" \",\" means separator"
 msgstr ""
 
 #: plugins/graph.py:73
-msgid ""
-"checksum is optional, checksum is sum of all bytes in frame except "
-"\",checksum\"."
+msgid "checksum is optional, checksum is sum of all bytes in frame except \",checksum\"."
 msgstr ""
 
 #: plugins/graph.py:74
@@ -770,11 +753,9 @@ msgstr "エスケープ"
 msgid "Header:"
 msgstr ""
 
-#: plugins/graph_widget_metasenselite.py:306
-#: plugins/graph_widget_metasenselite.py:578
-#: plugins/graph_widget_metasenselite.py:580
-#: plugins/graph_widget_metasenselite.py:589 plugins/graph_widgets.py:60
-#: plugins/graph_widgets.py:154 plugins/graph_widgets.py:156
+#: plugins/graph_widget_metasenselite.py:306 plugins/graph_widget_metasenselite.py:578
+#: plugins/graph_widget_metasenselite.py:580 plugins/graph_widget_metasenselite.py:589
+#: plugins/graph_widgets.py:60 plugins/graph_widgets.py:154 plugins/graph_widgets.py:156
 #: plugins/graph_widgets.py:165
 msgid "Set"
 msgstr ""
@@ -828,10 +809,9 @@ msgstr ""
 
 #: plugins/graph_widget_metasenselite.py:357
 msgid ""
-"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode"
-" + 1Byte Sensor Temp + 1Byte Driver Temp\n"
-" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res "
-"rows + 1Byte res cols\n"
+"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode + 1Byte Sensor Temp + "
+"1Byte Driver Temp\n"
+" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res rows + 1Byte res cols\n"
 " 2Byte Frame ID + 1 Byte ISP version + 1 Byte reserved3\n"
 " frame data\n"
 " 1Byte checksum + 1Byte tail\n"
@@ -884,23 +864,21 @@ msgstr "プロトコル"
 
 #: plugins/graph_widgets.py:61
 msgid ""
-"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes "
-"y(double) + 1Byte sum\n"
+"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
 "Protocol example code see help"
 msgstr ""
 
 #: plugins/graph_widgets.py:65
 msgid ""
-"Check this if you want to use binary protocol, or use ASCII protocol(e.g."
-" \"$data1,10.0,200.0\\n\"), more see help button on the top of window"
+"Check this if you want to use binary protocol, or use ASCII protocol(e.g. "
+"\"$data1,10.0,200.0\\n\"), more see help button on the top of window"
 msgstr ""
 
 #: plugins/myplugin.py:22
 msgid "my plugin"
 msgstr ""
 
-#: plugins/myplugin.py:62
-#: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
+#: plugins/myplugin.py:62 plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
 #, fuzzy
 msgid "Input data first please"
 msgstr "最初に接続してください"
@@ -926,8 +904,8 @@ msgstr ""
 msgid "Load defaults"
 msgstr ""
 
-#: plugins/protocol.py:248 plugins/protocol.py:559 plugins/protocol.py:583
-#: plugins/protocol.py:586 plugins/protocol.py:606
+#: plugins/protocol.py:248 plugins/protocol.py:559 plugins/protocol.py:583 plugins/protocol.py:586
+#: plugins/protocol.py:606
 #, fuzzy
 msgid "Save"
 msgstr "エスケープ"
@@ -983,6 +961,322 @@ msgstr ""
 #: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:30
 msgid "my plugin2"
 msgstr ""
+
+#. COMTool personalization
+msgid "Import page"
+msgstr "?????????"
+
+#. COMTool personalization
+msgid "Save page"
+msgstr "??????"
+
+#. COMTool personalization
+msgid "Import this page name, connection settings, and plugin settings from a page file"
+msgstr "???????????????????????????????????"
+
+#. COMTool personalization
+msgid "Save this page name, connection settings, and plugin settings to a page file"
+msgstr "???????????????????????????????"
+
+#. COMTool personalization
+msgid "Page"
+msgstr "???"
+
+#. COMTool personalization
+msgid "Received RX/TX log output"
+msgstr "RX/TX ???????"
+
+#. COMTool personalization
+msgid "Input data to send"
+msgstr "?????????????"
+
+#. COMTool personalization
+msgid "Send input data"
+msgstr "???????????"
+
+#. COMTool personalization
+msgid "Send history"
+msgstr "????"
+
+#. COMTool personalization
+msgid "Font family for received RX text"
+msgstr "?? RX ?????????"
+
+#. COMTool personalization
+msgid "Font size for received RX text"
+msgstr "?? RX ????????"
+
+#. COMTool personalization
+msgid "Color for received RX text in the receive area"
+msgstr "?????? RX ?????"
+
+#. COMTool personalization
+msgid "Font family for TX input text"
+msgstr "TX ???????????"
+
+#. COMTool personalization
+msgid "Font size for TX input text"
+msgstr "TX ??????????"
+
+#. COMTool personalization
+msgid "Color for TX input text and recorded TX lines"
+msgstr "TX ???????????? TX ???"
+
+#. COMTool personalization
+msgid "Path of the file to send"
+msgstr "???????????"
+
+#. COMTool personalization
+msgid "Select a file to send"
+msgstr "??????????????"
+
+#. COMTool personalization
+msgid "Send the selected file over the current connection"
+msgstr "????????????????????"
+
+#. COMTool personalization
+msgid "Clear send history"
+msgstr "??????????"
+
+#. COMTool personalization
+msgid "Enable saving received and recorded sent data to a log file"
+msgstr "?????????????????????????????"
+
+#. COMTool personalization
+msgid "Log file path"
+msgstr "?????????"
+
+#. COMTool personalization
+msgid "Select log file path"
+msgstr "????????????????"
+
+#. COMTool personalization
+msgid "Current log recording duration and file size"
+msgstr "?????????????????"
+
+#. COMTool personalization
+msgid "Add a custom send item"
+msgstr "??????????????"
+
+#. COMTool personalization
+msgid "Import custom send items from JSON"
+msgstr "JSON ???????????????????"
+
+#. COMTool personalization
+msgid "Export custom send items to JSON"
+msgstr "????????? JSON ??????????"
+
+#. COMTool personalization
+msgid "Set color for selected custom send items"
+msgstr "????????????????????"
+
+#. COMTool personalization
+msgid "Set icon for selected custom send items"
+msgstr "???????????????????????"
+
+#. COMTool personalization
+msgid "Delete selected custom send items"
+msgstr "??????????????????"
+
+#. COMTool personalization
+msgid "Edit custom send remark and icon"
+msgstr "???????????????????????"
+
+#. COMTool personalization
+msgid "Delete this custom send item"
+msgstr "????????????????"
+
+#. COMTool personalization
+msgid "Timestamp color in receive area"
+msgstr "??????????????"
+
+#. COMTool personalization
+msgid "Newline after timestamp"
+msgstr "???????????"
+
+#. COMTool personalization
+msgid "Display received data on the next line after timestamp"
+msgstr "???????????????????????"
+
+#. COMTool personalization
+msgid "Timed log"
+msgstr "??????"
+
+#. COMTool personalization
+msgid "Stop saving log automatically after the configured duration"
+msgstr "?????????????????????"
+
+#. COMTool personalization
+msgid "Timed log duration, format: HH:MM:SS"
+msgstr "???????????: HH:MM:SS"
+
+#. COMTool personalization
+msgid "Timed log duration error, format: HH:MM:SS"
+msgstr "????????????????????: HH:MM:SS"
+
+#. COMTool personalization
+msgid "Select visible custom send items"
+msgstr "??????????????????"
+
+#. COMTool personalization
+msgid "Select for batch edit"
+msgstr "??????????????"
+
+#. COMTool personalization
+msgid "Delete selected custom send item?"
+msgstr "????????????????????"
+
+#. COMTool personalization
+msgid "Delete selected custom send items?"
+msgstr "????????????????????"
+
+#. COMTool personalization
+msgid "Log"
+msgstr "??"
+
+#. COMTool personalization
+msgid "Rename"
+msgstr "?????"
+
+#. COMTool personalization
+msgid "Page name"
+msgstr "????"
+
+#. COMTool personalization
+msgid ", Double click to detach as a window, right click to rename"
+msgstr "???????????????????????????"
+
+#. COMTool personalization
+msgid "Page name already exists"
+msgstr "????????????"
+
+#. COMTool personalization
+msgid "Clear RX"
+msgstr "RX ???"
+
+#. COMTool personalization
+msgid "Clear receive area"
+msgstr "????????"
+
+#. COMTool personalization
+msgid "Clear TX"
+msgstr "TX ???"
+
+#. COMTool personalization
+msgid "Clear send input"
+msgstr "???????"
+
+#. COMTool personalization
+msgid "Default font"
+msgstr "??????"
+
+#. COMTool personalization
+msgid "Log: 00:00:00 / 0 B"
+msgstr "??: 00:00:00 / 0 B"
+
+#. COMTool personalization
+msgid "Import"
+msgstr "?????"
+
+#. COMTool personalization
+msgid "Export"
+msgstr "??????"
+
+#. COMTool personalization
+msgid "Search remark or command"
+msgstr "?????????????"
+
+#. COMTool personalization
+msgid "Search custom send items by remark or command"
+msgstr "??????????????????????"
+
+#. COMTool personalization
+msgid "All"
+msgstr "???"
+
+#. COMTool personalization
+msgid "Icon"
+msgstr "????"
+
+#. COMTool personalization
+msgid "Select color"
+msgstr "????"
+
+#. COMTool personalization
+msgid "Timed log stopped"
+msgstr "?????????????"
+
+#. COMTool personalization
+msgid "Drag before another item to reorder"
+msgstr "?????????????????"
+
+#. COMTool personalization
+msgid "Click to set button color, right click to clear"
+msgstr "??????????????????????"
+
+#. COMTool personalization
+msgid "Import custom send"
+msgstr "????????????"
+
+#. COMTool personalization
+msgid "Export custom send"
+msgstr "?????????????"
+
+#. COMTool personalization
+msgid "JSON file (*.json);;All Files (*)"
+msgstr "JSON ???? (*.json);;???????? (*)"
+
+#. COMTool personalization
+msgid "Timestamp color"
+msgstr "????????"
+
+#. COMTool personalization
+msgid "RX font"
+msgstr "RX ????"
+
+#. COMTool personalization
+msgid "RX size"
+msgstr "RX ???"
+
+#. COMTool personalization
+msgid "RX color"
+msgstr "RX ?"
+
+#. COMTool personalization
+msgid "TX font"
+msgstr "TX ????"
+
+#. COMTool personalization
+msgid "TX size"
+msgstr "TX ???"
+
+#. COMTool personalization
+msgid "TX color"
+msgstr "TX ?"
+
+#. COMTool personalization
+msgid "Custom send items imported!"
+msgstr "???????????????????"
+
+#. COMTool personalization
+msgid "Custom send items exported!"
+msgstr "????????????????????"
+
+#. COMTool personalization
+msgid "Custom send file must be a JSON list"
+msgstr "??????????? JSON ????????????"
+
+#. COMTool personalization
+msgid "Import custom send failed!"
+msgstr "????????????????????"
+
+#. COMTool personalization
+msgid "Export custom send failed!"
+msgstr "?????????????????????"
+
+#. COMTool personalization
+msgid "Receive settings"
+msgstr "????"
 
 #~ msgid "Send"
 #~ msgstr "送信"
@@ -1048,18 +1342,14 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ""
-#~ "Protocol: header + 1Byte name length "
-#~ "+ name + 8Bytes x(double) + 8Bytes"
-#~ " y(double) + 1Byte sum\n"
+#~ "Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
 #~ "If you use python, can pack frame by:\n"
 #~ "from COMTool.plugin import gragh_protocol\n"
 #~ "frame = gragh_protocol.plot_pack(name, x, y)"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "Protocol: header + 1Byte name length "
-#~ "+ name + 8Bytes x(double) + 8Bytes"
-#~ " y(double) + 1Byte sum\n"
+#~ "Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
 #~ "If you use python, can pack frame by:\n"
 #~ msgstr ""
 

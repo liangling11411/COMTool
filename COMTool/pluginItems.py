@@ -27,13 +27,14 @@ class PluginItem:
                     connClasses, connsConfigs,
                     globalConfig, itemConfig,
                     hintSignal, reloadWindowSignal,
-                    connCallback):
+                    connCallback, itemNameChanged=None):
         '''
             item show name, e.g. dbg-1
         '''
         self.reloadWindowSignal = reloadWindowSignal
         self.hintSignal = hintSignal
         self.name = name
+        self.itemNameChanged = itemNameChanged
         self.connClasses = connClasses
         self.connsConfigs = connsConfigs
         self.currConnWidget = None
@@ -138,8 +139,10 @@ class PluginItem:
         self.functionalWidget = QWidget()
         layout3 = QVBoxLayout()
         self.functionalWidget.setLayout(layout3)
-        loadConfigBtn = QPushButton(_("Load config"))
-        shareConfigBtn = QPushButton(_("Share config"))
+        loadConfigBtn = QPushButton(_("Import page"))
+        shareConfigBtn = QPushButton(_("Save page"))
+        loadConfigBtn.setToolTip(_("Import this page name, connection settings, and plugin settings from a page file"))
+        shareConfigBtn.setToolTip(_("Save this page name, connection settings, and plugin settings to a page file"))
         configButtonsInSettings = getattr(self.plugin, "onConfigButtonsInSettings", lambda: False)
         if configButtonsInSettings():
             settingLayout.addWidget(loadConfigBtn)
@@ -174,7 +177,7 @@ class PluginItem:
     def selectSharefile(self):
         oldPath = os.getcwd()
         fileName_choose, filetype = QFileDialog.getSaveFileName(self.functionalWidget,
-                            _("Select file"),
+                            _("Save page"),
                             os.path.join(oldPath, f"comtool.{self.name}.json"),
                             _("json file (*.json);;config file (*.conf);;All Files (*)"))
         if fileName_choose != "":
@@ -187,7 +190,7 @@ class PluginItem:
     def selectLoadfile(self):
         oldPath = os.getcwd()
         fileName_choose, filetype = QFileDialog.getOpenFileName(self.functionalWidget,
-                                _("Select file"),
+                                _("Import page"),
                                 oldPath,
                                 _("json file (*.json);;config file (*.conf);;All Files (*)"))
         if fileName_choose != "":
@@ -208,18 +211,24 @@ class PluginItem:
                     return
                 self.oldConnConfigs = self.connsConfigs.copy()
                 self.oldPluginConfigs = self.plugin.config.copy()
+                self.oldName = self.name
                 self.connsConfigs.clear()
                 self.plugin.config.clear()
                 for k, v in config["config"]["conns"].items():
                     self.connsConfigs[k] = v
                 for k, v in config["config"]["plugin"].items():
                     self.plugin.config[k] = v
+                importedName = config.get("name", self.name)
+                if importedName and self.itemNameChanged:
+                    self.itemNameChanged(self, importedName)
                 def onClose(ok):
                     if not ok:
                         self.connsConfigs.clear()
                         self.connsConfigs.update(self.oldConnConfigs)
                         self.plugin.config.clear()
                         self.plugin.config.update(self.oldPluginConfigs)
+                        if self.itemNameChanged:
+                            self.itemNameChanged(self, self.oldName)
                 self.reloadWindowSignal.emit("", _("Restart to load config?"), onClose)
 
     def _setConn(self, idx):

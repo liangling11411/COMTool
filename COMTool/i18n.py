@@ -21,12 +21,21 @@ def set_locale(locale_in):
     locales_path = os.path.join(root_dir, 'locales')
     if not os.path.exists(locales_path): # for pyinstaller pack
         locales_path = os.path.join(os.path.dirname(root_dir), 'locales')
-    # check translate binary file
-    mo_path = os.path.join(locales_path, "en", "LC_MESSAGES", "messages.mo")
-    if not os.path.exists(mo_path):
+    if translations_need_compile(locales_path):
         main("finish")
     lang = gettext.translation('messages', localedir=locales_path, languages=[locale])
     tr = lang.gettext
+
+def translations_need_compile(locales_path):
+    for locale_name in locales:
+        base = os.path.join(locales_path, locale_name, "LC_MESSAGES")
+        po_path = os.path.join(base, "messages.po")
+        mo_path = os.path.join(base, "messages.mo")
+        if not os.path.exists(mo_path):
+            return True
+        if os.path.exists(po_path) and os.path.getmtime(po_path) > os.path.getmtime(mo_path):
+            return True
+    return False
 
 def get_languages():
     languages = OrderedDict()
