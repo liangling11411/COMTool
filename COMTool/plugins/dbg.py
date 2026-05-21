@@ -1214,11 +1214,19 @@ class Plugin(Plugin_Base):
         self.saveLogDuration.setToolTip(_("Timed log duration, format: HH:MM:SS"))
         self.saveLogStatusLabel = QLabel(_("Log: 00:00:00 / 0 B"))
         self.saveLogStatusLabel.setToolTip(_("Current log recording duration and file size"))
+        self.logFileGroupBox.setLayout(logFileWrapper)
+
+        self.rxBufferGroupBox = QGroupBox(_("RX buffer size"))
+        rxBufferLayout = QHBoxLayout()
         self.receiveBufferSizeInput = NoWheelSpinBox()
         self.receiveBufferSizeInput.setRange(64, 1048576)
         self.receiveBufferSizeInput.setSingleStep(64)
         self.receiveBufferSizeInput.setSuffix(" KB")
         self.receiveBufferSizeInput.setToolTip(_("RX buffer size, only editable while the connection is closed"))
+        rxBufferLayout.addWidget(self.receiveBufferSizeInput)
+        rxBufferLayout.addStretch(1)
+        self.rxBufferGroupBox.setLayout(rxBufferLayout)
+
         logFileLayout.addWidget(self.saveLogCheckbox)
         logFileLayout.addWidget(self.logFilePath)
         logFileLayout.addWidget(self.logFileBtn)
@@ -1230,15 +1238,10 @@ class Plugin(Plugin_Base):
         logFileWrapper.addWidget(self.saveLogAutoNew)
         logFileWrapper.addLayout(logTimedLayout)
         logFileWrapper.addWidget(self.saveLogStatusLabel)
-        rxBufferLayout = QHBoxLayout()
-        rxBufferLayout.addWidget(QLabel(_("RX buffer size")))
-        rxBufferLayout.addWidget(self.receiveBufferSizeInput)
-        rxBufferLayout.addStretch(1)
-        logFileWrapper.addLayout(rxBufferLayout)
-        self.logFileGroupBox.setLayout(logFileWrapper)
 
         parentLayout.addWidget(self.fontSettingsGroupBox)
         parentLayout.addWidget(self.logFileGroupBox)
+        parentLayout.addWidget(self.rxBufferGroupBox)
         parentLayout.addWidget(self.fileSendGroupBox)
 
     def switchRxMode(self, ascii):
@@ -2756,7 +2759,9 @@ class Plugin(Plugin_Base):
             self.receiveArea.verticalScrollBar().setValue(curScrollValue)
         else:
             self.receiveArea.moveCursor(QTextCursor.End)
+            self.receiveArea.ensureCursorVisible()
         self.receiveArea.horizontalScrollBar().setValue(curHorizontalValue)
+        self.receiveArea.viewport().update()
 
     def updateReceivedDataDisplay(self, head : str, datas : list, encoding : str, isSend : bool):
         if not datas:
@@ -2768,31 +2773,34 @@ class Plugin(Plugin_Base):
             "isSend": isSend
         }
         self.receiveDisplayRecords.append(record)
+        self.appendReceivedDataRecord(record)
         if self.trimReceiveDisplayRecords():
             self.rerenderReceiveArea()
         else:
-            self.appendReceivedDataRecord(record)
             self.scheduleReceiveFindMarkersUpdate()
 
     def rerenderReceiveArea(self):
         if not hasattr(self, "receiveArea") or self.rerenderingReceiveArea:
             return
         self.rerenderingReceiveArea = True
-        scrollBar = self.receiveArea.verticalScrollBar()
-        oldValue = scrollBar.value()
-        atEnd = oldValue >= scrollBar.maximum()
-        records = list(self.receiveDisplayRecords)
-        self.receiveArea.clear()
-        self.defaultColor = None
-        self.defaultBg = None
-        for record in records:
-            self.appendReceivedDataRecord(record, preserveScroll=False)
-        if atEnd:
-            self.receiveArea.moveCursor(QTextCursor.End)
-        else:
-            scrollBar.setValue(min(oldValue, scrollBar.maximum()))
-        self.rerenderingReceiveArea = False
-        self.scheduleReceiveFindMarkersUpdate()
+        try:
+            scrollBar = self.receiveArea.verticalScrollBar()
+            oldValue = scrollBar.value()
+            atEnd = oldValue >= scrollBar.maximum()
+            records = list(self.receiveDisplayRecords)
+            self.receiveArea.clear()
+            self.defaultColor = None
+            self.defaultBg = None
+            for record in records:
+                self.appendReceivedDataRecord(record, preserveScroll=False)
+            if atEnd:
+                self.receiveArea.moveCursor(QTextCursor.End)
+                self.receiveArea.ensureCursorVisible()
+            else:
+                scrollBar.setValue(min(oldValue, scrollBar.maximum()))
+        finally:
+            self.rerenderingReceiveArea = False
+            self.scheduleReceiveFindMarkersUpdate()
 
     def sendHistoryFindDelete(self,str):
         self.sendHistory.removeItem(self.sendHistory.findText(str))
