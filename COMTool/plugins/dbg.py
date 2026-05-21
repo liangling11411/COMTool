@@ -410,6 +410,7 @@ class ReceiveFindAdvancedDialog(QDialog):
         self.dotAllCheck.setChecked(rule["dotMatchesNewline"])
         self.countLabel.setText("")
         self.updateRegexOptions()
+        self.updateFindNextState()
         self.loading = False
 
     def currentValues(self):
@@ -425,13 +426,18 @@ class ReceiveFindAdvancedDialog(QDialog):
     def updateRegexOptions(self):
         self.dotAllCheck.setEnabled(self.regexCheck.isChecked())
 
+    def updateFindNextState(self):
+        validRule = 0 <= self.idx < len(self.dialog.plugin.config.get("receiveFindRules", []))
+        self.findNextButton.setEnabled(validRule and self.dialog.plugin.isConnectionClosed())
+
     def onChanged(self):
         if self.loading:
             return
         self.dialog.updateRuleAdvanced(self.idx, self.item, self.currentValues())
 
     def findNext(self):
-        self.onChanged()
+        if not self.dialog.plugin.isConnectionClosed():
+            return
         self.dialog.plugin.jumpToNextReceiveFindRule(self.idx)
 
     def countMatches(self):
@@ -2041,6 +2047,10 @@ class Plugin(Plugin_Base):
         self.currentConnStatus = status
         super().onConnChanged(status, msg)
         self.updateClosedOnlyControls()
+        dialog = getattr(self, "receiveFindDialog", None)
+        advanced = getattr(dialog, "advancedDialog", None) if dialog is not None else None
+        if advanced is not None:
+            advanced.updateFindNextState()
         self.updateReceiveFindMarkers()
         if status == ConnectionStatus.CONNECTED and self.config["saveLogAutoNew"]:
             self.updateLogPath()
