@@ -710,7 +710,12 @@ class Plugin(Plugin_Base):
         self.mainWidget = QSplitter(Qt.Vertical)
         # widgets receive and send area
         self.receiveArea = QTextEdit()
+        self.receiveArea.setObjectName("receiveArea")
         self.receiveArea.setToolTip(_("Received RX/TX log output"))
+        self.receiveArea.setStyleSheet(
+            "QTextEdit#receiveArea QScrollBar::handle:vertical { min-height: 48px; }"
+            "QTextEdit#receiveArea QScrollBar::handle:horizontal { min-width: 48px; }"
+        )
         font = QFont(self.config.get("receiveFontFamily", DEFAULT_TEXT_FONT), self.config["receiveFontSize"])
         self.receiveArea.setFont(font)
         self.sendArea = QTextEdit()
@@ -736,6 +741,9 @@ class Plugin(Plugin_Base):
         sendWidget.setLayout(sendAreaWidgetsLayout)
         buttonLayout = QVBoxLayout()
         buttonLayout.addStretch(1)
+        buttonLayout.addWidget(self.clearHistoryButton)
+        buttonLayout.addWidget(self.clearSendButtion)
+        buttonLayout.addWidget(self.clearReceiveButtion)
         buttonLayout.addWidget(self.receiveFindButton)
         buttonLayout.addWidget(self.sendButton)
         sendAreaWidgetsLayout.addWidget(self.sendArea)
@@ -974,15 +982,9 @@ class Plugin(Plugin_Base):
         logFileWrapper.addWidget(self.saveLogStatusLabel)
         self.logFileGroupBox.setLayout(logFileWrapper)
 
-        clearButtonsLayout = QHBoxLayout()
-        clearButtonsLayout.addWidget(self.clearReceiveButtion)
-        clearButtonsLayout.addWidget(self.clearSendButtion)
-
         parentLayout.addWidget(self.fontSettingsGroupBox)
         parentLayout.addWidget(self.logFileGroupBox)
         parentLayout.addWidget(self.fileSendGroupBox)
-        parentLayout.addWidget(self.clearHistoryButton)
-        parentLayout.addLayout(clearButtonsLayout)
 
     def switchRxMode(self, ascii):
         if ascii:
