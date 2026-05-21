@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-05-21 11:37+0800\n"
+"POT-Creation-Date: 2026-05-21 16:41+0800\n"
 "PO-Revision-Date: 2021-12-04 15:20+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant_TW\n"
@@ -86,23 +86,18 @@ msgstr "連接丟失"
 msgid "Disconnected"
 msgstr "Disconnected"
 
-#: COMTool/conn/conn_serial.py:338 COMTool/conn/conn_ssh.py:296
-#: COMTool/conn/conn_tcp_udp.py:430 COMTool/main2.py:276 COMTool/main2.py:326
-#: COMTool/main2.py:481 COMTool/main2.py:486 COMTool/main2.py:880
-#: COMTool/pluginItems.py:200 COMTool/pluginItems.py:203
-#: COMTool/pluginItems.py:317 COMTool/pluginItems.py:329
-#: COMTool/plugins/base.py:194 COMTool/plugins/base.py:199
-#: COMTool/plugins/base.py:215 COMTool/plugins/base.py:224
-#: COMTool/plugins/dbg.py:1554 COMTool/plugins/dbg.py:1563
-#: COMTool/plugins/dbg.py:1591 COMTool/plugins/dbg.py:2160
-#: COMTool/plugins/dbg.py:2174 COMTool/plugins/dbg.py:2184
-#: COMTool/plugins/dbg.py:2207 COMTool/plugins/dbg.py:2274
-#: COMTool/plugins/dbg.py:2282 COMTool/plugins/graph.py:259
-#: COMTool/plugins/graph_widget_metasenselite.py:591
+#: COMTool/conn/conn_serial.py:338 COMTool/conn/conn_ssh.py:296 COMTool/conn/conn_tcp_udp.py:430
+#: COMTool/main2.py:276 COMTool/main2.py:326 COMTool/main2.py:481 COMTool/main2.py:486
+#: COMTool/main2.py:890 COMTool/pluginItems.py:202 COMTool/pluginItems.py:205
+#: COMTool/pluginItems.py:319 COMTool/pluginItems.py:331 COMTool/plugins/base.py:194
+#: COMTool/plugins/base.py:199 COMTool/plugins/base.py:215 COMTool/plugins/base.py:224
+#: COMTool/plugins/dbg.py:1854 COMTool/plugins/dbg.py:1863 COMTool/plugins/dbg.py:1891
+#: COMTool/plugins/dbg.py:2462 COMTool/plugins/dbg.py:2476 COMTool/plugins/dbg.py:2486
+#: COMTool/plugins/dbg.py:2509 COMTool/plugins/dbg.py:2576 COMTool/plugins/dbg.py:2584
+#: COMTool/plugins/graph.py:259 COMTool/plugins/graph_widget_metasenselite.py:591
 #: COMTool/plugins/graph_widgets.py:167 COMTool/plugins/myplugin.py:62
-#: COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
-#: COMTool/plugins/protocol.py:488 COMTool/plugins/protocol.py:515
-#: COMTool/plugins/protocol.py:524 COMTool/plugins/protocol.py:587
+#: COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70 COMTool/plugins/protocol.py:488
+#: COMTool/plugins/protocol.py:515 COMTool/plugins/protocol.py:524 COMTool/plugins/protocol.py:587
 msgid "Error"
 msgstr "錯誤"
 
@@ -114,8 +109,8 @@ msgstr "載入外掛程式失敗"
 msgid "Load plugin fail"
 msgstr "載入外掛程式失敗"
 
-#: COMTool/conn/conn_ssh.py:239 COMTool/main2.py:320
-#: COMTool/plugins/dbg.py:1676 COMTool/plugins/dbg.py:1690
+#: COMTool/conn/conn_ssh.py:239 COMTool/main2.py:320 COMTool/plugins/dbg.py:1976
+#: COMTool/plugins/dbg.py:1990
 msgid "Select file"
 msgstr "選擇文件"
 
@@ -135,7 +130,7 @@ msgstr "切換主題"
 msgid "Switch language"
 msgstr "切換語言"
 
-#: COMTool/main2.py:361 COMTool/main2.py:767
+#: COMTool/main2.py:361 COMTool/main2.py:777
 msgid "About"
 msgstr "關於"
 
@@ -163,9 +158,8 @@ msgstr "重新命名"
 msgid "Page name"
 msgstr "頁面名稱"
 
-#: COMTool/main2.py:529 COMTool/pluginItems.py:206 COMTool/plugins/dbg.py:1484
-#: COMTool/plugins/dbg.py:2187 COMTool/plugins/protocol.py:609
-#: COMTool/plugins/protocol.py:631
+#: COMTool/main2.py:529 COMTool/pluginItems.py:208 COMTool/plugins/dbg.py:1784
+#: COMTool/plugins/dbg.py:2489 COMTool/plugins/protocol.py:609 COMTool/plugins/protocol.py:631
 msgid "Warning"
 msgstr "警告"
 
@@ -173,39 +167,47 @@ msgstr "警告"
 msgid "Page name already exists"
 msgstr "頁面名稱已存在"
 
-#: COMTool/main2.py:597 COMTool/main2.py:606
+#: COMTool/main2.py:544
+msgid "Save page?"
+msgstr "儲存頁面？"
+
+#: COMTool/main2.py:545
+msgid "Save this page before closing it?"
+msgstr "關閉前要儲存此頁面嗎？"
+
+#: COMTool/main2.py:607 COMTool/main2.py:616
 msgid "Restart now?"
 msgstr "現在就重啟？"
 
-#: COMTool/main2.py:598
+#: COMTool/main2.py:608
 msgid "language changed to: "
 msgstr "語言更改為："
 
-#: COMTool/main2.py:598
+#: COMTool/main2.py:608
 msgid "Restart software to take effect now?"
 msgstr "現在就重啟軟件以生效？"
 
-#: COMTool/main2.py:653 COMTool/main2.py:654
+#: COMTool/main2.py:663 COMTool/main2.py:664
 msgid "Closing ..."
 msgstr "關閉中..."
 
-#: COMTool/main2.py:789
+#: COMTool/main2.py:799
 msgid "New versioin detected, please click learn more to download"
 msgstr "檢測到了新版本，請點擊 瞭解更多 按鈕以下載"
 
-#: COMTool/main2.py:790
+#: COMTool/main2.py:800
 msgid "Learn More"
 msgstr "瞭解更多"
 
-#: COMTool/main2.py:791
+#: COMTool/main2.py:801
 msgid "Skip this version"
 msgstr "跳過此版本"
 
-#: COMTool/main2.py:792
+#: COMTool/main2.py:802
 msgid "Remind me next time"
 msgstr "下次提醒我"
 
-#: COMTool/main2.py:793
+#: COMTool/main2.py:803
 msgid "Need update"
 msgstr "需要更新"
 
@@ -217,7 +219,7 @@ msgstr "外掛程式配置中找不到版本："
 msgid "Connection"
 msgstr "連接"
 
-#: COMTool/pluginItems.py:142 COMTool/pluginItems.py:193
+#: COMTool/pluginItems.py:142 COMTool/pluginItems.py:195
 msgid "Import page"
 msgstr "匯入頁面"
 
@@ -226,54 +228,46 @@ msgid "Save page"
 msgstr "儲存頁面"
 
 #: COMTool/pluginItems.py:144
-msgid ""
-"Import this page name, connection settings, and plugin settings from a "
-"page file"
+msgid "Import this page name, connection settings, and plugin settings from a page file"
 msgstr "从页面文件导入页面名称、连接设置和插件设置"
 
 #: COMTool/pluginItems.py:145
-msgid ""
-"Save this page name, connection settings, and plugin settings to a page "
-"file"
+msgid "Save this page name, connection settings, and plugin settings to a page file"
 msgstr "将页面名称、连接设置和插件设置保存到页面文件"
 
-#: COMTool/pluginItems.py:182 COMTool/pluginItems.py:195
+#: COMTool/pluginItems.py:182 COMTool/pluginItems.py:197
 msgid "json file (*.json);;config file (*.conf);;All Files (*)"
 msgstr "json 文件 (*.json);;配置文件 (*.conf);;所有文件 (*)"
 
-#: COMTool/pluginItems.py:200
-msgid ""
-"Not support load global config file, you can copy config file mannually "
-"to "
+#: COMTool/pluginItems.py:202
+msgid "Not support load global config file, you can copy config file mannually to "
 msgstr "不支持載入全局配置文件，您可以手動將配置文件複製到"
 
-#: COMTool/pluginItems.py:203
+#: COMTool/pluginItems.py:205
 msgid "Config is not for this plugin, config is for plugin:"
 msgstr "配置文件不是此外掛程式的，配置文件是外掛程式："
 
-#: COMTool/pluginItems.py:207
+#: COMTool/pluginItems.py:209
 msgid "Config version not same, plugin config version:"
 msgstr "配置文件版本不同，外掛程式配置文件版本："
 
-#: COMTool/pluginItems.py:208
+#: COMTool/pluginItems.py:210
 msgid "now"
 msgstr "現在"
 
-#: COMTool/pluginItems.py:209
-msgid ""
-"this maybe lead to some problem, if happened, please remove it manually "
-"from config file"
+#: COMTool/pluginItems.py:211
+msgid "this maybe lead to some problem, if happened, please remove it manually from config file"
 msgstr "可能導致一些問題，如果發生，請手動從配置文件中移除"
 
-#: COMTool/pluginItems.py:232
+#: COMTool/pluginItems.py:234
 msgid "Restart to load config?"
 msgstr "重启以載入設置？"
 
-#: COMTool/pluginItems.py:268
+#: COMTool/pluginItems.py:270
 msgid "Change connection, auto close old connection"
 msgstr "切换连接，自动关闭旧连接"
 
-#: COMTool/pluginItems.py:317
+#: COMTool/pluginItems.py:319
 msgid "Open file failed!"
 msgstr "打開失敗"
 
@@ -281,8 +275,7 @@ msgstr "打開失敗"
 msgid "Received"
 msgstr "已接收"
 
-#: COMTool/widgets.py:576 COMTool/widgets.py:577 COMTool/widgets.py:597
-#: COMTool/widgets.py:604
+#: COMTool/widgets.py:576 COMTool/widgets.py:577 COMTool/widgets.py:597 COMTool/widgets.py:604
 msgid "bytes"
 msgstr "字節"
 
@@ -302,12 +295,12 @@ msgstr "输入标记"
 msgid "Input value"
 msgstr "输入值"
 
-#: COMTool/plugins/dbg.py:2026 COMTool/widgets.py:691 COMTool/widgets.py:727
+#: COMTool/plugins/dbg.py:2328 COMTool/widgets.py:691 COMTool/widgets.py:727
 msgid "Select icon"
 msgstr "選擇圖標"
 
-#: COMTool/plugins/dbg.py:880 COMTool/plugins/protocol.py:277
-#: COMTool/widgets.py:698 COMTool/widgets.py:768
+#: COMTool/plugins/dbg.py:1075 COMTool/plugins/protocol.py:277 COMTool/widgets.py:698
+#: COMTool/widgets.py:768
 msgid "Record"
 msgstr "記錄"
 
@@ -319,9 +312,9 @@ msgstr "快捷鍵"
 msgid "Press key to record, or click Cancel"
 msgstr "按下快捷鍵記錄，或者按取消"
 
-#: COMTool/plugins/dbg.py:1532 COMTool/plugins/dbg.py:1619
-#: COMTool/plugins/dbg.py:2026 COMTool/plugins/dbg.py:2158
-#: COMTool/plugins/dbg.py:2172 COMTool/widgets.py:708 COMTool/widgets.py:727
+#: COMTool/plugins/dbg.py:1832 COMTool/plugins/dbg.py:1919 COMTool/plugins/dbg.py:2328
+#: COMTool/plugins/dbg.py:2460 COMTool/plugins/dbg.py:2474 COMTool/widgets.py:708
+#: COMTool/widgets.py:727
 msgid "OK"
 msgstr "確定"
 
@@ -337,8 +330,7 @@ msgstr "串口"
 msgid "Custom, input baudrate"
 msgstr "自定義，輸入波特率"
 
-#: COMTool/conn/conn_serial.py:114 COMTool/conn/conn_ssh.py:151
-#: COMTool/conn/conn_tcp_udp.py:115
+#: COMTool/conn/conn_serial.py:114 COMTool/conn/conn_ssh.py:151 COMTool/conn/conn_tcp_udp.py:115
 msgid "Port"
 msgstr "端口"
 
@@ -366,11 +358,9 @@ msgstr "流控"
 msgid "Check to enable(usually output low level)"
 msgstr "選中以使能（通常會輸出低電平）"
 
-#: COMTool/conn/conn_serial.py:155 COMTool/conn/conn_serial.py:302
-#: COMTool/conn/conn_serial.py:394 COMTool/conn/conn_ssh.py:165
-#: COMTool/conn/conn_ssh.py:251 COMTool/conn/conn_ssh.py:339
-#: COMTool/conn/conn_tcp_udp.py:140 COMTool/conn/conn_tcp_udp.py:343
-#: COMTool/conn/conn_tcp_udp.py:462
+#: COMTool/conn/conn_serial.py:155 COMTool/conn/conn_serial.py:302 COMTool/conn/conn_serial.py:394
+#: COMTool/conn/conn_ssh.py:165 COMTool/conn/conn_ssh.py:251 COMTool/conn/conn_ssh.py:339
+#: COMTool/conn/conn_tcp_udp.py:140 COMTool/conn/conn_tcp_udp.py:343 COMTool/conn/conn_tcp_udp.py:462
 msgid "OPEN"
 msgstr "打開"
 
@@ -378,19 +368,16 @@ msgstr "打開"
 msgid "Open Failed"
 msgstr "打開失敗"
 
-#: COMTool/conn/conn_serial.py:397 COMTool/conn/conn_serial.py:400
-#: COMTool/conn/conn_ssh.py:342 COMTool/conn/conn_ssh.py:345
-#: COMTool/conn/conn_tcp_udp.py:465 COMTool/conn/conn_tcp_udp.py:468
+#: COMTool/conn/conn_serial.py:397 COMTool/conn/conn_serial.py:400 COMTool/conn/conn_ssh.py:342
+#: COMTool/conn/conn_ssh.py:345 COMTool/conn/conn_tcp_udp.py:465 COMTool/conn/conn_tcp_udp.py:468
 msgid "CLOSE"
 msgstr "關閉"
 
-#: COMTool/conn/conn_serial.py:474 COMTool/conn/conn_ssh.py:368
-#: COMTool/conn/conn_tcp_udp.py:525
+#: COMTool/conn/conn_serial.py:474 COMTool/conn/conn_ssh.py:368 COMTool/conn/conn_tcp_udp.py:525
 msgid "Reconnected"
 msgstr "已重連"
 
-#: COMTool/conn/conn_serial.py:505 COMTool/conn/conn_ssh.py:413
-#: COMTool/conn/conn_tcp_udp.py:588
+#: COMTool/conn/conn_serial.py:505 COMTool/conn/conn_ssh.py:413 COMTool/conn/conn_tcp_udp.py:588
 msgid "Connection lose!"
 msgstr "連接丟失！"
 
@@ -430,7 +417,7 @@ msgstr "輸入"
 msgid "error"
 msgstr "錯誤"
 
-#: COMTool/conn/conn_ssh.py:241 COMTool/plugins/dbg.py:1678
+#: COMTool/conn/conn_ssh.py:241 COMTool/plugins/dbg.py:1978
 msgid "All Files (*)"
 msgstr "所有文件 (*)"
 
@@ -482,8 +469,7 @@ msgstr "斷開"
 msgid "Auto reconnect"
 msgstr "自動重連"
 
-#: COMTool/conn/conn_tcp_udp.py:386 COMTool/conn/conn_tcp_udp.py:517
-#: COMTool/conn/conn_tcp_udp.py:616
+#: COMTool/conn/conn_tcp_udp.py:386 COMTool/conn/conn_tcp_udp.py:517 COMTool/conn/conn_tcp_udp.py:616
 msgid "Target error"
 msgstr "目標錯誤"
 
@@ -511,611 +497,699 @@ msgstr "格式錯誤，應該如：00 01 02 03"
 msgid "Escape is on, but escape error:"
 msgstr "轉義符支持已打開，但是轉義時出現了問題"
 
-#: COMTool/plugins/dbg.py:285
-msgid "Find in receive area"
-msgstr "接收區查找"
+#: COMTool/plugins/dbg.py:310 COMTool/plugins/dbg.py:591
+msgid "Advanced find settings"
+msgstr "進階查找設定"
 
-#: COMTool/plugins/dbg.py:291
-msgid "Find rules (top rules have higher priority)"
-msgstr "查找規則（越靠上優先級越高）"
+#: COMTool/plugins/dbg.py:321
+msgid "Find next"
+msgstr "查找下一個"
 
-#: COMTool/plugins/dbg.py:294 COMTool/plugins/dbg.py:1065
-msgid "All"
-msgstr "全选"
+#: COMTool/plugins/dbg.py:322
+msgid "Jump to the next match for this rule"
+msgstr "跳轉到此規則的下一個符合項"
 
-#: COMTool/plugins/dbg.py:295
-msgid "Select all find rules"
-msgstr "選擇全部查找規則"
+#: COMTool/plugins/dbg.py:323
+msgid "Count"
+msgstr "計數"
 
-#: COMTool/plugins/dbg.py:296
-msgid "Highlight color"
-msgstr "高亮顏色"
+#: COMTool/plugins/dbg.py:324
+msgid "Count matches for this rule in the receive buffer"
+msgstr "統計此規則在接收緩衝區中的符合數"
 
-#: COMTool/plugins/dbg.py:297
-msgid "Choose highlight color for new rules or selected rules"
-msgstr "為新規則或所選規則選擇高亮顏色"
+#: COMTool/plugins/dbg.py:331
+msgid "Find options"
+msgstr "查找選項"
 
-#: COMTool/plugins/dbg.py:299
-msgid "Apply color"
-msgstr "套用顏色"
+#: COMTool/plugins/dbg.py:334
+msgid "Reverse find"
+msgstr "反向查找"
 
-#: COMTool/plugins/dbg.py:300
-msgid "Clear color"
-msgstr "清除顏色"
+#: COMTool/plugins/dbg.py:335
+msgid "Search upward when jumping to the next match"
+msgstr "跳轉下一個符合項時向上搜尋"
 
-#: COMTool/plugins/dbg.py:301
-msgid "Delete selected"
-msgstr "刪除所選"
+#: COMTool/plugins/dbg.py:336
+msgid "Whole word"
+msgstr "全字匹配"
 
-#: COMTool/plugins/dbg.py:302
-msgid "Apply the current highlight color to all selected rules"
-msgstr "將目前高亮顏色套用到所有選中規則"
+#: COMTool/plugins/dbg.py:337
+msgid "Match only whole words"
+msgstr "僅匹配完整單字"
 
-#: COMTool/plugins/dbg.py:303
-msgid "Remove highlight color from all selected rules"
-msgstr "從所有選中規則移除高亮顏色"
+#: COMTool/plugins/dbg.py:338
+msgid "Case sensitive"
+msgstr "區分大小寫"
 
-#: COMTool/plugins/dbg.py:304
-msgid "Delete all selected find rules"
-msgstr "刪除所有選中查找規則"
+#: COMTool/plugins/dbg.py:339
+msgid "Match uppercase and lowercase exactly"
+msgstr "嚴格匹配大小寫"
 
-#: COMTool/plugins/dbg.py:327
-msgid "Add find rule"
-msgstr "新增查找規則"
+#: COMTool/plugins/dbg.py:340
+msgid "Wrap around"
+msgstr "循環查找"
 
-#: COMTool/plugins/dbg.py:329
+#: COMTool/plugins/dbg.py:341
+msgid "Continue from the other end when no match is found"
+msgstr "未找到符合項時從另一端繼續"
+
+#: COMTool/plugins/dbg.py:342
+msgid "Regular expression"
+msgstr "正則表達式"
+
+#: COMTool/plugins/dbg.py:343
+msgid "Treat the find text as a Python regular expression"
+msgstr "將查找文字作為 Python 正則表達式處理"
+
+#: COMTool/plugins/dbg.py:344
+msgid "Dot matches newline"
+msgstr "點號匹配換行"
+
+#: COMTool/plugins/dbg.py:345
+msgid "Let '.' in regular expressions match line breaks"
+msgstr "允許正則表達式中的 '.' 匹配換行"
+
+#: COMTool/plugins/dbg.py:356 COMTool/plugins/dbg.py:495
 msgid "Close"
 msgstr "關閉"
 
-#: COMTool/plugins/dbg.py:330
+#: COMTool/plugins/dbg.py:379
+msgid "No find rule selected"
+msgstr "未選擇查找規則"
+
+#: COMTool/plugins/dbg.py:404 COMTool/plugins/dbg.py:585
+msgid "Find text"
+msgstr "查找文字"
+
+#: COMTool/plugins/dbg.py:404
+msgid "Empty"
+msgstr "空"
+
+#: COMTool/plugins/dbg.py:440
+msgid "Matches"
+msgstr "符合數"
+
+#: COMTool/plugins/dbg.py:451
+msgid "Find in receive area"
+msgstr "接收區查找"
+
+#: COMTool/plugins/dbg.py:457
+msgid "Find rules (top rules have higher priority)"
+msgstr "查找規則（越靠上優先級越高）"
+
+#: COMTool/plugins/dbg.py:460
+msgid "Select all"
+msgstr "全選"
+
+#: COMTool/plugins/dbg.py:461
+msgid "Select all find rules for batch actions"
+msgstr "選擇全部查找規則進行批量操作"
+
+#: COMTool/plugins/dbg.py:462
+msgid "Highlight color"
+msgstr "高亮顏色"
+
+#: COMTool/plugins/dbg.py:463
+msgid "Choose highlight color for new rules or selected rules"
+msgstr "為新規則或所選規則選擇高亮顏色"
+
+#: COMTool/plugins/dbg.py:465
+msgid "Apply color"
+msgstr "套用顏色"
+
+#: COMTool/plugins/dbg.py:466
+msgid "Clear color"
+msgstr "清除顏色"
+
+#: COMTool/plugins/dbg.py:467
+msgid "Delete selected"
+msgstr "刪除所選"
+
+#: COMTool/plugins/dbg.py:468
+msgid "Apply the current highlight color to all selected rules"
+msgstr "將目前高亮顏色套用到所有選中規則"
+
+#: COMTool/plugins/dbg.py:469
+msgid "Remove highlight color from all selected rules"
+msgstr "從所有選中規則移除高亮顏色"
+
+#: COMTool/plugins/dbg.py:470
+msgid "Delete all selected find rules"
+msgstr "刪除所有選中查找規則"
+
+#: COMTool/plugins/dbg.py:493
+msgid "Add find rule"
+msgstr "新增查找規則"
+
+#: COMTool/plugins/dbg.py:496
 msgid "Close find window"
 msgstr "關閉查找視窗"
 
-#: COMTool/plugins/dbg.py:354 COMTool/plugins/dbg.py:517
-#: COMTool/plugins/dbg.py:1390 COMTool/plugins/dbg.py:1404
-#: COMTool/plugins/dbg.py:1957 COMTool/plugins/dbg.py:2013
+#: COMTool/plugins/dbg.py:520 COMTool/plugins/dbg.py:703 COMTool/plugins/dbg.py:1648
+#: COMTool/plugins/dbg.py:1662 COMTool/plugins/dbg.py:2259 COMTool/plugins/dbg.py:2315
 msgid "Select color"
 msgstr "选择颜色"
 
-#: COMTool/plugins/dbg.py:408 COMTool/plugins/dbg.py:1779
-msgid "Select for batch edit"
-msgstr "选择后进行批量编辑"
+#: COMTool/plugins/dbg.py:575
+msgid "Select"
+msgstr "選擇"
 
-#: COMTool/plugins/dbg.py:411
+#: COMTool/plugins/dbg.py:576
+msgid "Select this rule for batch edit actions"
+msgstr "選擇此規則進行批量編輯"
+
+#: COMTool/plugins/dbg.py:579
 msgid "Drag before another find rule to change priority"
 msgstr "拖曳到另一條查找規則前方以調整優先級"
 
-#: COMTool/plugins/dbg.py:414
-msgid "Enable find rule"
-msgstr "啟用查找規則"
+#: COMTool/plugins/dbg.py:581 COMTool/plugins/graph_widgets.py:55
+msgid "Enable"
+msgstr "Enable"
 
-#: COMTool/plugins/dbg.py:417
-msgid "Find text or lambda expression"
-msgstr "查找文字或 lambda 表達式"
+#: COMTool/plugins/dbg.py:582
+msgid "Enable this rule for highlighting, navigation, and scrollbar markers"
+msgstr "啟用此規則用於高亮、跳轉和滾動條標記"
 
-#: COMTool/plugins/dbg.py:418
-msgid ""
-"Plain text searches exact text. Lambda receives text and may return bool,"
-" string, list, or (start, end) ranges."
-msgstr "普通文字按原文匹配。Lambda 接收 text，可回傳布林值、字串、清單或 (start, end) 範圍。"
+#: COMTool/plugins/dbg.py:586
+msgid "Plain text searches exact text. Use advanced settings for regular expressions."
+msgstr "普通文字按原文匹配，正則表達式請在進階設定中啟用。"
 
-#: COMTool/plugins/dbg.py:419
-msgid "Lambda expression"
-msgstr "Lambda 表達式"
-
-#: COMTool/plugins/dbg.py:420
-msgid "Use a lambda like: lambda text: re.findall(r'ERR\\d+', text)"
-msgstr "使用類似的 lambda：lambda text: re.findall(r'ERR\\d+', text)"
-
-#: COMTool/plugins/dbg.py:423
+#: COMTool/plugins/dbg.py:588
 msgid "Set highlight color, right click to clear"
 msgstr "設定高亮顏色，右鍵清除"
 
-#: COMTool/plugins/dbg.py:427
+#: COMTool/plugins/dbg.py:594
 msgid "Delete this find rule"
 msgstr "刪除此查找規則"
 
-#: COMTool/plugins/dbg.py:660
+#: COMTool/plugins/dbg.py:846
 msgid "Send Receive"
 msgstr "收发"
 
-#: COMTool/plugins/dbg.py:676
+#: COMTool/plugins/dbg.py:862
 msgid "Shortcut:"
 msgstr "快捷鍵："
 
-#: COMTool/plugins/dbg.py:677
+#: COMTool/plugins/dbg.py:863
 msgid "Full screen"
 msgstr "全屏"
 
-#: COMTool/plugins/dbg.py:678
+#: COMTool/plugins/dbg.py:864
 msgid "Send data"
 msgstr "發送數據"
 
-#: COMTool/plugins/dbg.py:679
+#: COMTool/plugins/dbg.py:865
 msgid "Clear Send Area"
 msgstr "清除發送區"
 
-#: COMTool/plugins/dbg.py:680
+#: COMTool/plugins/dbg.py:866
 msgid "Clear Receive Area"
 msgstr "清除接收區"
 
-#: COMTool/plugins/dbg.py:751
+#: COMTool/plugins/dbg.py:940
 msgid "Clear RX"
 msgstr "清除RX"
 
-#: COMTool/plugins/dbg.py:752
+#: COMTool/plugins/dbg.py:941
 msgid "Clear receive area"
 msgstr "清除接收区"
 
-#: COMTool/plugins/dbg.py:754
+#: COMTool/plugins/dbg.py:943
 msgid "Clear TX"
 msgstr "清除TX"
 
-#: COMTool/plugins/dbg.py:755
+#: COMTool/plugins/dbg.py:944
 msgid "Clear TX input"
 msgstr "清除TX輸入"
 
-#: COMTool/plugins/dbg.py:763
+#: COMTool/plugins/dbg.py:952
 msgid "Received RX/TX log output"
 msgstr "接收區RX/TX日誌輸出"
 
-#: COMTool/plugins/dbg.py:771
+#: COMTool/plugins/dbg.py:962
 msgid "Input data to send"
 msgstr "輸入要傳送的資料"
 
-#: COMTool/plugins/dbg.py:775
+#: COMTool/plugins/dbg.py:966
 msgid "Find and highlight receive text"
 msgstr "查找並高亮接收文字"
 
-#: COMTool/plugins/dbg.py:778
+#: COMTool/plugins/dbg.py:969
 msgid "Send input data"
 msgstr "傳送輸入框資料"
 
-#: COMTool/plugins/dbg.py:781
+#: COMTool/plugins/dbg.py:972
 msgid "Send history"
 msgstr "傳送歷史"
 
-#: COMTool/plugins/dbg.py:820
+#: COMTool/plugins/dbg.py:1015
 msgid "Receive Settings"
 msgstr "接收設置"
 
-#: COMTool/plugins/dbg.py:821 COMTool/plugins/dbg.py:865
-#: COMTool/plugins/protocol.py:269
+#: COMTool/plugins/dbg.py:1016 COMTool/plugins/dbg.py:1060 COMTool/plugins/protocol.py:269
 msgid "ASCII"
 msgstr "ASCII"
 
-#: COMTool/plugins/dbg.py:822
-msgid ""
-"Show recived data as visible format, select decode method at top right "
-"corner"
+#: COMTool/plugins/dbg.py:1017
+msgid "Show recived data as visible format, select decode method at top right corner"
 msgstr "使用可見字符顯示收到的數據，在右上角選擇解碼的方法"
 
-#: COMTool/plugins/dbg.py:823 COMTool/plugins/dbg.py:866
-#: COMTool/plugins/protocol.py:270
+#: COMTool/plugins/dbg.py:1018 COMTool/plugins/dbg.py:1061 COMTool/plugins/protocol.py:270
 msgid "HEX"
 msgstr "HEX"
 
-#: COMTool/plugins/dbg.py:824
+#: COMTool/plugins/dbg.py:1019
 msgid "Show recived data as hex format"
 msgstr "使用十六進製表示方法顯示收到的數據"
 
-#: COMTool/plugins/dbg.py:826
+#: COMTool/plugins/dbg.py:1021
 msgid ""
 "Auto\n"
 "Linefeed\n"
 "ms"
 msgstr "自動換行"
 
-#: COMTool/plugins/dbg.py:827 COMTool/plugins/dbg.py:830
+#: COMTool/plugins/dbg.py:1022 COMTool/plugins/dbg.py:1025
 msgid "Auto linefeed after interval, unit: ms"
 msgstr "超過這個時間自動換行，單位：ms"
 
-#: COMTool/plugins/dbg.py:833 COMTool/plugins/dbg.py:850
+#: COMTool/plugins/dbg.py:1028 COMTool/plugins/dbg.py:1045
 msgid "Timestamp"
 msgstr "時間戳"
 
-#: COMTool/plugins/dbg.py:834
-msgid ""
-"Add timestamp before received data, will automatically enable auto line "
-"feed"
+#: COMTool/plugins/dbg.py:1029
+msgid "Add timestamp before received data, will automatically enable auto line feed"
 msgstr "在接收的數據前添加時間戳， 會自動使能自動換行"
 
-#: COMTool/plugins/dbg.py:835 COMTool/plugins/protocol.py:244
+#: COMTool/plugins/dbg.py:1030 COMTool/plugins/protocol.py:244
 msgid "Display wrap"
 msgstr "自动换行显示"
 
-#: COMTool/plugins/dbg.py:836 COMTool/plugins/dbg.py:882
-#: COMTool/plugins/protocol.py:279
+#: COMTool/plugins/dbg.py:1031 COMTool/plugins/dbg.py:1077 COMTool/plugins/protocol.py:279
 msgid "Escape"
 msgstr "轉義符"
 
-#: COMTool/plugins/dbg.py:837 COMTool/plugins/dbg.py:883
-#: COMTool/plugins/protocol.py:280
+#: COMTool/plugins/dbg.py:1032 COMTool/plugins/dbg.py:1078 COMTool/plugins/protocol.py:280
 msgid "Enable escape characters support like \\t \\r \\n \\x01 \\001"
 msgstr "使能轉義符支持，比如 \\t \\r \\n \\x01 \\001"
 
-#: COMTool/plugins/dbg.py:838 COMTool/plugins/protocol.py:245
-msgid ""
-"When content in a line is too long, always auto wrap to show, and no "
-"scroll bar"
+#: COMTool/plugins/dbg.py:1033 COMTool/plugins/protocol.py:245
+msgid "When content in a line is too long, always auto wrap to show, and no scroll bar"
 msgstr "当单行内容过长时自动换行显示，不显示横向滚动条"
 
-#: COMTool/plugins/dbg.py:851 COMTool/plugins/dbg.py:963
-#: COMTool/plugins/dbg.py:970 COMTool/plugins/dbg.py:1067
+#: COMTool/plugins/dbg.py:1046 COMTool/plugins/dbg.py:1159 COMTool/plugins/dbg.py:1166
+#: COMTool/plugins/dbg.py:1273
 msgid "Color"
 msgstr "顏色"
 
-#: COMTool/plugins/dbg.py:852
+#: COMTool/plugins/dbg.py:1047
 msgid "Timestamp color in receive area"
 msgstr "接收区时间戳颜色"
 
-#: COMTool/plugins/dbg.py:853
+#: COMTool/plugins/dbg.py:1048
 msgid "Newline after timestamp"
 msgstr "时间戳后换行"
 
-#: COMTool/plugins/dbg.py:854
+#: COMTool/plugins/dbg.py:1049
 msgid "Display received data on the next line after timestamp"
 msgstr "在时间戳下一行显示接收数据"
 
-#: COMTool/plugins/dbg.py:856
+#: COMTool/plugins/dbg.py:1051
 msgid "Timestamp color"
 msgstr "时间戳颜色"
 
-#: COMTool/plugins/dbg.py:864
+#: COMTool/plugins/dbg.py:1059
 msgid "Send Settings"
 msgstr "發送設置"
 
-#: COMTool/plugins/dbg.py:867 COMTool/plugins/protocol.py:271
-msgid ""
-"Get send data as visible format, select encoding method at top right "
-"corner"
+#: COMTool/plugins/dbg.py:1062 COMTool/plugins/protocol.py:271
+msgid "Get send data as visible format, select encoding method at top right corner"
 msgstr "以可見字符的方式獲取將要發送的數據，在右上角選擇編碼的方法"
 
-#: COMTool/plugins/dbg.py:868 COMTool/plugins/protocol.py:272
+#: COMTool/plugins/dbg.py:1063 COMTool/plugins/protocol.py:272
 msgid "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
 msgstr "以十六進制的格式獲取將要發送的數據，比如 十六進制的'31 32 33' 和 ascii編碼的 '123' 等效"
 
-#: COMTool/plugins/dbg.py:870
+#: COMTool/plugins/dbg.py:1065
 msgid ""
 "Timed Send\n"
 "ms"
 msgstr "定時發送"
 
-#: COMTool/plugins/dbg.py:871 COMTool/plugins/dbg.py:874
+#: COMTool/plugins/dbg.py:1066 COMTool/plugins/dbg.py:1069
 msgid "Timed send, unit: ms"
 msgstr "定時發送，單位：ms"
 
-#: COMTool/plugins/dbg.py:877 COMTool/plugins/protocol.py:274
+#: COMTool/plugins/dbg.py:1072 COMTool/plugins/protocol.py:274
 msgid "<CRLF>"
 msgstr "<CRLF>"
 
-#: COMTool/plugins/dbg.py:878 COMTool/plugins/protocol.py:275
+#: COMTool/plugins/dbg.py:1073 COMTool/plugins/protocol.py:275
 msgid "Select to send \\r\\n instead of \\n"
 msgstr "選中發出通知\\r\\n不是\\n"
 
-#: COMTool/plugins/dbg.py:881 COMTool/plugins/protocol.py:278
+#: COMTool/plugins/dbg.py:1076 COMTool/plugins/protocol.py:278
 msgid "Record send data"
 msgstr "記錄發送的數據"
 
-#: COMTool/plugins/dbg.py:884
+#: COMTool/plugins/dbg.py:1079
 msgid "Newline"
 msgstr "换行"
 
-#: COMTool/plugins/dbg.py:885
+#: COMTool/plugins/dbg.py:1080
 msgid "Auto add new line when send"
 msgstr "发送时自动追加换行"
 
-#: COMTool/plugins/dbg.py:916
+#: COMTool/plugins/dbg.py:1111
 msgid "Auto line feed value error, must be integer"
 msgstr "自動換行值錯誤，必須是整數"
 
-#: COMTool/plugins/dbg.py:917
+#: COMTool/plugins/dbg.py:1112
 msgid "Timed send value error, must be integer"
 msgstr "定時發送值錯誤，必須是整數"
 
-#: COMTool/plugins/dbg.py:955
+#: COMTool/plugins/dbg.py:1151
 msgid "Default font"
 msgstr "預設字型"
 
-#: COMTool/plugins/dbg.py:959
+#: COMTool/plugins/dbg.py:1155
 msgid "Font family for received RX text"
 msgstr "接收區RX文字字型"
 
-#: COMTool/plugins/dbg.py:962
+#: COMTool/plugins/dbg.py:1158
 msgid "Font size for received RX text"
 msgstr "接收區RX文字字級"
 
-#: COMTool/plugins/dbg.py:964
+#: COMTool/plugins/dbg.py:1160
 msgid "Color for received RX text in the receive area"
 msgstr "接收区RX文本颜色"
 
-#: COMTool/plugins/dbg.py:966
+#: COMTool/plugins/dbg.py:1162
 msgid "Font family for TX input text"
 msgstr "TX輸入文字字型"
 
-#: COMTool/plugins/dbg.py:969
+#: COMTool/plugins/dbg.py:1165
 msgid "Font size for TX input text"
 msgstr "TX輸入文字字級"
 
-#: COMTool/plugins/dbg.py:971
+#: COMTool/plugins/dbg.py:1167
 msgid "Color for TX input text and recorded TX lines"
 msgstr "TX输入文本和记录的TX行颜色"
 
-#: COMTool/plugins/dbg.py:972
+#: COMTool/plugins/dbg.py:1168
 msgid "RX font"
 msgstr "RX字体"
 
-#: COMTool/plugins/dbg.py:974
+#: COMTool/plugins/dbg.py:1170
 msgid "RX size"
 msgstr "RX字号"
 
-#: COMTool/plugins/dbg.py:976
+#: COMTool/plugins/dbg.py:1172
 msgid "RX color"
 msgstr "RX颜色"
 
-#: COMTool/plugins/dbg.py:978
+#: COMTool/plugins/dbg.py:1174
 msgid "TX font"
 msgstr "TX字体"
 
-#: COMTool/plugins/dbg.py:980
+#: COMTool/plugins/dbg.py:1176
 msgid "TX size"
 msgstr "TX字号"
 
-#: COMTool/plugins/dbg.py:982
+#: COMTool/plugins/dbg.py:1178
 msgid "TX color"
 msgstr "TX颜色"
 
-#: COMTool/plugins/dbg.py:987
+#: COMTool/plugins/dbg.py:1183
 msgid "Path of the file to send"
 msgstr "要发送的文件路径"
 
-#: COMTool/plugins/dbg.py:988
+#: COMTool/plugins/dbg.py:1184
 msgid "Open File"
 msgstr "打开文件"
 
-#: COMTool/plugins/dbg.py:989
+#: COMTool/plugins/dbg.py:1185
 msgid "Select a file to send"
 msgstr "选择要发送的文件"
 
-#: COMTool/plugins/dbg.py:990 COMTool/plugins/dbg.py:994
+#: COMTool/plugins/dbg.py:1186 COMTool/plugins/dbg.py:1190
 msgid "Send File"
 msgstr "发送文件"
 
-#: COMTool/plugins/dbg.py:991
+#: COMTool/plugins/dbg.py:1187
 msgid "Send the selected file over the current connection"
 msgstr "通过当前连接发送所选文件"
 
-#: COMTool/plugins/dbg.py:992
+#: COMTool/plugins/dbg.py:1188
 msgid "Clear TX History"
 msgstr "清除TX歷史"
 
-#: COMTool/plugins/dbg.py:993
+#: COMTool/plugins/dbg.py:1189
 msgid "Clear TX send history"
 msgstr "清除TX傳送歷史"
 
-#: COMTool/plugins/dbg.py:1001
+#: COMTool/plugins/dbg.py:1197
 msgid "Save log"
 msgstr "保存日志"
 
-#: COMTool/plugins/dbg.py:1005
+#: COMTool/plugins/dbg.py:1201
 msgid "Enable saving received and recorded sent data to a log file"
 msgstr "将接收数据和记录的发送数据保存到日志文件"
 
-#: COMTool/plugins/dbg.py:1007
+#: COMTool/plugins/dbg.py:1203
 msgid "Log file path"
 msgstr "日志文件路径"
 
-#: COMTool/plugins/dbg.py:1008
+#: COMTool/plugins/dbg.py:1204
 msgid "Log path"
 msgstr "日志路径"
 
-#: COMTool/plugins/dbg.py:1009
+#: COMTool/plugins/dbg.py:1205
 msgid "Select log file path"
 msgstr "选择日志文件路径"
 
-#: COMTool/plugins/dbg.py:1010
+#: COMTool/plugins/dbg.py:1206
 msgid "Auto new file"
 msgstr "自動新建文件"
 
-#: COMTool/plugins/dbg.py:1011
+#: COMTool/plugins/dbg.py:1207
 msgid "When start a new connection, will automatically create a new log file"
 msgstr "当開始一個新的連接時，會自動創建一個新的日誌文件"
 
-#: COMTool/plugins/dbg.py:1012
+#: COMTool/plugins/dbg.py:1208
 msgid "Timed log"
 msgstr "定时日志"
 
-#: COMTool/plugins/dbg.py:1013
+#: COMTool/plugins/dbg.py:1209
 msgid "Stop saving log automatically after the configured duration"
 msgstr "达到设置时长后自动停止保存日志"
 
-#: COMTool/plugins/dbg.py:1018
+#: COMTool/plugins/dbg.py:1214
 msgid "Timed log duration, format: HH:MM:SS"
 msgstr "定时日志时长，格式：HH:MM:SS"
 
-#: COMTool/plugins/dbg.py:1019
+#: COMTool/plugins/dbg.py:1215
 msgid "Log: 00:00:00 / 0 B"
 msgstr "日志：00:00:00 / 0 B"
 
-#: COMTool/plugins/dbg.py:1020
+#: COMTool/plugins/dbg.py:1216
 msgid "Current log recording duration and file size"
 msgstr "当前日志记录时长和文件大小"
 
-#: COMTool/plugins/dbg.py:1054
+#: COMTool/plugins/dbg.py:1221
+msgid "RX buffer size, only editable while the connection is closed"
+msgstr "RX緩衝區大小，僅在連線關閉時可修改"
+
+#: COMTool/plugins/dbg.py:1234
+msgid "RX buffer size"
+msgstr "RX緩衝區大小"
+
+#: COMTool/plugins/dbg.py:1260
 msgid "Import"
 msgstr "匯入"
 
-#: COMTool/plugins/dbg.py:1055
+#: COMTool/plugins/dbg.py:1261
 msgid "Export"
 msgstr "匯出"
 
-#: COMTool/plugins/dbg.py:1056
+#: COMTool/plugins/dbg.py:1262
 msgid "Add a custom send item"
 msgstr "添加自定义发送词条"
 
-#: COMTool/plugins/dbg.py:1057
+#: COMTool/plugins/dbg.py:1263
 msgid "Import custom send items from JSON"
 msgstr "从JSON导入自定义发送词条"
 
-#: COMTool/plugins/dbg.py:1058
+#: COMTool/plugins/dbg.py:1264
 msgid "Export custom send items to JSON"
 msgstr "将自定义发送词条导出为JSON"
 
-#: COMTool/plugins/dbg.py:1063
+#: COMTool/plugins/dbg.py:1269
 msgid "Search remark or command"
 msgstr "搜索标记或指令"
 
-#: COMTool/plugins/dbg.py:1064
+#: COMTool/plugins/dbg.py:1270
 msgid "Search custom send items by remark or command"
 msgstr "按标记或指令搜索自定义发送词条"
 
-#: COMTool/plugins/dbg.py:1066
+#: COMTool/plugins/dbg.py:1271
+msgid "All"
+msgstr "全选"
+
+#: COMTool/plugins/dbg.py:1272
 msgid "Select visible custom send items"
 msgstr "选择当前可见的自定义发送词条"
 
-#: COMTool/plugins/dbg.py:1068
+#: COMTool/plugins/dbg.py:1274
 msgid "Icon"
 msgstr "图标"
 
-#: COMTool/plugins/dbg.py:1069 COMTool/plugins/dbg.py:1846
-#: COMTool/plugins/dbg.py:2043 COMTool/plugins/protocol.py:257
+#: COMTool/plugins/dbg.py:1275 COMTool/plugins/dbg.py:2148 COMTool/plugins/dbg.py:2345
+#: COMTool/plugins/protocol.py:257
 msgid "Delete"
 msgstr "删除"
 
-#: COMTool/plugins/dbg.py:1070
+#: COMTool/plugins/dbg.py:1276
 msgid "Set color for selected custom send items"
 msgstr "设置所选自定义发送词条颜色"
 
-#: COMTool/plugins/dbg.py:1071
+#: COMTool/plugins/dbg.py:1277
 msgid "Set icon for selected custom send items"
 msgstr "设置所选自定义发送词条图标"
 
-#: COMTool/plugins/dbg.py:1072
+#: COMTool/plugins/dbg.py:1278
 msgid "Delete selected custom send items"
 msgstr "删除所选自定义发送词条"
 
-#: COMTool/plugins/dbg.py:1079
+#: COMTool/plugins/dbg.py:1285
 msgid "Cutom send"
 msgstr "自訂傳送"
 
-#: COMTool/plugins/dbg.py:1248
-msgid "Lambda expression error"
-msgstr "Lambda 表達式錯誤"
+#: COMTool/plugins/dbg.py:1549 COMTool/plugins/dbg.py:1569
+msgid "Find"
+msgstr "查找"
 
-#: COMTool/plugins/dbg.py:1268
-msgid "Lambda expression must return a callable"
-msgstr "Lambda 表達式必須回傳可呼叫物件"
+#: COMTool/plugins/dbg.py:1549
+msgid "No match found"
+msgstr "未找到符合項"
 
-#: COMTool/plugins/dbg.py:1484
+#: COMTool/plugins/dbg.py:1569
+msgid "No more matches"
+msgstr "沒有更多符合項"
+
+#: COMTool/plugins/dbg.py:1784
 msgid "linefeed always on if timestamp or record send is on"
 msgstr "當時間戳和發送記錄打開是，必須將自動換行也打開"
 
-#: COMTool/plugins/dbg.py:1532
+#: COMTool/plugins/dbg.py:1832
 msgid "History cleared!"
 msgstr "歷史已清除！"
 
-#: COMTool/plugins/dbg.py:1535
+#: COMTool/plugins/dbg.py:1835
 msgid "Confirm clear"
 msgstr "確認清除"
 
-#: COMTool/plugins/dbg.py:1539
+#: COMTool/plugins/dbg.py:1839
 msgid "Clear receive area?"
 msgstr "確定清除接收區嗎？"
 
-#: COMTool/plugins/dbg.py:1543
+#: COMTool/plugins/dbg.py:1843
 msgid "Clear send input?"
 msgstr "確定清除傳送輸入嗎？"
 
-#: COMTool/plugins/dbg.py:1547
+#: COMTool/plugins/dbg.py:1847
 msgid "Clear TX history?"
 msgstr "確定清除TX歷史記錄嗎？"
 
-#: COMTool/plugins/dbg.py:1554 COMTool/plugins/graph.py:259
-#: COMTool/plugins/protocol.py:524
+#: COMTool/plugins/dbg.py:1854 COMTool/plugins/graph.py:259 COMTool/plugins/protocol.py:524
 msgid "Send data failed!"
 msgstr "发送数据失敗"
 
-#: COMTool/plugins/dbg.py:1559
+#: COMTool/plugins/dbg.py:1859
 msgid "Send file"
 msgstr "發送文件"
 
-#: COMTool/plugins/dbg.py:1563
+#: COMTool/plugins/dbg.py:1863
 msgid "Send file failed!"
 msgstr "发送文件失敗"
 
-#: COMTool/plugins/dbg.py:1591
+#: COMTool/plugins/dbg.py:1891
 msgid "Timed log duration error, format: HH:MM:SS"
 msgstr "定时日志时长错误，格式：HH:MM:SS"
 
-#: COMTool/plugins/dbg.py:1619
+#: COMTool/plugins/dbg.py:1919
 msgid "Timed log stopped"
 msgstr "定时日志已停止"
 
-#: COMTool/plugins/dbg.py:1669
+#: COMTool/plugins/dbg.py:1969
 msgid "Log"
 msgstr "日志"
 
-#: COMTool/plugins/dbg.py:1692
+#: COMTool/plugins/dbg.py:1992
 msgid "Log file (*.log);;txt file (*.txt);;All Files (*)"
 msgstr "日誌文件 (*.log);;文本文件 (*.txt);;所有文件 (*)"
 
-#: COMTool/plugins/dbg.py:1783
+#: COMTool/plugins/dbg.py:2081
+msgid "Select for batch edit"
+msgstr "选择后进行批量编辑"
+
+#: COMTool/plugins/dbg.py:2085
 msgid "Drag before another item to reorder"
 msgstr "拖拽到另一词条前方以重新排序"
 
-#: COMTool/plugins/dbg.py:1790
+#: COMTool/plugins/dbg.py:2092
 msgid "Click to set button color, right click to clear"
 msgstr "点击设置按钮颜色，右键清除颜色"
 
-#: COMTool/plugins/dbg.py:1796
+#: COMTool/plugins/dbg.py:2098
 msgid "Edit custom send remark and icon"
 msgstr "编辑自定义发送标记和图标"
 
-#: COMTool/plugins/dbg.py:1805
+#: COMTool/plugins/dbg.py:2107
 msgid "Delete this custom send item"
 msgstr "删除此自定义发送词条"
 
-#: COMTool/plugins/dbg.py:1846
+#: COMTool/plugins/dbg.py:2148
 msgid "Delete selected custom send item?"
 msgstr "确定删除所选自定义发送词条吗？"
 
-#: COMTool/plugins/dbg.py:2042
+#: COMTool/plugins/dbg.py:2344
 msgid "Delete selected custom send items?"
 msgstr "确定删除所选自定义发送词条吗？"
 
-#: COMTool/plugins/dbg.py:2145
+#: COMTool/plugins/dbg.py:2447
 msgid "Import custom send"
 msgstr "匯入自訂傳送"
 
-#: COMTool/plugins/dbg.py:2147 COMTool/plugins/dbg.py:2166
+#: COMTool/plugins/dbg.py:2449 COMTool/plugins/dbg.py:2468
 msgid "JSON file (*.json);;All Files (*)"
 msgstr "JSON 文件 (*.json);;所有文件 (*)"
 
-#: COMTool/plugins/dbg.py:2156
+#: COMTool/plugins/dbg.py:2458
 msgid "Custom send file must be a JSON list"
 msgstr "自定义发送文件必须是JSON数组"
 
-#: COMTool/plugins/dbg.py:2158
+#: COMTool/plugins/dbg.py:2460
 msgid "Custom send items imported!"
 msgstr "自定义发送词条已导入！"
 
-#: COMTool/plugins/dbg.py:2160
+#: COMTool/plugins/dbg.py:2462
 msgid "Import custom send failed!"
 msgstr "导入自定义发送失败！"
 
-#: COMTool/plugins/dbg.py:2164
+#: COMTool/plugins/dbg.py:2466
 msgid "Export custom send"
 msgstr "匯出自訂傳送"
 
-#: COMTool/plugins/dbg.py:2172
+#: COMTool/plugins/dbg.py:2474
 msgid "Custom send items exported!"
 msgstr "自定义发送词条已导出！"
 
-#: COMTool/plugins/dbg.py:2174
+#: COMTool/plugins/dbg.py:2476
 msgid "Export custom send failed!"
 msgstr "导出自定义发送失败！"
 
-#: COMTool/plugins/dbg.py:2184
+#: COMTool/plugins/dbg.py:2486
 msgid ""
 "File path error\n"
 "path"
@@ -1123,23 +1197,23 @@ msgstr ""
 "文件路徑錯誤\n"
 "路徑"
 
-#: COMTool/plugins/dbg.py:2187
+#: COMTool/plugins/dbg.py:2489
 msgid "Connect first please"
 msgstr "請先連接"
 
-#: COMTool/plugins/dbg.py:2190
+#: COMTool/plugins/dbg.py:2492
 msgid "Sending file"
 msgstr "發送文件中"
 
-#: COMTool/plugins/dbg.py:2207
+#: COMTool/plugins/dbg.py:2509
 msgid "Time format error"
 msgstr "時間格式錯誤"
 
-#: COMTool/plugins/dbg.py:2274
+#: COMTool/plugins/dbg.py:2576
 msgid "Send Error"
 msgstr "發送出錯"
 
-#: COMTool/plugins/dbg.py:2282
+#: COMTool/plugins/dbg.py:2584
 msgid "get data error"
 msgstr "獲取數據出錯"
 
@@ -1172,12 +1246,8 @@ msgid "\"$\" means start of frame, end with \"\\n\" \",\" means separator"
 msgstr "\"$\" means start of frame, end with \"\\n\" \",\" means separator"
 
 #: COMTool/plugins/graph.py:73
-msgid ""
-"checksum is optional, checksum is sum of all bytes in frame except "
-"\",checksum\"."
-msgstr ""
-"checksum is optional, checksum is sum of all bytes in frame except "
-"\",checksum\"."
+msgid "checksum is optional, checksum is sum of all bytes in frame except \",checksum\"."
+msgstr "checksum is optional, checksum is sum of all bytes in frame except \",checksum\"."
 
 #: COMTool/plugins/graph.py:74
 msgid "[x] is optional"
@@ -1199,8 +1269,7 @@ msgstr "Double click to add a graph widget"
 msgid "Clear count"
 msgstr "Clear count"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:297
-#: COMTool/plugins/graph_widgets.py:51
+#: COMTool/plugins/graph_widget_metasenselite.py:297 COMTool/plugins/graph_widgets.py:51
 msgid "Remove"
 msgstr "Remove"
 
@@ -1208,15 +1277,12 @@ msgstr "Remove"
 msgid "Capture"
 msgstr "捕获"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:304
-#: COMTool/plugins/graph_widgets.py:58
+#: COMTool/plugins/graph_widget_metasenselite.py:304 COMTool/plugins/graph_widgets.py:58
 msgid "Header:"
 msgstr "Header:"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:306
-#: COMTool/plugins/graph_widget_metasenselite.py:578
-#: COMTool/plugins/graph_widget_metasenselite.py:580
-#: COMTool/plugins/graph_widget_metasenselite.py:589
+#: COMTool/plugins/graph_widget_metasenselite.py:306 COMTool/plugins/graph_widget_metasenselite.py:578
+#: COMTool/plugins/graph_widget_metasenselite.py:580 COMTool/plugins/graph_widget_metasenselite.py:589
 #: COMTool/plugins/graph_widgets.py:60 COMTool/plugins/graph_widgets.py:154
 #: COMTool/plugins/graph_widgets.py:156 COMTool/plugins/graph_widgets.py:165
 msgid "Set"
@@ -1230,8 +1296,7 @@ msgstr "RawCMD:"
 msgid "AT+ISP=0\\r"
 msgstr "AT+ISP=0\\r"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:310
-#: COMTool/plugins/myplugin.py:44
+#: COMTool/plugins/graph_widget_metasenselite.py:310 COMTool/plugins/myplugin.py:44
 #: COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:52
 msgid "Send"
 msgstr "發送"
@@ -1270,20 +1335,18 @@ msgstr "  Ev:AE   "
 
 #: COMTool/plugins/graph_widget_metasenselite.py:357
 msgid ""
-"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode"
-" + 1Byte Sensor Temp + 1Byte Driver Temp\n"
-" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res "
-"rows + 1Byte res cols\n"
+"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode + 1Byte Sensor Temp + "
+"1Byte Driver Temp\n"
+" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res rows + 1Byte res cols\n"
 " 2Byte Frame ID + 1 Byte ISP version + 1 Byte reserved3\n"
 " frame data\n"
 " 1Byte checksum + 1Byte tail\n"
 " length count from Byte4 to the Byte before Checksum\n"
 "Protocol example code see help"
 msgstr ""
-"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode"
-" + 1Byte Sensor Temp + 1Byte Driver Temp\n"
-" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res "
-"rows + 1Byte res cols\n"
+"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode + 1Byte Sensor Temp + "
+"1Byte Driver Temp\n"
+" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res rows + 1Byte res cols\n"
 " 2Byte Frame ID + 1 Byte ISP version + 1 Byte reserved3\n"
 " frame data\n"
 " 1Byte checksum + 1Byte tail\n"
@@ -1310,8 +1373,7 @@ msgstr "X:"
 msgid "Y:"
 msgstr "Y:"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:591
-#: COMTool/plugins/graph_widgets.py:167
+#: COMTool/plugins/graph_widget_metasenselite.py:591 COMTool/plugins/graph_widgets.py:167
 msgid "Format error"
 msgstr "格式錯誤"
 
@@ -1323,38 +1385,31 @@ msgstr "Clear"
 msgid "Range:"
 msgstr "范围："
 
-#: COMTool/plugins/graph_widgets.py:55
-msgid "Enable"
-msgstr "Enable"
-
 #: COMTool/plugins/graph_widgets.py:57
 msgid "Binary Protocol"
 msgstr "Binary Protocol"
 
 #: COMTool/plugins/graph_widgets.py:61
 msgid ""
-"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes "
-"y(double) + 1Byte sum\n"
+"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
 "Protocol example code see help"
 msgstr ""
-"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes "
-"y(double) + 1Byte sum\n"
+"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
 "Protocol example code see help"
 
 #: COMTool/plugins/graph_widgets.py:65
 msgid ""
-"Check this if you want to use binary protocol, or use ASCII protocol(e.g."
-" \"$data1,10.0,200.0\\n\"), more see help button on the top of window"
+"Check this if you want to use binary protocol, or use ASCII protocol(e.g. "
+"\"$data1,10.0,200.0\\n\"), more see help button on the top of window"
 msgstr ""
-"Check this if you want to use binary protocol, or use ASCII protocol(e.g."
-" \"$data1,10.0,200.0\\n\"), more see help button on the top of window"
+"Check this if you want to use binary protocol, or use ASCII protocol(e.g. "
+"\"$data1,10.0,200.0\\n\"), more see help button on the top of window"
 
 #: COMTool/plugins/myplugin.py:22
 msgid "my plugin"
 msgstr "my plugin"
 
-#: COMTool/plugins/myplugin.py:62
-#: COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
+#: COMTool/plugins/myplugin.py:62 COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
 msgid "Input data first please"
 msgstr "請先輸入數據"
 
@@ -1382,9 +1437,8 @@ msgstr "自定义，输入名称"
 msgid "Load defaults"
 msgstr "加载默认值"
 
-#: COMTool/plugins/protocol.py:255 COMTool/plugins/protocol.py:575
-#: COMTool/plugins/protocol.py:599 COMTool/plugins/protocol.py:602
-#: COMTool/plugins/protocol.py:622
+#: COMTool/plugins/protocol.py:255 COMTool/plugins/protocol.py:575 COMTool/plugins/protocol.py:599
+#: COMTool/plugins/protocol.py:602 COMTool/plugins/protocol.py:622
 msgid "Save"
 msgstr "保存"
 
@@ -1496,18 +1550,14 @@ msgstr "my plugin2"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "Protocol: header + 1Byte name length "
-#~ "+ name + 8Bytes x(double) + 8Bytes"
-#~ " y(double) + 1Byte sum\n"
+#~ "Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
 #~ "If you use python, can pack frame by:\n"
 #~ "from COMTool.plugin import gragh_protocol\n"
 #~ "frame = gragh_protocol.plot_pack(name, x, y)"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "Protocol: header + 1Byte name length "
-#~ "+ name + 8Bytes x(double) + 8Bytes"
-#~ " y(double) + 1Byte sum\n"
+#~ "Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
 #~ "If you use python, can pack frame by:\n"
 #~ msgstr ""
 
@@ -1564,3 +1614,21 @@ msgstr "my plugin2"
 
 #~ msgid "no color"
 #~ msgstr "無顏色"
+
+#~ msgid "Enable find rule"
+#~ msgstr "啟用查找規則"
+
+#~ msgid ""
+#~ "Plain text searches exact text. Lambda receives text"
+#~ " and may return bool, string, list, or (start,"
+#~ " end) ranges."
+#~ msgstr "普通文字按原文匹配。Lambda 接收 text，可回傳布林值、字串、清單或 (start, end) 範圍。"
+
+#~ msgid "Use a lambda like: lambda text: re.findall(r'ERR\\d+', text)"
+#~ msgstr "使用類似的 lambda：lambda text: re.findall(r'ERR\\d+', text)"
+
+#~ msgid "Lambda expression error"
+#~ msgstr "Lambda 表達式錯誤"
+
+#~ msgid "Lambda expression must return a callable"
+#~ msgstr "Lambda 表達式必須回傳可呼叫物件"

@@ -539,6 +539,16 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             if _item.widget == self.tabWidget.widget(idx):
                 item = _item
                 break
+        if item is None:
+            return
+        reply = QMessageBox.question(self, _("Save page?"),
+                                     _("Save this page before closing it?"),
+                                     QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel,
+                                     QMessageBox.Yes)
+        if reply == QMessageBox.Cancel:
+            return
+        if reply == QMessageBox.Yes and not item.selectSharefile():
+            return
         self.tabWidget.removeTab(idx)
         for _item in self.config["items"]:
             if _item["name"] == item.name:

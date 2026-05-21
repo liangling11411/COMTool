@@ -29,8 +29,8 @@ from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QMimeData, QTimer
 from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSpinBox, QSizePolicy,
-                             QColorDialog, QFontComboBox, QDialog)
-from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QDrag, QTextOption, QPalette, QKeySequence
+                             QColorDialog, QFontComboBox, QDialog, QScrollBar)
+from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QDrag, QTextOption, QPalette, QKeySequence, QPainter
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
 import os, threading, time, re, json
 from datetime import datetime
@@ -186,6 +186,31 @@ class WrapRemarkButton(QPushButton):
         lineCount = max(1, len(lines))
         self.setMinimumHeight(max(parameters.customSendItemHeight, metrics.lineSpacing() * lineCount + 14))
 
+class FindMarkerScrollBar(QScrollBar):
+    def __init__(self, orientation, parent=None):
+        super().__init__(orientation, parent)
+        self.markers = []
+
+    def setMarkers(self, markers):
+        self.markers = markers[:2000]
+        self.update()
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        if not self.markers or self.orientation() != Qt.Vertical:
+            return
+        painter = QPainter(self)
+        height = max(1, self.height() - 4)
+        width = self.width()
+        for ratio, color in self.markers:
+            qcolor = QColor(color)
+            if not qcolor.isValid():
+                continue
+            painter.setPen(qcolor)
+            y = 2 + int(max(0, min(1, ratio)) * height)
+            painter.drawLine(1, y, max(1, width - 2), y)
+        painter.end()
+
 class ReceiveFindItemWidget(QWidget):
     MIME_TYPE = "application/x-comtool-receive-find-index"
 
@@ -275,6 +300,146 @@ class ReceiveFindColorButton(QPushButton):
         super().mouseReleaseEvent(event)
 
 
+class ReceiveFindAdvancedDialog(QDialog):
+    def __init__(self, dialog, parent=None):
+        super().__init__(parent)
+        self.dialog = dialog
+        self.idx = -1
+        self.item = None
+        self.loading = False
+        self.setWindowTitle(_("Advanced find settings"))
+        self.resize(520, 320)
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        self.patternLabel = QLabel("")
+        self.patternLabel.setWordWrap(True)
+        layout.addWidget(self.patternLabel)
+
+        actionLayout = QHBoxLayout()
+        self.findNextButton = QPushButton(_("Find next"))
+        self.findNextButton.setToolTip(_("Jump to the next match for this rule"))
+        self.countButton = QPushButton(_("Count"))
+        self.countButton.setToolTip(_("Count matches for this rule in the receive buffer"))
+        self.countLabel = QLabel("")
+        actionLayout.addWidget(self.findNextButton)
+        actionLayout.addWidget(self.countButton)
+        actionLayout.addWidget(self.countLabel, 1)
+        layout.addLayout(actionLayout)
+
+        optionGroup = QGroupBox(_("Find options"))
+        optionLayout = QGridLayout()
+        optionGroup.setLayout(optionLayout)
+        self.reverseCheck = QCheckBox(_("Reverse find"))
+        self.reverseCheck.setToolTip(_("Search upward when jumping to the next match"))
+        self.wholeWordCheck = QCheckBox(_("Whole word"))
+        self.wholeWordCheck.setToolTip(_("Match only whole words"))
+        self.caseSensitiveCheck = QCheckBox(_("Case sensitive"))
+        self.caseSensitiveCheck.setToolTip(_("Match uppercase and lowercase exactly"))
+        self.wrapCheck = QCheckBox(_("Wrap around"))
+        self.wrapCheck.setToolTip(_("Continue from the other end when no match is found"))
+        self.regexCheck = QCheckBox(_("Regular expression"))
+        self.regexCheck.setToolTip(_("Treat the find text as a Python regular expression"))
+        self.dotAllCheck = QCheckBox(_("Dot matches newline"))
+        self.dotAllCheck.setToolTip(_("Let '.' in regular expressions match line breaks"))
+        optionLayout.addWidget(self.reverseCheck, 0, 0, 1, 1)
+        optionLayout.addWidget(self.wholeWordCheck, 0, 1, 1, 1)
+        optionLayout.addWidget(self.caseSensitiveCheck, 1, 0, 1, 1)
+        optionLayout.addWidget(self.wrapCheck, 1, 1, 1, 1)
+        optionLayout.addWidget(self.regexCheck, 2, 0, 1, 1)
+        optionLayout.addWidget(self.dotAllCheck, 2, 1, 1, 1)
+        layout.addWidget(optionGroup)
+
+        bottomLayout = QHBoxLayout()
+        bottomLayout.addStretch(1)
+        self.closeButton = QPushButton(_("Close"))
+        bottomLayout.addWidget(self.closeButton)
+        layout.addLayout(bottomLayout)
+
+        self.findNextButton.clicked.connect(self.findNext)
+        self.countButton.clicked.connect(self.countMatches)
+        self.closeButton.clicked.connect(self.close)
+        for checkbox in [
+            self.reverseCheck,
+            self.wholeWordCheck,
+            self.caseSensitiveCheck,
+            self.wrapCheck,
+            self.regexCheck,
+            self.dotAllCheck
+        ]:
+            checkbox.clicked.connect(self.onChanged)
+        self.regexCheck.clicked.connect(self.updateRegexOptions)
+
+    def setRule(self, idx, item):
+        self.idx = idx
+        self.item = item
+        self.loading = True
+        if idx < 0 or idx >= len(self.dialog.plugin.config["receiveFindRules"]):
+            self.patternLabel.setText(_("No find rule selected"))
+            for obj in [
+                self.findNextButton,
+                self.countButton,
+                self.reverseCheck,
+                self.wholeWordCheck,
+                self.caseSensitiveCheck,
+                self.wrapCheck,
+                self.regexCheck,
+                self.dotAllCheck
+            ]:
+                obj.setEnabled(False)
+            self.loading = False
+            return
+        for obj in [
+            self.findNextButton,
+            self.countButton,
+            self.reverseCheck,
+            self.wholeWordCheck,
+            self.caseSensitiveCheck,
+            self.wrapCheck,
+            self.regexCheck
+        ]:
+            obj.setEnabled(True)
+        rule = self.dialog.plugin.normalizeReceiveFindRule(self.dialog.plugin.config["receiveFindRules"][idx])
+        self.patternLabel.setText(_("Find text") + ": " + (rule["pattern"] or _("Empty")))
+        self.reverseCheck.setChecked(rule["reverse"])
+        self.wholeWordCheck.setChecked(rule["wholeWord"])
+        self.caseSensitiveCheck.setChecked(rule["caseSensitive"])
+        self.wrapCheck.setChecked(rule["wrapFind"])
+        self.regexCheck.setChecked(rule["isRegex"])
+        self.dotAllCheck.setChecked(rule["dotMatchesNewline"])
+        self.countLabel.setText("")
+        self.updateRegexOptions()
+        self.loading = False
+
+    def currentValues(self):
+        return {
+            "reverse": self.reverseCheck.isChecked(),
+            "wholeWord": self.wholeWordCheck.isChecked(),
+            "caseSensitive": self.caseSensitiveCheck.isChecked(),
+            "wrapFind": self.wrapCheck.isChecked(),
+            "isRegex": self.regexCheck.isChecked(),
+            "dotMatchesNewline": self.dotAllCheck.isChecked()
+        }
+
+    def updateRegexOptions(self):
+        self.dotAllCheck.setEnabled(self.regexCheck.isChecked())
+
+    def onChanged(self):
+        if self.loading:
+            return
+        self.dialog.updateRuleAdvanced(self.idx, self.item, self.currentValues())
+
+    def findNext(self):
+        self.onChanged()
+        self.dialog.plugin.jumpToNextReceiveFindRule(self.idx)
+
+    def countMatches(self):
+        self.onChanged()
+        count = self.dialog.plugin.countReceiveFindRuleMatches(self.idx)
+        self.countLabel.setText(_("Matches") + ": {}".format(count))
+
+
 class ReceiveFindDialog(QDialog):
     def __init__(self, plugin, parent=None):
         super().__init__(parent)
@@ -282,6 +447,7 @@ class ReceiveFindDialog(QDialog):
         self.loading = False
         self.currentColor = "#fff176"
         self.dropTarget = None
+        self.advancedDialog = None
         self.setWindowTitle(_("Find in receive area"))
         self.resize(760, 520)
 
@@ -291,8 +457,8 @@ class ReceiveFindDialog(QDialog):
         layout.addWidget(QLabel(_("Find rules (top rules have higher priority)")))
 
         batchLayout = QHBoxLayout()
-        self.selectAll = QCheckBox(_("All"))
-        self.selectAll.setToolTip(_("Select all find rules"))
+        self.selectAll = QCheckBox(_("Select all"))
+        self.selectAll.setToolTip(_("Select all find rules for batch actions"))
         self.colorButton = QPushButton(_("Highlight color"))
         self.colorButton.setToolTip(_("Choose highlight color for new rules or selected rules"))
         self.updateColorButton()
@@ -384,6 +550,8 @@ class ReceiveFindDialog(QDialog):
 
     def refreshRules(self, selectIndexes=None):
         selectIndexes = set(selectIndexes or [])
+        if self.advancedDialog is not None and self.advancedDialog.isVisible():
+            self.advancedDialog.close()
         self.loading = True
         self.clearRuleWidgets()
         self.plugin.config["receiveFindRules"] = [
@@ -404,24 +572,23 @@ class ReceiveFindDialog(QDialog):
         layout.setContentsMargins(2,2,2,2)
         item.setLayout(layout)
 
-        select = QCheckBox()
-        select.setToolTip(_("Select for batch edit"))
+        select = QCheckBox(_("Select"))
+        select.setToolTip(_("Select this rule for batch edit actions"))
         dragHandle = ReceiveFindDragHandle(item)
         dragHandle.setProperty("class", "remark")
         dragHandle.setToolTip(_("Drag before another find rule to change priority"))
         utils_ui.setButtonIcon(dragHandle, "fa.bars")
-        enabled = QCheckBox()
-        enabled.setToolTip(_("Enable find rule"))
+        enabled = QCheckBox(_("Enable"))
+        enabled.setToolTip(_("Enable this rule for highlighting, navigation, and scrollbar markers"))
         enabled.setChecked(rule["enabled"])
         pattern = QLineEdit(rule["pattern"])
-        pattern.setPlaceholderText(_("Find text or lambda expression"))
-        pattern.setToolTip(_("Plain text searches exact text. Lambda receives text and may return bool, string, list, or (start, end) ranges."))
-        lambdaCheck = QCheckBox(_("Lambda expression"))
-        lambdaCheck.setToolTip(_("Use a lambda like: lambda text: re.findall(r'ERR\\d+', text)"))
-        lambdaCheck.setChecked(rule["isLambda"])
+        pattern.setPlaceholderText(_("Find text"))
+        pattern.setToolTip(_("Plain text searches exact text. Use advanced settings for regular expressions."))
         colorButton = ReceiveFindColorButton(self, item)
         colorButton.setToolTip(_("Set highlight color, right click to clear"))
         self.applyRuleColorButton(colorButton, rule["color"])
+        advancedButton = QPushButton("...")
+        advancedButton.setToolTip(_("Advanced find settings"))
         deleteButton = QPushButton("")
         deleteButton.setProperty("class", "deleteBtn")
         deleteButton.setToolTip(_("Delete this find rule"))
@@ -431,14 +598,14 @@ class ReceiveFindDialog(QDialog):
         layout.addWidget(dragHandle)
         layout.addWidget(enabled)
         layout.addWidget(pattern, 1)
-        layout.addWidget(lambdaCheck)
+        layout.addWidget(advancedButton)
         layout.addWidget(colorButton)
         layout.addWidget(deleteButton)
 
         item.selectCheckBox = select
         item.enabledCheckBox = enabled
         item.patternEdit = pattern
-        item.lambdaCheckBox = lambdaCheck
+        item.advancedButton = advancedButton
         item.colorButton = colorButton
         item.deleteButton = deleteButton
         item.findRuleData = rule
@@ -448,7 +615,7 @@ class ReceiveFindDialog(QDialog):
         select.stateChanged.connect(self.updateActionState)
         enabled.clicked.connect(lambda: self.onRuleWidgetChanged(item))
         pattern.textChanged.connect(lambda: self.onRuleWidgetChanged(item))
-        lambdaCheck.clicked.connect(lambda: self.onRuleWidgetChanged(item))
+        advancedButton.clicked.connect(lambda: self.openAdvancedRule(self.findItemsLayout.indexOf(item), item))
         colorButton.clicked.connect(lambda: self.selectRuleColor(self.findItemsLayout.indexOf(item), item, colorButton))
         deleteButton.clicked.connect(lambda: self.deleteRule(self.findItemsLayout.indexOf(item), item))
         return item
@@ -471,10 +638,29 @@ class ReceiveFindDialog(QDialog):
             return
         self.plugin.config["receiveFindRules"][idx].update({
             "pattern": item.patternEdit.text(),
-            "enabled": item.enabledCheckBox.isChecked(),
-            "isLambda": item.lambdaCheckBox.isChecked()
+            "enabled": item.enabledCheckBox.isChecked()
         })
         item.findRuleData.update(self.plugin.config["receiveFindRules"][idx])
+        if self.advancedDialog is not None and self.advancedDialog.isVisible() and self.advancedDialog.item is item:
+            self.advancedDialog.setRule(idx, item)
+        self.plugin.onReceiveFindRulesChanged()
+
+    def openAdvancedRule(self, idx, item):
+        if idx < 0 or idx >= len(self.plugin.config["receiveFindRules"]):
+            return
+        if self.advancedDialog is None:
+            self.advancedDialog = ReceiveFindAdvancedDialog(self, self)
+        self.advancedDialog.setRule(idx, item)
+        self.advancedDialog.show()
+        self.advancedDialog.raise_()
+        self.advancedDialog.activateWindow()
+
+    def updateRuleAdvanced(self, idx, item, values):
+        if idx < 0 or idx >= len(self.plugin.config["receiveFindRules"]):
+            return
+        self.plugin.config["receiveFindRules"][idx].update(values)
+        if item is not None and hasattr(item, "findRuleData"):
+            item.findRuleData.update(values)
         self.plugin.onReceiveFindRulesChanged()
 
     def updateActionState(self):
@@ -499,7 +685,7 @@ class ReceiveFindDialog(QDialog):
             "pattern": "",
             "color": self.currentColor,
             "enabled": True,
-            "isLambda": False
+            "isRegex": False
         })
         self.plugin.config["receiveFindRules"].append(rule)
         self.refreshRules({len(self.plugin.config["receiveFindRules"]) - 1})
@@ -723,7 +909,8 @@ class Plugin(Plugin_Base):
             "sendFontColor": "#1976d2",
             "timestampColor": "#6d6d6d",
             "timestampNewline": False,
-            "receiveFindRules": []
+            "receiveFindRules": [],
+            "receiveBufferSizeKB": 4096
         }
         for k in default:
             if not k in self.config:
@@ -744,6 +931,8 @@ class Plugin(Plugin_Base):
         self.logStartTime = None
         self.receiveFindDialog = None
         self.receiveFindRuleErrors = set()
+        self.receiveFindMarkerTimer = None
+        self.currentConnStatus = ConnectionStatus.CLOSED
 
     def ensureMainActionButtons(self):
         if hasattr(self, "clearReceiveButtion") and hasattr(self, "clearSendButtion"):
@@ -765,6 +954,8 @@ class Plugin(Plugin_Base):
             "QTextEdit#receiveArea QScrollBar::handle:vertical { min-height: 48px; }"
             "QTextEdit#receiveArea QScrollBar::handle:horizontal { min-width: 48px; }"
         )
+        self.receiveFindScrollBar = FindMarkerScrollBar(Qt.Vertical, self.receiveArea)
+        self.receiveArea.setVerticalScrollBar(self.receiveFindScrollBar)
         font = QFont(self.config.get("receiveFontFamily", DEFAULT_TEXT_FONT), self.config["receiveFontSize"])
         self.receiveArea.setFont(font)
         self.sendArea = FontSizeTextEdit(self.adjustSendFontSize)
@@ -810,6 +1001,10 @@ class Plugin(Plugin_Base):
         self.clearSendButtion.clicked.connect(self.clearSendInputWithConfirm)
         self.receiveUpdateSignal.connect(self.updateReceivedDataDisplay)
         self.sendHistory.activated.connect(self.onSendHistoryIndexChanged)
+        if self.receiveFindMarkerTimer is None:
+            self.receiveFindMarkerTimer = QTimer(self)
+            self.receiveFindMarkerTimer.setSingleShot(True)
+            self.receiveFindMarkerTimer.timeout.connect(self.updateReceiveFindMarkers)
 
         return self.mainWidget
 
@@ -928,6 +1123,7 @@ class Plugin(Plugin_Base):
         self.clearHistoryButton.clicked.connect(self.clearHistoryWithConfirm)
         self.receiveFontSizeInput.valueChanged.connect(self.changeReceiveFontSize)
         self.sendFontSizeInput.valueChanged.connect(self.changeSendFontSize)
+        self.receiveBufferSizeInput.valueChanged.connect(self.changeReceiveBufferSize)
         self.receiveFontFamilyInput.currentFontChanged.connect(self.changeReceiveFontFamily)
         self.sendFontFamilyInput.currentFontChanged.connect(self.changeSendFontFamily)
         self.receiveFontColorButton.clicked.connect(lambda: self.selectDefaultFontColor("receiveFontColor"))
@@ -1018,6 +1214,11 @@ class Plugin(Plugin_Base):
         self.saveLogDuration.setToolTip(_("Timed log duration, format: HH:MM:SS"))
         self.saveLogStatusLabel = QLabel(_("Log: 00:00:00 / 0 B"))
         self.saveLogStatusLabel.setToolTip(_("Current log recording duration and file size"))
+        self.receiveBufferSizeInput = NoWheelSpinBox()
+        self.receiveBufferSizeInput.setRange(64, 1048576)
+        self.receiveBufferSizeInput.setSingleStep(64)
+        self.receiveBufferSizeInput.setSuffix(" KB")
+        self.receiveBufferSizeInput.setToolTip(_("RX buffer size, only editable while the connection is closed"))
         logFileLayout.addWidget(self.saveLogCheckbox)
         logFileLayout.addWidget(self.logFilePath)
         logFileLayout.addWidget(self.logFileBtn)
@@ -1029,6 +1230,11 @@ class Plugin(Plugin_Base):
         logFileWrapper.addWidget(self.saveLogAutoNew)
         logFileWrapper.addLayout(logTimedLayout)
         logFileWrapper.addWidget(self.saveLogStatusLabel)
+        rxBufferLayout = QHBoxLayout()
+        rxBufferLayout.addWidget(QLabel(_("RX buffer size")))
+        rxBufferLayout.addWidget(self.receiveBufferSizeInput)
+        rxBufferLayout.addStretch(1)
+        logFileWrapper.addLayout(rxBufferLayout)
         self.logFileGroupBox.setLayout(logFileWrapper)
 
         parentLayout.addWidget(self.fontSettingsGroupBox)
@@ -1196,6 +1402,11 @@ class Plugin(Plugin_Base):
         self.sendFontFamilyInput.setCurrentFont(QFont(paramObj["sendFontFamily"]))
         self.receiveFontSizeInput.setValue(paramObj["receiveFontSize"])
         self.sendFontSizeInput.setValue(paramObj["sendFontSize"])
+        try:
+            paramObj["receiveBufferSizeKB"] = int(paramObj["receiveBufferSizeKB"])
+        except Exception:
+            paramObj["receiveBufferSizeKB"] = 4096
+        self.receiveBufferSizeInput.setValue(paramObj["receiveBufferSizeKB"])
         self.updateDefaultFontColorButton(self.receiveFontColorButton, paramObj["receiveFontColor"])
         self.updateDefaultFontColorButton(self.sendFontColorButton, paramObj["sendFontColor"])
         self.applyReceiveFont()
@@ -1208,6 +1419,7 @@ class Plugin(Plugin_Base):
             self.logStartTime = time.time()
             self.startSaveLogStatus()
         self.startTimedSaveLog()
+        self.updateClosedOnlyControls()
 
         self.receiveProcess = threading.Thread(target=self.receiveDataProcess)
         self.receiveProcess.setDaemon(True)
@@ -1222,7 +1434,12 @@ class Plugin(Plugin_Base):
             "pattern": "" if rule.get("pattern") is None else str(rule.get("pattern", "")),
             "color": "" if rule.get("color") is None else str(rule.get("color", "")),
             "enabled": bool(rule.get("enabled", True)),
-            "isLambda": bool(rule.get("isLambda", rule.get("lambda", False)))
+            "isRegex": bool(rule.get("isRegex", rule.get("regex", False))),
+            "caseSensitive": bool(rule.get("caseSensitive", True)),
+            "wholeWord": bool(rule.get("wholeWord", False)),
+            "reverse": bool(rule.get("reverse", False)),
+            "wrapFind": bool(rule.get("wrapFind", True)),
+            "dotMatchesNewline": bool(rule.get("dotMatchesNewline", False))
         }
 
     def onReceiveFindRulesChanged(self):
@@ -1241,80 +1458,121 @@ class Plugin(Plugin_Base):
         self.receiveFindDialog.raise_()
         self.receiveFindDialog.activateWindow()
 
-    def validateReceiveFindLambda(self, expression):
-        try:
-            self.compileReceiveFindLambda(expression)
-        except Exception as e:
-            return False, _("Lambda expression error") + ": " + str(e)
-        return True, ""
-
-    def compileReceiveFindLambda(self, expression):
-        safeGlobals = {
-            "__builtins__": {},
-            "re": re,
-            "len": len,
-            "min": min,
-            "max": max,
-            "sum": sum,
-            "any": any,
-            "all": all,
-            "str": str,
-            "int": int,
-            "float": float,
-            "bool": bool,
-        }
-        func = eval(expression, safeGlobals, {})
-        if not callable(func):
-            raise ValueError(_("Lambda expression must return a callable"))
-        return func
-
-    def plainTextFindRanges(self, text, pattern):
+    def plainTextFindRanges(self, text, pattern, caseSensitive=True):
         if not pattern:
             return []
+        source = text if caseSensitive else text.lower()
+        target = pattern if caseSensitive else pattern.lower()
         ranges = []
         start = 0
         while True:
-            idx = text.find(pattern, start)
+            idx = source.find(target, start)
             if idx < 0:
                 break
-            end = idx + len(pattern)
+            end = idx + len(target)
             ranges.append((idx, end))
             start = end if end > idx else idx + 1
         return ranges
 
-    def lambdaResultFindRanges(self, text, result):
-        if result is None or result is False:
+    def regexFindRanges(self, text, pattern, caseSensitive=True, wholeWord=False, dotMatchesNewline=False, sourceKey=None):
+        if not pattern:
             return []
-        if result is True:
-            return [(0, len(text))] if text else []
-        if hasattr(result, "start") and hasattr(result, "end"):
-            return [(result.start(), result.end())]
-        if isinstance(result, str):
-            return self.plainTextFindRanges(text, result)
-        if isinstance(result, (tuple, list)) and len(result) == 2 and all(isinstance(v, int) for v in result):
-            return [tuple(result)]
-        if isinstance(result, (tuple, list, set)):
-            ranges = []
-            for item in result:
-                ranges.extend(self.lambdaResultFindRanges(text, item))
-            return ranges
-        return self.plainTextFindRanges(text, str(result))
+        flags = re.MULTILINE
+        if not caseSensitive:
+            flags |= re.IGNORECASE
+        if dotMatchesNewline:
+            flags |= re.DOTALL
+        expression = pattern
+        if wholeWord:
+            expression = r"(?<!\w)(?:{})(?!\w)".format(expression)
+        try:
+            matcher = re.compile(expression, flags)
+        except Exception as e:
+            key = sourceKey or expression
+            if key not in self.receiveFindRuleErrors:
+                self.receiveFindRuleErrors.add(key)
+                print("receive find regex error:", e)
+            return []
+        ranges = []
+        for match in matcher.finditer(text):
+            start, end = match.span()
+            if start < end:
+                ranges.append((start, end))
+        return ranges
 
     def receiveFindRuleRanges(self, rule, text):
         pattern = rule.get("pattern", "")
         if not pattern:
             return []
-        if rule.get("isLambda", False):
-            try:
-                func = self.compileReceiveFindLambda(pattern)
-                return self.lambdaResultFindRanges(text, func(text))
-            except Exception as e:
-                key = pattern
-                if key not in self.receiveFindRuleErrors:
-                    self.receiveFindRuleErrors.add(key)
-                    print("receive find lambda error:", e)
-                return []
-        return self.plainTextFindRanges(text, pattern)
+        caseSensitive = rule.get("caseSensitive", True)
+        wholeWord = rule.get("wholeWord", False)
+        if rule.get("isRegex", False):
+            return self.regexFindRanges(
+                text,
+                pattern,
+                caseSensitive=caseSensitive,
+                wholeWord=wholeWord,
+                dotMatchesNewline=rule.get("dotMatchesNewline", False),
+                sourceKey=(pattern, caseSensitive, wholeWord, rule.get("dotMatchesNewline", False))
+            )
+        if wholeWord:
+            return self.regexFindRanges(
+                text,
+                re.escape(pattern),
+                caseSensitive=caseSensitive,
+                wholeWord=True,
+                sourceKey=(pattern, caseSensitive, wholeWord, "plain")
+            )
+        return self.plainTextFindRanges(text, pattern, caseSensitive=caseSensitive)
+
+    def receiveFindRuleByIndex(self, idx):
+        if idx < 0 or idx >= len(self.config.get("receiveFindRules", [])):
+            return None
+        rule = self.normalizeReceiveFindRule(self.config["receiveFindRules"][idx])
+        if not rule.get("enabled", True):
+            return None
+        return rule
+
+    def countReceiveFindRuleMatches(self, idx):
+        rule = self.receiveFindRuleByIndex(idx)
+        if rule is None or not hasattr(self, "receiveArea"):
+            return 0
+        return len(self.receiveFindRuleRanges(rule, self.receiveArea.toPlainText()))
+
+    def jumpToNextReceiveFindRule(self, idx):
+        rule = self.receiveFindRuleByIndex(idx)
+        if rule is None or not hasattr(self, "receiveArea"):
+            return
+        text = self.receiveArea.toPlainText()
+        ranges = self.receiveFindRuleRanges(rule, text)
+        if not ranges:
+            self.hintSignal.emit("info", _("Find"), _("No match found"))
+            return
+        cursor = self.receiveArea.textCursor()
+        position = cursor.selectionStart() if rule.get("reverse") else cursor.selectionEnd()
+        target = None
+        if rule.get("reverse"):
+            for start, end in reversed(ranges):
+                if end <= position:
+                    target = (start, end)
+                    break
+            if target is None and rule.get("wrapFind"):
+                target = ranges[-1]
+        else:
+            for start, end in ranges:
+                if start >= position:
+                    target = (start, end)
+                    break
+            if target is None and rule.get("wrapFind"):
+                target = ranges[0]
+        if target is None:
+            self.hintSignal.emit("info", _("Find"), _("No more matches"))
+            return
+        start, end = target
+        cursor.setPosition(start)
+        cursor.setPosition(end, QTextCursor.KeepAnchor)
+        self.receiveArea.setTextCursor(cursor)
+        self.receiveArea.ensureCursorVisible()
 
     def splitTextByReceiveFindRules(self, text, originalColor=None, originalBg=None):
         if not text:
@@ -1408,6 +1666,24 @@ class Plugin(Plugin_Base):
         self.updateDefaultFontColorButton(self.timestampColorButton, self.config["timestampColor"])
         self.rerenderReceiveArea()
 
+    def isConnectionClosed(self):
+        return self.currentConnStatus == ConnectionStatus.CLOSED
+
+    def updateClosedOnlyControls(self):
+        closed = self.isConnectionClosed()
+        for obj in [
+            getattr(self, "receiveFontSizeInput", None),
+            getattr(self, "sendFontSizeInput", None),
+            getattr(self, "receiveBufferSizeInput", None)
+        ]:
+            if obj is not None:
+                obj.setEnabled(closed)
+
+    def resetSpinBoxValue(self, spinBox, value):
+        spinBox.blockSignals(True)
+        spinBox.setValue(value)
+        spinBox.blockSignals(False)
+
     def applyReceiveFont(self):
         font = self.receiveArea.currentFont()
         font.setFamily(self.config.get("receiveFontFamily", DEFAULT_TEXT_FONT))
@@ -1423,14 +1699,28 @@ class Plugin(Plugin_Base):
         self.setTextEditPaletteColor(self.sendArea, self.config["sendFontColor"], updateDocument=True)
 
     def changeReceiveFontSize(self, size):
+        if not self.isConnectionClosed():
+            self.resetSpinBoxValue(self.receiveFontSizeInput, self.config["receiveFontSize"])
+            return
         self.config["receiveFontSize"] = size
         self.applyReceiveFont()
         self.rerenderReceiveArea()
 
     def changeSendFontSize(self, size):
+        if not self.isConnectionClosed():
+            self.resetSpinBoxValue(self.sendFontSizeInput, self.config["sendFontSize"])
+            return
         self.config["sendFontSize"] = size
         self.config["fontSize"] = size
         self.applySendFont()
+
+    def changeReceiveBufferSize(self, size):
+        if not self.isConnectionClosed():
+            self.resetSpinBoxValue(self.receiveBufferSizeInput, self.config["receiveBufferSizeKB"])
+            return
+        self.config["receiveBufferSizeKB"] = size
+        if self.trimReceiveDisplayRecords():
+            self.rerenderReceiveArea()
 
     def changeReceiveFontFamily(self, font):
         self.config["receiveFontFamily"] = font.family()
@@ -1442,6 +1732,8 @@ class Plugin(Plugin_Base):
         self.applySendFont()
 
     def adjustReceiveFontSize(self, delta):
+        if not self.isConnectionClosed():
+            return
         size = max(1, min(100, int(self.config.get("receiveFontSize", 10)) + delta))
         if hasattr(self, "receiveFontSizeInput"):
             self.receiveFontSizeInput.setValue(size)
@@ -1451,6 +1743,8 @@ class Plugin(Plugin_Base):
             self.rerenderReceiveArea()
 
     def adjustSendFontSize(self, delta):
+        if not self.isConnectionClosed():
+            return
         size = max(1, min(100, int(self.config.get("sendFontSize", 10)) + delta))
         if hasattr(self, "sendFontSizeInput"):
             self.sendFontSizeInput.setValue(size)
@@ -1460,6 +1754,9 @@ class Plugin(Plugin_Base):
             self.applySendFont()
 
     def onSendSettingsHexClicked(self):
+        if not self.config.get("sendAscii", True):
+            self.sendSettingsHex.setChecked(True)
+            return
         self.config["sendAscii"] = False
         data = self.sendArea.toPlainText().replace("\n","\r\n")
         data = utils.bytes_to_hex_str(data.encode())
@@ -1467,6 +1764,9 @@ class Plugin(Plugin_Base):
         self.sendArea.insertPlainText(data)
 
     def onSendSettingsAsciiClicked(self):
+        if self.config.get("sendAscii", True):
+            self.sendSettingsAscii.setChecked(True)
+            return
         self.config["sendAscii"] = True
         try:
             data = self.sendArea.toPlainText().replace("\n"," ").strip()
@@ -1717,7 +2017,9 @@ class Plugin(Plugin_Base):
             self.updateSaveLogStatus()
 
     def onConnChanged(self, status:ConnectionStatus, msg:str):
+        self.currentConnStatus = status
         super().onConnChanged(status, msg)
+        self.updateClosedOnlyControls()
         if status == ConnectionStatus.CONNECTED and self.config["saveLogAutoNew"]:
             self.updateLogPath()
             if self.config["saveLog"]:
@@ -2281,6 +2583,90 @@ class Plugin(Plugin_Base):
             print("[Error] onSendData: ", e)
             self.hintSignal.emit("error", _("Error"), _("get data error") + ": " + str(e))
 
+    def receiveRecordText(self, record):
+        parts = [record.get("head", "")]
+        encoding = self.configGlobal.get("encoding", "utf-8")
+        for data in record.get("datas", []):
+            if isinstance(data, str):
+                parts.append(data)
+            elif isinstance(data, bytes):
+                parts.append(data.decode(encoding=encoding, errors="ignore"))
+            elif isinstance(data, list):
+                for item in data:
+                    if isinstance(item, (list, tuple)) and len(item) >= 3:
+                        value = item[2]
+                    else:
+                        value = item
+                    if isinstance(value, bytes):
+                        parts.append(value.decode(encoding=encoding, errors="ignore"))
+                    else:
+                        parts.append(str(value))
+            else:
+                parts.append(str(data))
+        return "".join(parts)
+
+    def receiveRecordSize(self, record):
+        encoding = self.configGlobal.get("encoding", "utf-8")
+        return len(self.receiveRecordText(record).encode(encoding, errors="ignore"))
+
+    def receiveBufferLimitBytes(self):
+        try:
+            return max(64, int(self.config.get("receiveBufferSizeKB", 4096))) * 1024
+        except Exception:
+            self.config["receiveBufferSizeKB"] = 4096
+            return 4096 * 1024
+
+    def trimReceiveDisplayRecords(self):
+        limit = self.receiveBufferLimitBytes()
+        records = self.receiveDisplayRecords
+        if not records:
+            return False
+        total = 0
+        kept = []
+        for record in reversed(records):
+            size = self.receiveRecordSize(record)
+            if kept and total + size > limit:
+                break
+            kept.append(record)
+            total += size
+            if total >= limit:
+                break
+        kept.reverse()
+        if len(kept) == len(records):
+            return False
+        self.receiveDisplayRecords = kept
+        return True
+
+    def scheduleReceiveFindMarkersUpdate(self):
+        if self.receiveFindMarkerTimer is not None:
+            self.receiveFindMarkerTimer.start(200)
+
+    def updateReceiveFindMarkers(self):
+        if not hasattr(self, "receiveFindScrollBar"):
+            return
+        text = self.receiveArea.toPlainText() if hasattr(self, "receiveArea") else ""
+        if not text:
+            self.receiveFindScrollBar.setMarkers([])
+            return
+        textLength = max(1, len(text))
+        markers = []
+        for rawRule in self.config.get("receiveFindRules", []):
+            rule = self.normalizeReceiveFindRule(rawRule)
+            color = rule.get("color", "")
+            qcolor = QColor(color)
+            if not rule.get("enabled") or not color or not qcolor.isValid():
+                continue
+            for start, end in self.receiveFindRuleRanges(rule, text):
+                start = max(0, min(textLength, int(start)))
+                end = max(0, min(textLength, int(end)))
+                if start < end:
+                    markers.append(((start + end) / 2 / textLength, color))
+                if len(markers) >= 2000:
+                    break
+            if len(markers) >= 2000:
+                break
+        self.receiveFindScrollBar.setMarkers(markers)
+
     def receiveDisplayColor(self, isSend):
         color = self.config["sendFontColor"] if isSend else self.config["receiveFontColor"]
         qcolor = QColor(color)
@@ -2366,11 +2752,11 @@ class Plugin(Plugin_Base):
                         format.setBackground(QColor(bg) if bg else self.defaultBg)
                         cursor.setCharFormat(format)
                         cursor.insertText(text)
-            if preserveScroll and curScrollValue < endScrollValue:
-                self.receiveArea.verticalScrollBar().setValue(curScrollValue)
-            else:
-                self.receiveArea.moveCursor(QTextCursor.End)
-            self.receiveArea.horizontalScrollBar().setValue(curHorizontalValue)
+        if preserveScroll and curScrollValue < endScrollValue:
+            self.receiveArea.verticalScrollBar().setValue(curScrollValue)
+        else:
+            self.receiveArea.moveCursor(QTextCursor.End)
+        self.receiveArea.horizontalScrollBar().setValue(curHorizontalValue)
 
     def updateReceivedDataDisplay(self, head : str, datas : list, encoding : str, isSend : bool):
         if not datas:
@@ -2382,7 +2768,11 @@ class Plugin(Plugin_Base):
             "isSend": isSend
         }
         self.receiveDisplayRecords.append(record)
-        self.appendReceivedDataRecord(record)
+        if self.trimReceiveDisplayRecords():
+            self.rerenderReceiveArea()
+        else:
+            self.appendReceivedDataRecord(record)
+            self.scheduleReceiveFindMarkersUpdate()
 
     def rerenderReceiveArea(self):
         if not hasattr(self, "receiveArea") or self.rerenderingReceiveArea:
@@ -2402,6 +2792,7 @@ class Plugin(Plugin_Base):
         else:
             scrollBar.setValue(min(oldValue, scrollBar.maximum()))
         self.rerenderingReceiveArea = False
+        self.scheduleReceiveFindMarkersUpdate()
 
     def sendHistoryFindDelete(self,str):
         self.sendHistory.removeItem(self.sendHistory.findText(str))
@@ -2518,6 +2909,8 @@ class Plugin(Plugin_Base):
     def clearReceiveBuffer(self):
         self.receiveArea.clear()
         self.receiveDisplayRecords.clear()
+        if hasattr(self, "receiveFindScrollBar"):
+            self.receiveFindScrollBar.setMarkers([])
         if hasattr(self, "statusBar"):
             self.statusBar.clear()
 

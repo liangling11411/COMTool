@@ -186,6 +186,8 @@ class PluginItem:
                     if item["name"] == self.name:
                         json.dump(item, f, indent=4, ensure_ascii=False)
                         break
+            return True
+        return False
 
     def selectLoadfile(self):
         oldPath = os.getcwd()
