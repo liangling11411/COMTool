@@ -137,6 +137,55 @@ class NoWheelFontComboBox(QFontComboBox):
     def wheelEvent(self, event):
         event.ignore()
 
+class FontSizeTextEdit(QTextEdit):
+    def __init__(self, adjustFontSize, parent=None):
+        super().__init__(parent)
+        self.adjustFontSize = adjustFontSize
+
+    def wheelEvent(self, event):
+        if event.modifiers() & Qt.ControlModifier:
+            delta = event.angleDelta().y()
+            if delta:
+                self.adjustFontSize(1 if delta > 0 else -1)
+                event.accept()
+                return
+        super().wheelEvent(event)
+
+class WrapRemarkButton(QPushButton):
+    def __init__(self, text="", parent=None):
+        super().__init__("", parent)
+        self.rawText = ""
+        self.setText(text)
+
+    def text(self):
+        return self.rawText
+
+    def setText(self, text):
+        self.rawText = "" if text is None else str(text)
+        self.updateWrappedText()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.updateWrappedText()
+
+    def updateWrappedText(self):
+        metrics = self.fontMetrics()
+        iconWidth = self.iconSize().width() if not self.icon().isNull() else 0
+        width = max(24, self.width() - iconWidth - 24)
+        lines = []
+        for paragraph in (self.rawText or "").splitlines() or [""]:
+            line = ""
+            for ch in paragraph:
+                if not line or metrics.horizontalAdvance(line + ch) <= width:
+                    line += ch
+                else:
+                    lines.append(line)
+                    line = ch
+            lines.append(line)
+        QPushButton.setText(self, "\n".join(lines))
+        lineCount = max(1, len(lines))
+        self.setMinimumHeight(max(parameters.customSendItemHeight, metrics.lineSpacing() * lineCount + 14))
+
 class ReceiveFindItemWidget(QWidget):
     MIME_TYPE = "application/x-comtool-receive-find-index"
 
@@ -703,13 +752,13 @@ class Plugin(Plugin_Base):
         self.clearReceiveButtion.setToolTip(_("Clear receive area"))
         utils_ui.setButtonIcon(self.clearReceiveButtion, "mdi6.broom")
         self.clearSendButtion = QPushButton(_("Clear TX"))
-        self.clearSendButtion.setToolTip(_("Clear send input"))
+        self.clearSendButtion.setToolTip(_("Clear TX input"))
         utils_ui.setButtonIcon(self.clearSendButtion, "mdi6.broom")
 
     def onWidgetMain(self, parent):
         self.mainWidget = QSplitter(Qt.Vertical)
         # widgets receive and send area
-        self.receiveArea = QTextEdit()
+        self.receiveArea = FontSizeTextEdit(self.adjustReceiveFontSize)
         self.receiveArea.setObjectName("receiveArea")
         self.receiveArea.setToolTip(_("Received RX/TX log output"))
         self.receiveArea.setStyleSheet(
@@ -718,7 +767,7 @@ class Plugin(Plugin_Base):
         )
         font = QFont(self.config.get("receiveFontFamily", DEFAULT_TEXT_FONT), self.config["receiveFontSize"])
         self.receiveArea.setFont(font)
-        self.sendArea = QTextEdit()
+        self.sendArea = FontSizeTextEdit(self.adjustSendFontSize)
         self.sendArea.setToolTip(_("Input data to send"))
         self.sendArea.setAcceptRichText(False)
         self.ensureMainActionButtons()
@@ -740,12 +789,12 @@ class Plugin(Plugin_Base):
         sendAreaWidgetsLayout.setContentsMargins(0,4,0,0)
         sendWidget.setLayout(sendAreaWidgetsLayout)
         buttonLayout = QVBoxLayout()
-        buttonLayout.addStretch(1)
-        buttonLayout.addWidget(self.clearHistoryButton)
-        buttonLayout.addWidget(self.clearSendButtion)
-        buttonLayout.addWidget(self.clearReceiveButtion)
         buttonLayout.addWidget(self.receiveFindButton)
+        buttonLayout.addWidget(self.clearReceiveButtion)
+        buttonLayout.addWidget(self.clearSendButtion)
+        buttonLayout.addWidget(self.clearHistoryButton)
         buttonLayout.addWidget(self.sendButton)
+        buttonLayout.addStretch(1)
         sendAreaWidgetsLayout.addWidget(self.sendArea)
         sendAreaWidgetsLayout.addLayout(buttonLayout)
         self.mainWidget.addWidget(receiveWidget)
@@ -757,8 +806,8 @@ class Plugin(Plugin_Base):
         # event
         self.receiveFindButton.clicked.connect(self.openReceiveFindDialog)
         self.sendButton.clicked.connect(self.onSendData)
-        self.clearReceiveButtion.clicked.connect(self.clearReceiveBuffer)
-        self.clearSendButtion.clicked.connect(self.sendArea.clear)
+        self.clearReceiveButtion.clicked.connect(self.clearReceiveBufferWithConfirm)
+        self.clearSendButtion.clicked.connect(self.clearSendInputWithConfirm)
         self.receiveUpdateSignal.connect(self.updateReceivedDataDisplay)
         self.sendHistory.activated.connect(self.onSendHistoryIndexChanged)
 
@@ -876,7 +925,7 @@ class Plugin(Plugin_Base):
         self.saveLogTimed.clicked.connect(self.onSaveLogTimedChanged)
         self.saveLogDuration.editingFinished.connect(self.onSaveLogDurationChanged)
         self.openFileButton.clicked.connect(self.selectFile)
-        self.clearHistoryButton.clicked.connect(self.clearHistory)
+        self.clearHistoryButton.clicked.connect(self.clearHistoryWithConfirm)
         self.receiveFontSizeInput.valueChanged.connect(self.changeReceiveFontSize)
         self.sendFontSizeInput.valueChanged.connect(self.changeSendFontSize)
         self.receiveFontFamilyInput.currentFontChanged.connect(self.changeReceiveFontFamily)
@@ -940,8 +989,8 @@ class Plugin(Plugin_Base):
         self.openFileButton.setToolTip(_("Select a file to send"))
         self.sendFileButton = QPushButton(_("Send File"))
         self.sendFileButton.setToolTip(_("Send the selected file over the current connection"))
-        self.clearHistoryButton = QPushButton(_("Clear History"))
-        self.clearHistoryButton.setToolTip(_("Clear send history"))
+        self.clearHistoryButton = QPushButton(_("Clear TX History"))
+        self.clearHistoryButton.setToolTip(_("Clear TX send history"))
         self.fileSendGroupBox = QGroupBox(_("Send File"))
         fileSendGridLayout = QGridLayout()
         fileSendGridLayout.addWidget(self.filePathWidget, 0, 0, 1, 1)
@@ -1392,6 +1441,24 @@ class Plugin(Plugin_Base):
         self.config["sendFontFamily"] = font.family()
         self.applySendFont()
 
+    def adjustReceiveFontSize(self, delta):
+        size = max(1, min(100, int(self.config.get("receiveFontSize", 10)) + delta))
+        if hasattr(self, "receiveFontSizeInput"):
+            self.receiveFontSizeInput.setValue(size)
+        else:
+            self.config["receiveFontSize"] = size
+            self.applyReceiveFont()
+            self.rerenderReceiveArea()
+
+    def adjustSendFontSize(self, delta):
+        size = max(1, min(100, int(self.config.get("sendFontSize", 10)) + delta))
+        if hasattr(self, "sendFontSizeInput"):
+            self.sendFontSizeInput.setValue(size)
+        else:
+            self.config["sendFontSize"] = size
+            self.config["fontSize"] = size
+            self.applySendFont()
+
     def onSendSettingsHexClicked(self):
         self.config["sendAscii"] = False
         data = self.sendArea.toPlainText().replace("\n","\r\n")
@@ -1464,6 +1531,21 @@ class Plugin(Plugin_Base):
         self.sendHistory.clear()
         self.hintSignal.emit("info", _("OK"), _("History cleared!"))
 
+    def confirmClearAction(self, message):
+        return QMessageBox.question(self.mainWidget, _("Confirm clear"), message,
+                                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No) == QMessageBox.Yes
+
+    def clearReceiveBufferWithConfirm(self):
+        if self.confirmClearAction(_("Clear receive area?")):
+            self.clearReceiveBuffer()
+
+    def clearSendInputWithConfirm(self):
+        if self.confirmClearAction(_("Clear send input?")):
+            self.sendArea.clear()
+
+    def clearHistoryWithConfirm(self):
+        if self.confirmClearAction(_("Clear TX history?")):
+            self.clearHistory()
 
     def onSent(self, ok, msg, length, path):
         if ok:
@@ -1700,8 +1782,9 @@ class Plugin(Plugin_Base):
         dragHandle.setProperty("class", "remark")
         dragHandle.setToolTip(_("Drag before another item to reorder"))
         cmd = QLineEdit(customItem["text"])
-        send = QPushButton(customItem["remark"])
+        send = WrapRemarkButton(customItem["remark"])
         utils_ui.setButtonIcon(send, customItem["icon"])
+        send.updateWrappedText()
         colorButton = CustomSendColorButton(self, item, send)
         colorButton.setProperty("class", "remark")
         colorButton.setToolTip(_("Click to set button color, right click to clear"))

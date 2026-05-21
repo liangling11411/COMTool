@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-05-21 10:49+0800\n"
+"POT-Creation-Date: 2026-05-21 11:37+0800\n"
 "PO-Revision-Date: 2021-12-04 15:21+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -86,18 +86,23 @@ msgstr "Connection lose"
 msgid "Disconnected"
 msgstr "Disconnected"
 
-#: COMTool/conn/conn_serial.py:338 COMTool/conn/conn_ssh.py:296 COMTool/conn/conn_tcp_udp.py:430
-#: COMTool/main2.py:276 COMTool/main2.py:326 COMTool/main2.py:481 COMTool/main2.py:486
-#: COMTool/main2.py:880 COMTool/pluginItems.py:200 COMTool/pluginItems.py:203
-#: COMTool/pluginItems.py:317 COMTool/pluginItems.py:329 COMTool/plugins/base.py:194
-#: COMTool/plugins/base.py:199 COMTool/plugins/base.py:215 COMTool/plugins/base.py:224
-#: COMTool/plugins/dbg.py:1470 COMTool/plugins/dbg.py:1479 COMTool/plugins/dbg.py:1507
-#: COMTool/plugins/dbg.py:2075 COMTool/plugins/dbg.py:2089 COMTool/plugins/dbg.py:2099
-#: COMTool/plugins/dbg.py:2122 COMTool/plugins/dbg.py:2189 COMTool/plugins/dbg.py:2197
-#: COMTool/plugins/graph.py:259 COMTool/plugins/graph_widget_metasenselite.py:591
+#: COMTool/conn/conn_serial.py:338 COMTool/conn/conn_ssh.py:296
+#: COMTool/conn/conn_tcp_udp.py:430 COMTool/main2.py:276 COMTool/main2.py:326
+#: COMTool/main2.py:481 COMTool/main2.py:486 COMTool/main2.py:880
+#: COMTool/pluginItems.py:200 COMTool/pluginItems.py:203
+#: COMTool/pluginItems.py:317 COMTool/pluginItems.py:329
+#: COMTool/plugins/base.py:194 COMTool/plugins/base.py:199
+#: COMTool/plugins/base.py:215 COMTool/plugins/base.py:224
+#: COMTool/plugins/dbg.py:1554 COMTool/plugins/dbg.py:1563
+#: COMTool/plugins/dbg.py:1591 COMTool/plugins/dbg.py:2160
+#: COMTool/plugins/dbg.py:2174 COMTool/plugins/dbg.py:2184
+#: COMTool/plugins/dbg.py:2207 COMTool/plugins/dbg.py:2274
+#: COMTool/plugins/dbg.py:2282 COMTool/plugins/graph.py:259
+#: COMTool/plugins/graph_widget_metasenselite.py:591
 #: COMTool/plugins/graph_widgets.py:167 COMTool/plugins/myplugin.py:62
-#: COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70 COMTool/plugins/protocol.py:488
-#: COMTool/plugins/protocol.py:515 COMTool/plugins/protocol.py:524 COMTool/plugins/protocol.py:587
+#: COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
+#: COMTool/plugins/protocol.py:488 COMTool/plugins/protocol.py:515
+#: COMTool/plugins/protocol.py:524 COMTool/plugins/protocol.py:587
 msgid "Error"
 msgstr "Error"
 
@@ -109,8 +114,8 @@ msgstr "Load plugin failed"
 msgid "Load plugin fail"
 msgstr "Load plugin fail"
 
-#: COMTool/conn/conn_ssh.py:239 COMTool/main2.py:320 COMTool/plugins/dbg.py:1592
-#: COMTool/plugins/dbg.py:1606
+#: COMTool/conn/conn_ssh.py:239 COMTool/main2.py:320
+#: COMTool/plugins/dbg.py:1676 COMTool/plugins/dbg.py:1690
 msgid "Select file"
 msgstr "Select file"
 
@@ -158,8 +163,9 @@ msgstr "Rename"
 msgid "Page name"
 msgstr "Page name"
 
-#: COMTool/main2.py:529 COMTool/pluginItems.py:206 COMTool/plugins/dbg.py:1415
-#: COMTool/plugins/dbg.py:2102 COMTool/plugins/protocol.py:609 COMTool/plugins/protocol.py:631
+#: COMTool/main2.py:529 COMTool/pluginItems.py:206 COMTool/plugins/dbg.py:1484
+#: COMTool/plugins/dbg.py:2187 COMTool/plugins/protocol.py:609
+#: COMTool/plugins/protocol.py:631
 msgid "Warning"
 msgstr "Warning"
 
@@ -220,20 +226,32 @@ msgid "Save page"
 msgstr "Save page"
 
 #: COMTool/pluginItems.py:144
-msgid "Import this page name, connection settings, and plugin settings from a page file"
-msgstr "Import this page name, connection settings, and plugin settings from a page file"
+msgid ""
+"Import this page name, connection settings, and plugin settings from a "
+"page file"
+msgstr ""
+"Import this page name, connection settings, and plugin settings from a "
+"page file"
 
 #: COMTool/pluginItems.py:145
-msgid "Save this page name, connection settings, and plugin settings to a page file"
-msgstr "Save this page name, connection settings, and plugin settings to a page file"
+msgid ""
+"Save this page name, connection settings, and plugin settings to a page "
+"file"
+msgstr ""
+"Save this page name, connection settings, and plugin settings to a page "
+"file"
 
 #: COMTool/pluginItems.py:182 COMTool/pluginItems.py:195
 msgid "json file (*.json);;config file (*.conf);;All Files (*)"
 msgstr "json file (*.json);;config file (*.conf);;All Files (*)"
 
 #: COMTool/pluginItems.py:200
-msgid "Not support load global config file, you can copy config file mannually to "
-msgstr "Not support load global config file, you can copy config file mannually to "
+msgid ""
+"Not support load global config file, you can copy config file mannually "
+"to "
+msgstr ""
+"Not support load global config file, you can copy config file mannually "
+"to "
 
 #: COMTool/pluginItems.py:203
 msgid "Config is not for this plugin, config is for plugin:"
@@ -248,8 +266,12 @@ msgid "now"
 msgstr "now"
 
 #: COMTool/pluginItems.py:209
-msgid "this maybe lead to some problem, if happened, please remove it manually from config file"
-msgstr "this maybe lead to some problem, if happened, please remove it manually from config file"
+msgid ""
+"this maybe lead to some problem, if happened, please remove it manually "
+"from config file"
+msgstr ""
+"this maybe lead to some problem, if happened, please remove it manually "
+"from config file"
 
 #: COMTool/pluginItems.py:232
 msgid "Restart to load config?"
@@ -267,7 +289,8 @@ msgstr "Open file failed!"
 msgid "Received"
 msgstr "Received"
 
-#: COMTool/widgets.py:576 COMTool/widgets.py:577 COMTool/widgets.py:597 COMTool/widgets.py:604
+#: COMTool/widgets.py:576 COMTool/widgets.py:577 COMTool/widgets.py:597
+#: COMTool/widgets.py:604
 msgid "bytes"
 msgstr "bytes"
 
@@ -287,12 +310,12 @@ msgstr "Input remark"
 msgid "Input value"
 msgstr "Input value"
 
-#: COMTool/plugins/dbg.py:1941 COMTool/widgets.py:691 COMTool/widgets.py:727
+#: COMTool/plugins/dbg.py:2026 COMTool/widgets.py:691 COMTool/widgets.py:727
 msgid "Select icon"
 msgstr "Select icon"
 
-#: COMTool/plugins/dbg.py:823 COMTool/plugins/protocol.py:277 COMTool/widgets.py:698
-#: COMTool/widgets.py:768
+#: COMTool/plugins/dbg.py:880 COMTool/plugins/protocol.py:277
+#: COMTool/widgets.py:698 COMTool/widgets.py:768
 msgid "Record"
 msgstr "Record"
 
@@ -304,9 +327,9 @@ msgstr "Shortcut"
 msgid "Press key to record, or click Cancel"
 msgstr "Press key to record, or click Cancel"
 
-#: COMTool/plugins/dbg.py:1463 COMTool/plugins/dbg.py:1535 COMTool/plugins/dbg.py:1941
-#: COMTool/plugins/dbg.py:2073 COMTool/plugins/dbg.py:2087 COMTool/widgets.py:708
-#: COMTool/widgets.py:727
+#: COMTool/plugins/dbg.py:1532 COMTool/plugins/dbg.py:1619
+#: COMTool/plugins/dbg.py:2026 COMTool/plugins/dbg.py:2158
+#: COMTool/plugins/dbg.py:2172 COMTool/widgets.py:708 COMTool/widgets.py:727
 msgid "OK"
 msgstr "OK"
 
@@ -322,7 +345,8 @@ msgstr "Serial"
 msgid "Custom, input baudrate"
 msgstr "Custom, input baudrate"
 
-#: COMTool/conn/conn_serial.py:114 COMTool/conn/conn_ssh.py:151 COMTool/conn/conn_tcp_udp.py:115
+#: COMTool/conn/conn_serial.py:114 COMTool/conn/conn_ssh.py:151
+#: COMTool/conn/conn_tcp_udp.py:115
 msgid "Port"
 msgstr "Port"
 
@@ -350,9 +374,11 @@ msgstr "Flow control"
 msgid "Check to enable(usually output low level)"
 msgstr "Check to enable(usually output low level)"
 
-#: COMTool/conn/conn_serial.py:155 COMTool/conn/conn_serial.py:302 COMTool/conn/conn_serial.py:394
-#: COMTool/conn/conn_ssh.py:165 COMTool/conn/conn_ssh.py:251 COMTool/conn/conn_ssh.py:339
-#: COMTool/conn/conn_tcp_udp.py:140 COMTool/conn/conn_tcp_udp.py:343 COMTool/conn/conn_tcp_udp.py:462
+#: COMTool/conn/conn_serial.py:155 COMTool/conn/conn_serial.py:302
+#: COMTool/conn/conn_serial.py:394 COMTool/conn/conn_ssh.py:165
+#: COMTool/conn/conn_ssh.py:251 COMTool/conn/conn_ssh.py:339
+#: COMTool/conn/conn_tcp_udp.py:140 COMTool/conn/conn_tcp_udp.py:343
+#: COMTool/conn/conn_tcp_udp.py:462
 msgid "OPEN"
 msgstr "OPEN"
 
@@ -360,16 +386,19 @@ msgstr "OPEN"
 msgid "Open Failed"
 msgstr "Open Failed"
 
-#: COMTool/conn/conn_serial.py:397 COMTool/conn/conn_serial.py:400 COMTool/conn/conn_ssh.py:342
-#: COMTool/conn/conn_ssh.py:345 COMTool/conn/conn_tcp_udp.py:465 COMTool/conn/conn_tcp_udp.py:468
+#: COMTool/conn/conn_serial.py:397 COMTool/conn/conn_serial.py:400
+#: COMTool/conn/conn_ssh.py:342 COMTool/conn/conn_ssh.py:345
+#: COMTool/conn/conn_tcp_udp.py:465 COMTool/conn/conn_tcp_udp.py:468
 msgid "CLOSE"
 msgstr "CLOSE"
 
-#: COMTool/conn/conn_serial.py:474 COMTool/conn/conn_ssh.py:368 COMTool/conn/conn_tcp_udp.py:525
+#: COMTool/conn/conn_serial.py:474 COMTool/conn/conn_ssh.py:368
+#: COMTool/conn/conn_tcp_udp.py:525
 msgid "Reconnected"
 msgstr "Reconnected"
 
-#: COMTool/conn/conn_serial.py:505 COMTool/conn/conn_ssh.py:413 COMTool/conn/conn_tcp_udp.py:588
+#: COMTool/conn/conn_serial.py:505 COMTool/conn/conn_ssh.py:413
+#: COMTool/conn/conn_tcp_udp.py:588
 msgid "Connection lose!"
 msgstr "Connection lose!"
 
@@ -409,7 +438,7 @@ msgstr "Input"
 msgid "error"
 msgstr "error"
 
-#: COMTool/conn/conn_ssh.py:241 COMTool/plugins/dbg.py:1594
+#: COMTool/conn/conn_ssh.py:241 COMTool/plugins/dbg.py:1678
 msgid "All Files (*)"
 msgstr "All Files (*)"
 
@@ -461,7 +490,8 @@ msgstr "Disconnect"
 msgid "Auto reconnect"
 msgstr "Auto reconnect"
 
-#: COMTool/conn/conn_tcp_udp.py:386 COMTool/conn/conn_tcp_udp.py:517 COMTool/conn/conn_tcp_udp.py:616
+#: COMTool/conn/conn_tcp_udp.py:386 COMTool/conn/conn_tcp_udp.py:517
+#: COMTool/conn/conn_tcp_udp.py:616
 msgid "Target error"
 msgstr "Target error"
 
@@ -489,192 +519,199 @@ msgstr "Format error, should be like 00 01 02 03"
 msgid "Escape is on, but escape error:"
 msgstr "Escape is on, but escape error:"
 
-#: COMTool/plugins/dbg.py:236
+#: COMTool/plugins/dbg.py:285
 msgid "Find in receive area"
 msgstr "Find in receive area"
 
-#: COMTool/plugins/dbg.py:242
+#: COMTool/plugins/dbg.py:291
 msgid "Find rules (top rules have higher priority)"
 msgstr "Find rules (top rules have higher priority)"
 
-#: COMTool/plugins/dbg.py:245 COMTool/plugins/dbg.py:1014
+#: COMTool/plugins/dbg.py:294 COMTool/plugins/dbg.py:1065
 msgid "All"
 msgstr "All"
 
-#: COMTool/plugins/dbg.py:246
+#: COMTool/plugins/dbg.py:295
 msgid "Select all find rules"
 msgstr "Select all find rules"
 
-#: COMTool/plugins/dbg.py:247
+#: COMTool/plugins/dbg.py:296
 msgid "Highlight color"
 msgstr "Highlight color"
 
-#: COMTool/plugins/dbg.py:248
+#: COMTool/plugins/dbg.py:297
 msgid "Choose highlight color for new rules or selected rules"
 msgstr "Choose highlight color for new rules or selected rules"
 
-#: COMTool/plugins/dbg.py:250
+#: COMTool/plugins/dbg.py:299
 msgid "Apply color"
 msgstr "Apply color"
 
-#: COMTool/plugins/dbg.py:251
+#: COMTool/plugins/dbg.py:300
 msgid "Clear color"
 msgstr "Clear color"
 
-#: COMTool/plugins/dbg.py:252
+#: COMTool/plugins/dbg.py:301
 msgid "Delete selected"
 msgstr "Delete selected"
 
-#: COMTool/plugins/dbg.py:253
+#: COMTool/plugins/dbg.py:302
 msgid "Apply the current highlight color to all selected rules"
 msgstr "Apply the current highlight color to all selected rules"
 
-#: COMTool/plugins/dbg.py:254
+#: COMTool/plugins/dbg.py:303
 msgid "Remove highlight color from all selected rules"
 msgstr "Remove highlight color from all selected rules"
 
-#: COMTool/plugins/dbg.py:255
+#: COMTool/plugins/dbg.py:304
 msgid "Delete all selected find rules"
 msgstr "Delete all selected find rules"
 
-#: COMTool/plugins/dbg.py:278
+#: COMTool/plugins/dbg.py:327
 msgid "Add find rule"
 msgstr "Add find rule"
 
-#: COMTool/plugins/dbg.py:280
+#: COMTool/plugins/dbg.py:329
 msgid "Close"
 msgstr "Close"
 
-#: COMTool/plugins/dbg.py:281
+#: COMTool/plugins/dbg.py:330
 msgid "Close find window"
 msgstr "Close find window"
 
-#: COMTool/plugins/dbg.py:305 COMTool/plugins/dbg.py:468 COMTool/plugins/dbg.py:1339
-#: COMTool/plugins/dbg.py:1353 COMTool/plugins/dbg.py:1872 COMTool/plugins/dbg.py:1928
+#: COMTool/plugins/dbg.py:354 COMTool/plugins/dbg.py:517
+#: COMTool/plugins/dbg.py:1390 COMTool/plugins/dbg.py:1404
+#: COMTool/plugins/dbg.py:1957 COMTool/plugins/dbg.py:2013
 msgid "Select color"
 msgstr "Select color"
 
-#: COMTool/plugins/dbg.py:359 COMTool/plugins/dbg.py:1695
+#: COMTool/plugins/dbg.py:408 COMTool/plugins/dbg.py:1779
 msgid "Select for batch edit"
 msgstr "Select for batch edit"
 
-#: COMTool/plugins/dbg.py:362
+#: COMTool/plugins/dbg.py:411
 msgid "Drag before another find rule to change priority"
 msgstr "Drag before another find rule to change priority"
 
-#: COMTool/plugins/dbg.py:365
+#: COMTool/plugins/dbg.py:414
 msgid "Enable find rule"
 msgstr "Enable find rule"
 
-#: COMTool/plugins/dbg.py:368
+#: COMTool/plugins/dbg.py:417
 msgid "Find text or lambda expression"
 msgstr "Find text or lambda expression"
 
-#: COMTool/plugins/dbg.py:369
+#: COMTool/plugins/dbg.py:418
 msgid ""
-"Plain text searches exact text. Lambda receives text and may return bool, string, list, or "
-"(start, end) ranges."
+"Plain text searches exact text. Lambda receives text and may return bool,"
+" string, list, or (start, end) ranges."
 msgstr ""
-"Plain text searches exact text. Lambda receives text and may return bool, string, list, or "
-"(start, end) ranges."
+"Plain text searches exact text. Lambda receives text and may return bool,"
+" string, list, or (start, end) ranges."
 
-#: COMTool/plugins/dbg.py:370
+#: COMTool/plugins/dbg.py:419
 msgid "Lambda expression"
 msgstr "Lambda expression"
 
-#: COMTool/plugins/dbg.py:371
+#: COMTool/plugins/dbg.py:420
 msgid "Use a lambda like: lambda text: re.findall(r'ERR\\d+', text)"
 msgstr "Use a lambda like: lambda text: re.findall(r'ERR\\d+', text)"
 
-#: COMTool/plugins/dbg.py:374
+#: COMTool/plugins/dbg.py:423
 msgid "Set highlight color, right click to clear"
 msgstr "Set highlight color, right click to clear"
 
-#: COMTool/plugins/dbg.py:378
+#: COMTool/plugins/dbg.py:427
 msgid "Delete this find rule"
 msgstr "Delete this find rule"
 
-#: COMTool/plugins/dbg.py:611
+#: COMTool/plugins/dbg.py:660
 msgid "Send Receive"
 msgstr "Send Receive"
 
-#: COMTool/plugins/dbg.py:627
+#: COMTool/plugins/dbg.py:676
 msgid "Shortcut:"
 msgstr "Shortcut:"
 
-#: COMTool/plugins/dbg.py:628
+#: COMTool/plugins/dbg.py:677
 msgid "Full screen"
 msgstr "Full screen"
 
-#: COMTool/plugins/dbg.py:629
+#: COMTool/plugins/dbg.py:678
 msgid "Send data"
 msgstr "Send data"
 
-#: COMTool/plugins/dbg.py:630
+#: COMTool/plugins/dbg.py:679
 msgid "Clear Send Area"
 msgstr "Clear Send Area"
 
-#: COMTool/plugins/dbg.py:631
+#: COMTool/plugins/dbg.py:680
 msgid "Clear Receive Area"
 msgstr "Clear Receive Area"
 
-#: COMTool/plugins/dbg.py:702
+#: COMTool/plugins/dbg.py:751
 msgid "Clear RX"
 msgstr "Clear RX"
 
-#: COMTool/plugins/dbg.py:703
+#: COMTool/plugins/dbg.py:752
 msgid "Clear receive area"
 msgstr "Clear receive area"
 
-#: COMTool/plugins/dbg.py:705
+#: COMTool/plugins/dbg.py:754
 msgid "Clear TX"
 msgstr "Clear TX"
 
-#: COMTool/plugins/dbg.py:706
-msgid "Clear send input"
-msgstr "Clear send input"
+#: COMTool/plugins/dbg.py:755
+msgid "Clear TX input"
+msgstr "Clear TX input"
 
-#: COMTool/plugins/dbg.py:713
+#: COMTool/plugins/dbg.py:763
 msgid "Received RX/TX log output"
 msgstr "Received RX/TX log output"
 
-#: COMTool/plugins/dbg.py:717
+#: COMTool/plugins/dbg.py:771
 msgid "Input data to send"
 msgstr "Input data to send"
 
-#: COMTool/plugins/dbg.py:721
+#: COMTool/plugins/dbg.py:775
 msgid "Find and highlight receive text"
 msgstr "Find and highlight receive text"
 
-#: COMTool/plugins/dbg.py:724
+#: COMTool/plugins/dbg.py:778
 msgid "Send input data"
 msgstr "Send input data"
 
-#: COMTool/plugins/dbg.py:727
+#: COMTool/plugins/dbg.py:781
 msgid "Send history"
 msgstr "Send history"
 
-#: COMTool/plugins/dbg.py:763
+#: COMTool/plugins/dbg.py:820
 msgid "Receive Settings"
 msgstr "Receive Settings"
 
-#: COMTool/plugins/dbg.py:764 COMTool/plugins/dbg.py:808 COMTool/plugins/protocol.py:269
+#: COMTool/plugins/dbg.py:821 COMTool/plugins/dbg.py:865
+#: COMTool/plugins/protocol.py:269
 msgid "ASCII"
 msgstr "ASCII"
 
-#: COMTool/plugins/dbg.py:765
-msgid "Show recived data as visible format, select decode method at top right corner"
-msgstr "Show recived data as visible format, select decode method at top right corner"
+#: COMTool/plugins/dbg.py:822
+msgid ""
+"Show recived data as visible format, select decode method at top right "
+"corner"
+msgstr ""
+"Show recived data as visible format, select decode method at top right "
+"corner"
 
-#: COMTool/plugins/dbg.py:766 COMTool/plugins/dbg.py:809 COMTool/plugins/protocol.py:270
+#: COMTool/plugins/dbg.py:823 COMTool/plugins/dbg.py:866
+#: COMTool/plugins/protocol.py:270
 msgid "HEX"
 msgstr "HEX"
 
-#: COMTool/plugins/dbg.py:767
+#: COMTool/plugins/dbg.py:824
 msgid "Show recived data as hex format"
 msgstr "Show recived data as hex format"
 
-#: COMTool/plugins/dbg.py:769
+#: COMTool/plugins/dbg.py:826
 msgid ""
 "Auto\n"
 "Linefeed\n"
@@ -684,68 +721,82 @@ msgstr ""
 "Linefeed\n"
 "ms"
 
-#: COMTool/plugins/dbg.py:770 COMTool/plugins/dbg.py:773
+#: COMTool/plugins/dbg.py:827 COMTool/plugins/dbg.py:830
 msgid "Auto linefeed after interval, unit: ms"
 msgstr "Auto linefeed after interval, unit: ms"
 
-#: COMTool/plugins/dbg.py:776 COMTool/plugins/dbg.py:793
+#: COMTool/plugins/dbg.py:833 COMTool/plugins/dbg.py:850
 msgid "Timestamp"
 msgstr "Timestamp"
 
-#: COMTool/plugins/dbg.py:777
-msgid "Add timestamp before received data, will automatically enable auto line feed"
-msgstr "Add timestamp before received data, will automatically enable auto line feed"
+#: COMTool/plugins/dbg.py:834
+msgid ""
+"Add timestamp before received data, will automatically enable auto line "
+"feed"
+msgstr ""
+"Add timestamp before received data, will automatically enable auto line "
+"feed"
 
-#: COMTool/plugins/dbg.py:778 COMTool/plugins/protocol.py:244
+#: COMTool/plugins/dbg.py:835 COMTool/plugins/protocol.py:244
 msgid "Display wrap"
 msgstr "Display wrap"
 
-#: COMTool/plugins/dbg.py:779 COMTool/plugins/dbg.py:825 COMTool/plugins/protocol.py:279
+#: COMTool/plugins/dbg.py:836 COMTool/plugins/dbg.py:882
+#: COMTool/plugins/protocol.py:279
 msgid "Escape"
 msgstr "Escape"
 
-#: COMTool/plugins/dbg.py:780 COMTool/plugins/dbg.py:826 COMTool/plugins/protocol.py:280
+#: COMTool/plugins/dbg.py:837 COMTool/plugins/dbg.py:883
+#: COMTool/plugins/protocol.py:280
 msgid "Enable escape characters support like \\t \\r \\n \\x01 \\001"
 msgstr "Enable escape characters support like \\t \\r \\n \\x01 \\001"
 
-#: COMTool/plugins/dbg.py:781 COMTool/plugins/protocol.py:245
-msgid "When content in a line is too long, always auto wrap to show, and no scroll bar"
-msgstr "When content in a line is too long, always auto wrap to show, and no scroll bar"
+#: COMTool/plugins/dbg.py:838 COMTool/plugins/protocol.py:245
+msgid ""
+"When content in a line is too long, always auto wrap to show, and no "
+"scroll bar"
+msgstr ""
+"When content in a line is too long, always auto wrap to show, and no "
+"scroll bar"
 
-#: COMTool/plugins/dbg.py:794 COMTool/plugins/dbg.py:906 COMTool/plugins/dbg.py:913
-#: COMTool/plugins/dbg.py:1016
+#: COMTool/plugins/dbg.py:851 COMTool/plugins/dbg.py:963
+#: COMTool/plugins/dbg.py:970 COMTool/plugins/dbg.py:1067
 msgid "Color"
 msgstr "Color"
 
-#: COMTool/plugins/dbg.py:795
+#: COMTool/plugins/dbg.py:852
 msgid "Timestamp color in receive area"
 msgstr "Timestamp color in receive area"
 
-#: COMTool/plugins/dbg.py:796
+#: COMTool/plugins/dbg.py:853
 msgid "Newline after timestamp"
 msgstr "Newline after timestamp"
 
-#: COMTool/plugins/dbg.py:797
+#: COMTool/plugins/dbg.py:854
 msgid "Display received data on the next line after timestamp"
 msgstr "Display received data on the next line after timestamp"
 
-#: COMTool/plugins/dbg.py:799
+#: COMTool/plugins/dbg.py:856
 msgid "Timestamp color"
 msgstr "Timestamp color"
 
-#: COMTool/plugins/dbg.py:807
+#: COMTool/plugins/dbg.py:864
 msgid "Send Settings"
 msgstr "Send Settings"
 
-#: COMTool/plugins/dbg.py:810 COMTool/plugins/protocol.py:271
-msgid "Get send data as visible format, select encoding method at top right corner"
-msgstr "Get send data as visible format, select encoding method at top right corner"
+#: COMTool/plugins/dbg.py:867 COMTool/plugins/protocol.py:271
+msgid ""
+"Get send data as visible format, select encoding method at top right "
+"corner"
+msgstr ""
+"Get send data as visible format, select encoding method at top right "
+"corner"
 
-#: COMTool/plugins/dbg.py:811 COMTool/plugins/protocol.py:272
+#: COMTool/plugins/dbg.py:868 COMTool/plugins/protocol.py:272
 msgid "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
 msgstr "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
 
-#: COMTool/plugins/dbg.py:813
+#: COMTool/plugins/dbg.py:870
 msgid ""
 "Timed Send\n"
 "ms"
@@ -753,324 +804,341 @@ msgstr ""
 "Timed Send\n"
 "ms"
 
-#: COMTool/plugins/dbg.py:814 COMTool/plugins/dbg.py:817
+#: COMTool/plugins/dbg.py:871 COMTool/plugins/dbg.py:874
 msgid "Timed send, unit: ms"
 msgstr "Timed send, unit: ms"
 
-#: COMTool/plugins/dbg.py:820 COMTool/plugins/protocol.py:274
+#: COMTool/plugins/dbg.py:877 COMTool/plugins/protocol.py:274
 msgid "<CRLF>"
 msgstr "<CRLF>"
 
-#: COMTool/plugins/dbg.py:821 COMTool/plugins/protocol.py:275
+#: COMTool/plugins/dbg.py:878 COMTool/plugins/protocol.py:275
 msgid "Select to send \\r\\n instead of \\n"
 msgstr "Select to send \\r\\n instead of \\n"
 
-#: COMTool/plugins/dbg.py:824 COMTool/plugins/protocol.py:278
+#: COMTool/plugins/dbg.py:881 COMTool/plugins/protocol.py:278
 msgid "Record send data"
 msgstr "Record send data"
 
-#: COMTool/plugins/dbg.py:827
+#: COMTool/plugins/dbg.py:884
 msgid "Newline"
 msgstr "Newline"
 
-#: COMTool/plugins/dbg.py:828
+#: COMTool/plugins/dbg.py:885
 msgid "Auto add new line when send"
 msgstr "Auto add new line when send"
 
-#: COMTool/plugins/dbg.py:859
+#: COMTool/plugins/dbg.py:916
 msgid "Auto line feed value error, must be integer"
 msgstr "Auto line feed value error, must be integer"
 
-#: COMTool/plugins/dbg.py:860
+#: COMTool/plugins/dbg.py:917
 msgid "Timed send value error, must be integer"
 msgstr "Timed send value error, must be integer"
 
-#: COMTool/plugins/dbg.py:898
+#: COMTool/plugins/dbg.py:955
 msgid "Default font"
 msgstr "Default font"
 
-#: COMTool/plugins/dbg.py:902
+#: COMTool/plugins/dbg.py:959
 msgid "Font family for received RX text"
 msgstr "Font family for received RX text"
 
-#: COMTool/plugins/dbg.py:905
+#: COMTool/plugins/dbg.py:962
 msgid "Font size for received RX text"
 msgstr "Font size for received RX text"
 
-#: COMTool/plugins/dbg.py:907
+#: COMTool/plugins/dbg.py:964
 msgid "Color for received RX text in the receive area"
 msgstr "Color for received RX text in the receive area"
 
-#: COMTool/plugins/dbg.py:909
+#: COMTool/plugins/dbg.py:966
 msgid "Font family for TX input text"
 msgstr "Font family for TX input text"
 
-#: COMTool/plugins/dbg.py:912
+#: COMTool/plugins/dbg.py:969
 msgid "Font size for TX input text"
 msgstr "Font size for TX input text"
 
-#: COMTool/plugins/dbg.py:914
+#: COMTool/plugins/dbg.py:971
 msgid "Color for TX input text and recorded TX lines"
 msgstr "Color for TX input text and recorded TX lines"
 
-#: COMTool/plugins/dbg.py:915
+#: COMTool/plugins/dbg.py:972
 msgid "RX font"
 msgstr "RX font"
 
-#: COMTool/plugins/dbg.py:917
+#: COMTool/plugins/dbg.py:974
 msgid "RX size"
 msgstr "RX size"
 
-#: COMTool/plugins/dbg.py:919
+#: COMTool/plugins/dbg.py:976
 msgid "RX color"
 msgstr "RX color"
 
-#: COMTool/plugins/dbg.py:921
+#: COMTool/plugins/dbg.py:978
 msgid "TX font"
 msgstr "TX font"
 
-#: COMTool/plugins/dbg.py:923
+#: COMTool/plugins/dbg.py:980
 msgid "TX size"
 msgstr "TX size"
 
-#: COMTool/plugins/dbg.py:925
+#: COMTool/plugins/dbg.py:982
 msgid "TX color"
 msgstr "TX color"
 
-#: COMTool/plugins/dbg.py:930
+#: COMTool/plugins/dbg.py:987
 msgid "Path of the file to send"
 msgstr "Path of the file to send"
 
-#: COMTool/plugins/dbg.py:931
+#: COMTool/plugins/dbg.py:988
 msgid "Open File"
 msgstr "Open File"
 
-#: COMTool/plugins/dbg.py:932
+#: COMTool/plugins/dbg.py:989
 msgid "Select a file to send"
 msgstr "Select a file to send"
 
-#: COMTool/plugins/dbg.py:933 COMTool/plugins/dbg.py:937
+#: COMTool/plugins/dbg.py:990 COMTool/plugins/dbg.py:994
 msgid "Send File"
 msgstr "Send File"
 
-#: COMTool/plugins/dbg.py:934
+#: COMTool/plugins/dbg.py:991
 msgid "Send the selected file over the current connection"
 msgstr "Send the selected file over the current connection"
 
-#: COMTool/plugins/dbg.py:935
-msgid "Clear History"
-msgstr "Clear History"
+#: COMTool/plugins/dbg.py:992
+msgid "Clear TX History"
+msgstr "Clear TX History"
 
-#: COMTool/plugins/dbg.py:936
-msgid "Clear send history"
-msgstr "Clear send history"
+#: COMTool/plugins/dbg.py:993
+msgid "Clear TX send history"
+msgstr "Clear TX send history"
 
-#: COMTool/plugins/dbg.py:944
+#: COMTool/plugins/dbg.py:1001
 msgid "Save log"
 msgstr "Save log"
 
-#: COMTool/plugins/dbg.py:948
+#: COMTool/plugins/dbg.py:1005
 msgid "Enable saving received and recorded sent data to a log file"
 msgstr "Enable saving received and recorded sent data to a log file"
 
-#: COMTool/plugins/dbg.py:950
+#: COMTool/plugins/dbg.py:1007
 msgid "Log file path"
 msgstr "Log file path"
 
-#: COMTool/plugins/dbg.py:951
+#: COMTool/plugins/dbg.py:1008
 msgid "Log path"
 msgstr "Log path"
 
-#: COMTool/plugins/dbg.py:952
+#: COMTool/plugins/dbg.py:1009
 msgid "Select log file path"
 msgstr "Select log file path"
 
-#: COMTool/plugins/dbg.py:953
+#: COMTool/plugins/dbg.py:1010
 msgid "Auto new file"
 msgstr "Auto new file"
 
-#: COMTool/plugins/dbg.py:954
+#: COMTool/plugins/dbg.py:1011
 msgid "When start a new connection, will automatically create a new log file"
 msgstr "When start a new connection, will automatically create a new log file"
 
-#: COMTool/plugins/dbg.py:955
+#: COMTool/plugins/dbg.py:1012
 msgid "Timed log"
 msgstr "Timed log"
 
-#: COMTool/plugins/dbg.py:956
+#: COMTool/plugins/dbg.py:1013
 msgid "Stop saving log automatically after the configured duration"
 msgstr "Stop saving log automatically after the configured duration"
 
-#: COMTool/plugins/dbg.py:961
+#: COMTool/plugins/dbg.py:1018
 msgid "Timed log duration, format: HH:MM:SS"
 msgstr "Timed log duration, format: HH:MM:SS"
 
-#: COMTool/plugins/dbg.py:962
+#: COMTool/plugins/dbg.py:1019
 msgid "Log: 00:00:00 / 0 B"
 msgstr "Log: 00:00:00 / 0 B"
 
-#: COMTool/plugins/dbg.py:963
+#: COMTool/plugins/dbg.py:1020
 msgid "Current log recording duration and file size"
 msgstr "Current log recording duration and file size"
 
-#: COMTool/plugins/dbg.py:1003
+#: COMTool/plugins/dbg.py:1054
 msgid "Import"
 msgstr "Import"
 
-#: COMTool/plugins/dbg.py:1004
+#: COMTool/plugins/dbg.py:1055
 msgid "Export"
 msgstr "Export"
 
-#: COMTool/plugins/dbg.py:1005
+#: COMTool/plugins/dbg.py:1056
 msgid "Add a custom send item"
 msgstr "Add a custom send item"
 
-#: COMTool/plugins/dbg.py:1006
+#: COMTool/plugins/dbg.py:1057
 msgid "Import custom send items from JSON"
 msgstr "Import custom send items from JSON"
 
-#: COMTool/plugins/dbg.py:1007
+#: COMTool/plugins/dbg.py:1058
 msgid "Export custom send items to JSON"
 msgstr "Export custom send items to JSON"
 
-#: COMTool/plugins/dbg.py:1012
+#: COMTool/plugins/dbg.py:1063
 msgid "Search remark or command"
 msgstr "Search remark or command"
 
-#: COMTool/plugins/dbg.py:1013
+#: COMTool/plugins/dbg.py:1064
 msgid "Search custom send items by remark or command"
 msgstr "Search custom send items by remark or command"
 
-#: COMTool/plugins/dbg.py:1015
+#: COMTool/plugins/dbg.py:1066
 msgid "Select visible custom send items"
 msgstr "Select visible custom send items"
 
-#: COMTool/plugins/dbg.py:1017
+#: COMTool/plugins/dbg.py:1068
 msgid "Icon"
 msgstr "Icon"
 
-#: COMTool/plugins/dbg.py:1018 COMTool/plugins/dbg.py:1761 COMTool/plugins/dbg.py:1958
-#: COMTool/plugins/protocol.py:257
+#: COMTool/plugins/dbg.py:1069 COMTool/plugins/dbg.py:1846
+#: COMTool/plugins/dbg.py:2043 COMTool/plugins/protocol.py:257
 msgid "Delete"
 msgstr "Delete"
 
-#: COMTool/plugins/dbg.py:1019
+#: COMTool/plugins/dbg.py:1070
 msgid "Set color for selected custom send items"
 msgstr "Set color for selected custom send items"
 
-#: COMTool/plugins/dbg.py:1020
+#: COMTool/plugins/dbg.py:1071
 msgid "Set icon for selected custom send items"
 msgstr "Set icon for selected custom send items"
 
-#: COMTool/plugins/dbg.py:1021
+#: COMTool/plugins/dbg.py:1072
 msgid "Delete selected custom send items"
 msgstr "Delete selected custom send items"
 
-#: COMTool/plugins/dbg.py:1028
+#: COMTool/plugins/dbg.py:1079
 msgid "Cutom send"
 msgstr "Cutom send"
 
-#: COMTool/plugins/dbg.py:1197
+#: COMTool/plugins/dbg.py:1248
 msgid "Lambda expression error"
 msgstr "Lambda expression error"
 
-#: COMTool/plugins/dbg.py:1217
+#: COMTool/plugins/dbg.py:1268
 msgid "Lambda expression must return a callable"
 msgstr "Lambda expression must return a callable"
 
-#: COMTool/plugins/dbg.py:1415
+#: COMTool/plugins/dbg.py:1484
 msgid "linefeed always on if timestamp or record send is on"
 msgstr "linefeed always on if timestamp or record send is on"
 
-#: COMTool/plugins/dbg.py:1463
+#: COMTool/plugins/dbg.py:1532
 msgid "History cleared!"
 msgstr "History cleared!"
 
-#: COMTool/plugins/dbg.py:1470 COMTool/plugins/graph.py:259 COMTool/plugins/protocol.py:524
+#: COMTool/plugins/dbg.py:1535
+msgid "Confirm clear"
+msgstr "Confirm clear"
+
+#: COMTool/plugins/dbg.py:1539
+msgid "Clear receive area?"
+msgstr "Clear receive area?"
+
+#: COMTool/plugins/dbg.py:1543
+msgid "Clear send input?"
+msgstr "Clear send input?"
+
+#: COMTool/plugins/dbg.py:1547
+msgid "Clear TX history?"
+msgstr "Clear TX history?"
+
+#: COMTool/plugins/dbg.py:1554 COMTool/plugins/graph.py:259
+#: COMTool/plugins/protocol.py:524
 msgid "Send data failed!"
 msgstr "Send data failed!"
 
-#: COMTool/plugins/dbg.py:1475
+#: COMTool/plugins/dbg.py:1559
 msgid "Send file"
 msgstr "Send file"
 
-#: COMTool/plugins/dbg.py:1479
+#: COMTool/plugins/dbg.py:1563
 msgid "Send file failed!"
 msgstr "Send file failed!"
 
-#: COMTool/plugins/dbg.py:1507
+#: COMTool/plugins/dbg.py:1591
 msgid "Timed log duration error, format: HH:MM:SS"
 msgstr "Timed log duration error, format: HH:MM:SS"
 
-#: COMTool/plugins/dbg.py:1535
+#: COMTool/plugins/dbg.py:1619
 msgid "Timed log stopped"
 msgstr "Timed log stopped"
 
-#: COMTool/plugins/dbg.py:1585
+#: COMTool/plugins/dbg.py:1669
 msgid "Log"
 msgstr "Log"
 
-#: COMTool/plugins/dbg.py:1608
+#: COMTool/plugins/dbg.py:1692
 msgid "Log file (*.log);;txt file (*.txt);;All Files (*)"
 msgstr "Log file (*.log);;txt file (*.txt);;All Files (*)"
 
-#: COMTool/plugins/dbg.py:1699
+#: COMTool/plugins/dbg.py:1783
 msgid "Drag before another item to reorder"
 msgstr "Drag before another item to reorder"
 
-#: COMTool/plugins/dbg.py:1705
+#: COMTool/plugins/dbg.py:1790
 msgid "Click to set button color, right click to clear"
 msgstr "Click to set button color, right click to clear"
 
-#: COMTool/plugins/dbg.py:1711
+#: COMTool/plugins/dbg.py:1796
 msgid "Edit custom send remark and icon"
 msgstr "Edit custom send remark and icon"
 
-#: COMTool/plugins/dbg.py:1720
+#: COMTool/plugins/dbg.py:1805
 msgid "Delete this custom send item"
 msgstr "Delete this custom send item"
 
-#: COMTool/plugins/dbg.py:1761
+#: COMTool/plugins/dbg.py:1846
 msgid "Delete selected custom send item?"
 msgstr "Delete selected custom send item?"
 
-#: COMTool/plugins/dbg.py:1957
+#: COMTool/plugins/dbg.py:2042
 msgid "Delete selected custom send items?"
 msgstr "Delete selected custom send items?"
 
-#: COMTool/plugins/dbg.py:2060
+#: COMTool/plugins/dbg.py:2145
 msgid "Import custom send"
 msgstr "Import custom send"
 
-#: COMTool/plugins/dbg.py:2062 COMTool/plugins/dbg.py:2081
+#: COMTool/plugins/dbg.py:2147 COMTool/plugins/dbg.py:2166
 msgid "JSON file (*.json);;All Files (*)"
 msgstr "JSON file (*.json);;All Files (*)"
 
-#: COMTool/plugins/dbg.py:2071
+#: COMTool/plugins/dbg.py:2156
 msgid "Custom send file must be a JSON list"
 msgstr "Custom send file must be a JSON list"
 
-#: COMTool/plugins/dbg.py:2073
+#: COMTool/plugins/dbg.py:2158
 msgid "Custom send items imported!"
 msgstr "Custom send items imported!"
 
-#: COMTool/plugins/dbg.py:2075
+#: COMTool/plugins/dbg.py:2160
 msgid "Import custom send failed!"
 msgstr "Import custom send failed!"
 
-#: COMTool/plugins/dbg.py:2079
+#: COMTool/plugins/dbg.py:2164
 msgid "Export custom send"
 msgstr "Export custom send"
 
-#: COMTool/plugins/dbg.py:2087
+#: COMTool/plugins/dbg.py:2172
 msgid "Custom send items exported!"
 msgstr "Custom send items exported!"
 
-#: COMTool/plugins/dbg.py:2089
+#: COMTool/plugins/dbg.py:2174
 msgid "Export custom send failed!"
 msgstr "Export custom send failed!"
 
-#: COMTool/plugins/dbg.py:2099
+#: COMTool/plugins/dbg.py:2184
 msgid ""
 "File path error\n"
 "path"
@@ -1078,23 +1146,23 @@ msgstr ""
 "File path error\n"
 "path"
 
-#: COMTool/plugins/dbg.py:2102
+#: COMTool/plugins/dbg.py:2187
 msgid "Connect first please"
 msgstr "Connect first please"
 
-#: COMTool/plugins/dbg.py:2105
+#: COMTool/plugins/dbg.py:2190
 msgid "Sending file"
 msgstr "Sending file"
 
-#: COMTool/plugins/dbg.py:2122
+#: COMTool/plugins/dbg.py:2207
 msgid "Time format error"
 msgstr "Time format error"
 
-#: COMTool/plugins/dbg.py:2189
+#: COMTool/plugins/dbg.py:2274
 msgid "Send Error"
 msgstr "Send Error"
 
-#: COMTool/plugins/dbg.py:2197
+#: COMTool/plugins/dbg.py:2282
 msgid "get data error"
 msgstr "get data error"
 
@@ -1127,8 +1195,12 @@ msgid "\"$\" means start of frame, end with \"\\n\" \",\" means separator"
 msgstr "\"$\" means start of frame, end with \"\\n\" \",\" means separator"
 
 #: COMTool/plugins/graph.py:73
-msgid "checksum is optional, checksum is sum of all bytes in frame except \",checksum\"."
-msgstr "checksum is optional, checksum is sum of all bytes in frame except \",checksum\"."
+msgid ""
+"checksum is optional, checksum is sum of all bytes in frame except "
+"\",checksum\"."
+msgstr ""
+"checksum is optional, checksum is sum of all bytes in frame except "
+"\",checksum\"."
 
 #: COMTool/plugins/graph.py:74
 msgid "[x] is optional"
@@ -1150,7 +1222,8 @@ msgstr "Double click to add a graph widget"
 msgid "Clear count"
 msgstr "Clear count"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:297 COMTool/plugins/graph_widgets.py:51
+#: COMTool/plugins/graph_widget_metasenselite.py:297
+#: COMTool/plugins/graph_widgets.py:51
 msgid "Remove"
 msgstr "Remove"
 
@@ -1158,12 +1231,15 @@ msgstr "Remove"
 msgid "Capture"
 msgstr "Capture"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:304 COMTool/plugins/graph_widgets.py:58
+#: COMTool/plugins/graph_widget_metasenselite.py:304
+#: COMTool/plugins/graph_widgets.py:58
 msgid "Header:"
 msgstr "Header:"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:306 COMTool/plugins/graph_widget_metasenselite.py:578
-#: COMTool/plugins/graph_widget_metasenselite.py:580 COMTool/plugins/graph_widget_metasenselite.py:589
+#: COMTool/plugins/graph_widget_metasenselite.py:306
+#: COMTool/plugins/graph_widget_metasenselite.py:578
+#: COMTool/plugins/graph_widget_metasenselite.py:580
+#: COMTool/plugins/graph_widget_metasenselite.py:589
 #: COMTool/plugins/graph_widgets.py:60 COMTool/plugins/graph_widgets.py:154
 #: COMTool/plugins/graph_widgets.py:156 COMTool/plugins/graph_widgets.py:165
 msgid "Set"
@@ -1177,7 +1253,8 @@ msgstr "RawCMD:"
 msgid "AT+ISP=0\\r"
 msgstr "AT+ISP=0\\r"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:310 COMTool/plugins/myplugin.py:44
+#: COMTool/plugins/graph_widget_metasenselite.py:310
+#: COMTool/plugins/myplugin.py:44
 #: COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:52
 msgid "Send"
 msgstr "Send"
@@ -1216,18 +1293,20 @@ msgstr "  Ev:AE   "
 
 #: COMTool/plugins/graph_widget_metasenselite.py:357
 msgid ""
-"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode + 1Byte Sensor Temp + "
-"1Byte Driver Temp\n"
-" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res rows + 1Byte res cols\n"
+"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode"
+" + 1Byte Sensor Temp + 1Byte Driver Temp\n"
+" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res "
+"rows + 1Byte res cols\n"
 " 2Byte Frame ID + 1 Byte ISP version + 1 Byte reserved3\n"
 " frame data\n"
 " 1Byte checksum + 1Byte tail\n"
 " length count from Byte4 to the Byte before Checksum\n"
 "Protocol example code see help"
 msgstr ""
-"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode + 1Byte Sensor Temp + "
-"1Byte Driver Temp\n"
-" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res rows + 1Byte res cols\n"
+"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode"
+" + 1Byte Sensor Temp + 1Byte Driver Temp\n"
+" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res "
+"rows + 1Byte res cols\n"
 " 2Byte Frame ID + 1 Byte ISP version + 1 Byte reserved3\n"
 " frame data\n"
 " 1Byte checksum + 1Byte tail\n"
@@ -1254,7 +1333,8 @@ msgstr "X:"
 msgid "Y:"
 msgstr "Y:"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:591 COMTool/plugins/graph_widgets.py:167
+#: COMTool/plugins/graph_widget_metasenselite.py:591
+#: COMTool/plugins/graph_widgets.py:167
 msgid "Format error"
 msgstr "Format error"
 
@@ -1276,25 +1356,28 @@ msgstr "Binary Protocol"
 
 #: COMTool/plugins/graph_widgets.py:61
 msgid ""
-"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
+"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes "
+"y(double) + 1Byte sum\n"
 "Protocol example code see help"
 msgstr ""
-"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
+"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes "
+"y(double) + 1Byte sum\n"
 "Protocol example code see help"
 
 #: COMTool/plugins/graph_widgets.py:65
 msgid ""
-"Check this if you want to use binary protocol, or use ASCII protocol(e.g. "
-"\"$data1,10.0,200.0\\n\"), more see help button on the top of window"
+"Check this if you want to use binary protocol, or use ASCII protocol(e.g."
+" \"$data1,10.0,200.0\\n\"), more see help button on the top of window"
 msgstr ""
-"Check this if you want to use binary protocol, or use ASCII protocol(e.g. "
-"\"$data1,10.0,200.0\\n\"), more see help button on the top of window"
+"Check this if you want to use binary protocol, or use ASCII protocol(e.g."
+" \"$data1,10.0,200.0\\n\"), more see help button on the top of window"
 
 #: COMTool/plugins/myplugin.py:22
 msgid "my plugin"
 msgstr "my plugin"
 
-#: COMTool/plugins/myplugin.py:62 COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
+#: COMTool/plugins/myplugin.py:62
+#: COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
 msgid "Input data first please"
 msgstr "Input data first please"
 
@@ -1322,8 +1405,9 @@ msgstr "Custom, input name"
 msgid "Load defaults"
 msgstr "Load defaults"
 
-#: COMTool/plugins/protocol.py:255 COMTool/plugins/protocol.py:575 COMTool/plugins/protocol.py:599
-#: COMTool/plugins/protocol.py:602 COMTool/plugins/protocol.py:622
+#: COMTool/plugins/protocol.py:255 COMTool/plugins/protocol.py:575
+#: COMTool/plugins/protocol.py:599 COMTool/plugins/protocol.py:602
+#: COMTool/plugins/protocol.py:622
 msgid "Save"
 msgstr "Save"
 
@@ -1456,14 +1540,18 @@ msgstr "my plugin2"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
+#~ "Protocol: header + 1Byte name length "
+#~ "+ name + 8Bytes x(double) + 8Bytes"
+#~ " y(double) + 1Byte sum\n"
 #~ "If you use python, can pack frame by:\n"
 #~ "from COMTool.plugin import gragh_protocol\n"
 #~ "frame = gragh_protocol.plot_pack(name, x, y)"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
+#~ "Protocol: header + 1Byte name length "
+#~ "+ name + 8Bytes x(double) + 8Bytes"
+#~ " y(double) + 1Byte sum\n"
 #~ "If you use python, can pack frame by:\n"
 #~ msgstr ""
 
@@ -1520,4 +1608,3 @@ msgstr "my plugin2"
 
 #~ msgid "no color"
 #~ msgstr "no color"
-
