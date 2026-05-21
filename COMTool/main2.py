@@ -188,7 +188,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
                         conns, connsConfigs,
                         self.config, pluginConfig,
                         self.hintSignal, self.reloadWindowSignal,
-                        self.onConnChnaged)
+                        self.onConnChnaged, self.onItemNameChanged)
         self.tabAddItem(item)
         self.items.append(item)
         if setCurrent:
@@ -211,6 +211,34 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
     def setTabDisplay(self, idx, item):
         self.tabWidget.setTabText(idx, item.name)
         self.tabWidget.setTabToolTip(idx, item.name + _(", Double click to detach as a window, right click to rename"))
+
+    def uniqueItemName(self, name, currentItem=None):
+        baseName = name.strip() if name else _("Page")
+        if not baseName:
+            baseName = _("Page")
+        existing = {item.name for item in self.items if item is not currentItem}
+        if baseName not in existing:
+            return baseName
+        number = 1
+        while "{} {}".format(baseName, number) in existing:
+            number += 1
+        return "{} {}".format(baseName, number)
+
+    def onItemNameChanged(self, item, name):
+        oldName = item.name
+        newName = self.uniqueItemName(name, item)
+        item.name = newName
+        for itemConfig in self.config["items"]:
+            if itemConfig["name"] == oldName:
+                itemConfig["name"] = newName
+                break
+        if self.config["currItem"] == oldName:
+            self.config["currItem"] = newName
+        idx = self.tabWidget.indexOf(item.widget)
+        if idx >= 0:
+            self.setTabDisplay(idx, item)
+        item.widget.setWindowTitle(newName)
+        return newName
 
     def onConnChnaged(self, plugin, status:ConnectionStatus, msg):
         for item in self.items:
@@ -327,8 +355,15 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         self.settingsButton.setObjectName("menuItem1")
         self.aboutButton.setObjectName("menuItem3")
         self.functionalButton.setObjectName("menuItem4")
+        self.settingsButton.setToolTip(_("Show or hide settings panel"))
+        self.skinButton.setToolTip(_("Switch skin"))
+        self.languageCombobox.setToolTip(_("Switch language"))
+        self.aboutButton.setToolTip(_("About"))
+        self.functionalButton.setToolTip(_("Show or hide custom send panel"))
+        self.encodingCombobox.setToolTip(_("Text encoding for send and receive data"))
         # plugins slector
         self.pluginsSelector = ButtonCombbox(icon="fa.plus", btnClass="smallBtn2")
+        self.pluginsSelector.setToolTip(_("Add plugin page"))
         self.pluginsSelector.addItem(self.loadPluginStr)
         self.pluginsSelector.activated.connect(self.onPluginSelectorChanged)
 
@@ -490,20 +525,10 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         newName = newName.strip()
         if not newName or newName == item.name:
             return
-        for other in self.items:
-            if other is not item and other.name == newName:
-                QMessageBox.warning(self, _("Warning"), _("Page name already exists"))
-                return
-        oldName = item.name
-        item.name = newName
-        for itemConfig in self.config["items"]:
-            if itemConfig["name"] == oldName:
-                itemConfig["name"] = newName
-                break
-        if self.config["currItem"] == oldName:
-            self.config["currItem"] = newName
-        self.setTabDisplay(idx, item)
-        item.widget.setWindowTitle(newName)
+        if self.uniqueItemName(newName, item) != newName:
+            QMessageBox.warning(self, _("Warning"), _("Page name already exists"))
+            return
+        self.onItemNameChanged(item, newName)
 
     def closeTab(self, idx):
         # only one, ignore
