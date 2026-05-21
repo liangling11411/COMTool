@@ -439,6 +439,10 @@ class ReceiveFindAdvancedDialog(QDialog):
         count = self.dialog.plugin.countReceiveFindRuleMatches(self.idx)
         self.countLabel.setText(_("Matches") + ": {}".format(count))
 
+    def closeEvent(self, event):
+        super().closeEvent(event)
+        QTimer.singleShot(0, self.dialog.plugin.updateReceiveFindMarkers)
+
 
 class ReceiveFindDialog(QDialog):
     def __init__(self, plugin, parent=None):
@@ -654,6 +658,7 @@ class ReceiveFindDialog(QDialog):
         self.advancedDialog.show()
         self.advancedDialog.raise_()
         self.advancedDialog.activateWindow()
+        self.plugin.updateReceiveFindMarkers()
 
     def updateRuleAdvanced(self, idx, item, values):
         if idx < 0 or idx >= len(self.plugin.config["receiveFindRules"]):
@@ -1552,10 +1557,19 @@ class Plugin(Plugin_Base):
             self.hintSignal.emit("info", _("Find"), _("No match found"))
             return
         cursor = self.receiveArea.textCursor()
-        position = cursor.selectionStart() if rule.get("reverse") else cursor.selectionEnd()
+        hasSelection = cursor.hasSelection()
+        selectionStart = cursor.selectionStart()
+        selectionEnd = cursor.selectionEnd()
+        position = selectionStart if rule.get("reverse") else selectionEnd
+        if not hasSelection:
+            position = cursor.position()
         target = None
         if rule.get("reverse"):
             for start, end in reversed(ranges):
+                if hasSelection and start == selectionStart and end == selectionEnd:
+                    continue
+                if not hasSelection and start < position < end:
+                    continue
                 if end <= position:
                     target = (start, end)
                     break
@@ -1563,6 +1577,10 @@ class Plugin(Plugin_Base):
                 target = ranges[-1]
         else:
             for start, end in ranges:
+                if hasSelection and start == selectionStart and end == selectionEnd:
+                    continue
+                if not hasSelection and start < position < end:
+                    continue
                 if start >= position:
                     target = (start, end)
                     break
@@ -2023,6 +2041,7 @@ class Plugin(Plugin_Base):
         self.currentConnStatus = status
         super().onConnChanged(status, msg)
         self.updateClosedOnlyControls()
+        self.updateReceiveFindMarkers()
         if status == ConnectionStatus.CONNECTED and self.config["saveLogAutoNew"]:
             self.updateLogPath()
             if self.config["saveLog"]:
@@ -2644,8 +2663,18 @@ class Plugin(Plugin_Base):
         if self.receiveFindMarkerTimer is not None:
             self.receiveFindMarkerTimer.start(200)
 
+    def shouldShowReceiveFindMarkers(self):
+        if not self.isConnectionClosed():
+            return False
+        dialog = getattr(self, "receiveFindDialog", None)
+        advanced = getattr(dialog, "advancedDialog", None) if dialog is not None else None
+        return bool(advanced is not None and advanced.isVisible())
+
     def updateReceiveFindMarkers(self):
         if not hasattr(self, "receiveFindScrollBar"):
+            return
+        if not self.shouldShowReceiveFindMarkers():
+            self.receiveFindScrollBar.setMarkers([])
             return
         text = self.receiveArea.toPlainText() if hasattr(self, "receiveArea") else ""
         if not text:
