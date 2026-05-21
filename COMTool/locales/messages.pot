@@ -1,21 +1,21 @@
 # Translations template for PROJECT.
-# Copyright (C) 2025 ORGANIZATION
+# Copyright (C) 2026 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-05-17 11:48+0800\n"
+"POT-Creation-Date: 2026-05-22 00:19+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: helpAbout.py:40
 msgid "Config path"
@@ -61,270 +61,328 @@ msgstr ""
 msgid "You can buy me half a cup of coffee if this software helpes you"
 msgstr ""
 
-#: main2.py:90
+#: main2.py:92
 msgid "Load plugin from file"
 msgstr ""
 
 #: main2.py:213
-msgid ", Double click to detach as a window"
+msgid ", Double click to detach as a window, right click to rename"
 msgstr ""
 
-#: main2.py:222 plugins/base.py:79
+#: main2.py:216 main2.py:218
+msgid "Page"
+msgstr ""
+
+#: main2.py:250 plugins/base.py:79
 msgid "Connected"
 msgstr ""
 
-#: main2.py:222 plugins/base.py:85
+#: main2.py:250 plugins/base.py:85
 msgid "Connection lose"
 msgstr ""
 
-#: main2.py:222
+#: main2.py:250
 msgid "Disconnected"
 msgstr ""
 
-#: conn/conn_serial.py:337 conn/conn_ssh.py:296 conn/conn_tcp_udp.py:430
-#: main2.py:248 main2.py:298 main2.py:441 main2.py:446 main2.py:789
-#: pluginItems.py:175 pluginItems.py:178 pluginItems.py:286 pluginItems.py:298
-#: plugins/base.py:176 plugins/base.py:181 plugins/base.py:197
-#: plugins/base.py:206 plugins/dbg.py:463 plugins/dbg.py:472 plugins/dbg.py:625
-#: plugins/dbg.py:642 plugins/dbg.py:699 plugins/dbg.py:707
-#: plugins/graph.py:259 plugins/graph_widget_metasenselite.py:591
-#: plugins/graph_widgets.py:167 plugins/myplugin.py:62
+#: conn/conn_serial.py:338 conn/conn_ssh.py:296 conn/conn_tcp_udp.py:430
+#: main2.py:276 main2.py:326 main2.py:481 main2.py:486 main2.py:890
+#: pluginItems.py:202 pluginItems.py:205 pluginItems.py:319 pluginItems.py:331
+#: plugins/base.py:194 plugins/base.py:199 plugins/base.py:215
+#: plugins/base.py:224 plugins/dbg.py:1881 plugins/dbg.py:1890
+#: plugins/dbg.py:1918 plugins/dbg.py:2494 plugins/dbg.py:2508
+#: plugins/dbg.py:2518 plugins/dbg.py:2541 plugins/dbg.py:2608
+#: plugins/dbg.py:2616 plugins/devtools.py:171 plugins/graph.py:259
+#: plugins/graph_widget_metasenselite.py:591 plugins/graph_widgets.py:167
+#: plugins/myplugin.py:62
 #: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
-#: plugins/protocol.py:472 plugins/protocol.py:499 plugins/protocol.py:508
-#: plugins/protocol.py:571
+#: plugins/protocol.py:488 plugins/protocol.py:515 plugins/protocol.py:524
+#: plugins/protocol.py:587
 msgid "Error"
 msgstr ""
 
-#: main2.py:248
+#: main2.py:276
 msgid "Load plugin failed"
 msgstr ""
 
-#: main2.py:269
+#: main2.py:297
 msgid "Load plugin fail"
 msgstr ""
 
-#: conn/conn_ssh.py:239 main2.py:292 pluginItems.py:155 pluginItems.py:168
-#: plugins/dbg.py:485 plugins/dbg.py:499
+#: conn/conn_ssh.py:239 main2.py:320 plugins/dbg.py:2003 plugins/dbg.py:2017
 msgid "Select file"
 msgstr ""
 
-#: main2.py:294
+#: main2.py:322
 msgid "python script (*.py)"
 msgstr ""
 
-#: main2.py:298
-msgid "Load plugin error"
+#: main2.py:358
+msgid "Show or hide settings panel"
 msgstr ""
 
-#: main2.py:388
-msgid "New Window"
+#: main2.py:359
+msgid "Switch skin"
 msgstr ""
 
-#: main2.py:519 main2.py:528
-msgid "Restart now?"
+#: main2.py:360
+msgid "Switch language"
 msgstr ""
 
-#: main2.py:520
-msgid "language changed to: "
-msgstr ""
-
-#: main2.py:520
-msgid "Restart software to take effect now?"
-msgstr ""
-
-#: main2.py:569 main2.py:570
-msgid "Closing ..."
-msgstr ""
-
-#: main2.py:676
+#: main2.py:361 main2.py:777
 msgid "About"
 msgstr ""
 
-#: main2.py:698
+#: main2.py:362
+msgid "Show or hide custom send panel"
+msgstr ""
+
+#: main2.py:363
+msgid "Text encoding for send and receive data"
+msgstr ""
+
+#: main2.py:366
+msgid "Add plugin page"
+msgstr ""
+
+#: main2.py:427
+msgid "New Window"
+msgstr ""
+
+#: main2.py:513 main2.py:522
+msgid "Rename"
+msgstr ""
+
+#: main2.py:522
+msgid "Page name"
+msgstr ""
+
+#: main2.py:529 pluginItems.py:208 plugins/dbg.py:1811 plugins/dbg.py:2521
+#: plugins/protocol.py:609 plugins/protocol.py:631
+msgid "Warning"
+msgstr ""
+
+#: main2.py:529
+msgid "Page name already exists"
+msgstr ""
+
+#: main2.py:544
+msgid "Save page?"
+msgstr ""
+
+#: main2.py:545
+msgid "Save this page before closing it?"
+msgstr ""
+
+#: main2.py:607 main2.py:616
+msgid "Restart now?"
+msgstr ""
+
+#: main2.py:608
+msgid "language changed to: "
+msgstr ""
+
+#: main2.py:608
+msgid "Restart software to take effect now?"
+msgstr ""
+
+#: main2.py:663 main2.py:664
+msgid "Closing ..."
+msgstr ""
+
+#: main2.py:799
 msgid "New versioin detected, please click learn more to download"
 msgstr ""
 
-#: main2.py:699
+#: main2.py:800
 msgid "Learn More"
 msgstr ""
 
-#: main2.py:700
+#: main2.py:801
 msgid "Skip this version"
 msgstr ""
 
-#: main2.py:701
+#: main2.py:802
 msgid "Remind me next time"
 msgstr ""
 
-#: main2.py:702
+#: main2.py:803
 msgid "Need update"
 msgstr ""
 
-#: pluginItems.py:58
+#: pluginItems.py:59
 msgid "version not found in config of plugin:"
 msgstr ""
 
-#: conn/conn_tcp_udp.py:569 pluginItems.py:104
+#: conn/conn_tcp_udp.py:569 pluginItems.py:118
 msgid "Connection"
 msgstr ""
 
-#: pluginItems.py:129
-msgid "Load config"
+#: pluginItems.py:142 pluginItems.py:195
+msgid "Import page"
 msgstr ""
 
-#: pluginItems.py:130
-msgid "Share config"
+#: pluginItems.py:143 pluginItems.py:180
+msgid "Save page"
 msgstr ""
 
-#: pluginItems.py:157 pluginItems.py:170
+#: pluginItems.py:144
+msgid ""
+"Import this page name, connection settings, and plugin settings from a "
+"page file"
+msgstr ""
+
+#: pluginItems.py:145
+msgid ""
+"Save this page name, connection settings, and plugin settings to a page "
+"file"
+msgstr ""
+
+#: pluginItems.py:182 pluginItems.py:197
 msgid "json file (*.json);;config file (*.conf);;All Files (*)"
 msgstr ""
 
-#: pluginItems.py:175
+#: pluginItems.py:202
 msgid ""
 "Not support load global config file, you can copy config file mannually "
 "to "
 msgstr ""
 
-#: pluginItems.py:178
+#: pluginItems.py:205
 msgid "Config is not for this plugin, config is for plugin:"
 msgstr ""
 
-#: pluginItems.py:181 plugins/dbg.py:421 plugins/dbg.py:628
-#: plugins/protocol.py:593 plugins/protocol.py:615
-msgid "Warning"
-msgstr ""
-
-#: pluginItems.py:182
+#: pluginItems.py:209
 msgid "Config version not same, plugin config version:"
 msgstr ""
 
-#: pluginItems.py:183
+#: pluginItems.py:210
 msgid "now"
 msgstr ""
 
-#: pluginItems.py:184
+#: pluginItems.py:211
 msgid ""
 "this maybe lead to some problem, if happened, please remove it manually "
 "from config file"
 msgstr ""
 
-#: pluginItems.py:201
+#: pluginItems.py:234
 msgid "Restart to load config?"
 msgstr ""
 
-#: pluginItems.py:237
+#: pluginItems.py:270
 msgid "Change connection, auto close old connection"
 msgstr ""
 
-#: pluginItems.py:286
+#: pluginItems.py:319
 msgid "Open file failed!"
 msgstr ""
 
-#: widgets.py:563 widgets.py:584
+#: widgets.py:576 widgets.py:597
 msgid "Received"
 msgstr ""
 
-#: widgets.py:563 widgets.py:564 widgets.py:584 widgets.py:591
+#: widgets.py:576 widgets.py:577 widgets.py:597 widgets.py:604
 msgid "bytes"
 msgstr ""
 
-#: widgets.py:564 widgets.py:591
+#: widgets.py:577 widgets.py:604
 msgid "Sent"
 msgstr ""
 
-#: widgets.py:616
+#: widgets.py:629
 msgid "Help"
 msgstr ""
 
-#: widgets.py:663
+#: widgets.py:678
 msgid "Input remark"
 msgstr ""
 
-#: plugins/dbg.py:203 plugins/protocol.py:270 widgets.py:673 widgets.py:744
-msgid "Record"
-msgstr ""
-
-#: widgets.py:678
+#: widgets.py:688
 msgid "Input value"
 msgstr ""
 
-#: widgets.py:680 widgets.py:705
+#: plugins/dbg.py:2360 widgets.py:691 widgets.py:727
 msgid "Select icon"
 msgstr ""
 
-#: plugins/graph_widgets.py:392 widgets.py:682
+#: plugins/dbg.py:1086 plugins/protocol.py:277 widgets.py:698 widgets.py:768
+msgid "Record"
+msgstr ""
+
+#: plugins/graph_widgets.py:392 widgets.py:701
 msgid "Shortcut"
 msgstr ""
 
-#: widgets.py:684
+#: widgets.py:704
 msgid "Press key to record, or click Cancel"
 msgstr ""
 
-#: plugins/dbg.py:456 widgets.py:687 widgets.py:705
+#: plugins/dbg.py:1859 plugins/dbg.py:1946 plugins/dbg.py:2360
+#: plugins/dbg.py:2492 plugins/dbg.py:2506 widgets.py:708 widgets.py:727
 msgid "OK"
 msgstr ""
 
-#: widgets.py:688 widgets.py:731
+#: widgets.py:709 widgets.py:754
 msgid "Cancel"
 msgstr ""
 
-#: conn/conn_serial.py:47
+#: conn/conn_serial.py:48
 msgid "Serial"
 msgstr ""
 
-#: conn/conn_serial.py:81
+#: conn/conn_serial.py:82
 msgid "Custom, input baudrate"
 msgstr ""
 
-#: conn/conn_serial.py:113 conn/conn_ssh.py:151 conn/conn_tcp_udp.py:115
+#: conn/conn_serial.py:114 conn/conn_ssh.py:151 conn/conn_tcp_udp.py:115
 msgid "Port"
 msgstr ""
 
-#: conn/conn_serial.py:114
+#: conn/conn_serial.py:115
 msgid "Baudrate"
 msgstr ""
 
-#: conn/conn_serial.py:115
+#: conn/conn_serial.py:116
 msgid "DataBytes"
 msgstr ""
 
-#: conn/conn_serial.py:116
+#: conn/conn_serial.py:117
 msgid "Parity"
 msgstr ""
 
-#: conn/conn_serial.py:117
+#: conn/conn_serial.py:118
 msgid "Stopbits"
 msgstr ""
 
-#: conn/conn_serial.py:118
+#: conn/conn_serial.py:119
 msgid "Flow control"
 msgstr ""
 
-#: conn/conn_serial.py:152 conn/conn_serial.py:153
+#: conn/conn_serial.py:153 conn/conn_serial.py:154
 msgid "Check to enable(usually output low level)"
 msgstr ""
 
-#: conn/conn_serial.py:154 conn/conn_serial.py:301 conn/conn_serial.py:393
+#: conn/conn_serial.py:155 conn/conn_serial.py:302 conn/conn_serial.py:394
 #: conn/conn_ssh.py:165 conn/conn_ssh.py:251 conn/conn_ssh.py:339
 #: conn/conn_tcp_udp.py:140 conn/conn_tcp_udp.py:343 conn/conn_tcp_udp.py:462
 msgid "OPEN"
 msgstr ""
 
-#: conn/conn_serial.py:207 conn/conn_serial.py:336
+#: conn/conn_serial.py:208 conn/conn_serial.py:337
 msgid "Open Failed"
 msgstr ""
 
-#: conn/conn_serial.py:396 conn/conn_serial.py:399 conn/conn_ssh.py:342
+#: conn/conn_serial.py:397 conn/conn_serial.py:400 conn/conn_ssh.py:342
 #: conn/conn_ssh.py:345 conn/conn_tcp_udp.py:465 conn/conn_tcp_udp.py:468
 msgid "CLOSE"
 msgstr ""
 
-#: conn/conn_serial.py:434 conn/conn_ssh.py:368 conn/conn_tcp_udp.py:525
+#: conn/conn_serial.py:474 conn/conn_ssh.py:368 conn/conn_tcp_udp.py:525
 msgid "Reconnected"
 msgstr ""
 
-#: conn/conn_serial.py:465 conn/conn_ssh.py:413 conn/conn_tcp_udp.py:588
+#: conn/conn_serial.py:505 conn/conn_ssh.py:413 conn/conn_tcp_udp.py:588
 msgid "Connection lose!"
 msgstr ""
 
@@ -356,7 +414,7 @@ msgstr ""
 msgid "Input error"
 msgstr ""
 
-#: conn/conn_ssh.py:222
+#: conn/conn_ssh.py:222 plugins/devtools.py:433
 msgid "Input"
 msgstr ""
 
@@ -364,7 +422,7 @@ msgstr ""
 msgid "error"
 msgstr ""
 
-#: conn/conn_ssh.py:241 plugins/dbg.py:487
+#: conn/conn_ssh.py:241 plugins/dbg.py:2005
 msgid "All Files (*)"
 msgstr ""
 
@@ -392,7 +450,7 @@ msgstr ""
 msgid "Protocol"
 msgstr ""
 
-#: conn/conn_tcp_udp.py:109
+#: conn/conn_tcp_udp.py:109 plugins/devtools.py:548
 msgid "Mode"
 msgstr ""
 
@@ -436,243 +494,1115 @@ msgstr ""
 msgid "Connecting"
 msgstr ""
 
-#: plugins/base.py:197
+#: plugins/base.py:215 plugins/devtools.py:193
 msgid "Format error, should be like 00 01 02 03"
 msgstr ""
 
-#: plugins/base.py:206
+#: plugins/base.py:224
 msgid "Escape is on, but escape error:"
 msgstr ""
 
-#: plugins/dbg.py:51
+#: plugins/dbg.py:310 plugins/dbg.py:601
+msgid "Advanced find settings"
+msgstr ""
+
+#: plugins/dbg.py:321
+msgid "Find next"
+msgstr ""
+
+#: plugins/dbg.py:322
+msgid "Jump to the next match for this rule"
+msgstr ""
+
+#: plugins/dbg.py:323
+msgid "Count"
+msgstr ""
+
+#: plugins/dbg.py:324
+msgid "Count matches for this rule in the receive buffer"
+msgstr ""
+
+#: plugins/dbg.py:331
+msgid "Find options"
+msgstr ""
+
+#: plugins/dbg.py:334
+msgid "Reverse find"
+msgstr ""
+
+#: plugins/dbg.py:335
+msgid "Search upward when jumping to the next match"
+msgstr ""
+
+#: plugins/dbg.py:336
+msgid "Whole word"
+msgstr ""
+
+#: plugins/dbg.py:337
+msgid "Match only whole words"
+msgstr ""
+
+#: plugins/dbg.py:338
+msgid "Case sensitive"
+msgstr ""
+
+#: plugins/dbg.py:339
+msgid "Match uppercase and lowercase exactly"
+msgstr ""
+
+#: plugins/dbg.py:340
+msgid "Wrap around"
+msgstr ""
+
+#: plugins/dbg.py:341
+msgid "Continue from the other end when no match is found"
+msgstr ""
+
+#: plugins/dbg.py:342
+msgid "Regular expression"
+msgstr ""
+
+#: plugins/dbg.py:343
+msgid "Treat the find text as a Python regular expression"
+msgstr ""
+
+#: plugins/dbg.py:344
+msgid "Dot matches newline"
+msgstr ""
+
+#: plugins/dbg.py:345
+msgid "Let '.' in regular expressions match line breaks"
+msgstr ""
+
+#: plugins/dbg.py:356 plugins/dbg.py:505
+msgid "Close"
+msgstr ""
+
+#: plugins/dbg.py:379
+msgid "No find rule selected"
+msgstr ""
+
+#: plugins/dbg.py:404 plugins/dbg.py:595
+msgid "Find text"
+msgstr ""
+
+#: plugins/dbg.py:404
+msgid "Empty"
+msgstr ""
+
+#: plugins/dbg.py:446
+msgid "Matches"
+msgstr ""
+
+#: plugins/dbg.py:461
+msgid "Find in receive area"
+msgstr ""
+
+#: plugins/dbg.py:467
+msgid "Find rules (top rules have higher priority)"
+msgstr ""
+
+#: plugins/dbg.py:470
+msgid "Select all"
+msgstr ""
+
+#: plugins/dbg.py:471
+msgid "Select all find rules for batch actions"
+msgstr ""
+
+#: plugins/dbg.py:472
+msgid "Highlight color"
+msgstr ""
+
+#: plugins/dbg.py:473
+msgid "Choose highlight color for new rules or selected rules"
+msgstr ""
+
+#: plugins/dbg.py:475
+msgid "Apply color"
+msgstr ""
+
+#: plugins/dbg.py:476
+msgid "Clear color"
+msgstr ""
+
+#: plugins/dbg.py:477
+msgid "Delete selected"
+msgstr ""
+
+#: plugins/dbg.py:478
+msgid "Apply the current highlight color to all selected rules"
+msgstr ""
+
+#: plugins/dbg.py:479
+msgid "Remove highlight color from all selected rules"
+msgstr ""
+
+#: plugins/dbg.py:480
+msgid "Delete all selected find rules"
+msgstr ""
+
+#: plugins/dbg.py:503
+msgid "Add find rule"
+msgstr ""
+
+#: plugins/dbg.py:506
+msgid "Close find window"
+msgstr ""
+
+#: plugins/dbg.py:530 plugins/dbg.py:714 plugins/dbg.py:1675
+#: plugins/dbg.py:1689 plugins/dbg.py:2291 plugins/dbg.py:2347
+msgid "Select color"
+msgstr ""
+
+#: plugins/dbg.py:585
+msgid "Select"
+msgstr ""
+
+#: plugins/dbg.py:586
+msgid "Select this rule for batch edit actions"
+msgstr ""
+
+#: plugins/dbg.py:589
+msgid "Drag before another find rule to change priority"
+msgstr ""
+
+#: plugins/dbg.py:591 plugins/graph_widgets.py:55
+msgid "Enable"
+msgstr ""
+
+#: plugins/dbg.py:592
+msgid "Enable this rule for highlighting, navigation, and scrollbar markers"
+msgstr ""
+
+#: plugins/dbg.py:596
+msgid ""
+"Plain text searches exact text. Use advanced settings for regular "
+"expressions."
+msgstr ""
+
+#: plugins/dbg.py:598
+msgid "Set highlight color, right click to clear"
+msgstr ""
+
+#: plugins/dbg.py:604
+msgid "Delete this find rule"
+msgstr ""
+
+#: plugins/dbg.py:857
 msgid "Send Receive"
 msgstr ""
 
-#: plugins/dbg.py:67
+#: plugins/dbg.py:873
 msgid "Shortcut:"
 msgstr ""
 
-#: plugins/dbg.py:68
+#: plugins/dbg.py:874
 msgid "Full screen"
 msgstr ""
 
-#: plugins/dbg.py:69
+#: plugins/dbg.py:875
 msgid "Send data"
 msgstr ""
 
-#: plugins/dbg.py:70
+#: plugins/dbg.py:876
 msgid "Clear Send Area"
 msgstr ""
 
-#: plugins/dbg.py:71
+#: plugins/dbg.py:877
 msgid "Clear Receive Area"
 msgstr ""
 
-#: plugins/dbg.py:152
+#: plugins/dbg.py:951
+msgid "Clear RX"
+msgstr ""
+
+#: plugins/dbg.py:952
+msgid "Clear receive area"
+msgstr ""
+
+#: plugins/dbg.py:954
+msgid "Clear TX"
+msgstr ""
+
+#: plugins/dbg.py:955
+msgid "Clear TX input"
+msgstr ""
+
+#: plugins/dbg.py:963
+msgid "Received RX/TX log output"
+msgstr ""
+
+#: plugins/dbg.py:973
+msgid "Input data to send"
+msgstr ""
+
+#: plugins/dbg.py:977
+msgid "Find and highlight receive text"
+msgstr ""
+
+#: plugins/dbg.py:980
+msgid "Send input data"
+msgstr ""
+
+#: plugins/dbg.py:983
+msgid "Send history"
+msgstr ""
+
+#: plugins/dbg.py:1026
 msgid "Receive Settings"
 msgstr ""
 
-#: plugins/dbg.py:153 plugins/dbg.py:188 plugins/protocol.py:262
+#: plugins/dbg.py:1027 plugins/dbg.py:1071 plugins/protocol.py:269
 msgid "ASCII"
 msgstr ""
 
-#: plugins/dbg.py:154
+#: plugins/dbg.py:1028
 msgid ""
 "Show recived data as visible format, select decode method at top right "
 "corner"
 msgstr ""
 
-#: plugins/dbg.py:155 plugins/dbg.py:189 plugins/protocol.py:263
+#: plugins/dbg.py:1029 plugins/dbg.py:1072 plugins/protocol.py:270
 msgid "HEX"
 msgstr ""
 
-#: plugins/dbg.py:156
+#: plugins/dbg.py:1030
 msgid "Show recived data as hex format"
 msgstr ""
 
-#: plugins/dbg.py:158
+#: plugins/dbg.py:1032
 msgid ""
 "Auto\n"
 "Linefeed\n"
 "ms"
 msgstr ""
 
-#: plugins/dbg.py:159 plugins/dbg.py:162
+#: plugins/dbg.py:1033 plugins/dbg.py:1036
 msgid "Auto linefeed after interval, unit: ms"
 msgstr ""
 
-#: plugins/dbg.py:165
+#: plugins/dbg.py:1039 plugins/dbg.py:1056
 msgid "Timestamp"
 msgstr ""
 
-#: plugins/dbg.py:166
+#: plugins/dbg.py:1040
 msgid ""
 "Add timestamp before received data, will automatically enable auto line "
 "feed"
 msgstr ""
 
-#: plugins/dbg.py:167
-msgid "Color"
-msgstr ""
-
-#: plugins/dbg.py:168
-msgid "Enable unix terminal color support, e.g. \\33[31;43mhello\\33[0m"
-msgstr ""
-
-#: plugins/dbg.py:169
+#: plugins/dbg.py:1041 plugins/protocol.py:244
 msgid "Display wrap"
 msgstr ""
 
-#: plugins/dbg.py:170 plugins/dbg.py:205 plugins/protocol.py:272
+#: plugins/dbg.py:1042 plugins/dbg.py:1088 plugins/protocol.py:279
 msgid "Escape"
 msgstr ""
 
-#: plugins/dbg.py:171 plugins/dbg.py:206 plugins/protocol.py:273
+#: plugins/dbg.py:1043 plugins/dbg.py:1089 plugins/protocol.py:280
 msgid "Enable escape characters support like \\t \\r \\n \\x01 \\001"
 msgstr ""
 
-#: plugins/dbg.py:172
+#: plugins/dbg.py:1044 plugins/protocol.py:245
 msgid ""
 "When content in a line is too long, always auto wrap to show, and no "
 "scroll bar"
 msgstr ""
 
-#: plugins/dbg.py:187
+#: plugins/dbg.py:1057 plugins/dbg.py:1170 plugins/dbg.py:1177
+#: plugins/dbg.py:1287
+msgid "Color"
+msgstr ""
+
+#: plugins/dbg.py:1058
+msgid "Timestamp color in receive area"
+msgstr ""
+
+#: plugins/dbg.py:1059
+msgid "Newline after timestamp"
+msgstr ""
+
+#: plugins/dbg.py:1060
+msgid "Display received data on the next line after timestamp"
+msgstr ""
+
+#: plugins/dbg.py:1062
+msgid "Timestamp color"
+msgstr ""
+
+#: plugins/dbg.py:1070
 msgid "Send Settings"
 msgstr ""
 
-#: plugins/dbg.py:190 plugins/protocol.py:264
+#: plugins/dbg.py:1073 plugins/protocol.py:271
 msgid ""
 "Get send data as visible format, select encoding method at top right "
 "corner"
 msgstr ""
 
-#: plugins/dbg.py:191 plugins/protocol.py:265
+#: plugins/dbg.py:1074 plugins/protocol.py:272
 msgid "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
 msgstr ""
 
-#: plugins/dbg.py:193
+#: plugins/dbg.py:1076
 msgid ""
 "Timed Send\n"
 "ms"
 msgstr ""
 
-#: plugins/dbg.py:194 plugins/dbg.py:197
+#: plugins/dbg.py:1077 plugins/dbg.py:1080
 msgid "Timed send, unit: ms"
 msgstr ""
 
-#: plugins/dbg.py:200 plugins/protocol.py:267
+#: plugins/dbg.py:1083 plugins/protocol.py:274
 msgid "<CRLF>"
 msgstr ""
 
-#: plugins/dbg.py:201 plugins/protocol.py:268
+#: plugins/dbg.py:1084 plugins/protocol.py:275
 msgid "Select to send \\r\\n instead of \\n"
 msgstr ""
 
-#: plugins/dbg.py:204 plugins/protocol.py:271
+#: plugins/dbg.py:1087 plugins/protocol.py:278
 msgid "Record send data"
 msgstr ""
 
-#: plugins/dbg.py:207
+#: plugins/dbg.py:1090
 msgid "Newline"
 msgstr ""
 
-#: plugins/dbg.py:208
+#: plugins/dbg.py:1091
 msgid "Auto add new line when send"
 msgstr ""
 
-#: plugins/dbg.py:236
+#: plugins/dbg.py:1122
 msgid "Auto line feed value error, must be integer"
 msgstr ""
 
-#: plugins/dbg.py:237
+#: plugins/dbg.py:1123
 msgid "Timed send value error, must be integer"
 msgstr ""
 
-#: plugins/dbg.py:259
+#: plugins/dbg.py:1162
+msgid "Default font"
+msgstr ""
+
+#: plugins/dbg.py:1166
+msgid "Font family for received RX text"
+msgstr ""
+
+#: plugins/dbg.py:1169
+msgid "Font size for received RX text"
+msgstr ""
+
+#: plugins/dbg.py:1171
+msgid "Color for received RX text in the receive area"
+msgstr ""
+
+#: plugins/dbg.py:1173
+msgid "Font family for TX input text"
+msgstr ""
+
+#: plugins/dbg.py:1176
+msgid "Font size for TX input text"
+msgstr ""
+
+#: plugins/dbg.py:1178
+msgid "Color for TX input text and recorded TX lines"
+msgstr ""
+
+#: plugins/dbg.py:1179
+msgid "RX font"
+msgstr ""
+
+#: plugins/dbg.py:1181
+msgid "RX size"
+msgstr ""
+
+#: plugins/dbg.py:1183
+msgid "RX color"
+msgstr ""
+
+#: plugins/dbg.py:1185
+msgid "TX font"
+msgstr ""
+
+#: plugins/dbg.py:1187
+msgid "TX size"
+msgstr ""
+
+#: plugins/dbg.py:1189
+msgid "TX color"
+msgstr ""
+
+#: plugins/dbg.py:1194
+msgid "Path of the file to send"
+msgstr ""
+
+#: plugins/dbg.py:1195
 msgid "Open File"
 msgstr ""
 
-#: plugins/dbg.py:260 plugins/dbg.py:270
+#: plugins/dbg.py:1196
+msgid "Select a file to send"
+msgstr ""
+
+#: plugins/dbg.py:1197 plugins/dbg.py:1201
 msgid "Send File"
 msgstr ""
 
-#: plugins/dbg.py:261
-msgid "Clear History"
+#: plugins/dbg.py:1198
+msgid "Send the selected file over the current connection"
 msgstr ""
 
-#: plugins/dbg.py:263
-msgid "Font Size"
+#: plugins/dbg.py:1199
+msgid "Clear TX History"
 msgstr ""
 
-#: plugins/dbg.py:276
+#: plugins/dbg.py:1200
+msgid "Clear TX send history"
+msgstr ""
+
+#: plugins/dbg.py:1208
 msgid "Save log"
 msgstr ""
 
-#: plugins/dbg.py:279
-msgid "Cutom send"
+#: plugins/dbg.py:1212
+msgid "Enable saving received and recorded sent data to a log file"
 msgstr ""
 
-#: plugins/dbg.py:311
+#: plugins/dbg.py:1214
+msgid "Log file path"
+msgstr ""
+
+#: plugins/dbg.py:1215
 msgid "Log path"
 msgstr ""
 
-#: plugins/dbg.py:312
+#: plugins/dbg.py:1216
+msgid "Select log file path"
+msgstr ""
+
+#: plugins/dbg.py:1217
 msgid "Auto new file"
 msgstr ""
 
-#: plugins/dbg.py:313
+#: plugins/dbg.py:1218
 msgid "When start a new connection, will automatically create a new log file"
 msgstr ""
 
-#: plugins/dbg.py:421
+#: plugins/dbg.py:1219
+msgid "Timed log"
+msgstr ""
+
+#: plugins/dbg.py:1220
+msgid "Stop saving log automatically after the configured duration"
+msgstr ""
+
+#: plugins/dbg.py:1225
+msgid "Timed log duration, format: HH:MM:SS"
+msgstr ""
+
+#: plugins/dbg.py:1226
+msgid "Log: 00:00:00 / 0 B"
+msgstr ""
+
+#: plugins/dbg.py:1227
+msgid "Current log recording duration and file size"
+msgstr ""
+
+#: plugins/dbg.py:1230
+msgid "RX buffer size"
+msgstr ""
+
+#: plugins/dbg.py:1236
+msgid "RX buffer size, only editable while the connection is closed"
+msgstr ""
+
+#: plugins/dbg.py:1274
+msgid "Import"
+msgstr ""
+
+#: plugins/dbg.py:1275
+msgid "Export"
+msgstr ""
+
+#: plugins/dbg.py:1276
+msgid "Add a custom send item"
+msgstr ""
+
+#: plugins/dbg.py:1277
+msgid "Import custom send items from JSON"
+msgstr ""
+
+#: plugins/dbg.py:1278
+msgid "Export custom send items to JSON"
+msgstr ""
+
+#: plugins/dbg.py:1283
+msgid "Search remark or command"
+msgstr ""
+
+#: plugins/dbg.py:1284
+msgid "Search custom send items by remark or command"
+msgstr ""
+
+#: plugins/dbg.py:1285
+msgid "All"
+msgstr ""
+
+#: plugins/dbg.py:1286
+msgid "Select visible custom send items"
+msgstr ""
+
+#: plugins/dbg.py:1288
+msgid "Icon"
+msgstr ""
+
+#: plugins/dbg.py:1289 plugins/dbg.py:2180 plugins/dbg.py:2377
+#: plugins/protocol.py:257
+msgid "Delete"
+msgstr ""
+
+#: plugins/dbg.py:1290
+msgid "Set color for selected custom send items"
+msgstr ""
+
+#: plugins/dbg.py:1291
+msgid "Set icon for selected custom send items"
+msgstr ""
+
+#: plugins/dbg.py:1292
+msgid "Delete selected custom send items"
+msgstr ""
+
+#: plugins/dbg.py:1299
+msgid "Cutom send"
+msgstr ""
+
+#: plugins/dbg.py:1563 plugins/dbg.py:1596
+msgid "Find"
+msgstr ""
+
+#: plugins/dbg.py:1563
+msgid "No match found"
+msgstr ""
+
+#: plugins/dbg.py:1596
+msgid "No more matches"
+msgstr ""
+
+#: plugins/dbg.py:1811
 msgid "linefeed always on if timestamp or record send is on"
 msgstr ""
 
-#: plugins/dbg.py:456
+#: plugins/dbg.py:1859
 msgid "History cleared!"
 msgstr ""
 
-#: plugins/dbg.py:463 plugins/graph.py:259 plugins/protocol.py:508
+#: plugins/dbg.py:1862
+msgid "Confirm clear"
+msgstr ""
+
+#: plugins/dbg.py:1866
+msgid "Clear receive area?"
+msgstr ""
+
+#: plugins/dbg.py:1870
+msgid "Clear send input?"
+msgstr ""
+
+#: plugins/dbg.py:1874
+msgid "Clear TX history?"
+msgstr ""
+
+#: plugins/dbg.py:1881 plugins/graph.py:259 plugins/protocol.py:524
 msgid "Send data failed!"
 msgstr ""
 
-#: plugins/dbg.py:468
+#: plugins/dbg.py:1886
 msgid "Send file"
 msgstr ""
 
-#: plugins/dbg.py:472
+#: plugins/dbg.py:1890
 msgid "Send file failed!"
 msgstr ""
 
-#: plugins/dbg.py:501
+#: plugins/dbg.py:1918
+msgid "Timed log duration error, format: HH:MM:SS"
+msgstr ""
+
+#: plugins/dbg.py:1946
+msgid "Timed log stopped"
+msgstr ""
+
+#: plugins/dbg.py:1996
+msgid "Log"
+msgstr ""
+
+#: plugins/dbg.py:2019
 msgid "Log file (*.log);;txt file (*.txt);;All Files (*)"
 msgstr ""
 
-#: plugins/dbg.py:625
+#: plugins/dbg.py:2113
+msgid "Select for batch edit"
+msgstr ""
+
+#: plugins/dbg.py:2117
+msgid "Drag before another item to reorder"
+msgstr ""
+
+#: plugins/dbg.py:2124
+msgid "Click to set button color, right click to clear"
+msgstr ""
+
+#: plugins/dbg.py:2130
+msgid "Edit custom send remark and icon"
+msgstr ""
+
+#: plugins/dbg.py:2139
+msgid "Delete this custom send item"
+msgstr ""
+
+#: plugins/dbg.py:2180
+msgid "Delete selected custom send item?"
+msgstr ""
+
+#: plugins/dbg.py:2376
+msgid "Delete selected custom send items?"
+msgstr ""
+
+#: plugins/dbg.py:2479
+msgid "Import custom send"
+msgstr ""
+
+#: plugins/dbg.py:2481 plugins/dbg.py:2500
+msgid "JSON file (*.json);;All Files (*)"
+msgstr ""
+
+#: plugins/dbg.py:2490
+msgid "Custom send file must be a JSON list"
+msgstr ""
+
+#: plugins/dbg.py:2492
+msgid "Custom send items imported!"
+msgstr ""
+
+#: plugins/dbg.py:2494
+msgid "Import custom send failed!"
+msgstr ""
+
+#: plugins/dbg.py:2498
+msgid "Export custom send"
+msgstr ""
+
+#: plugins/dbg.py:2506
+msgid "Custom send items exported!"
+msgstr ""
+
+#: plugins/dbg.py:2508
+msgid "Export custom send failed!"
+msgstr ""
+
+#: plugins/dbg.py:2518
 msgid ""
 "File path error\n"
 "path"
 msgstr ""
 
-#: plugins/dbg.py:628
+#: plugins/dbg.py:2521
 msgid "Connect first please"
 msgstr ""
 
-#: plugins/dbg.py:631
+#: plugins/dbg.py:2524
 msgid "Sending file"
 msgstr ""
 
-#: plugins/dbg.py:642
+#: plugins/dbg.py:2541
 msgid "Time format error"
 msgstr ""
 
-#: plugins/dbg.py:699
+#: plugins/dbg.py:2608
 msgid "Send Error"
 msgstr ""
 
-#: plugins/dbg.py:707
+#: plugins/dbg.py:2616
 msgid "get data error"
+msgstr ""
+
+#: plugins/devtools.py:54 plugins/devtools.py:516
+msgid "Input text"
+msgstr ""
+
+#: plugins/devtools.py:57
+msgid "Result"
+msgstr ""
+
+#: plugins/devtools.py:77
+msgid "Programming Tools"
+msgstr ""
+
+#: plugins/devtools.py:101
+msgid "Open tool"
+msgstr ""
+
+#: plugins/devtools.py:117 plugins/devtools.py:201
+msgid "LRC check"
+msgstr ""
+
+#: plugins/devtools.py:118 plugins/devtools.py:218
+msgid "BCC check"
+msgstr ""
+
+#: plugins/devtools.py:119 plugins/devtools.py:237
+msgid "CRC check"
+msgstr ""
+
+#: plugins/devtools.py:120 plugins/devtools.py:310
+msgid "RGB color format convert"
+msgstr ""
+
+#: plugins/devtools.py:121 plugins/devtools.py:366
+msgid "Unicode"
+msgstr ""
+
+#: plugins/devtools.py:122 plugins/devtools.py:380
+msgid "URLEncode"
+msgstr ""
+
+#: plugins/devtools.py:123 plugins/devtools.py:388
+msgid "Base64"
+msgstr ""
+
+#: plugins/devtools.py:124 plugins/devtools.py:402
+msgid "Punycode"
+msgstr ""
+
+#: plugins/devtools.py:125 plugins/devtools.py:422
+msgid "Unix timestamp"
+msgstr ""
+
+#: plugins/devtools.py:126 plugins/devtools.py:467
+msgid "Image to Base64"
+msgstr ""
+
+#: plugins/devtools.py:127 plugins/devtools.py:507
+msgid "Chinese domain encoding"
+msgstr ""
+
+#: plugins/devtools.py:128 plugins/devtools.py:515
+msgid "MD5 encrypt/decrypt"
+msgstr ""
+
+#: plugins/devtools.py:129 plugins/devtools.py:537
+msgid "AES encrypt/decrypt"
+msgstr ""
+
+#: plugins/devtools.py:130 plugins/devtools.py:583
+msgid "Encode/decode collection"
+msgstr ""
+
+#: plugins/devtools.py:131 plugins/devtools.py:607
+msgid "Hash collection"
+msgstr ""
+
+#: plugins/devtools.py:175 plugins/devtools.py:240
+msgid "Input hex bytes or text"
+msgstr ""
+
+#: plugins/devtools.py:175
+msgid "Check result"
+msgstr ""
+
+#: plugins/devtools.py:177 plugins/devtools.py:243
+msgid "Hex bytes"
+msgstr ""
+
+#: plugins/devtools.py:177 plugins/devtools.py:243
+msgid "UTF-8 text"
+msgstr ""
+
+#: plugins/devtools.py:178 plugins/devtools.py:244
+msgid "Choose whether the input is hex bytes like 01 02 AF or plain text"
+msgstr ""
+
+#: plugins/devtools.py:197
+msgid "Input bytes"
+msgstr ""
+
+#: plugins/devtools.py:202
+msgid ""
+"Calculate the longitudinal redundancy check byte. The result is the two's"
+" complement of the byte sum, often used by serial text protocols."
+msgstr ""
+
+#: plugins/devtools.py:203
+msgid "Calculate LRC"
+msgstr ""
+
+#: plugins/devtools.py:211 plugins/devtools.py:230 plugins/devtools.py:268
+msgid "Append byte"
+msgstr ""
+
+#: plugins/devtools.py:219
+msgid ""
+"Calculate the block check character by XORing every input byte. It is "
+"useful for simple serial protocol frame checks."
+msgstr ""
+
+#: plugins/devtools.py:220
+msgid "Calculate BCC"
+msgstr ""
+
+#: plugins/devtools.py:238
+msgid ""
+"Calculate common cyclic redundancy checks for byte data. Hex input "
+"accepts spaces, commas, 0x prefixes, and line breaks."
+msgstr ""
+
+#: plugins/devtools.py:240
+msgid "CRC result"
+msgstr ""
+
+#: plugins/devtools.py:247
+msgid "Choose CRC algorithm"
+msgstr ""
+
+#: plugins/devtools.py:248
+msgid "Input mode"
+msgstr ""
+
+#: plugins/devtools.py:250
+msgid "Algorithm"
+msgstr ""
+
+#: plugins/devtools.py:253
+msgid "Calculate CRC"
+msgstr ""
+
+#: plugins/devtools.py:271
+msgid "Append bytes"
+msgstr ""
+
+#: plugins/devtools.py:304
+msgid "Low byte first"
+msgstr ""
+
+#: plugins/devtools.py:305
+msgid "High byte first"
+msgstr ""
+
+#: plugins/devtools.py:311
+msgid ""
+"Convert common RGB color formats. Supports #RRGGBB, short #RGB, "
+"rgb(r,g,b), comma separated RGB, and decimal color values."
+msgstr ""
+
+#: plugins/devtools.py:313
+msgid "Input RGB color"
+msgstr ""
+
+#: plugins/devtools.py:313
+msgid "Converted color values"
+msgstr ""
+
+#: plugins/devtools.py:314 plugins/devtools.py:471
+msgid "Convert"
+msgstr ""
+
+#: plugins/devtools.py:336
+msgid "Input is empty"
+msgstr ""
+
+#: plugins/devtools.py:356 plugins/graph_widget_metasenselite.py:591
+#: plugins/graph_widgets.py:167
+msgid "Format error"
+msgstr ""
+
+#: plugins/devtools.py:361
+msgid "RGB value must be 0-255"
+msgstr ""
+
+#: plugins/devtools.py:366
+msgid ""
+"Convert text to Unicode escape sequences, or restore Unicode escapes to "
+"readable text."
+msgstr ""
+
+#: plugins/devtools.py:368 plugins/devtools.py:382 plugins/devtools.py:390
+#: plugins/devtools.py:404 plugins/devtools.py:509 plugins/devtools.py:588
+msgid "Encode"
+msgstr ""
+
+#: plugins/devtools.py:369 plugins/devtools.py:383 plugins/devtools.py:391
+#: plugins/devtools.py:405 plugins/devtools.py:510 plugins/devtools.py:589
+msgid "Decode"
+msgstr ""
+
+#: plugins/devtools.py:380
+msgid "Encode text for use in URLs, or decode percent-escaped URL text."
+msgstr ""
+
+#: plugins/devtools.py:388
+msgid ""
+"Encode text as Base64, or decode Base64 back to text with the current "
+"UTF-8 text encoding."
+msgstr ""
+
+#: plugins/devtools.py:402
+msgid ""
+"Convert internationalized domain names between Unicode text and ASCII "
+"Punycode form."
+msgstr ""
+
+#: plugins/devtools.py:403
+msgid "Input domain or text"
+msgstr ""
+
+#: plugins/devtools.py:403
+msgid "Converted value"
+msgstr ""
+
+#: plugins/devtools.py:422
+msgid ""
+"Convert Unix timestamps and local date-time strings. Date input format: "
+"YYYY-MM-DD HH:MM:SS."
+msgstr ""
+
+#: plugins/devtools.py:426
+msgid "Timestamp or date-time"
+msgstr ""
+
+#: plugins/devtools.py:427
+msgid "Enter seconds, milliseconds, or YYYY-MM-DD HH:MM:SS"
+msgstr ""
+
+#: plugins/devtools.py:428
+msgid "Now"
+msgstr ""
+
+#: plugins/devtools.py:429
+msgid "To date-time"
+msgstr ""
+
+#: plugins/devtools.py:430
+msgid "To timestamp"
+msgstr ""
+
+#: plugins/devtools.py:467
+msgid ""
+"Choose an image file and convert it to Base64 text or a data URL for "
+"embedding."
+msgstr ""
+
+#: plugins/devtools.py:469
+msgid "Image file path"
+msgstr ""
+
+#: plugins/devtools.py:470 plugins/devtools.py:488
+msgid "Choose file"
+msgstr ""
+
+#: plugins/devtools.py:472
+msgid "Output data URL"
+msgstr ""
+
+#: plugins/devtools.py:488
+msgid "Image files (*.png *.jpg *.jpeg *.gif *.bmp *.webp);;All Files (*)"
+msgstr ""
+
+#: plugins/devtools.py:507
+msgid ""
+"Encode Chinese or other internationalized domain names to IDNA, or decode"
+" xn-- domains back to readable text."
+msgstr ""
+
+#: plugins/devtools.py:508
+msgid "Input domain"
+msgstr ""
+
+#: plugins/devtools.py:508
+msgid "Converted domain"
+msgstr ""
+
+#: plugins/devtools.py:515
+msgid ""
+"Generate MD5 digests. MD5 is one-way and cannot be truly decrypted; use "
+"the compare field to verify candidate text."
+msgstr ""
+
+#: plugins/devtools.py:516
+msgid "MD5 result"
+msgstr ""
+
+#: plugins/devtools.py:518
+msgid "Optional MD5 hash to compare"
+msgstr ""
+
+#: plugins/devtools.py:530
+msgid "Compare"
+msgstr ""
+
+#: plugins/devtools.py:530
+msgid "Not match"
+msgstr ""
+
+#: plugins/devtools.py:532 plugins/devtools.py:609
+msgid "Generate"
+msgstr ""
+
+#: plugins/devtools.py:537
+msgid ""
+"AES text encryption and decryption. Supports ECB and CBC with PKCS7 "
+"padding. Key lengths: 16, 24, or 32 bytes."
+msgstr ""
+
+#: plugins/devtools.py:538
+msgid "Input text or Base64 cipher text"
+msgstr ""
+
+#: plugins/devtools.py:538
+msgid "AES result"
+msgstr ""
+
+#: plugins/devtools.py:541
+msgid "AES key"
+msgstr ""
+
+#: plugins/devtools.py:543
+msgid "CBC IV, 16 bytes"
+msgstr ""
+
+#: plugins/devtools.py:546
+msgid "Key"
+msgstr ""
+
+#: plugins/devtools.py:550
+msgid "IV"
+msgstr ""
+
+#: plugins/devtools.py:553
+msgid "Encrypt"
+msgstr ""
+
+#: plugins/devtools.py:554
+msgid "Decrypt"
+msgstr ""
+
+#: plugins/devtools.py:560
+msgid "AES backend not available"
+msgstr ""
+
+#: plugins/devtools.py:565
+msgid "AES key must be 16, 24, or 32 bytes"
+msgstr ""
+
+#: plugins/devtools.py:583
+msgid "Common reversible text transforms for quick programming work."
+msgstr ""
+
+#: plugins/devtools.py:607
+msgid "Generate common hashes for the input text."
 msgstr ""
 
 #: plugins/graph.py:48
@@ -828,20 +1758,12 @@ msgstr ""
 msgid "Y:"
 msgstr ""
 
-#: plugins/graph_widget_metasenselite.py:591 plugins/graph_widgets.py:167
-msgid "Format error"
-msgstr ""
-
 #: plugins/graph_widgets.py:52
 msgid "Clear"
 msgstr ""
 
 #: plugins/graph_widgets.py:53
 msgid "Range:"
-msgstr ""
-
-#: plugins/graph_widgets.py:55
-msgid "Enable"
 msgstr ""
 
 #: plugins/graph_widgets.py:57
@@ -874,64 +1796,64 @@ msgstr ""
 msgid "protocol"
 msgstr ""
 
-#: plugins/protocol.py:154
+#: plugins/protocol.py:155
 msgid "Key mode"
 msgstr ""
 
-#: plugins/protocol.py:240
+#: plugins/protocol.py:241
+msgid "Receive settings"
+msgstr ""
+
+#: plugins/protocol.py:247
 msgid "En-decoding settings"
 msgstr ""
 
-#: plugins/protocol.py:244
+#: plugins/protocol.py:251
 msgid "Custom, input name"
 msgstr ""
 
-#: plugins/protocol.py:245
+#: plugins/protocol.py:252
 msgid "Load defaults"
 msgstr ""
 
-#: plugins/protocol.py:248 plugins/protocol.py:559 plugins/protocol.py:583
-#: plugins/protocol.py:586 plugins/protocol.py:606
+#: plugins/protocol.py:255 plugins/protocol.py:575 plugins/protocol.py:599
+#: plugins/protocol.py:602 plugins/protocol.py:622
 msgid "Save"
 msgstr ""
 
-#: plugins/protocol.py:250
-msgid "Delete"
-msgstr ""
-
-#: plugins/protocol.py:254
+#: plugins/protocol.py:261
 msgid "Defaults"
 msgstr ""
 
-#: plugins/protocol.py:256
+#: plugins/protocol.py:263
 msgid "Code"
 msgstr ""
 
-#: plugins/protocol.py:260
+#: plugins/protocol.py:267
 msgid "Send settings"
 msgstr ""
 
-#: plugins/protocol.py:472
+#: plugins/protocol.py:488
 msgid "Run decode error"
 msgstr ""
 
-#: plugins/protocol.py:499
+#: plugins/protocol.py:515
 msgid "Run encode error"
 msgstr ""
 
-#: plugins/protocol.py:567
+#: plugins/protocol.py:583
 msgid "decode and encode method should be in code"
 msgstr ""
 
-#: plugins/protocol.py:570
+#: plugins/protocol.py:586
 msgid "Method error"
 msgstr ""
 
-#: plugins/protocol.py:593
+#: plugins/protocol.py:609
 msgid "Please input code profile name first"
 msgstr ""
 
-#: plugins/protocol.py:615
+#: plugins/protocol.py:631
 msgid "Please select a code profile name first to delete"
 msgstr ""
 
@@ -942,4 +1864,3 @@ msgstr ""
 #: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:30
 msgid "my plugin2"
 msgstr ""
-

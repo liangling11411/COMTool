@@ -2,9 +2,10 @@ from . import dbg
 from . import protocol
 from .import terminal
 from . import graph
+from . import devtools
 # from . import myplugin
 
-pluginClasses = [dbg.Plugin, protocol.Plugin, terminal.Plugin, graph.Plugin]
+pluginClasses = [dbg.Plugin, protocol.Plugin, terminal.Plugin, graph.Plugin, devtools.Plugin]
 # pluginClasses.append(myplugin.Plugin)
 
 builtinPlugins = {}
