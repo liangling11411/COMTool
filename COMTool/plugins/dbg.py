@@ -29,8 +29,9 @@ from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QMimeData, QTimer
 from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSpinBox, QSizePolicy,
-                             QColorDialog, QFontComboBox)
-from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QDrag, QTextOption, QPalette
+                             QColorDialog, QFontComboBox, QDialog, QListWidget, QListWidgetItem,
+                             QAbstractItemView)
+from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QDrag, QTextOption, QPalette, QKeySequence
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
 import os, threading, time, re, json
 from datetime import datetime
@@ -137,6 +138,268 @@ class NoWheelFontComboBox(QFontComboBox):
     def wheelEvent(self, event):
         event.ignore()
 
+class ReceiveFindDialog(QDialog):
+    def __init__(self, plugin, parent=None):
+        super().__init__(parent)
+        self.plugin = plugin
+        self.loading = False
+        self.currentColor = "#fff176"
+        self.setWindowTitle(_("Find in receive area"))
+        self.resize(560, 460)
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        layout.addWidget(QLabel(_("Find content")))
+        self.patternEdit = QTextEdit()
+        self.patternEdit.setAcceptRichText(False)
+        self.patternEdit.setPlaceholderText(_("One plain-text rule per line, or one lambda expression"))
+        self.patternEdit.setToolTip(_("Plain text searches exact text. Lambda receives text and may return bool, string, list, or (start, end) ranges."))
+        self.patternEdit.setFixedHeight(90)
+        layout.addWidget(self.patternEdit)
+
+        optionsLayout = QHBoxLayout()
+        self.lambdaCheck = QCheckBox(_("Lambda expression"))
+        self.lambdaCheck.setToolTip(_("Use a lambda like: lambda text: re.findall(r'ERR\\d+', text)"))
+        self.colorButton = QPushButton(_("Highlight color"))
+        self.colorButton.setToolTip(_("Choose highlight color for new rules or selected rules"))
+        self.updateColorButton()
+        optionsLayout.addWidget(self.lambdaCheck)
+        optionsLayout.addWidget(self.colorButton)
+        optionsLayout.addStretch(1)
+        layout.addLayout(optionsLayout)
+
+        actionsLayout = QHBoxLayout()
+        self.addButton = QPushButton(_("Add"))
+        self.updateButton = QPushButton(_("Update selected"))
+        self.applyColorButton = QPushButton(_("Apply color"))
+        self.clearColorButton = QPushButton(_("Clear color"))
+        self.deleteButton = QPushButton(_("Delete selected"))
+        self.addButton.setToolTip(_("Add one or more find rules"))
+        self.updateButton.setToolTip(_("Update the selected find rule from the input"))
+        self.applyColorButton.setToolTip(_("Apply the current highlight color to all selected rules"))
+        self.clearColorButton.setToolTip(_("Remove highlight color from all selected rules"))
+        self.deleteButton.setToolTip(_("Delete all selected find rules"))
+        actionsLayout.addWidget(self.addButton)
+        actionsLayout.addWidget(self.updateButton)
+        actionsLayout.addWidget(self.applyColorButton)
+        actionsLayout.addWidget(self.clearColorButton)
+        actionsLayout.addWidget(self.deleteButton)
+        layout.addLayout(actionsLayout)
+
+        self.rulesList = QListWidget()
+        self.rulesList.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.rulesList.setToolTip(_("Select multiple rules to apply or clear highlight color together"))
+        layout.addWidget(self.rulesList, 1)
+
+        bottomLayout = QHBoxLayout()
+        self.closeButton = QPushButton(_("Close"))
+        self.closeButton.setToolTip(_("Close find window"))
+        bottomLayout.addStretch(1)
+        bottomLayout.addWidget(self.closeButton)
+        layout.addLayout(bottomLayout)
+
+        self.autoUpdateTimer = QTimer(self)
+        self.autoUpdateTimer.setSingleShot(True)
+        self.autoUpdateTimer.setInterval(250)
+        self.autoUpdateTimer.timeout.connect(self.updateSelectedRuleFromEditor)
+
+        self.colorButton.clicked.connect(self.selectColor)
+        self.addButton.clicked.connect(self.addRules)
+        self.updateButton.clicked.connect(self.updateSelectedRuleFromEditor)
+        self.applyColorButton.clicked.connect(self.applyColorToSelected)
+        self.clearColorButton.clicked.connect(self.clearSelectedColor)
+        self.deleteButton.clicked.connect(self.deleteSelectedRules)
+        self.closeButton.clicked.connect(self.close)
+        self.rulesList.itemSelectionChanged.connect(self.onSelectionChanged)
+        self.rulesList.itemChanged.connect(self.onItemChanged)
+        self.patternEdit.textChanged.connect(self.queueSelectedUpdate)
+        self.lambdaCheck.clicked.connect(self.updateSelectedRuleFromEditor)
+        self.refreshRules()
+
+    def updateColorButton(self):
+        color = QColor(self.currentColor)
+        if color.isValid():
+            textColor = "black" if (0.299 * color.red() + 0.587 * color.green() + 0.114 * color.blue()) > 160 else "white"
+            self.colorButton.setStyleSheet("background-color: {}; border-color: {}; color: {};".format(self.currentColor, self.currentColor, textColor))
+        else:
+            self.colorButton.setStyleSheet("")
+
+    def selectColor(self):
+        color = QColorDialog.getColor(QColor(self.currentColor), self, _("Select color"))
+        if not color.isValid():
+            return
+        self.currentColor = color.name()
+        self.updateColorButton()
+        if self.selectedIndexes():
+            self.applyColorToSelected()
+
+    def selectedIndexes(self):
+        return sorted([self.rulesList.row(item) for item in self.rulesList.selectedItems()])
+
+    def ruleText(self, rule):
+        prefix = "lambda" if rule.get("isLambda") else "text"
+        color = rule.get("color") or _("no color")
+        pattern = rule.get("pattern", "").replace("\n", "\\n")
+        return "{} [{}] {}".format(prefix, color, pattern)
+
+    def updateListItem(self, idx):
+        if idx < 0 or idx >= self.rulesList.count():
+            return
+        if idx >= len(self.plugin.config["receiveFindRules"]):
+            return
+        rule = self.plugin.normalizeReceiveFindRule(self.plugin.config["receiveFindRules"][idx])
+        item = self.rulesList.item(idx)
+        oldLoading = self.loading
+        self.loading = True
+        item.setText(self.ruleText(rule))
+        item.setToolTip(rule.get("pattern", ""))
+        item.setCheckState(Qt.Checked if rule.get("enabled") else Qt.Unchecked)
+        qcolor = QColor(rule.get("color", ""))
+        if qcolor.isValid():
+            item.setBackground(qcolor.lighter(170))
+        else:
+            item.setBackground(QColor("transparent"))
+        self.loading = oldLoading
+
+    def refreshRules(self, selectIndexes=None):
+        selectIndexes = set(selectIndexes or [])
+        self.loading = True
+        self.rulesList.clear()
+        self.plugin.config["receiveFindRules"] = [
+            self.plugin.normalizeReceiveFindRule(rule)
+            for rule in self.plugin.config.get("receiveFindRules", [])
+        ]
+        for idx, rule in enumerate(self.plugin.config["receiveFindRules"]):
+            item = QListWidgetItem()
+            item.setFlags(item.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            self.rulesList.addItem(item)
+            self.updateListItem(idx)
+            if idx in selectIndexes:
+                item.setSelected(True)
+        self.loading = False
+        self.updateActionState()
+
+    def updateActionState(self):
+        hasSelection = bool(self.selectedIndexes())
+        self.updateButton.setEnabled(len(self.selectedIndexes()) == 1)
+        self.applyColorButton.setEnabled(hasSelection)
+        self.clearColorButton.setEnabled(hasSelection)
+        self.deleteButton.setEnabled(hasSelection)
+
+    def onSelectionChanged(self):
+        indexes = self.selectedIndexes()
+        self.updateActionState()
+        if len(indexes) != 1:
+            return
+        rule = self.plugin.normalizeReceiveFindRule(self.plugin.config["receiveFindRules"][indexes[0]])
+        self.loading = True
+        self.patternEdit.setPlainText(rule.get("pattern", ""))
+        self.lambdaCheck.setChecked(rule.get("isLambda", False))
+        if rule.get("color"):
+            self.currentColor = rule["color"]
+            self.updateColorButton()
+        self.loading = False
+
+    def onItemChanged(self, item):
+        if self.loading:
+            return
+        idx = self.rulesList.row(item)
+        if idx < 0 or idx >= len(self.plugin.config["receiveFindRules"]):
+            return
+        self.plugin.config["receiveFindRules"][idx]["enabled"] = item.checkState() == Qt.Checked
+        self.plugin.onReceiveFindRulesChanged()
+
+    def queueSelectedUpdate(self):
+        if self.loading or len(self.selectedIndexes()) != 1:
+            return
+        self.autoUpdateTimer.start()
+
+    def inputRules(self):
+        text = self.patternEdit.toPlainText()
+        if self.lambdaCheck.isChecked():
+            rules = [text.strip()]
+        else:
+            rules = [line.strip() for line in text.splitlines()]
+        return [rule for rule in rules if rule]
+
+    def addRules(self):
+        patterns = self.inputRules()
+        if not patterns:
+            return
+        isLambda = self.lambdaCheck.isChecked()
+        if isLambda:
+            ok, msg = self.plugin.validateReceiveFindLambda(patterns[0])
+            if not ok:
+                self.plugin.hintSignal.emit("error", _("Error"), msg)
+                return
+        for pattern in patterns:
+            self.plugin.config["receiveFindRules"].append(self.plugin.normalizeReceiveFindRule({
+                "pattern": pattern,
+                "color": self.currentColor,
+                "enabled": True,
+                "isLambda": isLambda
+            }))
+        indexes = range(len(self.plugin.config["receiveFindRules"]) - len(patterns), len(self.plugin.config["receiveFindRules"]))
+        self.refreshRules(indexes)
+        self.plugin.onReceiveFindRulesChanged()
+
+    def updateSelectedRuleFromEditor(self):
+        if self.loading:
+            return
+        indexes = self.selectedIndexes()
+        if len(indexes) != 1:
+            return
+        patterns = self.inputRules()
+        if not patterns:
+            return
+        pattern = patterns[0]
+        isLambda = self.lambdaCheck.isChecked()
+        if isLambda:
+            ok, msg = self.plugin.validateReceiveFindLambda(pattern)
+            if not ok:
+                return
+        idx = indexes[0]
+        oldColor = self.plugin.config["receiveFindRules"][idx].get("color", self.currentColor)
+        self.plugin.config["receiveFindRules"][idx] = self.plugin.normalizeReceiveFindRule({
+            "pattern": pattern,
+            "color": oldColor,
+            "enabled": self.rulesList.item(idx).checkState() == Qt.Checked,
+            "isLambda": isLambda
+        })
+        self.updateListItem(idx)
+        self.plugin.onReceiveFindRulesChanged()
+
+    def applyColorToSelected(self):
+        indexes = self.selectedIndexes()
+        if not indexes:
+            return
+        for idx in indexes:
+            if idx < len(self.plugin.config["receiveFindRules"]):
+                self.plugin.config["receiveFindRules"][idx]["color"] = self.currentColor
+                self.updateListItem(idx)
+        self.plugin.onReceiveFindRulesChanged()
+
+    def clearSelectedColor(self):
+        indexes = self.selectedIndexes()
+        if not indexes:
+            return
+        for idx in indexes:
+            if idx < len(self.plugin.config["receiveFindRules"]):
+                self.plugin.config["receiveFindRules"][idx]["color"] = ""
+                self.updateListItem(idx)
+        self.plugin.onReceiveFindRulesChanged()
+
+    def deleteSelectedRules(self):
+        indexes = self.selectedIndexes()
+        if not indexes:
+            return
+        for idx in sorted(indexes, reverse=True):
+            if idx < len(self.plugin.config["receiveFindRules"]):
+                self.plugin.config["receiveFindRules"].pop(idx)
+        self.refreshRules()
+        self.plugin.onReceiveFindRulesChanged()
+
 class Plugin(Plugin_Base):
     '''
         call sequence:
@@ -220,7 +483,8 @@ class Plugin(Plugin_Base):
             "receiveFontColor": "#2e7d32",
             "sendFontColor": "#1976d2",
             "timestampColor": "#6d6d6d",
-            "timestampNewline": False
+            "timestampNewline": False,
+            "receiveFindRules": []
         }
         for k in default:
             if not k in self.config:
@@ -239,6 +503,8 @@ class Plugin(Plugin_Base):
         self.saveLogStopTimer = None
         self.saveLogStatusTimer = None
         self.logStartTime = None
+        self.receiveFindDialog = None
+        self.receiveFindRuleErrors = set()
 
     def ensureMainActionButtons(self):
         if hasattr(self, "clearReceiveButtion") and hasattr(self, "clearSendButtion"):
@@ -261,6 +527,9 @@ class Plugin(Plugin_Base):
         self.sendArea.setToolTip(_("Input data to send"))
         self.sendArea.setAcceptRichText(False)
         self.ensureMainActionButtons()
+        self.receiveFindButton = QPushButton("")
+        self.receiveFindButton.setToolTip(_("Find and highlight receive text"))
+        utils_ui.setButtonIcon(self.receiveFindButton, "fa.search")
         self.sendButton = QPushButton("")
         self.sendButton.setToolTip(_("Send input data"))
         utils_ui.setButtonIcon(self.sendButton, "fa.send")
@@ -277,6 +546,7 @@ class Plugin(Plugin_Base):
         sendWidget.setLayout(sendAreaWidgetsLayout)
         buttonLayout = QVBoxLayout()
         buttonLayout.addStretch(1)
+        buttonLayout.addWidget(self.receiveFindButton)
         buttonLayout.addWidget(self.sendButton)
         sendAreaWidgetsLayout.addWidget(self.sendArea)
         sendAreaWidgetsLayout.addLayout(buttonLayout)
@@ -287,6 +557,7 @@ class Plugin(Plugin_Base):
         self.mainWidget.setStretchFactor(1, 2)
         self.mainWidget.setStretchFactor(2, 1)
         # event
+        self.receiveFindButton.clicked.connect(self.openReceiveFindDialog)
         self.sendButton.clicked.connect(self.onSendData)
         self.clearReceiveButtion.clicked.connect(self.clearReceiveBuffer)
         self.clearSendButtion.clicked.connect(self.sendArea.clear)
@@ -688,6 +959,10 @@ class Plugin(Plugin_Base):
         self.updateDefaultFontColorButton(self.sendFontColorButton, paramObj["sendFontColor"])
         self.applyReceiveFont()
         self.applySendFont()
+        paramObj["receiveFindRules"] = [
+            self.normalizeReceiveFindRule(rule)
+            for rule in paramObj.get("receiveFindRules", [])
+        ]
         if paramObj["saveLog"]:
             self.logStartTime = time.time()
             self.startSaveLogStatus()
@@ -696,6 +971,145 @@ class Plugin(Plugin_Base):
         self.receiveProcess = threading.Thread(target=self.receiveDataProcess)
         self.receiveProcess.setDaemon(True)
         self.receiveProcess.start()
+
+    def normalizeReceiveFindRule(self, rule=None):
+        if rule is None:
+            rule = {}
+        if isinstance(rule, str):
+            rule = {"pattern": rule}
+        return {
+            "pattern": "" if rule.get("pattern") is None else str(rule.get("pattern", "")),
+            "color": "" if rule.get("color") is None else str(rule.get("color", "")),
+            "enabled": bool(rule.get("enabled", True)),
+            "isLambda": bool(rule.get("isLambda", rule.get("lambda", False)))
+        }
+
+    def onReceiveFindRulesChanged(self):
+        self.config["receiveFindRules"] = [
+            self.normalizeReceiveFindRule(rule)
+            for rule in self.config.get("receiveFindRules", [])
+        ]
+        self.receiveFindRuleErrors.clear()
+        self.rerenderReceiveArea()
+
+    def openReceiveFindDialog(self):
+        if self.receiveFindDialog is None:
+            self.receiveFindDialog = ReceiveFindDialog(self, self.mainWidget)
+        self.receiveFindDialog.refreshRules()
+        self.receiveFindDialog.show()
+        self.receiveFindDialog.raise_()
+        self.receiveFindDialog.activateWindow()
+
+    def validateReceiveFindLambda(self, expression):
+        try:
+            self.compileReceiveFindLambda(expression)
+        except Exception as e:
+            return False, _("Lambda expression error") + ": " + str(e)
+        return True, ""
+
+    def compileReceiveFindLambda(self, expression):
+        safeGlobals = {
+            "__builtins__": {},
+            "re": re,
+            "len": len,
+            "min": min,
+            "max": max,
+            "sum": sum,
+            "any": any,
+            "all": all,
+            "str": str,
+            "int": int,
+            "float": float,
+            "bool": bool,
+        }
+        func = eval(expression, safeGlobals, {})
+        if not callable(func):
+            raise ValueError(_("Lambda expression must return a callable"))
+        return func
+
+    def plainTextFindRanges(self, text, pattern):
+        if not pattern:
+            return []
+        ranges = []
+        start = 0
+        while True:
+            idx = text.find(pattern, start)
+            if idx < 0:
+                break
+            end = idx + len(pattern)
+            ranges.append((idx, end))
+            start = end if end > idx else idx + 1
+        return ranges
+
+    def lambdaResultFindRanges(self, text, result):
+        if result is None or result is False:
+            return []
+        if result is True:
+            return [(0, len(text))] if text else []
+        if hasattr(result, "start") and hasattr(result, "end"):
+            return [(result.start(), result.end())]
+        if isinstance(result, str):
+            return self.plainTextFindRanges(text, result)
+        if isinstance(result, (tuple, list)) and len(result) == 2 and all(isinstance(v, int) for v in result):
+            return [tuple(result)]
+        if isinstance(result, (tuple, list, set)):
+            ranges = []
+            for item in result:
+                ranges.extend(self.lambdaResultFindRanges(text, item))
+            return ranges
+        return self.plainTextFindRanges(text, str(result))
+
+    def receiveFindRuleRanges(self, rule, text):
+        pattern = rule.get("pattern", "")
+        if not pattern:
+            return []
+        if rule.get("isLambda", False):
+            try:
+                func = self.compileReceiveFindLambda(pattern)
+                return self.lambdaResultFindRanges(text, func(text))
+            except Exception as e:
+                key = pattern
+                if key not in self.receiveFindRuleErrors:
+                    self.receiveFindRuleErrors.add(key)
+                    print("receive find lambda error:", e)
+                return []
+        return self.plainTextFindRanges(text, pattern)
+
+    def splitTextByReceiveFindRules(self, text, originalColor=None, originalBg=None):
+        if not text:
+            return []
+        ranges = []
+        for order, rawRule in enumerate(self.config.get("receiveFindRules", [])):
+            rule = self.normalizeReceiveFindRule(rawRule)
+            color = rule.get("color", "")
+            qcolor = QColor(color)
+            if not rule.get("enabled") or not color or not qcolor.isValid():
+                continue
+            for start, end in self.receiveFindRuleRanges(rule, text):
+                start = max(0, min(len(text), int(start)))
+                end = max(0, min(len(text), int(end)))
+                if start < end:
+                    ranges.append((start, end, color, order))
+        if not ranges:
+            return [[originalColor, originalBg, text]]
+        points = {0, len(text)}
+        for start, end, _color, _order in ranges:
+            points.add(start)
+            points.add(end)
+        points = sorted(points)
+        segments = []
+        for idx in range(len(points) - 1):
+            start, end = points[idx], points[idx + 1]
+            if start == end:
+                continue
+            bg = originalBg
+            bestOrder = -1
+            for rangeStart, rangeEnd, color, order in ranges:
+                if rangeStart <= start and end <= rangeEnd and order >= bestOrder:
+                    bg = color
+                    bestOrder = order
+            segments.append([originalColor, bg, text[start:end]])
+        return segments
 
     def setTextEditPaletteColor(self, edit, color, updateDocument=False):
         qcolor = QColor(color)
@@ -1033,7 +1447,10 @@ class Plugin(Plugin_Base):
                 self.startSaveLogStatus()
 
     def onKeyPressEvent(self, event):
-        if event.key() == Qt.Key_Control:
+        if event.matches(QKeySequence.Find):
+            self.openReceiveFindDialog()
+            event.accept()
+        elif event.key() == Qt.Key_Control:
             self.keyControlPressed = True
         elif event.key() == Qt.Key_Return or event.key()==Qt.Key_Enter:
             if self.keyControlPressed:
@@ -1645,30 +2062,31 @@ class Plugin(Plugin_Base):
             format.setFontWeight(QFont.Normal)
             for data in datas:
                 if type(data) == str:
-                    format.setForeground(directionColor)
-                    format.setBackground(self.defaultBg)
-                    cursor.setCharFormat(format)
-                    cursor.insertText(data)
+                    for color, bg, text in self.splitTextByReceiveFindRules(data):
+                        format.setForeground(QColor(color) if color else directionColor)
+                        format.setBackground(QColor(bg) if bg else self.defaultBg)
+                        cursor.setCharFormat(format)
+                        cursor.insertText(text)
                 elif type(data) == list:
                     for color, bg, text in data:
-                        if color:
-                            format.setForeground(QColor(color))
+                        for segColor, segBg, segText in self.splitTextByReceiveFindRules(text, color, bg):
+                            if segColor:
+                                format.setForeground(QColor(segColor))
+                            else:
+                                format.setForeground(directionColor)
+                            if segBg:
+                                format.setBackground(QColor(segBg))
+                            else:
+                                format.setBackground(self.defaultBg)
                             cursor.setCharFormat(format)
-                        else:
-                            format.setForeground(directionColor)
-                            cursor.setCharFormat(format)
-                        if bg:
-                            format.setBackground(QColor(bg))
-                            cursor.setCharFormat(format)
-                        else:
-                            format.setBackground(self.defaultBg)
-                            cursor.setCharFormat(format)
-                        cursor.insertText(text)
+                            cursor.insertText(segText)
                 else: # bytes
-                    format.setForeground(directionColor)
-                    format.setBackground(self.defaultBg)
-                    cursor.setCharFormat(format)
-                    cursor.insertText(data.decode(encoding=encoding, errors="ignore"))
+                    text = data.decode(encoding=encoding, errors="ignore")
+                    for color, bg, text in self.splitTextByReceiveFindRules(text):
+                        format.setForeground(QColor(color) if color else directionColor)
+                        format.setBackground(QColor(bg) if bg else self.defaultBg)
+                        cursor.setCharFormat(format)
+                        cursor.insertText(text)
             if preserveScroll and curScrollValue < endScrollValue:
                 self.receiveArea.verticalScrollBar().setValue(curScrollValue)
             else:
