@@ -318,6 +318,15 @@ class Plugin(Plugin_Base):
     def onInit(self, config):
         super().onInit(config)
 
+    def globalConfigValue(self, key, default=None):
+        config = self.configGlobal
+        if hasattr(config, "get"):
+            return config.get(key, default)
+        try:
+            return config[key]
+        except Exception:
+            return default
+
     def onIsAddConnWidget(self):
         return False
 
@@ -1030,90 +1039,7 @@ class Plugin(Plugin_Base):
         )
         frame = QFrame()
         frame.setObjectName("bitCalculator")
-        frame.setStyleSheet("""
-            QFrame#bitCalculator {
-                border: 1px solid #858585;
-                border-radius: 6px;
-            }
-            QLabel#bitCalcDisplay {
-                font-size: 30px;
-                font-weight: 600;
-                padding: 4px 2px;
-            }
-            QLabel#bitCalcExpr {
-                color: #777777;
-                min-height: 20px;
-            }
-            QPushButton#bitCalcKey {
-                background: palette(button);
-                color: palette(button-text);
-                border: 1px solid palette(mid);
-                border-radius: 4px;
-                min-width: 58px;
-                min-height: 34px;
-                font-size: 16px;
-            }
-            QPushButton#bitCalcKey:hover {
-                background: palette(light);
-            }
-            QPushButton#bitCalcKey:pressed {
-                background: #2f75c1;
-                color: #ffffff;
-            }
-            QPushButton#bitCalcKey:disabled {
-                color: palette(mid);
-                background: palette(window);
-            }
-            QPushButton#bitCalcBase {
-                background: palette(button);
-                color: palette(button-text);
-                border: 1px solid palette(mid);
-                border-radius: 3px;
-                min-width: 42px;
-                max-width: 42px;
-                min-height: 24px;
-                padding: 1px 2px;
-            }
-            QPushButton#bitCalcBase:checked {
-                background: #2f75c1;
-                color: #ffffff;
-                border-color: #2f75c1;
-                font-weight: 600;
-            }
-            QPushButton#bitCalcToggle, QPushButton#bitCalcAction {
-                background: palette(button);
-                color: palette(button-text);
-                border: 1px solid palette(mid);
-                border-radius: 4px;
-                min-height: 26px;
-                padding: 2px 10px;
-            }
-            QPushButton#bitCalcToggle:checked {
-                background: #2f75c1;
-                color: #ffffff;
-                border-color: #2f75c1;
-            }
-            QPushButton#bitCalcAction:pressed {
-                background: #2f75c1;
-                color: #ffffff;
-                border-color: #2f75c1;
-            }
-            QPushButton#bitCell {
-                background: palette(button);
-                color: palette(button-text);
-                border: 1px solid palette(mid);
-                border-radius: 3px;
-                min-width: 22px;
-                max-width: 22px;
-                min-height: 24px;
-                max-height: 24px;
-                font-weight: 600;
-            }
-            QPushButton#bitCell:checked {
-                background: #2f75c1;
-                color: white;
-            }
-        """)
+        frame.setStyleSheet(self.bitCalculatorStyleSheet())
         layout = QVBoxLayout()
         layout.setContentsMargins(14, 12, 14, 14)
         layout.setSpacing(8)
@@ -1225,6 +1151,106 @@ class Plugin(Plugin_Base):
         card.layout.addWidget(frame)
         self.bitCalcRefresh(state)
         return card
+
+    def bitCalculatorStyleSheet(self):
+        dark = self.globalConfigValue("skin", "light") == "dark"
+        colors = {
+            "frameBorder": "#565656" if dark else "#858585",
+            "expr": "#a8a8a8" if dark else "#777777",
+            "buttonBg": "#4a4a4a" if dark else "#ffffff",
+            "buttonHover": "#565656" if dark else "#f2f2f2",
+            "buttonDisabledBg": "#303030" if dark else "#f5f5f5",
+            "buttonText": "#f2f2f2" if dark else "#202020",
+            "buttonDisabledText": "#8c8c8c" if dark else "#9a9a9a",
+            "buttonBorder": "#656565" if dark else "#c9c9c9",
+        }
+        return """
+            QFrame#bitCalculator {
+                border: 1px solid %(frameBorder)s;
+                border-radius: 6px;
+            }
+            QLabel#bitCalcDisplay {
+                font-size: 30px;
+                font-weight: 600;
+                padding: 4px 2px;
+            }
+            QLabel#bitCalcExpr {
+                color: %(expr)s;
+                min-height: 20px;
+            }
+            QPushButton#bitCalcKey {
+                background: %(buttonBg)s;
+                color: %(buttonText)s;
+                border: 1px solid %(buttonBorder)s;
+                border-radius: 4px;
+                min-width: 58px;
+                min-height: 34px;
+                font-size: 16px;
+            }
+            QPushButton#bitCalcKey:hover {
+                background: %(buttonHover)s;
+            }
+            QPushButton#bitCalcKey:pressed {
+                background: #2f75c1;
+                color: #ffffff;
+            }
+            QPushButton#bitCalcKey:disabled {
+                color: %(buttonDisabledText)s;
+                background: %(buttonDisabledBg)s;
+            }
+            QPushButton#bitCalcBase {
+                background: %(buttonBg)s;
+                color: %(buttonText)s;
+                border: 1px solid %(buttonBorder)s;
+                border-radius: 3px;
+                min-width: 42px;
+                max-width: 42px;
+                min-height: 24px;
+                padding: 1px 2px;
+            }
+            QPushButton#bitCalcBase:checked {
+                background: #2f75c1;
+                color: #ffffff;
+                border-color: #2f75c1;
+                font-weight: 600;
+            }
+            QPushButton#bitCalcToggle, QPushButton#bitCalcAction {
+                background: %(buttonBg)s;
+                color: %(buttonText)s;
+                border: 1px solid %(buttonBorder)s;
+                border-radius: 4px;
+                min-height: 26px;
+                padding: 2px 10px;
+            }
+            QPushButton#bitCalcToggle:hover, QPushButton#bitCalcAction:hover {
+                background: %(buttonHover)s;
+            }
+            QPushButton#bitCalcToggle:checked {
+                background: #2f75c1;
+                color: #ffffff;
+                border-color: #2f75c1;
+            }
+            QPushButton#bitCalcAction:pressed {
+                background: #2f75c1;
+                color: #ffffff;
+                border-color: #2f75c1;
+            }
+            QPushButton#bitCell {
+                background: %(buttonBg)s;
+                color: %(buttonText)s;
+                border: 1px solid %(buttonBorder)s;
+                border-radius: 3px;
+                min-width: 22px;
+                max-width: 22px;
+                min-height: 24px;
+                max-height: 24px;
+                font-weight: 600;
+            }
+            QPushButton#bitCell:checked {
+                background: #2f75c1;
+                color: white;
+            }
+        """ % colors
 
     def createBitCalculatorKeypad(self, state):
         widget = QWidget()

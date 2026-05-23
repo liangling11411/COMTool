@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-05-23 19:12+0800\n"
+"POT-Creation-Date: 2026-05-23 21:11+0800\n"
 "PO-Revision-Date: 2021-12-04 15:21+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -90,12 +90,12 @@ msgstr "Disconnected"
 #: main2.py:276 main2.py:326 main2.py:481 main2.py:486 main2.py:890
 #: pluginItems.py:203 pluginItems.py:206 pluginItems.py:320 pluginItems.py:332
 #: plugins/base.py:194 plugins/base.py:199 plugins/base.py:215
-#: plugins/base.py:224 plugins/dbg.py:1882 plugins/dbg.py:1891
-#: plugins/dbg.py:1919 plugins/dbg.py:2495 plugins/dbg.py:2509
-#: plugins/dbg.py:2519 plugins/dbg.py:2542 plugins/dbg.py:2609
-#: plugins/dbg.py:2617 plugins/graph.py:259
-#: plugins/graph_widget_metasenselite.py:591 plugins/graph_widgets.py:167
-#: plugins/myplugin.py:62
+#: plugins/base.py:224 plugins/dbg.py:226 plugins/dbg.py:1969
+#: plugins/dbg.py:1978 plugins/dbg.py:2182 plugins/dbg.py:2188
+#: plugins/dbg.py:2769 plugins/dbg.py:2783 plugins/dbg.py:2793
+#: plugins/dbg.py:2816 plugins/dbg.py:2883 plugins/dbg.py:2891
+#: plugins/graph.py:259 plugins/graph_widget_metasenselite.py:591
+#: plugins/graph_widgets.py:167 plugins/myplugin.py:62
 #: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
 #: plugins/protocol.py:488 plugins/protocol.py:515 plugins/protocol.py:524
 #: plugins/protocol.py:587
@@ -110,7 +110,7 @@ msgstr "Load plugin failed"
 msgid "Load plugin fail"
 msgstr "Load plugin fail"
 
-#: conn/conn_ssh.py:239 main2.py:320 plugins/dbg.py:2004 plugins/dbg.py:2018
+#: conn/conn_ssh.py:239 main2.py:320 plugins/dbg.py:2277 plugins/dbg.py:2291
 msgid "Select file"
 msgstr "Select file"
 
@@ -154,12 +154,13 @@ msgstr "New Window"
 msgid "Rename"
 msgstr "Rename"
 
-#: main2.py:522
+#: main2.py:522 plugins/dbg.py:2262
 msgid "Page name"
 msgstr "Page name"
 
-#: main2.py:529 pluginItems.py:209 plugins/dbg.py:1812 plugins/dbg.py:2522
-#: plugins/protocol.py:609 plugins/protocol.py:631
+#: main2.py:529 pluginItems.py:209 plugins/dbg.py:1899 plugins/dbg.py:2099
+#: plugins/dbg.py:2178 plugins/dbg.py:2796 plugins/protocol.py:609
+#: plugins/protocol.py:631
 msgid "Warning"
 msgstr "Warning"
 
@@ -311,11 +312,11 @@ msgstr "Input remark"
 msgid "Input value"
 msgstr "Input value"
 
-#: plugins/dbg.py:2361 widgets.py:691 widgets.py:727
+#: plugins/dbg.py:2635 widgets.py:691 widgets.py:727
 msgid "Select icon"
 msgstr "Select icon"
 
-#: plugins/dbg.py:1087 plugins/protocol.py:277 widgets.py:698 widgets.py:768
+#: plugins/dbg.py:1180 plugins/protocol.py:277 widgets.py:698 widgets.py:768
 msgid "Record"
 msgstr "Record"
 
@@ -327,8 +328,8 @@ msgstr "Shortcut"
 msgid "Press key to record, or click Cancel"
 msgstr "Press key to record, or click Cancel"
 
-#: plugins/dbg.py:1860 plugins/dbg.py:1947 plugins/dbg.py:2361
-#: plugins/dbg.py:2493 plugins/dbg.py:2507 widgets.py:708 widgets.py:727
+#: plugins/dbg.py:1947 plugins/dbg.py:2064 plugins/dbg.py:2635
+#: plugins/dbg.py:2767 plugins/dbg.py:2781 widgets.py:708 widgets.py:727
 msgid "OK"
 msgstr "OK"
 
@@ -431,7 +432,7 @@ msgstr "Input"
 msgid "error"
 msgstr "error"
 
-#: conn/conn_ssh.py:241 plugins/dbg.py:2006
+#: conn/conn_ssh.py:241 plugins/dbg.py:2279
 msgid "All Files (*)"
 msgstr "All Files (*)"
 
@@ -459,7 +460,7 @@ msgstr "Connection closed!"
 msgid "Protocol"
 msgstr "Protocol"
 
-#: conn/conn_tcp_udp.py:109 plugins/devtools.py:1941
+#: conn/conn_tcp_udp.py:109 plugins/devtools.py:1958
 msgid "Mode"
 msgstr "Mode"
 
@@ -511,724 +512,872 @@ msgstr "Format error, should be like 00 01 02 03"
 msgid "Escape is on, but escape error:"
 msgstr "Escape is on, but escape error:"
 
-#: plugins/dbg.py:310 plugins/dbg.py:601
-msgid "Advanced find settings"
-msgstr "Advanced find settings"
-
-#: plugins/dbg.py:321
-msgid "Find next"
-msgstr "Find next"
-
-#: plugins/dbg.py:322
-msgid "Jump to the next match for this rule"
-msgstr "Jump to the next match for this rule"
-
-#: plugins/dbg.py:323 plugins/devtools.py:1586
-msgid "Count"
-msgstr "Count"
-
-#: plugins/dbg.py:324
-msgid "Count matches for this rule in the receive buffer"
-msgstr "Count matches for this rule in the receive buffer"
-
-#: plugins/dbg.py:331
-msgid "Find options"
-msgstr "Find options"
-
-#: plugins/dbg.py:334
-msgid "Reverse find"
-msgstr "Reverse find"
-
-#: plugins/dbg.py:335
-msgid "Search upward when jumping to the next match"
-msgstr "Search upward when jumping to the next match"
-
-#: plugins/dbg.py:336
-msgid "Whole word"
-msgstr "Whole word"
-
-#: plugins/dbg.py:337
-msgid "Match only whole words"
-msgstr "Match only whole words"
-
-#: plugins/dbg.py:338
-msgid "Case sensitive"
-msgstr "Case sensitive"
-
-#: plugins/dbg.py:339
-msgid "Match uppercase and lowercase exactly"
-msgstr "Match uppercase and lowercase exactly"
-
-#: plugins/dbg.py:340
-msgid "Wrap around"
-msgstr "Wrap around"
-
-#: plugins/dbg.py:341
-msgid "Continue from the other end when no match is found"
-msgstr "Continue from the other end when no match is found"
-
-#: plugins/dbg.py:342
-msgid "Regular expression"
-msgstr "Regular expression"
-
-#: plugins/dbg.py:343
-msgid "Treat the find text as a Python regular expression"
-msgstr "Treat the find text as a Python regular expression"
-
-#: plugins/dbg.py:344
-msgid "Dot matches newline"
-msgstr "Dot matches newline"
-
-#: plugins/dbg.py:345
-msgid "Let '.' in regular expressions match line breaks"
-msgstr "Let '.' in regular expressions match line breaks"
-
-#: plugins/dbg.py:356 plugins/dbg.py:505
-msgid "Close"
-msgstr "Close"
-
-#: plugins/dbg.py:379
-msgid "No find rule selected"
-msgstr "No find rule selected"
-
-#: plugins/dbg.py:404 plugins/dbg.py:595
-msgid "Find text"
-msgstr "Find text"
-
-#: plugins/dbg.py:404
-msgid "Empty"
-msgstr "Empty"
-
-#: plugins/dbg.py:446
-msgid "Matches"
-msgstr "Matches"
-
-#: plugins/dbg.py:461
-msgid "Find in receive area"
-msgstr "Find in receive area"
-
-#: plugins/dbg.py:467
-msgid "Find rules (top rules have higher priority)"
-msgstr "Find rules (top rules have higher priority)"
-
-#: plugins/dbg.py:470
-msgid "Select all"
-msgstr "Select all"
-
-#: plugins/dbg.py:471
-msgid "Select all find rules for batch actions"
-msgstr "Select all find rules for batch actions"
-
-#: plugins/dbg.py:472
-msgid "Highlight color"
-msgstr "Highlight color"
-
-#: plugins/dbg.py:473
-msgid "Choose highlight color for new rules or selected rules"
-msgstr "Choose highlight color for new rules or selected rules"
-
-#: plugins/dbg.py:475
-msgid "Apply color"
-msgstr "Apply color"
-
-#: plugins/dbg.py:476
-msgid "Clear color"
-msgstr "Clear color"
-
-#: plugins/dbg.py:477
-msgid "Delete selected"
-msgstr "Delete selected"
-
-#: plugins/dbg.py:478
-msgid "Apply the current highlight color to all selected rules"
-msgstr "Apply the current highlight color to all selected rules"
-
-#: plugins/dbg.py:479
-msgid "Remove highlight color from all selected rules"
-msgstr "Remove highlight color from all selected rules"
-
-#: plugins/dbg.py:480
-msgid "Delete all selected find rules"
-msgstr "Delete all selected find rules"
-
-#: plugins/dbg.py:503
-msgid "Add find rule"
-msgstr "Add find rule"
-
-#: plugins/dbg.py:506
-msgid "Close find window"
-msgstr "Close find window"
-
-#: plugins/dbg.py:530 plugins/dbg.py:714 plugins/dbg.py:1676
-#: plugins/dbg.py:1690 plugins/dbg.py:2292 plugins/dbg.py:2348
-msgid "Select color"
-msgstr "Select color"
-
-#: plugins/dbg.py:585
-msgid "Select"
-msgstr "Select"
-
-#: plugins/dbg.py:586
-msgid "Select this rule for batch edit actions"
-msgstr "Select this rule for batch edit actions"
-
-#: plugins/dbg.py:589
-msgid "Drag before another find rule to change priority"
-msgstr "Drag before another find rule to change priority"
-
-#: plugins/dbg.py:591 plugins/graph_widgets.py:55
-msgid "Enable"
-msgstr "Enable"
-
-#: plugins/dbg.py:592
-msgid "Enable this rule for highlighting, navigation, and scrollbar markers"
-msgstr "Enable this rule for highlighting, navigation, and scrollbar markers"
-
-#: plugins/dbg.py:596
-msgid ""
-"Plain text searches exact text. Use advanced settings for regular "
-"expressions."
-msgstr ""
-"Plain text searches exact text. Use advanced settings for regular "
-"expressions."
-
-#: plugins/dbg.py:598
-msgid "Set highlight color, right click to clear"
-msgstr "Set highlight color, right click to clear"
-
-#: plugins/dbg.py:604
-msgid "Delete this find rule"
-msgstr "Delete this find rule"
-
-#: plugins/dbg.py:857
-msgid "Send Receive"
-msgstr "Send Receive"
-
-#: plugins/dbg.py:873
-msgid "Shortcut:"
-msgstr "Shortcut:"
-
-#: plugins/dbg.py:874
-msgid "Full screen"
-msgstr "Full screen"
-
-#: plugins/dbg.py:875
-msgid "Send data"
-msgstr "Send data"
-
-#: plugins/dbg.py:876
-msgid "Clear Send Area"
-msgstr "Clear Send Area"
-
-#: plugins/dbg.py:877
-msgid "Clear Receive Area"
-msgstr "Clear Receive Area"
-
-#: plugins/dbg.py:951
-msgid "Clear RX"
-msgstr "Clear RX"
-
-#: plugins/dbg.py:952
-msgid "Clear receive area"
-msgstr "Clear receive area"
-
-#: plugins/dbg.py:954
-msgid "Clear TX"
-msgstr "Clear TX"
-
-#: plugins/dbg.py:955
-msgid "Clear TX input"
-msgstr "Clear TX input"
-
-#: plugins/dbg.py:963
-msgid "Received RX/TX log output"
-msgstr "Received RX/TX log output"
-
-#: plugins/dbg.py:974
-msgid "Input data to send"
-msgstr "Input data to send"
-
-#: plugins/dbg.py:978
-msgid "Find and highlight receive text"
-msgstr "Find and highlight receive text"
-
-#: plugins/dbg.py:981
-msgid "Send input data"
-msgstr "Send input data"
-
-#: plugins/dbg.py:984
-msgid "Send history"
-msgstr "Send history"
-
-#: plugins/dbg.py:1027
-msgid "Receive Settings"
-msgstr "Receive Settings"
-
-#: plugins/dbg.py:1028 plugins/dbg.py:1072 plugins/protocol.py:269
-msgid "ASCII"
-msgstr "ASCII"
-
-#: plugins/dbg.py:1029
-msgid ""
-"Show recived data as visible format, select decode method at top right "
-"corner"
-msgstr ""
-"Show recived data as visible format, select decode method at top right "
-"corner"
-
-#: plugins/dbg.py:1030 plugins/dbg.py:1073 plugins/protocol.py:270
-msgid "HEX"
-msgstr "HEX"
-
-#: plugins/dbg.py:1031
-msgid "Show recived data as hex format"
-msgstr "Show recived data as hex format"
-
-#: plugins/dbg.py:1033
-msgid ""
-"Auto\n"
-"Linefeed\n"
-"ms"
-msgstr ""
-"Auto\n"
-"Linefeed\n"
-"ms"
-
-#: plugins/dbg.py:1034 plugins/dbg.py:1037
-msgid "Auto linefeed after interval, unit: ms"
-msgstr "Auto linefeed after interval, unit: ms"
-
-#: plugins/dbg.py:1040 plugins/dbg.py:1057
-msgid "Timestamp"
-msgstr "Timestamp"
-
-#: plugins/dbg.py:1041
-msgid ""
-"Add timestamp before received data, will automatically enable auto line "
-"feed"
-msgstr ""
-"Add timestamp before received data, will automatically enable auto line "
-"feed"
-
-#: plugins/dbg.py:1042 plugins/protocol.py:244
-msgid "Display wrap"
-msgstr "Display wrap"
-
-#: plugins/dbg.py:1043 plugins/dbg.py:1089 plugins/protocol.py:279
-msgid "Escape"
-msgstr "Escape"
-
-#: plugins/dbg.py:1044 plugins/dbg.py:1090 plugins/protocol.py:280
-msgid "Enable escape characters support like \\t \\r \\n \\x01 \\001"
-msgstr "Enable escape characters support like \\t \\r \\n \\x01 \\001"
-
-#: plugins/dbg.py:1045 plugins/protocol.py:245
-msgid ""
-"When content in a line is too long, always auto wrap to show, and no "
-"scroll bar"
-msgstr ""
-"When content in a line is too long, always auto wrap to show, and no "
-"scroll bar"
-
-#: plugins/dbg.py:1058 plugins/dbg.py:1171 plugins/dbg.py:1178
-#: plugins/dbg.py:1288 plugins/devtools.py:385
-msgid "Color"
-msgstr "Color"
-
-#: plugins/dbg.py:1059
-msgid "Timestamp color in receive area"
-msgstr "Timestamp color in receive area"
-
-#: plugins/dbg.py:1060
-msgid "Newline after timestamp"
-msgstr "Newline after timestamp"
-
-#: plugins/dbg.py:1061
-msgid "Display received data on the next line after timestamp"
-msgstr "Display received data on the next line after timestamp"
-
-#: plugins/dbg.py:1063
-msgid "Timestamp color"
-msgstr "Timestamp color"
-
-#: plugins/dbg.py:1071
-msgid "Send Settings"
-msgstr "Send Settings"
-
-#: plugins/dbg.py:1074 plugins/protocol.py:271
-msgid ""
-"Get send data as visible format, select encoding method at top right "
-"corner"
-msgstr ""
-"Get send data as visible format, select encoding method at top right "
-"corner"
-
-#: plugins/dbg.py:1075 plugins/protocol.py:272
-msgid "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
-msgstr "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
-
-#: plugins/dbg.py:1077
-msgid ""
-"Timed Send\n"
-"ms"
-msgstr ""
-"Timed Send\n"
-"ms"
-
-#: plugins/dbg.py:1078 plugins/dbg.py:1081
-msgid "Timed send, unit: ms"
-msgstr "Timed send, unit: ms"
-
-#: plugins/dbg.py:1084 plugins/protocol.py:274
-msgid "<CRLF>"
-msgstr "<CRLF>"
-
-#: plugins/dbg.py:1085 plugins/protocol.py:275
-msgid "Select to send \\r\\n instead of \\n"
-msgstr "Select to send \\r\\n instead of \\n"
-
-#: plugins/dbg.py:1088 plugins/protocol.py:278
-msgid "Record send data"
-msgstr "Record send data"
-
-#: plugins/dbg.py:1091
-msgid "Newline"
-msgstr "Newline"
-
-#: plugins/dbg.py:1092
-msgid "Auto add new line when send"
-msgstr "Auto add new line when send"
-
-#: plugins/dbg.py:1123
-msgid "Auto line feed value error, must be integer"
-msgstr "Auto line feed value error, must be integer"
-
-#: plugins/dbg.py:1124
-msgid "Timed send value error, must be integer"
-msgstr "Timed send value error, must be integer"
-
-#: plugins/dbg.py:1163
-msgid "Default font"
-msgstr "Default font"
-
-#: plugins/dbg.py:1167
-msgid "Font family for received RX text"
-msgstr "Font family for received RX text"
-
-#: plugins/dbg.py:1170
-msgid "Font size for received RX text"
-msgstr "Font size for received RX text"
-
-#: plugins/dbg.py:1172
-msgid "Color for received RX text in the receive area"
-msgstr "Color for received RX text in the receive area"
-
-#: plugins/dbg.py:1174
-msgid "Font family for TX input text"
-msgstr "Font family for TX input text"
-
-#: plugins/dbg.py:1177
-msgid "Font size for TX input text"
-msgstr "Font size for TX input text"
-
-#: plugins/dbg.py:1179
-msgid "Color for TX input text and recorded TX lines"
-msgstr "Color for TX input text and recorded TX lines"
-
-#: plugins/dbg.py:1180
-msgid "RX font"
-msgstr "RX font"
-
-#: plugins/dbg.py:1182
-msgid "RX size"
-msgstr "RX size"
-
-#: plugins/dbg.py:1184
-msgid "RX color"
-msgstr "RX color"
-
-#: plugins/dbg.py:1186
-msgid "TX font"
-msgstr "TX font"
-
-#: plugins/dbg.py:1188
-msgid "TX size"
-msgstr "TX size"
-
-#: plugins/dbg.py:1190
-msgid "TX color"
-msgstr "TX color"
-
-#: plugins/dbg.py:1195
-msgid "Path of the file to send"
-msgstr "Path of the file to send"
-
-#: plugins/dbg.py:1196
-msgid "Open File"
-msgstr "Open File"
-
-#: plugins/dbg.py:1197
-msgid "Select a file to send"
-msgstr "Select a file to send"
-
-#: plugins/dbg.py:1198 plugins/dbg.py:1202
-msgid "Send File"
-msgstr "Send File"
-
-#: plugins/dbg.py:1199
-msgid "Send the selected file over the current connection"
-msgstr "Send the selected file over the current connection"
-
-#: plugins/dbg.py:1200
-msgid "Clear TX History"
-msgstr "Clear TX History"
-
-#: plugins/dbg.py:1201
-msgid "Clear TX send history"
-msgstr "Clear TX send history"
-
-#: plugins/dbg.py:1209
-msgid "Save log"
-msgstr "Save log"
-
-#: plugins/dbg.py:1213
-msgid "Enable saving received and recorded sent data to a log file"
-msgstr "Enable saving received and recorded sent data to a log file"
-
-#: plugins/dbg.py:1215
-msgid "Log file path"
-msgstr "Log file path"
-
-#: plugins/dbg.py:1216
-msgid "Log path"
-msgstr "Log path"
-
-#: plugins/dbg.py:1217
-msgid "Select log file path"
-msgstr "Select log file path"
-
-#: plugins/dbg.py:1218
+#: plugins/dbg.py:158 plugins/dbg.py:1314
+msgid "More log settings"
+msgstr "More log settings"
+
+#: plugins/dbg.py:166 plugins/dbg.py:2108
 msgid "Auto new file"
 msgstr "Auto new file"
 
-#: plugins/dbg.py:1219
+#: plugins/dbg.py:167
 msgid "When start a new connection, will automatically create a new log file"
 msgstr "When start a new connection, will automatically create a new log file"
 
-#: plugins/dbg.py:1220
+#: plugins/dbg.py:168 plugins/dbg.py:2109
 msgid "Timed log"
 msgstr "Timed log"
 
-#: plugins/dbg.py:1221
+#: plugins/dbg.py:169
 msgid "Stop saving log automatically after the configured duration"
 msgstr "Stop saving log automatically after the configured duration"
 
-#: plugins/dbg.py:1226
-msgid "Timed log duration, format: HH:MM:SS"
-msgstr "Timed log duration, format: HH:MM:SS"
+#: plugins/dbg.py:170
+msgid "Append log information at stop"
+msgstr "Append log information at stop"
 
-#: plugins/dbg.py:1227
+#: plugins/dbg.py:171
+msgid ""
+"Append start time, pause history, log size, and connection settings to "
+"the end of the log"
+msgstr ""
+"Append start time, pause history, log size, and connection settings to "
+"the end of the log"
+
+#: plugins/dbg.py:185
+msgid "Only numbers are allowed"
+msgstr "Only numbers are allowed"
+
+#: plugins/dbg.py:194
+msgid "Hours"
+msgstr "Hours"
+
+#: plugins/dbg.py:196
+msgid "Minutes"
+msgstr "Minutes"
+
+#: plugins/dbg.py:198
+msgid "Seconds"
+msgstr "Seconds"
+
+#: plugins/dbg.py:226
+msgid "Timed log duration must be greater than zero"
+msgstr "Timed log duration must be greater than zero"
+
+#: plugins/dbg.py:391 plugins/dbg.py:682
+msgid "Advanced find settings"
+msgstr "Advanced find settings"
+
+#: plugins/dbg.py:402
+msgid "Find next"
+msgstr "Find next"
+
+#: plugins/dbg.py:403
+msgid "Jump to the next match for this rule"
+msgstr "Jump to the next match for this rule"
+
+#: plugins/dbg.py:404 plugins/devtools.py:1603
+msgid "Count"
+msgstr "Count"
+
+#: plugins/dbg.py:405
+msgid "Count matches for this rule in the receive buffer"
+msgstr "Count matches for this rule in the receive buffer"
+
+#: plugins/dbg.py:412
+msgid "Find options"
+msgstr "Find options"
+
+#: plugins/dbg.py:415
+msgid "Reverse find"
+msgstr "Reverse find"
+
+#: plugins/dbg.py:416
+msgid "Search upward when jumping to the next match"
+msgstr "Search upward when jumping to the next match"
+
+#: plugins/dbg.py:417
+msgid "Whole word"
+msgstr "Whole word"
+
+#: plugins/dbg.py:418
+msgid "Match only whole words"
+msgstr "Match only whole words"
+
+#: plugins/dbg.py:419
+msgid "Case sensitive"
+msgstr "Case sensitive"
+
+#: plugins/dbg.py:420
+msgid "Match uppercase and lowercase exactly"
+msgstr "Match uppercase and lowercase exactly"
+
+#: plugins/dbg.py:421
+msgid "Wrap around"
+msgstr "Wrap around"
+
+#: plugins/dbg.py:422
+msgid "Continue from the other end when no match is found"
+msgstr "Continue from the other end when no match is found"
+
+#: plugins/dbg.py:423
+msgid "Regular expression"
+msgstr "Regular expression"
+
+#: plugins/dbg.py:424
+msgid "Treat the find text as a Python regular expression"
+msgstr "Treat the find text as a Python regular expression"
+
+#: plugins/dbg.py:425
+msgid "Dot matches newline"
+msgstr "Dot matches newline"
+
+#: plugins/dbg.py:426
+msgid "Let '.' in regular expressions match line breaks"
+msgstr "Let '.' in regular expressions match line breaks"
+
+#: plugins/dbg.py:437 plugins/dbg.py:586
+msgid "Close"
+msgstr "Close"
+
+#: plugins/dbg.py:460
+msgid "No find rule selected"
+msgstr "No find rule selected"
+
+#: plugins/dbg.py:485 plugins/dbg.py:676
+msgid "Find text"
+msgstr "Find text"
+
+#: plugins/dbg.py:485
+msgid "Empty"
+msgstr "Empty"
+
+#: plugins/dbg.py:527
+msgid "Matches"
+msgstr "Matches"
+
+#: plugins/dbg.py:542
+msgid "Find in receive area"
+msgstr "Find in receive area"
+
+#: plugins/dbg.py:548
+msgid "Find rules (top rules have higher priority)"
+msgstr "Find rules (top rules have higher priority)"
+
+#: plugins/dbg.py:551
+msgid "Select all"
+msgstr "Select all"
+
+#: plugins/dbg.py:552
+msgid "Select all find rules for batch actions"
+msgstr "Select all find rules for batch actions"
+
+#: plugins/dbg.py:553
+msgid "Highlight color"
+msgstr "Highlight color"
+
+#: plugins/dbg.py:554
+msgid "Choose highlight color for new rules or selected rules"
+msgstr "Choose highlight color for new rules or selected rules"
+
+#: plugins/dbg.py:556
+msgid "Apply color"
+msgstr "Apply color"
+
+#: plugins/dbg.py:557
+msgid "Clear color"
+msgstr "Clear color"
+
+#: plugins/dbg.py:558
+msgid "Delete selected"
+msgstr "Delete selected"
+
+#: plugins/dbg.py:559
+msgid "Apply the current highlight color to all selected rules"
+msgstr "Apply the current highlight color to all selected rules"
+
+#: plugins/dbg.py:560
+msgid "Remove highlight color from all selected rules"
+msgstr "Remove highlight color from all selected rules"
+
+#: plugins/dbg.py:561
+msgid "Delete all selected find rules"
+msgstr "Delete all selected find rules"
+
+#: plugins/dbg.py:584
+msgid "Add find rule"
+msgstr "Add find rule"
+
+#: plugins/dbg.py:587
+msgid "Close find window"
+msgstr "Close find window"
+
+#: plugins/dbg.py:611 plugins/dbg.py:795 plugins/dbg.py:1763
+#: plugins/dbg.py:1777 plugins/dbg.py:2566 plugins/dbg.py:2622
+msgid "Select color"
+msgstr "Select color"
+
+#: plugins/dbg.py:666
+msgid "Select"
+msgstr "Select"
+
+#: plugins/dbg.py:667
+msgid "Select this rule for batch edit actions"
+msgstr "Select this rule for batch edit actions"
+
+#: plugins/dbg.py:670
+msgid "Drag before another find rule to change priority"
+msgstr "Drag before another find rule to change priority"
+
+#: plugins/dbg.py:672 plugins/graph_widgets.py:55
+msgid "Enable"
+msgstr "Enable"
+
+#: plugins/dbg.py:673
+msgid "Enable this rule for highlighting, navigation, and scrollbar markers"
+msgstr "Enable this rule for highlighting, navigation, and scrollbar markers"
+
+#: plugins/dbg.py:677
+msgid ""
+"Plain text searches exact text. Use advanced settings for regular "
+"expressions."
+msgstr ""
+"Plain text searches exact text. Use advanced settings for regular "
+"expressions."
+
+#: plugins/dbg.py:679
+msgid "Set highlight color, right click to clear"
+msgstr "Set highlight color, right click to clear"
+
+#: plugins/dbg.py:685
+msgid "Delete this find rule"
+msgstr "Delete this find rule"
+
+#: plugins/dbg.py:938
+msgid "Send Receive"
+msgstr "Send Receive"
+
+#: plugins/dbg.py:954
+msgid "Shortcut:"
+msgstr "Shortcut:"
+
+#: plugins/dbg.py:955
+msgid "Full screen"
+msgstr "Full screen"
+
+#: plugins/dbg.py:956
+msgid "Send data"
+msgstr "Send data"
+
+#: plugins/dbg.py:957
+msgid "Clear Send Area"
+msgstr "Clear Send Area"
+
+#: plugins/dbg.py:958
+msgid "Clear Receive Area"
+msgstr "Clear Receive Area"
+
+#: plugins/dbg.py:1044
+msgid "Clear RX"
+msgstr "Clear RX"
+
+#: plugins/dbg.py:1045
+msgid "Clear receive area"
+msgstr "Clear receive area"
+
+#: plugins/dbg.py:1047
+msgid "Clear TX"
+msgstr "Clear TX"
+
+#: plugins/dbg.py:1048
+msgid "Clear TX input"
+msgstr "Clear TX input"
+
+#: plugins/dbg.py:1056
+msgid "Received RX/TX log output"
+msgstr "Received RX/TX log output"
+
+#: plugins/dbg.py:1067
+msgid "Input data to send"
+msgstr "Input data to send"
+
+#: plugins/dbg.py:1071
+msgid "Find and highlight receive text"
+msgstr "Find and highlight receive text"
+
+#: plugins/dbg.py:1074
+msgid "Send input data"
+msgstr "Send input data"
+
+#: plugins/dbg.py:1077
+msgid "Send history"
+msgstr "Send history"
+
+#: plugins/dbg.py:1120
+msgid "Receive Settings"
+msgstr "Receive Settings"
+
+#: plugins/dbg.py:1121 plugins/dbg.py:1165 plugins/protocol.py:269
+msgid "ASCII"
+msgstr "ASCII"
+
+#: plugins/dbg.py:1122
+msgid ""
+"Show recived data as visible format, select decode method at top right "
+"corner"
+msgstr ""
+"Show recived data as visible format, select decode method at top right "
+"corner"
+
+#: plugins/dbg.py:1123 plugins/dbg.py:1166 plugins/protocol.py:270
+msgid "HEX"
+msgstr "HEX"
+
+#: plugins/dbg.py:1124
+msgid "Show recived data as hex format"
+msgstr "Show recived data as hex format"
+
+#: plugins/dbg.py:1126
+msgid ""
+"Auto\n"
+"Linefeed\n"
+"ms"
+msgstr ""
+"Auto\n"
+"Linefeed\n"
+"ms"
+
+#: plugins/dbg.py:1127 plugins/dbg.py:1130
+msgid "Auto linefeed after interval, unit: ms"
+msgstr "Auto linefeed after interval, unit: ms"
+
+#: plugins/dbg.py:1133 plugins/dbg.py:1150
+msgid "Timestamp"
+msgstr "Timestamp"
+
+#: plugins/dbg.py:1134
+msgid ""
+"Add timestamp before received data, will automatically enable auto line "
+"feed"
+msgstr ""
+"Add timestamp before received data, will automatically enable auto line "
+"feed"
+
+#: plugins/dbg.py:1135 plugins/protocol.py:244
+msgid "Display wrap"
+msgstr "Display wrap"
+
+#: plugins/dbg.py:1136 plugins/dbg.py:1182 plugins/protocol.py:279
+msgid "Escape"
+msgstr "Escape"
+
+#: plugins/dbg.py:1137 plugins/dbg.py:1183 plugins/protocol.py:280
+msgid "Enable escape characters support like \\t \\r \\n \\x01 \\001"
+msgstr "Enable escape characters support like \\t \\r \\n \\x01 \\001"
+
+#: plugins/dbg.py:1138 plugins/protocol.py:245
+msgid ""
+"When content in a line is too long, always auto wrap to show, and no "
+"scroll bar"
+msgstr ""
+"When content in a line is too long, always auto wrap to show, and no "
+"scroll bar"
+
+#: plugins/dbg.py:1151 plugins/dbg.py:1264 plugins/dbg.py:1271
+#: plugins/dbg.py:1379 plugins/devtools.py:385
+msgid "Color"
+msgstr "Color"
+
+#: plugins/dbg.py:1152
+msgid "Timestamp color in receive area"
+msgstr "Timestamp color in receive area"
+
+#: plugins/dbg.py:1153
+msgid "Newline after timestamp"
+msgstr "Newline after timestamp"
+
+#: plugins/dbg.py:1154
+msgid "Display received data on the next line after timestamp"
+msgstr "Display received data on the next line after timestamp"
+
+#: plugins/dbg.py:1156
+msgid "Timestamp color"
+msgstr "Timestamp color"
+
+#: plugins/dbg.py:1164
+msgid "Send Settings"
+msgstr "Send Settings"
+
+#: plugins/dbg.py:1167 plugins/protocol.py:271
+msgid ""
+"Get send data as visible format, select encoding method at top right "
+"corner"
+msgstr ""
+"Get send data as visible format, select encoding method at top right "
+"corner"
+
+#: plugins/dbg.py:1168 plugins/protocol.py:272
+msgid "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
+msgstr "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
+
+#: plugins/dbg.py:1170
+msgid ""
+"Timed Send\n"
+"ms"
+msgstr ""
+"Timed Send\n"
+"ms"
+
+#: plugins/dbg.py:1171 plugins/dbg.py:1174
+msgid "Timed send, unit: ms"
+msgstr "Timed send, unit: ms"
+
+#: plugins/dbg.py:1177 plugins/protocol.py:274
+msgid "<CRLF>"
+msgstr "<CRLF>"
+
+#: plugins/dbg.py:1178 plugins/protocol.py:275
+msgid "Select to send \\r\\n instead of \\n"
+msgstr "Select to send \\r\\n instead of \\n"
+
+#: plugins/dbg.py:1181 plugins/protocol.py:278
+msgid "Record send data"
+msgstr "Record send data"
+
+#: plugins/dbg.py:1184
+msgid "Newline"
+msgstr "Newline"
+
+#: plugins/dbg.py:1185
+msgid "Auto add new line when send"
+msgstr "Auto add new line when send"
+
+#: plugins/dbg.py:1216
+msgid "Auto line feed value error, must be integer"
+msgstr "Auto line feed value error, must be integer"
+
+#: plugins/dbg.py:1217
+msgid "Timed send value error, must be integer"
+msgstr "Timed send value error, must be integer"
+
+#: plugins/dbg.py:1256
+msgid "Default font"
+msgstr "Default font"
+
+#: plugins/dbg.py:1260
+msgid "Font family for received RX text"
+msgstr "Font family for received RX text"
+
+#: plugins/dbg.py:1263
+msgid "Font size for received RX text"
+msgstr "Font size for received RX text"
+
+#: plugins/dbg.py:1265
+msgid "Color for received RX text in the receive area"
+msgstr "Color for received RX text in the receive area"
+
+#: plugins/dbg.py:1267
+msgid "Font family for TX input text"
+msgstr "Font family for TX input text"
+
+#: plugins/dbg.py:1270
+msgid "Font size for TX input text"
+msgstr "Font size for TX input text"
+
+#: plugins/dbg.py:1272
+msgid "Color for TX input text and recorded TX lines"
+msgstr "Color for TX input text and recorded TX lines"
+
+#: plugins/dbg.py:1273
+msgid "RX font"
+msgstr "RX font"
+
+#: plugins/dbg.py:1275
+msgid "RX size"
+msgstr "RX size"
+
+#: plugins/dbg.py:1277
+msgid "RX color"
+msgstr "RX color"
+
+#: plugins/dbg.py:1279
+msgid "TX font"
+msgstr "TX font"
+
+#: plugins/dbg.py:1281
+msgid "TX size"
+msgstr "TX size"
+
+#: plugins/dbg.py:1283
+msgid "TX color"
+msgstr "TX color"
+
+#: plugins/dbg.py:1288
+msgid "Path of the file to send"
+msgstr "Path of the file to send"
+
+#: plugins/dbg.py:1289
+msgid "Open File"
+msgstr "Open File"
+
+#: plugins/dbg.py:1290
+msgid "Select a file to send"
+msgstr "Select a file to send"
+
+#: plugins/dbg.py:1291 plugins/dbg.py:1295
+msgid "Send File"
+msgstr "Send File"
+
+#: plugins/dbg.py:1292
+msgid "Send the selected file over the current connection"
+msgstr "Send the selected file over the current connection"
+
+#: plugins/dbg.py:1293
+msgid "Clear TX History"
+msgstr "Clear TX History"
+
+#: plugins/dbg.py:1294
+msgid "Clear TX send history"
+msgstr "Clear TX send history"
+
+#: plugins/dbg.py:1302
+msgid "Save log"
+msgstr "Save log"
+
+#: plugins/dbg.py:1306
+msgid "Log file path"
+msgstr "Log file path"
+
+#: plugins/dbg.py:1307 plugins/dbg.py:2261
+msgid "Log path"
+msgstr "Log path"
+
+#: plugins/dbg.py:1308
+msgid "Select log file path"
+msgstr "Select log file path"
+
+#: plugins/dbg.py:1309 plugins/dbg.py:2084
+msgid "Start record"
+msgstr "Start record"
+
+#: plugins/dbg.py:1310
+msgid "Start or pause log recording"
+msgstr "Start or pause log recording"
+
+#: plugins/dbg.py:1311
+msgid "Stop record"
+msgstr "Stop record"
+
+#: plugins/dbg.py:1312
+msgid "Stop log recording"
+msgstr "Stop log recording"
+
+#: plugins/dbg.py:1315
+msgid "Configure auto new file, timed log, and log information summary"
+msgstr "Configure auto new file, timed log, and log information summary"
+
+#: plugins/dbg.py:1318
+msgid "Current log settings"
+msgstr "Current log settings"
+
+#: plugins/dbg.py:1319
 msgid "Log: 00:00:00 / 0 B"
 msgstr "Log: 00:00:00 / 0 B"
 
-#: plugins/dbg.py:1228
+#: plugins/dbg.py:1320
 msgid "Current log recording duration and file size"
 msgstr "Current log recording duration and file size"
 
-#: plugins/dbg.py:1231
+#: plugins/dbg.py:1323
 msgid "RX buffer size"
 msgstr "RX buffer size"
 
-#: plugins/dbg.py:1237
+#: plugins/dbg.py:1329
 msgid "RX buffer size, only editable while the connection is closed"
 msgstr "RX buffer size, only editable while the connection is closed"
 
-#: plugins/dbg.py:1275
+#: plugins/dbg.py:1366
 msgid "Import"
 msgstr "Import"
 
-#: plugins/dbg.py:1276
+#: plugins/dbg.py:1367
 msgid "Export"
 msgstr "Export"
 
-#: plugins/dbg.py:1277
+#: plugins/dbg.py:1368
 msgid "Add a custom send item"
 msgstr "Add a custom send item"
 
-#: plugins/dbg.py:1278
+#: plugins/dbg.py:1369
 msgid "Import custom send items from JSON"
 msgstr "Import custom send items from JSON"
 
-#: plugins/dbg.py:1279
+#: plugins/dbg.py:1370
 msgid "Export custom send items to JSON"
 msgstr "Export custom send items to JSON"
 
-#: plugins/dbg.py:1284
+#: plugins/dbg.py:1375
 msgid "Search remark or command"
 msgstr "Search remark or command"
 
-#: plugins/dbg.py:1285
+#: plugins/dbg.py:1376
 msgid "Search custom send items by remark or command"
 msgstr "Search custom send items by remark or command"
 
-#: plugins/dbg.py:1286
+#: plugins/dbg.py:1377
 msgid "All"
 msgstr "All"
 
-#: plugins/dbg.py:1287
+#: plugins/dbg.py:1378
 msgid "Select visible custom send items"
 msgstr "Select visible custom send items"
 
-#: plugins/dbg.py:1289
+#: plugins/dbg.py:1380
 msgid "Icon"
 msgstr "Icon"
 
-#: plugins/dbg.py:1290 plugins/dbg.py:2181 plugins/dbg.py:2378
+#: plugins/dbg.py:1381 plugins/dbg.py:2455 plugins/dbg.py:2652
 #: plugins/protocol.py:257
 msgid "Delete"
 msgstr "Delete"
 
-#: plugins/dbg.py:1291
+#: plugins/dbg.py:1382
 msgid "Set color for selected custom send items"
 msgstr "Set color for selected custom send items"
 
-#: plugins/dbg.py:1292
+#: plugins/dbg.py:1383
 msgid "Set icon for selected custom send items"
 msgstr "Set icon for selected custom send items"
 
-#: plugins/dbg.py:1293
+#: plugins/dbg.py:1384
 msgid "Delete selected custom send items"
 msgstr "Delete selected custom send items"
 
-#: plugins/dbg.py:1300
+#: plugins/dbg.py:1391
 msgid "Cutom send"
 msgstr "Cutom send"
 
-#: plugins/dbg.py:1564 plugins/dbg.py:1597
+#: plugins/dbg.py:1651 plugins/dbg.py:1684
 msgid "Find"
 msgstr "Find"
 
-#: plugins/dbg.py:1564
+#: plugins/dbg.py:1651
 msgid "No match found"
 msgstr "No match found"
 
-#: plugins/dbg.py:1597
+#: plugins/dbg.py:1684
 msgid "No more matches"
 msgstr "No more matches"
 
-#: plugins/dbg.py:1812
+#: plugins/dbg.py:1899
 msgid "linefeed always on if timestamp or record send is on"
 msgstr "linefeed always on if timestamp or record send is on"
 
-#: plugins/dbg.py:1860
+#: plugins/dbg.py:1947
 msgid "History cleared!"
 msgstr "History cleared!"
 
-#: plugins/dbg.py:1863
+#: plugins/dbg.py:1950
 msgid "Confirm clear"
 msgstr "Confirm clear"
 
-#: plugins/dbg.py:1867
+#: plugins/dbg.py:1954
 msgid "Clear receive area?"
 msgstr "Clear receive area?"
 
-#: plugins/dbg.py:1871
+#: plugins/dbg.py:1958
 msgid "Clear send input?"
 msgstr "Clear send input?"
 
-#: plugins/dbg.py:1875
+#: plugins/dbg.py:1962
 msgid "Clear TX history?"
 msgstr "Clear TX history?"
 
-#: plugins/dbg.py:1882 plugins/graph.py:259 plugins/protocol.py:524
+#: plugins/dbg.py:1969 plugins/graph.py:259 plugins/protocol.py:524
 msgid "Send data failed!"
 msgstr "Send data failed!"
 
-#: plugins/dbg.py:1887
+#: plugins/dbg.py:1974
 msgid "Send file"
 msgstr "Send file"
 
-#: plugins/dbg.py:1891
+#: plugins/dbg.py:1978
 msgid "Send file failed!"
 msgstr "Send file failed!"
 
-#: plugins/dbg.py:1919
-msgid "Timed log duration error, format: HH:MM:SS"
-msgstr "Timed log duration error, format: HH:MM:SS"
+#: plugins/dbg.py:2038
+msgid "Confirm stop"
+msgstr "Confirm stop"
 
-#: plugins/dbg.py:1947
+#: plugins/dbg.py:2038
+msgid "Stop log recording?"
+msgstr "Stop log recording?"
+
+#: plugins/dbg.py:2064
 msgid "Timed log stopped"
 msgstr "Timed log stopped"
 
-#: plugins/dbg.py:1997
+#: plugins/dbg.py:2085
+msgid "Start log recording"
+msgstr "Start log recording"
+
+#: plugins/dbg.py:2089
+msgid "Resume record"
+msgstr "Resume record"
+
+#: plugins/dbg.py:2090
+msgid "Resume log recording"
+msgstr "Resume log recording"
+
+#: plugins/dbg.py:2093
+msgid "Pause record"
+msgstr "Pause record"
+
+#: plugins/dbg.py:2094
+msgid "Pause log recording"
+msgstr "Pause log recording"
+
+#: plugins/dbg.py:2099
+msgid "Log settings are locked while recording or paused"
+msgstr "Log settings are locked while recording or paused"
+
+#: plugins/dbg.py:2108 plugins/dbg.py:2110
+msgid "On"
+msgstr "On"
+
+#: plugins/dbg.py:2108 plugins/dbg.py:2109 plugins/dbg.py:2110
+msgid "Off"
+msgstr "Off"
+
+#: plugins/dbg.py:2110
+msgid "Append info"
+msgstr "Append info"
+
+#: plugins/dbg.py:2178
+msgid "Select log file path before starting log"
+msgstr "Select log file path before starting log"
+
+#: plugins/dbg.py:2182
+msgid "Log folder does not exist"
+msgstr "Log folder does not exist"
+
+#: plugins/dbg.py:2188
+msgid "Open log file failed"
+msgstr "Open log file failed"
+
+#: plugins/dbg.py:2215
 msgid "Log"
 msgstr "Log"
 
-#: plugins/dbg.py:2020
+#: plugins/dbg.py:2242
+msgid "Log information"
+msgstr "Log information"
+
+#: plugins/dbg.py:2243
+msgid "Start time"
+msgstr "Start time"
+
+#: plugins/dbg.py:2244
+msgid "End time"
+msgstr "End time"
+
+#: plugins/dbg.py:2245
+msgid "Active duration"
+msgstr "Active duration"
+
+#: plugins/dbg.py:2246
+msgid "Pause count"
+msgstr "Pause count"
+
+#: plugins/dbg.py:2251 plugins/dbg.py:2258
+msgid "Pause time"
+msgstr "Pause time"
+
+#: plugins/dbg.py:2258
+msgid "None"
+msgstr "None"
+
+#: plugins/dbg.py:2260
+msgid "Log size"
+msgstr "Log size"
+
+#: plugins/dbg.py:2263
+msgid "Connection type"
+msgstr "Connection type"
+
+#: plugins/dbg.py:2264
+msgid "Connection status"
+msgstr "Connection status"
+
+#: plugins/dbg.py:2265
+msgid "Connection settings"
+msgstr "Connection settings"
+
+#: plugins/dbg.py:2293
 msgid "Log file (*.log);;txt file (*.txt);;All Files (*)"
 msgstr "Log file (*.log);;txt file (*.txt);;All Files (*)"
 
-#: plugins/dbg.py:2114
+#: plugins/dbg.py:2388
 msgid "Select for batch edit"
 msgstr "Select for batch edit"
 
-#: plugins/dbg.py:2118
+#: plugins/dbg.py:2392
 msgid "Drag before another item to reorder"
 msgstr "Drag before another item to reorder"
 
-#: plugins/dbg.py:2125
+#: plugins/dbg.py:2399
 msgid "Click to set button color, right click to clear"
 msgstr "Click to set button color, right click to clear"
 
-#: plugins/dbg.py:2131
+#: plugins/dbg.py:2405
 msgid "Edit custom send remark and icon"
 msgstr "Edit custom send remark and icon"
 
-#: plugins/dbg.py:2140
+#: plugins/dbg.py:2414
 msgid "Delete this custom send item"
 msgstr "Delete this custom send item"
 
-#: plugins/dbg.py:2181
+#: plugins/dbg.py:2455
 msgid "Delete selected custom send item?"
 msgstr "Delete selected custom send item?"
 
-#: plugins/dbg.py:2377
+#: plugins/dbg.py:2651
 msgid "Delete selected custom send items?"
 msgstr "Delete selected custom send items?"
 
-#: plugins/dbg.py:2480
+#: plugins/dbg.py:2754
 msgid "Import custom send"
 msgstr "Import custom send"
 
-#: plugins/dbg.py:2482 plugins/dbg.py:2501
+#: plugins/dbg.py:2756 plugins/dbg.py:2775
 msgid "JSON file (*.json);;All Files (*)"
 msgstr "JSON file (*.json);;All Files (*)"
 
-#: plugins/dbg.py:2491
+#: plugins/dbg.py:2765
 msgid "Custom send file must be a JSON list"
 msgstr "Custom send file must be a JSON list"
 
-#: plugins/dbg.py:2493
+#: plugins/dbg.py:2767
 msgid "Custom send items imported!"
 msgstr "Custom send items imported!"
 
-#: plugins/dbg.py:2495
+#: plugins/dbg.py:2769
 msgid "Import custom send failed!"
 msgstr "Import custom send failed!"
 
-#: plugins/dbg.py:2499
+#: plugins/dbg.py:2773
 msgid "Export custom send"
 msgstr "Export custom send"
 
-#: plugins/dbg.py:2507
+#: plugins/dbg.py:2781
 msgid "Custom send items exported!"
 msgstr "Custom send items exported!"
 
-#: plugins/dbg.py:2509
+#: plugins/dbg.py:2783
 msgid "Export custom send failed!"
 msgstr "Export custom send failed!"
 
-#: plugins/dbg.py:2519
+#: plugins/dbg.py:2793
 msgid ""
 "File path error\n"
 "path"
@@ -1236,41 +1385,41 @@ msgstr ""
 "File path error\n"
 "path"
 
-#: plugins/dbg.py:2522
+#: plugins/dbg.py:2796
 msgid "Connect first please"
 msgstr "Connect first please"
 
-#: plugins/dbg.py:2525
+#: plugins/dbg.py:2799
 msgid "Sending file"
 msgstr "Sending file"
 
-#: plugins/dbg.py:2542
+#: plugins/dbg.py:2816
 msgid "Time format error"
 msgstr "Time format error"
 
-#: plugins/dbg.py:2609
+#: plugins/dbg.py:2883
 msgid "Send Error"
 msgstr "Send Error"
 
-#: plugins/dbg.py:2617
+#: plugins/dbg.py:2891
 msgid "get data error"
 msgstr "get data error"
 
-#: plugins/devtools.py:123 plugins/devtools.py:1896
+#: plugins/devtools.py:123 plugins/devtools.py:1913
 msgid "Original text"
 msgstr "Original text"
 
-#: plugins/devtools.py:123 plugins/devtools.py:1896
+#: plugins/devtools.py:123 plugins/devtools.py:1913
 msgid "Input text"
 msgstr "Input text"
 
-#: plugins/devtools.py:126 plugins/devtools.py:1637 plugins/devtools.py:1813
-#: plugins/devtools.py:1861
+#: plugins/devtools.py:126 plugins/devtools.py:1654 plugins/devtools.py:1830
+#: plugins/devtools.py:1878
 msgid "Conversion result"
 msgstr "Conversion result"
 
-#: plugins/devtools.py:126 plugins/devtools.py:1637 plugins/devtools.py:1813
-#: plugins/devtools.py:1853
+#: plugins/devtools.py:126 plugins/devtools.py:1654 plugins/devtools.py:1830
+#: plugins/devtools.py:1870
 msgid "Result"
 msgstr "Result"
 
@@ -1330,7 +1479,7 @@ msgstr "Bit operations"
 msgid "Bit calculator"
 msgstr "Bit calculator"
 
-#: plugins/devtools.py:390 plugins/devtools.py:1486
+#: plugins/devtools.py:390 plugins/devtools.py:1503
 msgid "Multi-bit operations"
 msgstr "Multi-bit operations"
 
@@ -1338,15 +1487,15 @@ msgstr "Multi-bit operations"
 msgid "String processing"
 msgstr "String processing"
 
-#: plugins/devtools.py:393 plugins/devtools.py:1531
+#: plugins/devtools.py:393 plugins/devtools.py:1548
 msgid "English case convert"
 msgstr "English case convert"
 
-#: plugins/devtools.py:394 plugins/devtools.py:1558
+#: plugins/devtools.py:394 plugins/devtools.py:1575
 msgid "String reverse"
 msgstr "String reverse"
 
-#: plugins/devtools.py:395 plugins/devtools.py:1573
+#: plugins/devtools.py:395 plugins/devtools.py:1590
 msgid "Character count"
 msgstr "Character count"
 
@@ -1354,27 +1503,27 @@ msgstr "Character count"
 msgid "Encoding"
 msgstr "Encoding"
 
-#: plugins/devtools.py:398 plugins/devtools.py:1751
+#: plugins/devtools.py:398 plugins/devtools.py:1768
 msgid "Unicode"
 msgstr "Unicode"
 
-#: plugins/devtools.py:399 plugins/devtools.py:1765
+#: plugins/devtools.py:399 plugins/devtools.py:1782
 msgid "URLEncode"
 msgstr "URLEncode"
 
-#: plugins/devtools.py:400 plugins/devtools.py:1773
+#: plugins/devtools.py:400 plugins/devtools.py:1790
 msgid "Base64"
 msgstr "Base64"
 
-#: plugins/devtools.py:401 plugins/devtools.py:1787
+#: plugins/devtools.py:401 plugins/devtools.py:1804
 msgid "Punycode"
 msgstr "Punycode"
 
-#: plugins/devtools.py:402 plugins/devtools.py:1887
+#: plugins/devtools.py:402 plugins/devtools.py:1904
 msgid "Chinese domain encoding"
 msgstr "Chinese domain encoding"
 
-#: plugins/devtools.py:403 plugins/devtools.py:1843
+#: plugins/devtools.py:403 plugins/devtools.py:1860
 msgid "Image to Base64"
 msgstr "Image to Base64"
 
@@ -1382,7 +1531,7 @@ msgstr "Image to Base64"
 msgid "Time"
 msgstr "Time"
 
-#: plugins/devtools.py:406 plugins/devtools.py:1807
+#: plugins/devtools.py:406 plugins/devtools.py:1824
 msgid "Unix timestamp"
 msgstr "Unix timestamp"
 
@@ -1390,23 +1539,23 @@ msgstr "Unix timestamp"
 msgid "Crypto"
 msgstr "Crypto"
 
-#: plugins/devtools.py:409 plugins/devtools.py:1895
+#: plugins/devtools.py:409 plugins/devtools.py:1912
 msgid "MD5 encrypt/decrypt"
 msgstr "MD5 encrypt/decrypt"
 
-#: plugins/devtools.py:410 plugins/devtools.py:1928
+#: plugins/devtools.py:410 plugins/devtools.py:1945
 msgid "AES encrypt/decrypt"
 msgstr "AES encrypt/decrypt"
 
-#: plugins/devtools.py:411 plugins/devtools.py:1628
+#: plugins/devtools.py:411 plugins/devtools.py:1645
 msgid "ECC encrypt/decrypt"
 msgstr "ECC encrypt/decrypt"
 
-#: plugins/devtools.py:412 plugins/devtools.py:1976
+#: plugins/devtools.py:412 plugins/devtools.py:1993
 msgid "Encode/decode collection"
 msgstr "Encode/decode collection"
 
-#: plugins/devtools.py:413 plugins/devtools.py:2000
+#: plugins/devtools.py:413 plugins/devtools.py:2017
 msgid "Hash collection"
 msgstr "Hash collection"
 
@@ -1446,9 +1595,9 @@ msgstr "Input hex bytes or text"
 msgid "Input HEX + check"
 msgstr "Input HEX + check"
 
-#: plugins/devtools.py:521 plugins/devtools.py:666 plugins/devtools.py:1501
-#: plugins/devtools.py:1539 plugins/devtools.py:1563 plugins/devtools.py:1587
-#: plugins/devtools.py:1641 plugins/devtools.py:1917
+#: plugins/devtools.py:521 plugins/devtools.py:666 plugins/devtools.py:1518
+#: plugins/devtools.py:1556 plugins/devtools.py:1580 plugins/devtools.py:1604
+#: plugins/devtools.py:1658 plugins/devtools.py:1934
 #: plugins/graph_widgets.py:52
 msgid "Clear"
 msgstr "Clear"
@@ -1493,7 +1642,7 @@ msgstr ""
 msgid "Choose CRC algorithm"
 msgstr "Choose CRC algorithm"
 
-#: plugins/devtools.py:620 plugins/devtools.py:1979
+#: plugins/devtools.py:620 plugins/devtools.py:1996
 msgid "Algorithm"
 msgstr "Algorithm"
 
@@ -1581,7 +1730,7 @@ msgstr "Blue"
 msgid "Input is empty"
 msgstr "Input is empty"
 
-#: plugins/devtools.py:936 plugins/devtools.py:1017 plugins/devtools.py:1482
+#: plugins/devtools.py:936 plugins/devtools.py:1017 plugins/devtools.py:1499
 #: plugins/graph_widget_metasenselite.py:591 plugins/graph_widgets.py:167
 msgid "Format error"
 msgstr "Format error"
@@ -1598,43 +1747,43 @@ msgstr ""
 "Programmer calculator for integer base conversion, bit toggling, bitwise "
 "operations, and shift operations."
 
-#: plugins/devtools.py:1158
+#: plugins/devtools.py:1075
 msgid "Switch input base"
 msgstr "Switch input base"
 
-#: plugins/devtools.py:1174
+#: plugins/devtools.py:1091
 msgid "Keypad"
 msgstr "Keypad"
 
-#: plugins/devtools.py:1175
+#: plugins/devtools.py:1092
 msgid "Bit grid"
 msgstr "Bit grid"
 
-#: plugins/devtools.py:1186
+#: plugins/devtools.py:1103
 msgid "Word size"
 msgstr "Word size"
 
-#: plugins/devtools.py:1198 plugins/devtools.py:1199
+#: plugins/devtools.py:1115 plugins/devtools.py:1116
 msgid "Apply"
 msgstr "Apply"
 
-#: plugins/devtools.py:1202
+#: plugins/devtools.py:1119
 msgid "Bitwise"
 msgstr "Bitwise"
 
-#: plugins/devtools.py:1206
+#: plugins/devtools.py:1123
 msgid "Shift"
 msgstr "Shift"
 
-#: plugins/devtools.py:1286
+#: plugins/devtools.py:1303
 msgid "Toggle bit"
 msgstr "Toggle bit"
 
-#: plugins/devtools.py:1466 plugins/devtools.py:1470
+#: plugins/devtools.py:1483 plugins/devtools.py:1487
 msgid "Divide by zero"
 msgstr "Divide by zero"
 
-#: plugins/devtools.py:1487
+#: plugins/devtools.py:1504
 msgid ""
 "Run byte-level AND, OR, XNOR, XOR, and NOT operations on two text or HEX "
 "inputs."
@@ -1642,23 +1791,23 @@ msgstr ""
 "Run byte-level AND, OR, XNOR, XOR, and NOT operations on two text or HEX "
 "inputs."
 
-#: plugins/devtools.py:1490
+#: plugins/devtools.py:1507
 msgid "Input A"
 msgstr "Input A"
 
-#: plugins/devtools.py:1490 plugins/devtools.py:1491
+#: plugins/devtools.py:1507 plugins/devtools.py:1508
 msgid "Input string or HEX"
 msgstr "Input string or HEX"
 
-#: plugins/devtools.py:1491
+#: plugins/devtools.py:1508
 msgid "Input B"
 msgstr "Input B"
 
-#: plugins/devtools.py:1500
+#: plugins/devtools.py:1517
 msgid "Calculate"
 msgstr "Calculate"
 
-#: plugins/devtools.py:1519
+#: plugins/devtools.py:1536
 msgid ""
 "Inputs have different lengths; shorter input is padded with 00 for two-"
 "input operations."
@@ -1666,7 +1815,7 @@ msgstr ""
 "Inputs have different lengths; shorter input is padded with 00 for two-"
 "input operations."
 
-#: plugins/devtools.py:1532
+#: plugins/devtools.py:1549
 msgid ""
 "Convert English text between uppercase, lowercase, title case, and "
 "swapped case."
@@ -1674,51 +1823,51 @@ msgstr ""
 "Convert English text between uppercase, lowercase, title case, and "
 "swapped case."
 
-#: plugins/devtools.py:1534
+#: plugins/devtools.py:1551
 msgid "Input English text"
 msgstr "Input English text"
 
-#: plugins/devtools.py:1534
+#: plugins/devtools.py:1551
 msgid "Converted text"
 msgstr "Converted text"
 
-#: plugins/devtools.py:1535
+#: plugins/devtools.py:1552
 msgid "Uppercase"
 msgstr "Uppercase"
 
-#: plugins/devtools.py:1536
+#: plugins/devtools.py:1553
 msgid "Lowercase"
 msgstr "Lowercase"
 
-#: plugins/devtools.py:1537
+#: plugins/devtools.py:1554
 msgid "Title case"
 msgstr "Title case"
 
-#: plugins/devtools.py:1538
+#: plugins/devtools.py:1555
 msgid "Swap case"
 msgstr "Swap case"
 
-#: plugins/devtools.py:1554 plugins/devtools.py:1569
+#: plugins/devtools.py:1571 plugins/devtools.py:1586
 msgid "Conversion complete"
 msgstr "Conversion complete"
 
-#: plugins/devtools.py:1559
+#: plugins/devtools.py:1576
 msgid "Reverse the input string by character order."
 msgstr "Reverse the input string by character order."
 
-#: plugins/devtools.py:1561 plugins/devtools.py:1576
+#: plugins/devtools.py:1578 plugins/devtools.py:1593
 msgid "Input string"
 msgstr "Input string"
 
-#: plugins/devtools.py:1561
+#: plugins/devtools.py:1578
 msgid "Reversed string"
 msgstr "Reversed string"
 
-#: plugins/devtools.py:1562
+#: plugins/devtools.py:1579
 msgid "Reverse"
 msgstr "Reverse"
 
-#: plugins/devtools.py:1574
+#: plugins/devtools.py:1591
 msgid ""
 "Count characters, non-space characters, words, lines, and UTF-8 bytes in "
 "the input string."
@@ -1726,39 +1875,39 @@ msgstr ""
 "Count characters, non-space characters, words, lines, and UTF-8 bytes in "
 "the input string."
 
-#: plugins/devtools.py:1578
+#: plugins/devtools.py:1595
 msgid "Characters"
 msgstr "Characters"
 
-#: plugins/devtools.py:1579
+#: plugins/devtools.py:1596
 msgid "Characters without spaces"
 msgstr "Characters without spaces"
 
-#: plugins/devtools.py:1580
+#: plugins/devtools.py:1597
 msgid "Words"
 msgstr "Words"
 
-#: plugins/devtools.py:1581
+#: plugins/devtools.py:1598
 msgid "Lines"
 msgstr "Lines"
 
-#: plugins/devtools.py:1582
+#: plugins/devtools.py:1599
 msgid "UTF-8 bytes"
 msgstr "UTF-8 bytes"
 
-#: plugins/devtools.py:1584
+#: plugins/devtools.py:1601
 msgid "Character frequency"
 msgstr "Character frequency"
 
-#: plugins/devtools.py:1606
+#: plugins/devtools.py:1623
 msgid "Count complete"
 msgstr "Count complete"
 
-#: plugins/devtools.py:1614
+#: plugins/devtools.py:1631
 msgid "Space"
 msgstr "Space"
 
-#: plugins/devtools.py:1629
+#: plugins/devtools.py:1646
 msgid ""
 "Generate ECC key pairs and encrypt/decrypt text with ECIES style ECDH + "
 "AES-GCM."
@@ -1766,79 +1915,79 @@ msgstr ""
 "Generate ECC key pairs and encrypt/decrypt text with ECIES style ECDH + "
 "AES-GCM."
 
-#: plugins/devtools.py:1633
+#: plugins/devtools.py:1650
 msgid "Curve"
 msgstr "Curve"
 
-#: plugins/devtools.py:1634
+#: plugins/devtools.py:1651
 msgid "Private key"
 msgstr "Private key"
 
-#: plugins/devtools.py:1634
+#: plugins/devtools.py:1651
 msgid "PEM private key"
 msgstr "PEM private key"
 
-#: plugins/devtools.py:1635
+#: plugins/devtools.py:1652
 msgid "Public key"
 msgstr "Public key"
 
-#: plugins/devtools.py:1635
+#: plugins/devtools.py:1652
 msgid "PEM public key"
 msgstr "PEM public key"
 
-#: plugins/devtools.py:1636
+#: plugins/devtools.py:1653
 msgid "Plain text or cipher JSON"
 msgstr "Plain text or cipher JSON"
 
-#: plugins/devtools.py:1636
+#: plugins/devtools.py:1653
 msgid "Input text or ECC cipher JSON"
 msgstr "Input text or ECC cipher JSON"
 
-#: plugins/devtools.py:1638
+#: plugins/devtools.py:1655
 msgid "Generate key pair"
 msgstr "Generate key pair"
 
-#: plugins/devtools.py:1639 plugins/devtools.py:1946
+#: plugins/devtools.py:1656 plugins/devtools.py:1963
 msgid "Encrypt"
 msgstr "Encrypt"
 
-#: plugins/devtools.py:1640 plugins/devtools.py:1947
+#: plugins/devtools.py:1657 plugins/devtools.py:1964
 msgid "Decrypt"
 msgstr "Decrypt"
 
-#: plugins/devtools.py:1647
+#: plugins/devtools.py:1664
 msgid "ECC backend not available"
 msgstr "ECC backend not available"
 
-#: plugins/devtools.py:1677
+#: plugins/devtools.py:1694
 msgid "ECC key pair generated"
 msgstr "ECC key pair generated"
 
-#: plugins/devtools.py:1703
+#: plugins/devtools.py:1720
 msgid "Public key is empty"
 msgstr "Public key is empty"
 
-#: plugins/devtools.py:1706
+#: plugins/devtools.py:1723
 msgid "Public key is not an ECC public key"
 msgstr "Public key is not an ECC public key"
 
-#: plugins/devtools.py:1724
+#: plugins/devtools.py:1741
 msgid "ECC encrypt complete"
 msgstr "ECC encrypt complete"
 
-#: plugins/devtools.py:1734
+#: plugins/devtools.py:1751
 msgid "Private key is empty"
 msgstr "Private key is empty"
 
-#: plugins/devtools.py:1737
+#: plugins/devtools.py:1754
 msgid "Private key is not an ECC private key"
 msgstr "Private key is not an ECC private key"
 
-#: plugins/devtools.py:1746
+#: plugins/devtools.py:1763
 msgid "ECC decrypt complete"
 msgstr "ECC decrypt complete"
 
-#: plugins/devtools.py:1751
+#: plugins/devtools.py:1768
 msgid ""
 "Convert text to Unicode escape sequences, or restore Unicode escapes to "
 "readable text."
@@ -1846,21 +1995,21 @@ msgstr ""
 "Convert text to Unicode escape sequences, or restore Unicode escapes to "
 "readable text."
 
-#: plugins/devtools.py:1753 plugins/devtools.py:1767 plugins/devtools.py:1775
-#: plugins/devtools.py:1789 plugins/devtools.py:1889 plugins/devtools.py:1981
+#: plugins/devtools.py:1770 plugins/devtools.py:1784 plugins/devtools.py:1792
+#: plugins/devtools.py:1806 plugins/devtools.py:1906 plugins/devtools.py:1998
 msgid "Encode"
 msgstr "Encode"
 
-#: plugins/devtools.py:1754 plugins/devtools.py:1768 plugins/devtools.py:1776
-#: plugins/devtools.py:1790 plugins/devtools.py:1890 plugins/devtools.py:1982
+#: plugins/devtools.py:1771 plugins/devtools.py:1785 plugins/devtools.py:1793
+#: plugins/devtools.py:1807 plugins/devtools.py:1907 plugins/devtools.py:1999
 msgid "Decode"
 msgstr "Decode"
 
-#: plugins/devtools.py:1765
+#: plugins/devtools.py:1782
 msgid "Encode text for use in URLs, or decode percent-escaped URL text."
 msgstr "Encode text for use in URLs, or decode percent-escaped URL text."
 
-#: plugins/devtools.py:1773
+#: plugins/devtools.py:1790
 msgid ""
 "Encode text as Base64, or decode Base64 back to text with the current "
 "UTF-8 text encoding."
@@ -1868,7 +2017,7 @@ msgstr ""
 "Encode text as Base64, or decode Base64 back to text with the current "
 "UTF-8 text encoding."
 
-#: plugins/devtools.py:1787
+#: plugins/devtools.py:1804
 msgid ""
 "Convert internationalized domain names between Unicode text and ASCII "
 "Punycode form."
@@ -1876,15 +2025,15 @@ msgstr ""
 "Convert internationalized domain names between Unicode text and ASCII "
 "Punycode form."
 
-#: plugins/devtools.py:1788
+#: plugins/devtools.py:1805
 msgid "Input domain or text"
 msgstr "Input domain or text"
 
-#: plugins/devtools.py:1788
+#: plugins/devtools.py:1805
 msgid "Converted value"
 msgstr "Converted value"
 
-#: plugins/devtools.py:1807
+#: plugins/devtools.py:1824
 msgid ""
 "Convert Unix timestamps and local date-time strings. Date input format: "
 "YYYY-MM-DD HH:MM:SS."
@@ -1892,27 +2041,27 @@ msgstr ""
 "Convert Unix timestamps and local date-time strings. Date input format: "
 "YYYY-MM-DD HH:MM:SS."
 
-#: plugins/devtools.py:1809 plugins/devtools.py:1812
+#: plugins/devtools.py:1826 plugins/devtools.py:1829
 msgid "Timestamp or date-time"
 msgstr "Timestamp or date-time"
 
-#: plugins/devtools.py:1810
+#: plugins/devtools.py:1827
 msgid "Enter seconds, milliseconds, or YYYY-MM-DD HH:MM:SS"
 msgstr "Enter seconds, milliseconds, or YYYY-MM-DD HH:MM:SS"
 
-#: plugins/devtools.py:1814
+#: plugins/devtools.py:1831
 msgid "Now"
 msgstr "Now"
 
-#: plugins/devtools.py:1815
+#: plugins/devtools.py:1832
 msgid "To date-time"
 msgstr "To date-time"
 
-#: plugins/devtools.py:1816
+#: plugins/devtools.py:1833
 msgid "To timestamp"
 msgstr "To timestamp"
 
-#: plugins/devtools.py:1843
+#: plugins/devtools.py:1860
 msgid ""
 "Choose an image file and convert it to Base64 text or a data URL for "
 "embedding."
@@ -1920,27 +2069,27 @@ msgstr ""
 "Choose an image file and convert it to Base64 text or a data URL for "
 "embedding."
 
-#: plugins/devtools.py:1845 plugins/devtools.py:1855
+#: plugins/devtools.py:1862 plugins/devtools.py:1872
 msgid "Image file path"
 msgstr "Image file path"
 
-#: plugins/devtools.py:1847 plugins/devtools.py:1868
+#: plugins/devtools.py:1864 plugins/devtools.py:1885
 msgid "Choose file"
 msgstr "Choose file"
 
-#: plugins/devtools.py:1849
+#: plugins/devtools.py:1866
 msgid "Convert"
 msgstr "Convert"
 
-#: plugins/devtools.py:1851
+#: plugins/devtools.py:1868
 msgid "Output data URL"
 msgstr "Output data URL"
 
-#: plugins/devtools.py:1868
+#: plugins/devtools.py:1885
 msgid "Image files (*.png *.jpg *.jpeg *.gif *.bmp *.webp);;All Files (*)"
 msgstr "Image files (*.png *.jpg *.jpeg *.gif *.bmp *.webp);;All Files (*)"
 
-#: plugins/devtools.py:1887
+#: plugins/devtools.py:1904
 msgid ""
 "Encode Chinese or other internationalized domain names to IDNA, or decode"
 " xn-- domains back to readable text."
@@ -1948,15 +2097,15 @@ msgstr ""
 "Encode Chinese or other internationalized domain names to IDNA, or decode"
 " xn-- domains back to readable text."
 
-#: plugins/devtools.py:1888
+#: plugins/devtools.py:1905
 msgid "Input domain"
 msgstr "Input domain"
 
-#: plugins/devtools.py:1888
+#: plugins/devtools.py:1905
 msgid "Converted domain"
 msgstr "Converted domain"
 
-#: plugins/devtools.py:1895
+#: plugins/devtools.py:1912
 msgid ""
 "Generate MD5 digests. MD5 is one-way and cannot be truly decrypted; use "
 "the compare field to verify candidate text."
@@ -1964,43 +2113,43 @@ msgstr ""
 "Generate MD5 digests. MD5 is one-way and cannot be truly decrypted; use "
 "the compare field to verify candidate text."
 
-#: plugins/devtools.py:1898
+#: plugins/devtools.py:1915
 msgid "Optional MD5 hash to compare"
 msgstr "Optional MD5 hash to compare"
 
-#: plugins/devtools.py:1900
+#: plugins/devtools.py:1917
 msgid "Compare hash"
 msgstr "Compare hash"
 
-#: plugins/devtools.py:1902
+#: plugins/devtools.py:1919
 msgid "Lowercase 32-bit"
 msgstr "Lowercase 32-bit"
 
-#: plugins/devtools.py:1903
+#: plugins/devtools.py:1920
 msgid "Uppercase 32-bit"
 msgstr "Uppercase 32-bit"
 
-#: plugins/devtools.py:1904
+#: plugins/devtools.py:1921
 msgid "Lowercase 16-bit"
 msgstr "Lowercase 16-bit"
 
-#: plugins/devtools.py:1905
+#: plugins/devtools.py:1922
 msgid "Uppercase 16-bit"
 msgstr "Uppercase 16-bit"
 
-#: plugins/devtools.py:1906
+#: plugins/devtools.py:1923
 msgid "Compare"
 msgstr "Compare"
 
-#: plugins/devtools.py:1915
+#: plugins/devtools.py:1932
 msgid "Not match"
 msgstr "Not match"
 
-#: plugins/devtools.py:1916 plugins/devtools.py:2002
+#: plugins/devtools.py:1933 plugins/devtools.py:2019
 msgid "Generate"
 msgstr "Generate"
 
-#: plugins/devtools.py:1928
+#: plugins/devtools.py:1945
 msgid ""
 "AES text encryption and decryption. Supports ECB and CBC with PKCS7 "
 "padding. Key lengths: 16, 24, or 32 bytes."
@@ -2008,43 +2157,43 @@ msgstr ""
 "AES text encryption and decryption. Supports ECB and CBC with PKCS7 "
 "padding. Key lengths: 16, 24, or 32 bytes."
 
-#: plugins/devtools.py:1929
+#: plugins/devtools.py:1946
 msgid "Input text or Base64 cipher text"
 msgstr "Input text or Base64 cipher text"
 
-#: plugins/devtools.py:1929
+#: plugins/devtools.py:1946
 msgid "AES result"
 msgstr "AES result"
 
-#: plugins/devtools.py:1932
+#: plugins/devtools.py:1949
 msgid "AES key"
 msgstr "AES key"
 
-#: plugins/devtools.py:1935
+#: plugins/devtools.py:1952
 msgid "CBC IV, 16 bytes"
 msgstr "CBC IV, 16 bytes"
 
-#: plugins/devtools.py:1939
+#: plugins/devtools.py:1956
 msgid "Key"
 msgstr "Key"
 
-#: plugins/devtools.py:1943
+#: plugins/devtools.py:1960
 msgid "IV"
 msgstr "IV"
 
-#: plugins/devtools.py:1953
+#: plugins/devtools.py:1970
 msgid "AES backend not available"
 msgstr "AES backend not available"
 
-#: plugins/devtools.py:1958
+#: plugins/devtools.py:1975
 msgid "AES key must be 16, 24, or 32 bytes"
 msgstr "AES key must be 16, 24, or 32 bytes"
 
-#: plugins/devtools.py:1976
+#: plugins/devtools.py:1993
 msgid "Common reversible text transforms for quick programming work."
 msgstr "Common reversible text transforms for quick programming work."
 
-#: plugins/devtools.py:2000
+#: plugins/devtools.py:2017
 msgid "Generate common hashes for the input text."
 msgstr "Generate common hashes for the input text."
 
@@ -2567,3 +2716,9 @@ msgstr "my plugin2"
 
 #~ msgid "Value stored to memory"
 #~ msgstr "Value stored to memory"
+
+#~ msgid "Enable saving received and recorded sent data to a log file"
+#~ msgstr "Enable saving received and recorded sent data to a log file"
+
+#~ msgid "Timed log duration error, format: HH:MM:SS"
+#~ msgstr "Timed log duration error, format: HH:MM:SS\"\\"
