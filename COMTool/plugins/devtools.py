@@ -9,13 +9,14 @@ import re
 import time
 from urllib.parse import quote, unquote
 
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout,
     QTextEdit, QLabel, QLineEdit, QFileDialog, QStackedWidget, QScrollArea,
-    QCheckBox, QRadioButton, QButtonGroup, QColorDialog
+    QCheckBox, QRadioButton, QButtonGroup, QTreeWidget, QTreeWidgetItem,
+    QSpinBox, QFrame
 )
-from PyQt5.QtGui import QColor, QCursor
+from PyQt5.QtGui import QColor, QPainter, QImage, QPen
 
 try:
     from Combobox import ComboBox
@@ -170,6 +171,141 @@ class ToolCard(QWidget):
         return line
 
 
+class NoWheelSpinBox(QSpinBox):
+    def wheelEvent(self, event):
+        event.ignore()
+
+
+class HsvColorPlane(QWidget):
+    def __init__(self, changedCallback=None, parent=None):
+        super().__init__(parent)
+        self.hue = 0
+        self.saturation = 255
+        self.value = 255
+        self.changedCallback = changedCallback
+        self._image = None
+        self._imageHue = None
+        self._imageSize = None
+        self.setFixedSize(220, 200)
+        self.setToolTip(_("Drag to choose saturation and value"))
+
+    def setHsv(self, hue, saturation, value):
+        hue = self._clamp(int(hue), 0, 359)
+        saturation = self._clamp(int(saturation), 0, 255)
+        value = self._clamp(int(value), 0, 255)
+        if hue != self.hue:
+            self._image = None
+        self.hue = hue
+        self.saturation = saturation
+        self.value = value
+        self.update()
+
+    def paintEvent(self, _event):
+        painter = QPainter(self)
+        painter.drawImage(0, 0, self._colorImage())
+        x = round(self.saturation * (self.width() - 1) / 255)
+        y = round((255 - self.value) * (self.height() - 1) / 255)
+        painter.setPen(QPen(QColor("#000000"), 1))
+        painter.drawLine(x - 6, y, x + 6, y)
+        painter.drawLine(x, y - 6, x, y + 6)
+        painter.setPen(QPen(QColor("#ffffff"), 1))
+        painter.drawLine(x - 5, y, x + 5, y)
+        painter.drawLine(x, y - 5, x, y + 5)
+
+    def mousePressEvent(self, event):
+        self.pick(event.pos())
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() & Qt.LeftButton:
+            self.pick(event.pos())
+
+    def pick(self, pos):
+        width = max(1, self.width() - 1)
+        height = max(1, self.height() - 1)
+        x = self._clamp(pos.x(), 0, width)
+        y = self._clamp(pos.y(), 0, height)
+        saturation = round(x * 255 / width)
+        value = round(255 - y * 255 / height)
+        self.setHsv(self.hue, saturation, value)
+        if self.changedCallback:
+            self.changedCallback(self.hue, self.saturation, self.value)
+
+    def _colorImage(self):
+        size = (self.width(), self.height())
+        if self._image is not None and self._imageHue == self.hue and self._imageSize == size:
+            return self._image
+        width, height = size
+        image = QImage(width, height, QImage.Format_RGB32)
+        maxX = max(1, width - 1)
+        maxY = max(1, height - 1)
+        for y in range(height):
+            value = round(255 - y * 255 / maxY)
+            for x in range(width):
+                saturation = round(x * 255 / maxX)
+                image.setPixelColor(x, y, QColor.fromHsv(self.hue, saturation, value))
+        self._image = image
+        self._imageHue = self.hue
+        self._imageSize = size
+        return self._image
+
+    @staticmethod
+    def _clamp(value, low, high):
+        return max(low, min(high, value))
+
+
+class HueBar(QWidget):
+    def __init__(self, changedCallback=None, parent=None):
+        super().__init__(parent)
+        self.hue = 0
+        self.changedCallback = changedCallback
+        self._image = None
+        self._imageHeight = None
+        self.setFixedSize(18, 200)
+        self.setToolTip(_("Drag to choose hue"))
+
+    def setHue(self, hue):
+        self.hue = max(0, min(359, int(hue)))
+        self.update()
+
+    def paintEvent(self, _event):
+        painter = QPainter(self)
+        painter.drawImage(0, 0, self._colorImage())
+        y = round(self.hue * (self.height() - 1) / 359)
+        painter.setPen(QPen(QColor("#ffffff"), 1))
+        painter.drawRect(0, max(0, y - 2), self.width() - 1, 4)
+        painter.setPen(QPen(QColor("#000000"), 1))
+        painter.drawLine(0, y, self.width() - 1, y)
+
+    def mousePressEvent(self, event):
+        self.pick(event.pos())
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() & Qt.LeftButton:
+            self.pick(event.pos())
+
+    def pick(self, pos):
+        height = max(1, self.height() - 1)
+        y = max(0, min(height, pos.y()))
+        self.setHue(round(y * 359 / height))
+        if self.changedCallback:
+            self.changedCallback(self.hue)
+
+    def _colorImage(self):
+        height = self.height()
+        if self._image is not None and self._imageHeight == height:
+            return self._image
+        image = QImage(self.width(), height, QImage.Format_RGB32)
+        maxY = max(1, height - 1)
+        for y in range(height):
+            hue = round(y * 359 / maxY)
+            color = QColor.fromHsv(hue, 255, 255)
+            for x in range(self.width()):
+                image.setPixelColor(x, y, color)
+        self._image = image
+        self._imageHeight = height
+        return self._image
+
+
 
 class Plugin(Plugin_Base):
     id = "devtools"
@@ -189,20 +325,35 @@ class Plugin(Plugin_Base):
         return True
 
     def onWidgetSettings(self, parent):
-        self.toolButtons = []
         panel = QWidget()
         layout = QVBoxLayout()
         layout.setContentsMargins(4, 8, 4, 8)
-        layout.setSpacing(6)
+        layout.setSpacing(0)
         panel.setLayout(layout)
-        for idx, (key, title) in enumerate(self.toolDefinitions()):
-            button = QPushButton(title)
-            button.setCheckable(True)
-            button.setToolTip(_("Open tool") + ": " + title)
-            button.clicked.connect(lambda _checked=False, index=idx: self.setTool(index))
-            layout.addWidget(button)
-            self.toolButtons.append(button)
-        layout.addStretch(1)
+
+        self.toolTree = QTreeWidget()
+        self.toolTree.setHeaderHidden(True)
+        self.toolTree.setRootIsDecorated(True)
+        self.toolTree.setIndentation(16)
+        self.toolTree.setToolTip(_("Select a programming tool"))
+        self.toolTree.itemClicked.connect(self.onToolTreeItemClicked)
+        self.toolItems = []
+        index = 0
+        for category, tools in self.toolCategories():
+            parentItem = QTreeWidgetItem([category])
+            parentItem.setFlags(parentItem.flags() & ~Qt.ItemIsSelectable)
+            parentItem.setToolTip(0, category)
+            self.toolTree.addTopLevelItem(parentItem)
+            for key, title in tools:
+                child = QTreeWidgetItem([title])
+                child.setData(0, Qt.UserRole, index)
+                child.setToolTip(0, _("Open tool") + ": " + title)
+                parentItem.addChild(child)
+                self.toolItems.append(child)
+                index += 1
+            parentItem.setExpanded(True)
+        layout.addWidget(self.toolTree, 1)
+        self.toolSettingsPanel = panel
         return panel
 
     def onWidgetMain(self, parent):
@@ -212,26 +363,39 @@ class Plugin(Plugin_Base):
         self.setTool(0)
         return self.stack
 
-    def toolDefinitions(self):
+    def toolCategories(self):
         return [
-            ("lrc", _("LRC check")),
-            ("bcc", _("BCC check")),
-            ("crc", _("CRC check")),
-            ("rgb", _("Color format convert")),
-            ("bitwise", _("Bitwise operations")),
-            ("ecc", _("ECC encrypt/decrypt")),
-            ("unicode", _("Unicode")),
-            ("url", _("URLEncode")),
-            ("base64", _("Base64")),
-            ("punycode", _("Punycode")),
-            ("timestamp", _("Unix timestamp")),
-            ("image_base64", _("Image to Base64")),
-            ("domain", _("Chinese domain encoding")),
-            ("md5", _("MD5 encrypt/decrypt")),
-            ("aes", _("AES encrypt/decrypt")),
-            ("codec", _("Encode/decode collection")),
-            ("hash", _("Hash collection")),
+            (_("Check"), [
+                ("lrc", _("LRC check")),
+                ("bcc", _("BCC check")),
+                ("crc", _("CRC check")),
+            ]),
+            (_("Color and bit operations"), [
+                ("rgb", _("Color format convert")),
+                ("bitwise", _("Bitwise operations")),
+            ]),
+            (_("Encoding"), [
+                ("unicode", _("Unicode")),
+                ("url", _("URLEncode")),
+                ("base64", _("Base64")),
+                ("punycode", _("Punycode")),
+                ("domain", _("Chinese domain encoding")),
+                ("image_base64", _("Image to Base64")),
+            ]),
+            (_("Time"), [
+                ("timestamp", _("Unix timestamp")),
+            ]),
+            (_("Crypto"), [
+                ("md5", _("MD5 encrypt/decrypt")),
+                ("aes", _("AES encrypt/decrypt")),
+                ("ecc", _("ECC encrypt/decrypt")),
+                ("codec", _("Encode/decode collection")),
+                ("hash", _("Hash collection")),
+            ]),
         ]
+
+    def toolDefinitions(self):
+        return [tool for _category, tools in self.toolCategories() for tool in tools]
 
     def wrapTool(self, widget):
         scroll = QScrollArea()
@@ -243,8 +407,15 @@ class Plugin(Plugin_Base):
     def setTool(self, index):
         if hasattr(self, "stack"):
             self.stack.setCurrentIndex(index)
-        for idx, button in enumerate(getattr(self, "toolButtons", [])):
-            button.setChecked(idx == index)
+        if hasattr(self, "toolTree") and index < len(getattr(self, "toolItems", [])):
+            item = self.toolItems[index]
+            if self.toolTree.currentItem() != item:
+                self.toolTree.setCurrentItem(item)
+
+    def onToolTreeItemClicked(self, item, _column):
+        index = item.data(0, Qt.UserRole)
+        if index is not None:
+            self.setTool(int(index))
 
     def createTool(self, key):
         creators = {
@@ -591,73 +762,150 @@ class Plugin(Plugin_Base):
     def createRgbTool(self):
         card = ToolCard(
             _("Color format convert"),
-            _("Convert common RGB color formats. Supports #RRGGBB, short #RGB, rgb(r,g,b), comma separated RGB, and decimal color values.")
+            _("Convert between RGB, HSV, and HTML HEX colors.")
         )
-        inp = QLineEdit()
-        inp.setPlaceholderText("#336699 / rgb(51,102,153) / 51,102,153")
-        inp.setObjectName("ip33ResultLine")
-        screenPickButton = QPushButton(_("Screen pick"))
-        screenPickButton.setObjectName("ip33Secondary")
-        previewButton = QPushButton("")
-        previewButton.setObjectName("ip33Secondary")
-        previewButton.setFixedWidth(54)
-        card.addFormRow(_("Color") + ":", [inp, screenPickButton, previewButton])
-        colorDialog = QColorDialog(QColor("#336699"), card)
-        colorDialog.setOption(QColorDialog.NoButtons, True)
-        colorDialog.setOption(QColorDialog.DontUseNativeDialog, True)
-        colorDialog.setToolTip(_("Palette"))
-        card.layout.addWidget(colorDialog)
-        resultFields = {
-            "hex": card.addResultLine("HEX:"),
-            "rgb": card.addResultLine("RGB:"),
-            "tuple": card.addResultLine(_("RGB tuple") + ":"),
-            "dec": card.addResultLine(_("Decimal") + ":"),
-            "bgr": card.addResultLine("BGR HEX:"),
+
+        pickerRow = QHBoxLayout()
+        pickerRow.setSpacing(18)
+        plane = HsvColorPlane()
+        hueBar = HueBar()
+        pickerRow.addWidget(plane)
+        pickerRow.addWidget(hueBar)
+        pickerRow.addStretch(1)
+        card.layout.addLayout(pickerRow)
+
+        controlRow = QHBoxLayout()
+        controlRow.setSpacing(22)
+        preview = QFrame()
+        preview.setObjectName("colorPreview")
+        preview.setFixedSize(58, 118)
+        preview.setFrameShape(QFrame.StyledPanel)
+        preview.setToolTip(_("Selected color preview"))
+        controlRow.addWidget(preview)
+
+        form = QGridLayout()
+        form.setHorizontalSpacing(10)
+        form.setVerticalSpacing(8)
+        hueSpin = self.createColorSpinBox(0, 359, _("Hue value"))
+        satSpin = self.createColorSpinBox(0, 255, _("Saturation value"))
+        valSpin = self.createColorSpinBox(0, 255, _("Brightness value"))
+        redSpin = self.createColorSpinBox(0, 255, _("Red value"))
+        greenSpin = self.createColorSpinBox(0, 255, _("Green value"))
+        blueSpin = self.createColorSpinBox(0, 255, _("Blue value"))
+        htmlInput = QLineEdit()
+        htmlInput.setObjectName("ip33ResultLine")
+        htmlInput.setToolTip(_("HTML HEX color, for example #FFBB00"))
+        htmlInput.setPlaceholderText("#FFBB00")
+
+        form.addWidget(self.addCompactLabel(_("Hue") + ":"), 0, 0)
+        form.addWidget(hueSpin, 0, 1)
+        form.addWidget(self.addCompactLabel(_("Red") + ":"), 0, 2)
+        form.addWidget(redSpin, 0, 3)
+        form.addWidget(self.addCompactLabel(_("Sat") + ":"), 1, 0)
+        form.addWidget(satSpin, 1, 1)
+        form.addWidget(self.addCompactLabel(_("Green") + ":"), 1, 2)
+        form.addWidget(greenSpin, 1, 3)
+        form.addWidget(self.addCompactLabel(_("Val") + ":"), 2, 0)
+        form.addWidget(valSpin, 2, 1)
+        form.addWidget(self.addCompactLabel(_("Blue") + ":"), 2, 2)
+        form.addWidget(blueSpin, 2, 3)
+        form.addWidget(self.addCompactLabel("HTML:"), 3, 0)
+        form.addWidget(htmlInput, 3, 1, 1, 3)
+        controlRow.addLayout(form)
+        controlRow.addStretch(1)
+        card.layout.addLayout(controlRow)
+
+        state = {
+            "updating": False,
+            "plane": plane,
+            "hueBar": hueBar,
+            "preview": preview,
+            "hue": hueSpin,
+            "sat": satSpin,
+            "val": valSpin,
+            "red": redSpin,
+            "green": greenSpin,
+            "blue": blueSpin,
+            "html": htmlInput,
         }
-        colorDialog.currentColorChanged.connect(lambda color: self.setColorFromDialog(color, inp, previewButton, resultFields))
-        screenPickButton.clicked.connect(lambda: self.pickScreenRgbColorDelayed(inp, previewButton, resultFields, screenPickButton))
-        card.addButton(_("Convert"), lambda: self.convertRgb(inp, resultFields, previewButton))
-        card.addButton(_("Clear"), lambda: self.clearRgbTool(inp, resultFields, previewButton, colorDialog), primary=False)
-        card.finishButtons()
-        self.setColorFromDialog(QColor("#336699"), inp, previewButton, resultFields)
+        plane.changedCallback = lambda hue, sat, val: self.updateColorControlsFromHsv(state, hue, sat, val)
+        hueBar.changedCallback = lambda hue: self.updateColorControlsFromHsv(state, hue, satSpin.value(), valSpin.value())
+        hueSpin.valueChanged.connect(lambda _value: self.updateColorControlsFromHsv(state, hueSpin.value(), satSpin.value(), valSpin.value()))
+        satSpin.valueChanged.connect(lambda _value: self.updateColorControlsFromHsv(state, hueSpin.value(), satSpin.value(), valSpin.value()))
+        valSpin.valueChanged.connect(lambda _value: self.updateColorControlsFromHsv(state, hueSpin.value(), satSpin.value(), valSpin.value()))
+        redSpin.valueChanged.connect(lambda _value: self.updateColorControlsFromRgb(state))
+        greenSpin.valueChanged.connect(lambda _value: self.updateColorControlsFromRgb(state))
+        blueSpin.valueChanged.connect(lambda _value: self.updateColorControlsFromRgb(state))
+        htmlInput.textEdited.connect(lambda text: self.updateColorControlsFromHtml(state, text, silent=True))
+        htmlInput.editingFinished.connect(lambda: self.updateColorControlsFromHtml(state, htmlInput.text(), silent=False))
+        self.updateColorControlsFromColor(state, QColor("#FFBB00"))
         return card
 
-    def clearRgbTool(self, inp, resultFields, previewButton=None, colorDialog=None):
-        inp.clear()
-        for field in resultFields.values():
-            field.clear()
-        if previewButton is not None:
-            previewButton.setStyleSheet("")
-        if colorDialog is not None:
-            colorDialog.blockSignals(True)
-            colorDialog.setCurrentColor(QColor("#336699"))
-            colorDialog.blockSignals(False)
+    def addCompactLabel(self, text):
+        label = QLabel(text)
+        label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        return label
 
-    def setColorFromDialog(self, color, inp, previewButton, resultFields):
-        if color.isValid():
-            inp.setText(color.name().upper())
-            self.convertRgb(inp, resultFields, previewButton)
+    def createColorSpinBox(self, minimum, maximum, tooltip):
+        spin = NoWheelSpinBox()
+        spin.setRange(minimum, maximum)
+        spin.setFixedWidth(70)
+        spin.setToolTip(tooltip)
+        return spin
 
-    def pickScreenRgbColorDelayed(self, inp, previewButton, resultFields, button):
-        oldText = button.text()
-        button.setText(_("Move cursor to color"))
-        button.setEnabled(False)
-        QTimer.singleShot(1000, lambda: self.pickScreenRgbColor(inp, previewButton, resultFields, button, oldText))
+    def updateColorControlsFromHsv(self, state, hue, saturation, value):
+        if state.get("updating"):
+            return
+        color = QColor.fromHsv(int(hue), int(saturation), int(value))
+        self.updateColorControlsFromColor(state, color)
 
-    def pickScreenRgbColor(self, inp, previewButton, resultFields, button, oldText):
+    def updateColorControlsFromRgb(self, state):
+        if state.get("updating"):
+            return
+        color = QColor(state["red"].value(), state["green"].value(), state["blue"].value())
+        self.updateColorControlsFromColor(state, color)
+
+    def updateColorControlsFromHtml(self, state, text, silent=False):
+        if state.get("updating"):
+            return
+        value = text.strip()
+        if not value:
+            if not silent:
+                self.showWarning(_("Input is empty"))
+            return
         try:
-            pos = QCursor.pos()
-            screen = QApplication.screenAt(pos) if hasattr(QApplication, "screenAt") else QApplication.primaryScreen()
-            if screen is None:
-                screen = QApplication.primaryScreen()
-            pixmap = screen.grabWindow(0, pos.x(), pos.y(), 1, 1)
-            color = pixmap.toImage().pixelColor(0, 0)
-            if color.isValid():
-                inp.setText(color.name().upper())
-                self.convertRgb(inp, resultFields, previewButton)
-        finally:
-            button.setText(oldText)
-            button.setEnabled(True)
+            r, g, b = self.parseRgb(value)
+            self.updateColorControlsFromColor(state, QColor(r, g, b))
+        except Exception as e:
+            if not silent:
+                self.showError(e)
+
+    def updateColorControlsFromColor(self, state, color):
+        if not color.isValid():
+            self.showError(_("Format error"))
+            return
+        state["updating"] = True
+        hue, saturation, value, _alpha = color.getHsv()
+        if hue < 0:
+            hue = 0
+        state["plane"].setHsv(hue, saturation, value)
+        state["hueBar"].setHue(hue)
+        state["hue"].setValue(hue)
+        state["sat"].setValue(saturation)
+        state["val"].setValue(value)
+        state["red"].setValue(color.red())
+        state["green"].setValue(color.green())
+        state["blue"].setValue(color.blue())
+        state["html"].setText(color.name().upper())
+        self.updateColorPreviewFrame(state["preview"], color)
+        state["updating"] = False
+
+    def updateColorPreviewFrame(self, preview, color):
+        border = color.darker(150).name()
+        preview.setStyleSheet(
+            "QFrame#colorPreview { background-color: %s; border: 1px solid %s; }"
+            % (color.name(), border)
+        )
 
     def updateRgbPreview(self, previewButton, color):
         if previewButton is None:
