@@ -3,6 +3,7 @@ import codecs
 from datetime import datetime
 import hashlib
 import html
+import json
 import os
 import re
 import time
@@ -20,17 +21,28 @@ try:
     from Combobox import ComboBox
     from plugins.base import Plugin_Base
     from i18n import _
+    from widgets import statusBar
 except ImportError:
     from COMTool.Combobox import ComboBox
     from COMTool.plugins.base import Plugin_Base
     from COMTool.i18n import _
+    from COMTool.widgets import statusBar
 
 try:
     from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
     from cryptography.hazmat.primitives import padding
+    from cryptography.hazmat.primitives.asymmetric import ec
+    from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+    from cryptography.hazmat.primitives import hashes, serialization
     from cryptography.hazmat.backends import default_backend
 except Exception:
     Cipher = None
+    AESGCM = None
+    ec = None
+    HKDF = None
+    hashes = None
+    serialization = None
 
 
 class ToolCard(QWidget):
@@ -170,7 +182,8 @@ class Plugin(Plugin_Base):
         return False
 
     def onWidgetStatusBar(self, parent):
-        return None
+        self.statusBar = statusBar(rxTxCount=False)
+        return self.statusBar
 
     def onSettingsWidgetScrollTogether(self):
         return True
@@ -204,8 +217,9 @@ class Plugin(Plugin_Base):
             ("lrc", _("LRC check")),
             ("bcc", _("BCC check")),
             ("crc", _("CRC check")),
-            ("rgb", _("RGB color format convert")),
+            ("rgb", _("Color format convert")),
             ("bitwise", _("Bitwise operations")),
+            ("ecc", _("ECC encrypt/decrypt")),
             ("unicode", _("Unicode")),
             ("url", _("URLEncode")),
             ("base64", _("Base64")),
@@ -239,6 +253,7 @@ class Plugin(Plugin_Base):
             "crc": self.createCrcTool,
             "rgb": self.createRgbTool,
             "bitwise": self.createBitwiseTool,
+            "ecc": self.createEccTool,
             "unicode": self.createUnicodeTool,
             "url": self.createUrlTool,
             "base64": self.createBase64Tool,
@@ -260,8 +275,27 @@ class Plugin(Plugin_Base):
         else:
             output.setText(text)
 
+    def showStatus(self, level, msg):
+        if hasattr(self, "statusBar"):
+            self.statusBar.setMsg(level, str(msg))
+        elif getattr(self, "hintSignal", None):
+            self.hintSignal.emit(level, _("Info"), str(msg))
+
+    def showInfo(self, msg):
+        self.showStatus("info", msg)
+
+    def showWarning(self, msg):
+        self.showStatus("warning", msg)
+
+    def showError(self, err):
+        self.showStatus("error", err)
+
+    def copyText(self, text):
+        QApplication.clipboard().setText(text)
+        self.showInfo(_("Copied"))
+
     def fail(self, output, err):
-        self.setOutput(output, _("Error") + ": " + str(err))
+        self.showError(err)
 
     def addInputModeRadios(self, card):
         hexRadio = QRadioButton(_("Hex"))
@@ -374,8 +408,8 @@ class Plugin(Plugin_Base):
             )
 
     def fillErrorResult(self, resultFields, err):
-        self.setOutput(next(iter(resultFields.values())), _("Error") + ": " + str(err))
-        for key, field in list(resultFields.items())[1:]:
+        self.showError(err)
+        for field in resultFields.values():
             field.clear()
 
     def createCrcTool(self):
@@ -556,20 +590,23 @@ class Plugin(Plugin_Base):
 
     def createRgbTool(self):
         card = ToolCard(
-            _("RGB color format convert"),
+            _("Color format convert"),
             _("Convert common RGB color formats. Supports #RRGGBB, short #RGB, rgb(r,g,b), comma separated RGB, and decimal color values.")
         )
         inp = QLineEdit()
         inp.setPlaceholderText("#336699 / rgb(51,102,153) / 51,102,153")
         inp.setObjectName("ip33ResultLine")
-        paletteButton = QPushButton(_("Palette"))
-        paletteButton.setObjectName("ip33Secondary")
         screenPickButton = QPushButton(_("Screen pick"))
         screenPickButton.setObjectName("ip33Secondary")
         previewButton = QPushButton("")
         previewButton.setObjectName("ip33Secondary")
         previewButton.setFixedWidth(54)
-        card.addFormRow(_("RGB color") + ":", [inp, paletteButton, screenPickButton, previewButton])
+        card.addFormRow(_("Color") + ":", [inp, screenPickButton, previewButton])
+        colorDialog = QColorDialog(QColor("#336699"), card)
+        colorDialog.setOption(QColorDialog.NoButtons, True)
+        colorDialog.setOption(QColorDialog.DontUseNativeDialog, True)
+        colorDialog.setToolTip(_("Palette"))
+        card.layout.addWidget(colorDialog)
         resultFields = {
             "hex": card.addResultLine("HEX:"),
             "rgb": card.addResultLine("RGB:"),
@@ -577,27 +614,26 @@ class Plugin(Plugin_Base):
             "dec": card.addResultLine(_("Decimal") + ":"),
             "bgr": card.addResultLine("BGR HEX:"),
         }
-        paletteButton.clicked.connect(lambda: self.selectRgbColor(card, inp, previewButton, resultFields))
+        colorDialog.currentColorChanged.connect(lambda color: self.setColorFromDialog(color, inp, previewButton, resultFields))
         screenPickButton.clicked.connect(lambda: self.pickScreenRgbColorDelayed(inp, previewButton, resultFields, screenPickButton))
         card.addButton(_("Convert"), lambda: self.convertRgb(inp, resultFields, previewButton))
-        card.addButton(_("Clear"), lambda: self.clearRgbTool(inp, resultFields, previewButton), primary=False)
+        card.addButton(_("Clear"), lambda: self.clearRgbTool(inp, resultFields, previewButton, colorDialog), primary=False)
         card.finishButtons()
+        self.setColorFromDialog(QColor("#336699"), inp, previewButton, resultFields)
         return card
 
-    def clearRgbTool(self, inp, resultFields, previewButton=None):
+    def clearRgbTool(self, inp, resultFields, previewButton=None, colorDialog=None):
         inp.clear()
         for field in resultFields.values():
             field.clear()
         if previewButton is not None:
             previewButton.setStyleSheet("")
+        if colorDialog is not None:
+            colorDialog.blockSignals(True)
+            colorDialog.setCurrentColor(QColor("#336699"))
+            colorDialog.blockSignals(False)
 
-    def selectRgbColor(self, parent, inp, previewButton, resultFields):
-        current = QColor("#336699")
-        try:
-            current = QColor(*self.parseRgb(inp.text()))
-        except Exception:
-            pass
-        color = QColorDialog.getColor(current, parent, _("Select color"))
+    def setColorFromDialog(self, color, inp, previewButton, resultFields):
         if color.isValid():
             inp.setText(color.name().upper())
             self.convertRgb(inp, resultFields, previewButton)
@@ -652,7 +688,9 @@ class Plugin(Plugin_Base):
             self.setOutput(resultFields["bgr"], "#{:02X}{:02X}{:02X}".format(b, g, r))
             self.updateRgbPreview(previewButton, hexColor)
         except Exception as e:
-            self.setOutput(resultFields["hex"], _("Error") + ": " + str(e))
+            for field in resultFields.values():
+                field.clear()
+            self.showError(e)
 
     def parseRgb(self, text):
         value = text.strip()
@@ -694,42 +732,166 @@ class Plugin(Plugin_Base):
         hexRadio, _textRadio = self.addInputModeRadios(card)
         inputA = card.addTextArea(_("Input A") + ":", _("Input string or HEX"), False, 90)
         inputB = card.addTextArea(_("Input B") + ":", _("Input string or HEX"), False, 90)
-        output = card.addTextArea(_("Conversion result") + ":", _("Result"), True, 180)
-        card.addButton(_("Calculate"), lambda: self.calcBitwise(inputA, inputB, output, hexRadio.isChecked()))
-        card.addButton(_("Clear"), lambda: self.clearBitwise(inputA, inputB, output), primary=False)
+        resultFields = {
+            "and": card.addResultLine("AND:"),
+            "or": card.addResultLine("OR:"),
+            "xnor": card.addResultLine("XNOR:"),
+            "xor": card.addResultLine("XOR:"),
+            "notA": card.addResultLine("NOT A:"),
+            "notB": card.addResultLine("NOT B:"),
+        }
+        card.addButton(_("Calculate"), lambda: self.calcBitwise(inputA, inputB, resultFields, hexRadio.isChecked()))
+        card.addButton(_("Clear"), lambda: self.clearBitwise(inputA, inputB, resultFields), primary=False)
         card.finishButtons()
         return card
 
-    def clearBitwise(self, inputA, inputB, output):
+    def clearBitwise(self, inputA, inputB, resultFields):
         inputA.clear()
         inputB.clear()
-        output.clear()
+        for field in resultFields.values():
+            field.clear()
 
-    def calcBitwise(self, inputA, inputB, output, isHex):
+    def calcBitwise(self, inputA, inputB, resultFields, isHex):
         try:
             dataA = self.parseBytes(inputA.toPlainText(), isHex)
             dataB = self.parseBytes(inputB.toPlainText(), isHex)
             maxLen = max(len(dataA), len(dataB))
             a = dataA.ljust(maxLen, b"\x00")
             b = dataB.ljust(maxLen, b"\x00")
-            results = [
-                ("AND", bytes(x & y for x, y in zip(a, b))),
-                ("OR", bytes(x | y for x, y in zip(a, b))),
-                ("XNOR", bytes((~(x ^ y)) & 0xFF for x, y in zip(a, b))),
-                ("XOR", bytes(x ^ y for x, y in zip(a, b))),
-                ("NOT A", bytes((~x) & 0xFF for x in dataA)),
-                ("NOT B", bytes((~x) & 0xFF for x in dataB)),
-            ]
-            lines = []
             if len(dataA) != len(dataB):
-                lines.append(_("Inputs have different lengths; shorter input is padded with 00 for two-input operations."))
-            for name, data in results:
-                preview = data.decode("utf-8", errors="replace")
-                lines.append("{} HEX: {}".format(name, self.formatBytes(data)))
-                lines.append("{} TEXT: {}".format(name, preview))
-            self.setOutput(output, "\n".join(lines))
+                self.showWarning(_("Inputs have different lengths; shorter input is padded with 00 for two-input operations."))
+            self.setOutput(resultFields["and"], self.formatBytes(bytes(x & y for x, y in zip(a, b))))
+            self.setOutput(resultFields["or"], self.formatBytes(bytes(x | y for x, y in zip(a, b))))
+            self.setOutput(resultFields["xnor"], self.formatBytes(bytes((~(x ^ y)) & 0xFF for x, y in zip(a, b))))
+            self.setOutput(resultFields["xor"], self.formatBytes(bytes(x ^ y for x, y in zip(a, b))))
+            self.setOutput(resultFields["notA"], self.formatBytes(bytes((~x) & 0xFF for x in dataA)))
+            self.setOutput(resultFields["notB"], self.formatBytes(bytes((~x) & 0xFF for x in dataB)))
         except Exception as e:
-            self.fail(output, e)
+            self.fillErrorResult(resultFields, e)
+
+    def createEccTool(self):
+        card = ToolCard(
+            _("ECC encrypt/decrypt"),
+            _("Generate ECC key pairs and encrypt/decrypt text with ECIES style ECDH + AES-GCM.")
+        )
+        curveBox = ComboBox()
+        curveBox.addItems(["SECP256R1", "SECP384R1", "SECP521R1", "SECP256K1"])
+        card.addFormRow(_("Curve") + ":", curveBox)
+        privateKeyInput = card.addTextArea(_("Private key") + ":", _("PEM private key"), False, 120)
+        publicKeyInput = card.addTextArea(_("Public key") + ":", _("PEM public key"), False, 120)
+        dataInput = card.addTextArea(_("Plain text or cipher JSON") + ":", _("Input text or ECC cipher JSON"), False, 120)
+        output = card.addTextArea(_("Conversion result") + ":", _("Result"), True, 140)
+        card.addButton(_("Generate key pair"), lambda: self.generateEccKeyPair(curveBox.currentText(), privateKeyInput, publicKeyInput))
+        card.addButton(_("Encrypt"), lambda: self.eccEncrypt(publicKeyInput, dataInput, output))
+        card.addButton(_("Decrypt"), lambda: self.eccDecrypt(privateKeyInput, dataInput, output))
+        card.addButton(_("Clear"), lambda: self.clearEccTool(privateKeyInput, publicKeyInput, dataInput, output), primary=False)
+        card.finishButtons()
+        return card
+
+    def eccReady(self):
+        if AESGCM is None or ec is None or HKDF is None or hashes is None or serialization is None:
+            self.showError(_("ECC backend not available"))
+            return False
+        return True
+
+    def eccCurve(self, name):
+        curves = {
+            "SECP256R1": ec.SECP256R1,
+            "SECP384R1": ec.SECP384R1,
+            "SECP521R1": ec.SECP521R1,
+            "SECP256K1": ec.SECP256K1,
+        }
+        return curves.get(name, ec.SECP256R1)()
+
+    def generateEccKeyPair(self, curveName, privateKeyInput, publicKeyInput):
+        if not self.eccReady():
+            return
+        try:
+            privateKey = ec.generate_private_key(self.eccCurve(curveName), default_backend())
+            publicKey = privateKey.public_key()
+            privatePem = privateKey.private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PrivateFormat.PKCS8,
+                encryption_algorithm=serialization.NoEncryption()
+            ).decode("utf-8")
+            publicPem = publicKey.public_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo
+            ).decode("utf-8")
+            self.setOutput(privateKeyInput, privatePem)
+            self.setOutput(publicKeyInput, publicPem)
+            self.showInfo(_("ECC key pair generated"))
+        except Exception as e:
+            self.showError(e)
+
+    def clearEccTool(self, privateKeyInput, publicKeyInput, dataInput, output):
+        privateKeyInput.clear()
+        publicKeyInput.clear()
+        dataInput.clear()
+        output.clear()
+
+    def eccDeriveKey(self, privateKey, publicKey):
+        shared = privateKey.exchange(ec.ECDH(), publicKey)
+        return HKDF(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=None,
+            info=b"COMTool ECC ECIES AES-GCM",
+            backend=default_backend()
+        ).derive(shared)
+
+    def eccEncrypt(self, publicKeyInput, dataInput, output):
+        if not self.eccReady():
+            return
+        try:
+            publicKeyText = publicKeyInput.toPlainText().strip().encode("utf-8")
+            if not publicKeyText:
+                raise ValueError(_("Public key is empty"))
+            publicKey = serialization.load_pem_public_key(publicKeyText, backend=default_backend())
+            if not isinstance(publicKey, ec.EllipticCurvePublicKey):
+                raise ValueError(_("Public key is not an ECC public key"))
+            ephemeralPrivate = ec.generate_private_key(publicKey.curve, default_backend())
+            aesKey = self.eccDeriveKey(ephemeralPrivate, publicKey)
+            nonce = os.urandom(12)
+            cipherText = AESGCM(aesKey).encrypt(nonce, dataInput.toPlainText().encode("utf-8"), None)
+            ephemeralPublicPem = ephemeralPrivate.public_key().public_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo
+            )
+            payload = {
+                "version": 1,
+                "algorithm": "ECIES-HKDF-SHA256-AESGCM",
+                "curve": publicKey.curve.name,
+                "ephemeralPublicKey": base64.b64encode(ephemeralPublicPem).decode("ascii"),
+                "nonce": base64.b64encode(nonce).decode("ascii"),
+                "ciphertext": base64.b64encode(cipherText).decode("ascii"),
+            }
+            self.setOutput(output, json.dumps(payload, indent=2))
+            self.showInfo(_("ECC encrypt complete"))
+        except Exception as e:
+            self.showError(e)
+
+    def eccDecrypt(self, privateKeyInput, dataInput, output):
+        if not self.eccReady():
+            return
+        try:
+            privateKeyText = privateKeyInput.toPlainText().strip().encode("utf-8")
+            if not privateKeyText:
+                raise ValueError(_("Private key is empty"))
+            privateKey = serialization.load_pem_private_key(privateKeyText, password=None, backend=default_backend())
+            if not isinstance(privateKey, ec.EllipticCurvePrivateKey):
+                raise ValueError(_("Private key is not an ECC private key"))
+            payload = json.loads(dataInput.toPlainText())
+            ephemeralPublicPem = base64.b64decode(payload["ephemeralPublicKey"])
+            ephemeralPublic = serialization.load_pem_public_key(ephemeralPublicPem, backend=default_backend())
+            nonce = base64.b64decode(payload["nonce"])
+            cipherText = base64.b64decode(payload["ciphertext"])
+            aesKey = self.eccDeriveKey(privateKey, ephemeralPublic)
+            plain = AESGCM(aesKey).decrypt(nonce, cipherText, None)
+            self.setOutput(output, plain.decode("utf-8", errors="replace"))
+            self.showInfo(_("ECC decrypt complete"))
+        except Exception as e:
+            self.showError(e)
 
     def createUnicodeTool(self):
         card = ToolCard(_("Unicode"), _("Convert text to Unicode escape sequences, or restore Unicode escapes to readable text."))
@@ -934,7 +1096,7 @@ class Plugin(Plugin_Base):
 
     def aesCrypt(self, inp, out, key, iv, modeName, encrypt):
         if Cipher is None:
-            self.setOutput(out, _("AES backend not available"))
+            self.showError(_("AES backend not available"))
             return
         try:
             keyBytes = key.encode("utf-8")

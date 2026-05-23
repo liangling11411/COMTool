@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-05-23 16:53+0800\n"
+"POT-Creation-Date: 2026-05-23 18:01+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -92,8 +92,7 @@ msgstr ""
 #: plugins/base.py:224 plugins/dbg.py:1882 plugins/dbg.py:1891
 #: plugins/dbg.py:1919 plugins/dbg.py:2495 plugins/dbg.py:2509
 #: plugins/dbg.py:2519 plugins/dbg.py:2542 plugins/dbg.py:2609
-#: plugins/dbg.py:2617 plugins/devtools.py:295 plugins/devtools.py:408
-#: plugins/devtools.py:659 plugins/graph.py:259
+#: plugins/dbg.py:2617 plugins/graph.py:259
 #: plugins/graph_widget_metasenselite.py:591 plugins/graph_widgets.py:167
 #: plugins/myplugin.py:62
 #: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
@@ -451,7 +450,7 @@ msgstr ""
 msgid "Protocol"
 msgstr ""
 
-#: conn/conn_tcp_udp.py:109 plugins/devtools.py:929
+#: conn/conn_tcp_udp.py:109 plugins/devtools.py:1087
 msgid "Mode"
 msgstr ""
 
@@ -495,7 +494,7 @@ msgstr ""
 msgid "Connecting"
 msgstr ""
 
-#: plugins/base.py:215 plugins/devtools.py:341
+#: plugins/base.py:215 plugins/devtools.py:344
 msgid "Format error, should be like 00 01 02 03"
 msgstr ""
 
@@ -653,7 +652,6 @@ msgstr ""
 
 #: plugins/dbg.py:530 plugins/dbg.py:714 plugins/dbg.py:1676
 #: plugins/dbg.py:1690 plugins/dbg.py:2292 plugins/dbg.py:2348
-#: plugins/devtools.py:604
 msgid "Select color"
 msgstr ""
 
@@ -813,7 +811,7 @@ msgid ""
 msgstr ""
 
 #: plugins/dbg.py:1058 plugins/dbg.py:1171 plugins/dbg.py:1178
-#: plugins/dbg.py:1288
+#: plugins/dbg.py:1288 plugins/devtools.py:604
 msgid "Color"
 msgstr ""
 
@@ -1232,465 +1230,544 @@ msgstr ""
 msgid "get data error"
 msgstr ""
 
-#: plugins/devtools.py:140 plugins/devtools.py:884
+#: plugins/devtools.py:121 plugins/devtools.py:1042
 msgid "Original text"
 msgstr ""
 
-#: plugins/devtools.py:140 plugins/devtools.py:884
+#: plugins/devtools.py:121 plugins/devtools.py:1042
 msgid "Input text"
 msgstr ""
 
-#: plugins/devtools.py:143 plugins/devtools.py:701 plugins/devtools.py:801
-#: plugins/devtools.py:849
+#: plugins/devtools.py:124 plugins/devtools.py:783 plugins/devtools.py:959
+#: plugins/devtools.py:1007
 msgid "Conversion result"
 msgstr ""
 
-#: plugins/devtools.py:143 plugins/devtools.py:701 plugins/devtools.py:801
-#: plugins/devtools.py:841
+#: plugins/devtools.py:124 plugins/devtools.py:783 plugins/devtools.py:959
+#: plugins/devtools.py:999
 msgid "Result"
 msgstr ""
 
-#: plugins/devtools.py:182
+#: plugins/devtools.py:163
 msgid "Copy"
 msgstr ""
 
-#: plugins/devtools.py:184
+#: plugins/devtools.py:165
 msgid "Copy result"
 msgstr ""
 
-#: plugins/devtools.py:195
+#: plugins/devtools.py:176
 msgid "Programming Tools"
 msgstr ""
 
-#: plugins/devtools.py:219
+#: plugins/devtools.py:201
 msgid "Open tool"
 msgstr ""
 
-#: plugins/devtools.py:235 plugins/devtools.py:362
+#: plugins/devtools.py:217 plugins/devtools.py:365
 msgid "LRC check"
 msgstr ""
 
-#: plugins/devtools.py:236 plugins/devtools.py:378
+#: plugins/devtools.py:218 plugins/devtools.py:381
 msgid "BCC check"
 msgstr ""
 
-#: plugins/devtools.py:237 plugins/devtools.py:414
+#: plugins/devtools.py:219 plugins/devtools.py:417
 msgid "CRC check"
 msgstr ""
 
-#: plugins/devtools.py:238 plugins/devtools.py:563
-msgid "RGB color format convert"
+#: plugins/devtools.py:220 plugins/devtools.py:593
+msgid "Color format convert"
 msgstr ""
 
-#: plugins/devtools.py:239 plugins/devtools.py:695
+#: plugins/devtools.py:221 plugins/devtools.py:729
 msgid "Bitwise operations"
 msgstr ""
 
-#: plugins/devtools.py:240 plugins/devtools.py:739
+#: plugins/devtools.py:222 plugins/devtools.py:774
+msgid "ECC encrypt/decrypt"
+msgstr ""
+
+#: plugins/devtools.py:223 plugins/devtools.py:897
 msgid "Unicode"
 msgstr ""
 
-#: plugins/devtools.py:241 plugins/devtools.py:753
+#: plugins/devtools.py:224 plugins/devtools.py:911
 msgid "URLEncode"
 msgstr ""
 
-#: plugins/devtools.py:242 plugins/devtools.py:761
+#: plugins/devtools.py:225 plugins/devtools.py:919
 msgid "Base64"
 msgstr ""
 
-#: plugins/devtools.py:243 plugins/devtools.py:775
+#: plugins/devtools.py:226 plugins/devtools.py:933
 msgid "Punycode"
 msgstr ""
 
-#: plugins/devtools.py:244 plugins/devtools.py:795
+#: plugins/devtools.py:227 plugins/devtools.py:953
 msgid "Unix timestamp"
 msgstr ""
 
-#: plugins/devtools.py:245 plugins/devtools.py:831
+#: plugins/devtools.py:228 plugins/devtools.py:989
 msgid "Image to Base64"
 msgstr ""
 
-#: plugins/devtools.py:246 plugins/devtools.py:875
+#: plugins/devtools.py:229 plugins/devtools.py:1033
 msgid "Chinese domain encoding"
 msgstr ""
 
-#: plugins/devtools.py:247 plugins/devtools.py:883
+#: plugins/devtools.py:230 plugins/devtools.py:1041
 msgid "MD5 encrypt/decrypt"
 msgstr ""
 
-#: plugins/devtools.py:248 plugins/devtools.py:916
+#: plugins/devtools.py:231 plugins/devtools.py:1074
 msgid "AES encrypt/decrypt"
 msgstr ""
 
-#: plugins/devtools.py:249 plugins/devtools.py:964
+#: plugins/devtools.py:232 plugins/devtools.py:1122
 msgid "Encode/decode collection"
 msgstr ""
 
-#: plugins/devtools.py:250 plugins/devtools.py:988
+#: plugins/devtools.py:233 plugins/devtools.py:1146
 msgid "Hash collection"
 msgstr ""
 
-#: plugins/devtools.py:298
+#: plugins/devtools.py:282
+msgid "Info"
+msgstr ""
+
+#: plugins/devtools.py:295
+msgid "Copied"
+msgstr ""
+
+#: plugins/devtools.py:301
 msgid "Hex"
 msgstr ""
 
-#: plugins/devtools.py:299
+#: plugins/devtools.py:302
 msgid "Text"
 msgstr ""
 
-#: plugins/devtools.py:305
+#: plugins/devtools.py:308
 msgid "Data format"
 msgstr ""
 
-#: plugins/devtools.py:307
+#: plugins/devtools.py:310
 msgid "Hex mode accepts values like 01 02 AF; text mode uses UTF-8 bytes."
 msgstr ""
 
-#: plugins/devtools.py:314 plugins/devtools.py:450
+#: plugins/devtools.py:317 plugins/devtools.py:453
 msgid "Data to check"
 msgstr ""
 
-#: plugins/devtools.py:314 plugins/devtools.py:450
+#: plugins/devtools.py:317 plugins/devtools.py:453
 msgid "Input hex bytes or text"
 msgstr ""
 
-#: plugins/devtools.py:320 plugins/devtools.py:458
+#: plugins/devtools.py:323 plugins/devtools.py:461
 msgid "Input HEX + check"
 msgstr ""
 
-#: plugins/devtools.py:323 plugins/devtools.py:468 plugins/devtools.py:587
-#: plugins/devtools.py:703 plugins/devtools.py:905 plugins/graph_widgets.py:52
+#: plugins/devtools.py:326 plugins/devtools.py:471 plugins/devtools.py:620
+#: plugins/devtools.py:744 plugins/devtools.py:787 plugins/devtools.py:1063
+#: plugins/graph_widgets.py:52
 msgid "Clear"
 msgstr ""
 
-#: plugins/devtools.py:345
+#: plugins/devtools.py:348
 msgid "Input bytes"
 msgstr ""
 
-#: plugins/devtools.py:363
+#: plugins/devtools.py:366
 msgid ""
 "Calculate the longitudinal redundancy check byte. The result is the two's"
 " complement of the byte sum, often used by serial text protocols."
 msgstr ""
 
-#: plugins/devtools.py:364
+#: plugins/devtools.py:367
 msgid "Calculate LRC"
 msgstr ""
 
-#: plugins/devtools.py:379
+#: plugins/devtools.py:382
 msgid ""
 "Calculate the block check character by XORing every input byte. It is "
 "useful for simple serial protocol frame checks."
 msgstr ""
 
-#: plugins/devtools.py:380
+#: plugins/devtools.py:383
 msgid "Calculate BCC"
 msgstr ""
 
-#: plugins/devtools.py:415
+#: plugins/devtools.py:418
 msgid ""
 "Calculate common cyclic redundancy checks for byte data. Hex input "
 "accepts spaces, commas, 0x prefixes, and line breaks."
 msgstr ""
 
-#: plugins/devtools.py:421
+#: plugins/devtools.py:424
 msgid "Choose CRC algorithm"
 msgstr ""
 
-#: plugins/devtools.py:422 plugins/devtools.py:967
+#: plugins/devtools.py:425 plugins/devtools.py:1125
 msgid "Algorithm"
 msgstr ""
 
-#: plugins/devtools.py:456
+#: plugins/devtools.py:459
 msgid "Low byte first"
 msgstr ""
 
-#: plugins/devtools.py:457
+#: plugins/devtools.py:460
 msgid "High byte first"
 msgstr ""
 
-#: plugins/devtools.py:459
+#: plugins/devtools.py:462
 msgid "Input HEX + low byte first"
 msgstr ""
 
-#: plugins/devtools.py:462
+#: plugins/devtools.py:465
 msgid "Calculate CRC"
 msgstr ""
 
-#: plugins/devtools.py:541
+#: plugins/devtools.py:544
 msgid "CRC width must be 1-32"
 msgstr ""
 
-#: plugins/devtools.py:564
+#: plugins/devtools.py:594
 msgid ""
 "Convert common RGB color formats. Supports #RRGGBB, short #RGB, "
 "rgb(r,g,b), comma separated RGB, and decimal color values."
 msgstr ""
 
-#: plugins/devtools.py:569
-msgid "Palette"
-msgstr ""
-
-#: plugins/devtools.py:571
+#: plugins/devtools.py:599
 msgid "Screen pick"
 msgstr ""
 
-#: plugins/devtools.py:576
-msgid "RGB color"
+#: plugins/devtools.py:608
+msgid "Palette"
 msgstr ""
 
-#: plugins/devtools.py:580
+#: plugins/devtools.py:613
 msgid "RGB tuple"
 msgstr ""
 
-#: plugins/devtools.py:581
+#: plugins/devtools.py:614
 msgid "Decimal"
 msgstr ""
 
-#: plugins/devtools.py:586 plugins/devtools.py:837
+#: plugins/devtools.py:619 plugins/devtools.py:995
 msgid "Convert"
 msgstr ""
 
-#: plugins/devtools.py:611
+#: plugins/devtools.py:643
 msgid "Move cursor to color"
 msgstr ""
 
-#: plugins/devtools.py:664
+#: plugins/devtools.py:698
 msgid "Input is empty"
 msgstr ""
 
-#: plugins/devtools.py:684 plugins/graph_widget_metasenselite.py:591
+#: plugins/devtools.py:718 plugins/graph_widget_metasenselite.py:591
 #: plugins/graph_widgets.py:167
 msgid "Format error"
 msgstr ""
 
-#: plugins/devtools.py:689
+#: plugins/devtools.py:723
 msgid "RGB value must be 0-255"
 msgstr ""
 
-#: plugins/devtools.py:696
+#: plugins/devtools.py:730
 msgid ""
 "Run byte-level AND, OR, XNOR, XOR, and NOT operations on two text or HEX "
 "inputs."
 msgstr ""
 
-#: plugins/devtools.py:699
+#: plugins/devtools.py:733
 msgid "Input A"
 msgstr ""
 
-#: plugins/devtools.py:699 plugins/devtools.py:700
+#: plugins/devtools.py:733 plugins/devtools.py:734
 msgid "Input string or HEX"
 msgstr ""
 
-#: plugins/devtools.py:700
+#: plugins/devtools.py:734
 msgid "Input B"
 msgstr ""
 
-#: plugins/devtools.py:702
+#: plugins/devtools.py:743
 msgid "Calculate"
 msgstr ""
 
-#: plugins/devtools.py:729
+#: plugins/devtools.py:762
 msgid ""
 "Inputs have different lengths; shorter input is padded with 00 for two-"
 "input operations."
 msgstr ""
 
-#: plugins/devtools.py:739
+#: plugins/devtools.py:775
+msgid ""
+"Generate ECC key pairs and encrypt/decrypt text with ECIES style ECDH + "
+"AES-GCM."
+msgstr ""
+
+#: plugins/devtools.py:779
+msgid "Curve"
+msgstr ""
+
+#: plugins/devtools.py:780
+msgid "Private key"
+msgstr ""
+
+#: plugins/devtools.py:780
+msgid "PEM private key"
+msgstr ""
+
+#: plugins/devtools.py:781
+msgid "Public key"
+msgstr ""
+
+#: plugins/devtools.py:781
+msgid "PEM public key"
+msgstr ""
+
+#: plugins/devtools.py:782
+msgid "Plain text or cipher JSON"
+msgstr ""
+
+#: plugins/devtools.py:782
+msgid "Input text or ECC cipher JSON"
+msgstr ""
+
+#: plugins/devtools.py:784
+msgid "Generate key pair"
+msgstr ""
+
+#: plugins/devtools.py:785 plugins/devtools.py:1092
+msgid "Encrypt"
+msgstr ""
+
+#: plugins/devtools.py:786 plugins/devtools.py:1093
+msgid "Decrypt"
+msgstr ""
+
+#: plugins/devtools.py:793
+msgid "ECC backend not available"
+msgstr ""
+
+#: plugins/devtools.py:823
+msgid "ECC key pair generated"
+msgstr ""
+
+#: plugins/devtools.py:849
+msgid "Public key is empty"
+msgstr ""
+
+#: plugins/devtools.py:852
+msgid "Public key is not an ECC public key"
+msgstr ""
+
+#: plugins/devtools.py:870
+msgid "ECC encrypt complete"
+msgstr ""
+
+#: plugins/devtools.py:880
+msgid "Private key is empty"
+msgstr ""
+
+#: plugins/devtools.py:883
+msgid "Private key is not an ECC private key"
+msgstr ""
+
+#: plugins/devtools.py:892
+msgid "ECC decrypt complete"
+msgstr ""
+
+#: plugins/devtools.py:897
 msgid ""
 "Convert text to Unicode escape sequences, or restore Unicode escapes to "
 "readable text."
 msgstr ""
 
-#: plugins/devtools.py:741 plugins/devtools.py:755 plugins/devtools.py:763
-#: plugins/devtools.py:777 plugins/devtools.py:877 plugins/devtools.py:969
+#: plugins/devtools.py:899 plugins/devtools.py:913 plugins/devtools.py:921
+#: plugins/devtools.py:935 plugins/devtools.py:1035 plugins/devtools.py:1127
 msgid "Encode"
 msgstr ""
 
-#: plugins/devtools.py:742 plugins/devtools.py:756 plugins/devtools.py:764
-#: plugins/devtools.py:778 plugins/devtools.py:878 plugins/devtools.py:970
+#: plugins/devtools.py:900 plugins/devtools.py:914 plugins/devtools.py:922
+#: plugins/devtools.py:936 plugins/devtools.py:1036 plugins/devtools.py:1128
 msgid "Decode"
 msgstr ""
 
-#: plugins/devtools.py:753
+#: plugins/devtools.py:911
 msgid "Encode text for use in URLs, or decode percent-escaped URL text."
 msgstr ""
 
-#: plugins/devtools.py:761
+#: plugins/devtools.py:919
 msgid ""
 "Encode text as Base64, or decode Base64 back to text with the current "
 "UTF-8 text encoding."
 msgstr ""
 
-#: plugins/devtools.py:775
+#: plugins/devtools.py:933
 msgid ""
 "Convert internationalized domain names between Unicode text and ASCII "
 "Punycode form."
 msgstr ""
 
-#: plugins/devtools.py:776
+#: plugins/devtools.py:934
 msgid "Input domain or text"
 msgstr ""
 
-#: plugins/devtools.py:776
+#: plugins/devtools.py:934
 msgid "Converted value"
 msgstr ""
 
-#: plugins/devtools.py:795
+#: plugins/devtools.py:953
 msgid ""
 "Convert Unix timestamps and local date-time strings. Date input format: "
 "YYYY-MM-DD HH:MM:SS."
 msgstr ""
 
-#: plugins/devtools.py:797 plugins/devtools.py:800
+#: plugins/devtools.py:955 plugins/devtools.py:958
 msgid "Timestamp or date-time"
 msgstr ""
 
-#: plugins/devtools.py:798
+#: plugins/devtools.py:956
 msgid "Enter seconds, milliseconds, or YYYY-MM-DD HH:MM:SS"
 msgstr ""
 
-#: plugins/devtools.py:802
+#: plugins/devtools.py:960
 msgid "Now"
 msgstr ""
 
-#: plugins/devtools.py:803
+#: plugins/devtools.py:961
 msgid "To date-time"
 msgstr ""
 
-#: plugins/devtools.py:804
+#: plugins/devtools.py:962
 msgid "To timestamp"
 msgstr ""
 
-#: plugins/devtools.py:831
+#: plugins/devtools.py:989
 msgid ""
 "Choose an image file and convert it to Base64 text or a data URL for "
 "embedding."
 msgstr ""
 
-#: plugins/devtools.py:833 plugins/devtools.py:843
+#: plugins/devtools.py:991 plugins/devtools.py:1001
 msgid "Image file path"
 msgstr ""
 
-#: plugins/devtools.py:835 plugins/devtools.py:856
+#: plugins/devtools.py:993 plugins/devtools.py:1014
 msgid "Choose file"
 msgstr ""
 
-#: plugins/devtools.py:839
+#: plugins/devtools.py:997
 msgid "Output data URL"
 msgstr ""
 
-#: plugins/devtools.py:856
+#: plugins/devtools.py:1014
 msgid "Image files (*.png *.jpg *.jpeg *.gif *.bmp *.webp);;All Files (*)"
 msgstr ""
 
-#: plugins/devtools.py:875
+#: plugins/devtools.py:1033
 msgid ""
 "Encode Chinese or other internationalized domain names to IDNA, or decode"
 " xn-- domains back to readable text."
 msgstr ""
 
-#: plugins/devtools.py:876
+#: plugins/devtools.py:1034
 msgid "Input domain"
 msgstr ""
 
-#: plugins/devtools.py:876
+#: plugins/devtools.py:1034
 msgid "Converted domain"
 msgstr ""
 
-#: plugins/devtools.py:883
+#: plugins/devtools.py:1041
 msgid ""
 "Generate MD5 digests. MD5 is one-way and cannot be truly decrypted; use "
 "the compare field to verify candidate text."
 msgstr ""
 
-#: plugins/devtools.py:886
+#: plugins/devtools.py:1044
 msgid "Optional MD5 hash to compare"
 msgstr ""
 
-#: plugins/devtools.py:888
+#: plugins/devtools.py:1046
 msgid "Compare hash"
 msgstr ""
 
-#: plugins/devtools.py:890
+#: plugins/devtools.py:1048
 msgid "Lowercase 32-bit"
 msgstr ""
 
-#: plugins/devtools.py:891
+#: plugins/devtools.py:1049
 msgid "Uppercase 32-bit"
 msgstr ""
 
-#: plugins/devtools.py:892
+#: plugins/devtools.py:1050
 msgid "Lowercase 16-bit"
 msgstr ""
 
-#: plugins/devtools.py:893
+#: plugins/devtools.py:1051
 msgid "Uppercase 16-bit"
 msgstr ""
 
-#: plugins/devtools.py:894
+#: plugins/devtools.py:1052
 msgid "Compare"
 msgstr ""
 
-#: plugins/devtools.py:903
+#: plugins/devtools.py:1061
 msgid "Not match"
 msgstr ""
 
-#: plugins/devtools.py:904 plugins/devtools.py:990
+#: plugins/devtools.py:1062 plugins/devtools.py:1148
 msgid "Generate"
 msgstr ""
 
-#: plugins/devtools.py:916
+#: plugins/devtools.py:1074
 msgid ""
 "AES text encryption and decryption. Supports ECB and CBC with PKCS7 "
 "padding. Key lengths: 16, 24, or 32 bytes."
 msgstr ""
 
-#: plugins/devtools.py:917
+#: plugins/devtools.py:1075
 msgid "Input text or Base64 cipher text"
 msgstr ""
 
-#: plugins/devtools.py:917
+#: plugins/devtools.py:1075
 msgid "AES result"
 msgstr ""
 
-#: plugins/devtools.py:920
+#: plugins/devtools.py:1078
 msgid "AES key"
 msgstr ""
 
-#: plugins/devtools.py:923
+#: plugins/devtools.py:1081
 msgid "CBC IV, 16 bytes"
 msgstr ""
 
-#: plugins/devtools.py:927
+#: plugins/devtools.py:1085
 msgid "Key"
 msgstr ""
 
-#: plugins/devtools.py:931
+#: plugins/devtools.py:1089
 msgid "IV"
 msgstr ""
 
-#: plugins/devtools.py:934
-msgid "Encrypt"
-msgstr ""
-
-#: plugins/devtools.py:935
-msgid "Decrypt"
-msgstr ""
-
-#: plugins/devtools.py:941
+#: plugins/devtools.py:1099
 msgid "AES backend not available"
 msgstr ""
 
-#: plugins/devtools.py:946
+#: plugins/devtools.py:1104
 msgid "AES key must be 16, 24, or 32 bytes"
 msgstr ""
 
-#: plugins/devtools.py:964
+#: plugins/devtools.py:1122
 msgid "Common reversible text transforms for quick programming work."
 msgstr ""
 
-#: plugins/devtools.py:988
+#: plugins/devtools.py:1146
 msgid "Generate common hashes for the input text."
 msgstr ""
 
