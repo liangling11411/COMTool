@@ -3,6 +3,7 @@ import codecs
 from datetime import datetime
 import hashlib
 import html
+import ast
 import json
 import os
 import re
@@ -14,9 +15,9 @@ from PyQt5.QtWidgets import (
     QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout,
     QTextEdit, QLabel, QLineEdit, QFileDialog, QStackedWidget, QScrollArea,
     QCheckBox, QRadioButton, QButtonGroup, QTreeWidget, QTreeWidgetItem,
-    QSpinBox, QFrame
+    QSpinBox, QFrame, QSizePolicy
 )
-from PyQt5.QtGui import QColor, QPainter, QImage, QPen
+from PyQt5.QtGui import QColor, QPainter, QImage, QPen, QFont
 
 try:
     from Combobox import ComboBox
@@ -324,25 +325,33 @@ class Plugin(Plugin_Base):
     def onSettingsWidgetScrollTogether(self):
         return True
 
+    def onSettingsWidgetStretch(self):
+        return 1
+
     def onWidgetSettings(self, parent):
         panel = QWidget()
+        panel.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         layout = QVBoxLayout()
-        layout.setContentsMargins(4, 8, 4, 8)
+        layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(0)
         panel.setLayout(layout)
 
         self.toolTree = QTreeWidget()
+        self.toolTree.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolTree.setHeaderHidden(True)
         self.toolTree.setRootIsDecorated(True)
         self.toolTree.setIndentation(16)
         self.toolTree.setToolTip(_("Select a programming tool"))
         self.toolTree.itemClicked.connect(self.onToolTreeItemClicked)
         self.toolItems = []
+        parentFont = QFont()
+        parentFont.setBold(True)
         index = 0
         for category, tools in self.toolCategories():
             parentItem = QTreeWidgetItem([category])
             parentItem.setFlags(parentItem.flags() & ~Qt.ItemIsSelectable)
             parentItem.setToolTip(0, category)
+            parentItem.setFont(0, parentFont)
             self.toolTree.addTopLevelItem(parentItem)
             for key, title in tools:
                 child = QTreeWidgetItem([title])
@@ -370,9 +379,17 @@ class Plugin(Plugin_Base):
                 ("bcc", _("BCC check")),
                 ("crc", _("CRC check")),
             ]),
-            (_("Color and bit operations"), [
+            (_("Color"), [
                 ("rgb", _("Color format convert")),
-                ("bitwise", _("Bitwise operations")),
+            ]),
+            (_("Bit operations"), [
+                ("bit_calculator", _("Bit calculator")),
+                ("bitwise", _("Multi-bit operations")),
+            ]),
+            (_("String processing"), [
+                ("case_convert", _("English case convert")),
+                ("string_reverse", _("String reverse")),
+                ("char_count", _("Character count")),
             ]),
             (_("Encoding"), [
                 ("unicode", _("Unicode")),
@@ -423,7 +440,11 @@ class Plugin(Plugin_Base):
             "bcc": self.createBccTool,
             "crc": self.createCrcTool,
             "rgb": self.createRgbTool,
+            "bit_calculator": self.createBitCalculatorTool,
             "bitwise": self.createBitwiseTool,
+            "case_convert": self.createCaseConvertTool,
+            "string_reverse": self.createStringReverseTool,
+            "char_count": self.createCharCountTool,
             "ecc": self.createEccTool,
             "unicode": self.createUnicodeTool,
             "url": self.createUrlTool,
@@ -765,20 +786,44 @@ class Plugin(Plugin_Base):
             _("Convert between RGB, HSV, and HTML HEX colors.")
         )
 
+        panel = QFrame()
+        panel.setObjectName("colorConvertPanel")
+        panel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        panel.setStyleSheet("""
+            QFrame#colorConvertPanel {
+                border: 1px solid #858585;
+                border-radius: 6px;
+            }
+            QSpinBox#colorSpinBox {
+                min-height: 24px;
+                padding: 1px 4px;
+            }
+            QLineEdit#colorHtmlInput {
+                min-height: 28px;
+                padding: 1px 8px;
+            }
+        """)
+        panelLayout = QVBoxLayout()
+        panelLayout.setContentsMargins(14, 14, 14, 14)
+        panelLayout.setSpacing(14)
+        panel.setLayout(panelLayout)
+
         pickerRow = QHBoxLayout()
-        pickerRow.setSpacing(18)
+        pickerRow.setSpacing(14)
         plane = HsvColorPlane()
+        plane.setFixedSize(238, 190)
         hueBar = HueBar()
+        hueBar.setFixedSize(20, 190)
         pickerRow.addWidget(plane)
         pickerRow.addWidget(hueBar)
         pickerRow.addStretch(1)
-        card.layout.addLayout(pickerRow)
+        panelLayout.addLayout(pickerRow)
 
         controlRow = QHBoxLayout()
-        controlRow.setSpacing(22)
+        controlRow.setSpacing(18)
         preview = QFrame()
         preview.setObjectName("colorPreview")
-        preview.setFixedSize(58, 118)
+        preview.setFixedSize(76, 116)
         preview.setFrameShape(QFrame.StyledPanel)
         preview.setToolTip(_("Selected color preview"))
         controlRow.addWidget(preview)
@@ -793,7 +838,7 @@ class Plugin(Plugin_Base):
         greenSpin = self.createColorSpinBox(0, 255, _("Green value"))
         blueSpin = self.createColorSpinBox(0, 255, _("Blue value"))
         htmlInput = QLineEdit()
-        htmlInput.setObjectName("ip33ResultLine")
+        htmlInput.setObjectName("colorHtmlInput")
         htmlInput.setToolTip(_("HTML HEX color, for example #FFBB00"))
         htmlInput.setPlaceholderText("#FFBB00")
 
@@ -813,7 +858,12 @@ class Plugin(Plugin_Base):
         form.addWidget(htmlInput, 3, 1, 1, 3)
         controlRow.addLayout(form)
         controlRow.addStretch(1)
-        card.layout.addLayout(controlRow)
+        panelLayout.addLayout(controlRow)
+
+        panelRow = QHBoxLayout()
+        panelRow.addWidget(panel)
+        panelRow.addStretch(1)
+        card.layout.addLayout(panelRow)
 
         state = {
             "updating": False,
@@ -848,8 +898,9 @@ class Plugin(Plugin_Base):
 
     def createColorSpinBox(self, minimum, maximum, tooltip):
         spin = NoWheelSpinBox()
+        spin.setObjectName("colorSpinBox")
         spin.setRange(minimum, maximum)
-        spin.setFixedWidth(70)
+        spin.setFixedWidth(66)
         spin.setToolTip(tooltip)
         return spin
 
@@ -972,9 +1023,428 @@ class Plugin(Plugin_Base):
             values.append(number)
         return tuple(values)
 
+    def createBitCalculatorTool(self):
+        card = ToolCard(
+            _("Bit calculator"),
+            _("Programmer calculator for integer base conversion, bit toggling, bitwise operations, and shift operations.")
+        )
+        frame = QFrame()
+        frame.setObjectName("bitCalculator")
+        frame.setStyleSheet("""
+            QFrame#bitCalculator {
+                border: 1px solid #858585;
+                border-radius: 6px;
+            }
+            QLabel#bitCalcDisplay {
+                font-size: 30px;
+                font-weight: 600;
+                padding: 4px 2px;
+            }
+            QLabel#bitCalcExpr {
+                color: #777777;
+                min-height: 20px;
+            }
+            QPushButton#bitCalcKey {
+                min-width: 58px;
+                min-height: 34px;
+                font-size: 16px;
+            }
+            QPushButton#bitCalcBase {
+                min-width: 52px;
+                text-align: left;
+            }
+            QPushButton#bitCalcBase:checked {
+                border-left: 3px solid #2f75c1;
+                font-weight: 600;
+            }
+            QPushButton#bitCell {
+                min-width: 22px;
+                max-width: 22px;
+                min-height: 24px;
+                max-height: 24px;
+                font-weight: 600;
+            }
+            QPushButton#bitCell:checked {
+                background: #2f75c1;
+                color: white;
+            }
+        """)
+        layout = QVBoxLayout()
+        layout.setContentsMargins(14, 12, 14, 14)
+        layout.setSpacing(8)
+        frame.setLayout(layout)
+
+        exprLabel = QLabel("")
+        exprLabel.setObjectName("bitCalcExpr")
+        exprLabel.setAlignment(Qt.AlignRight)
+        exprLabel.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        display = QLabel("0")
+        display.setObjectName("bitCalcDisplay")
+        display.setAlignment(Qt.AlignRight)
+        display.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        layout.addWidget(exprLabel)
+        layout.addWidget(display)
+
+        state = {
+            "base": "DEC",
+            "wordBits": 64,
+            "entry": "0",
+            "expr": "",
+            "newEntry": False,
+            "memory": 0,
+            "value": 0,
+            "display": display,
+            "exprLabel": exprLabel,
+            "baseButtons": {},
+            "baseValues": {},
+            "digitButtons": {},
+            "bitButtons": {},
+        }
+
+        baseGrid = QGridLayout()
+        baseGrid.setHorizontalSpacing(8)
+        baseGrid.setVerticalSpacing(3)
+        baseGroup = QButtonGroup(frame)
+        baseGroup.setExclusive(True)
+        for row, baseName in enumerate(["HEX", "DEC", "OCT", "BIN"]):
+            button = QPushButton(baseName)
+            button.setObjectName("bitCalcBase")
+            button.setCheckable(True)
+            button.setToolTip(_("Switch input base") + ": " + baseName)
+            button.clicked.connect(lambda _checked=False, base=baseName: self.bitCalcSetBase(state, base))
+            baseGroup.addButton(button)
+            valueLabel = QLabel("0")
+            valueLabel.setTextInteractionFlags(Qt.TextSelectableByMouse)
+            valueLabel.setWordWrap(True)
+            baseGrid.addWidget(button, row, 0)
+            baseGrid.addWidget(valueLabel, row, 1)
+            state["baseButtons"][baseName] = button
+            state["baseValues"][baseName] = valueLabel
+        layout.addLayout(baseGrid)
+
+        toolbar = QHBoxLayout()
+        keypadButton = QPushButton(_("Keypad"))
+        bitsButton = QPushButton(_("Bit grid"))
+        for button in (keypadButton, bitsButton):
+            button.setCheckable(True)
+            button.setObjectName("ip33Secondary")
+        viewGroup = QButtonGroup(frame)
+        viewGroup.setExclusive(True)
+        viewGroup.addButton(keypadButton)
+        viewGroup.addButton(bitsButton)
+        keypadButton.setChecked(True)
+        wordBox = ComboBox()
+        wordBox.addItems(["QWORD", "DWORD", "WORD", "BYTE"])
+        wordBox.setToolTip(_("Word size"))
+        memoryButton = QPushButton("MS")
+        memoryButton.setObjectName("ip33Secondary")
+        memoryButton.setToolTip(_("Store current value to memory"))
+        toolbar.addWidget(keypadButton)
+        toolbar.addWidget(bitsButton)
+        toolbar.addStretch(1)
+        toolbar.addWidget(wordBox)
+        toolbar.addWidget(memoryButton)
+        layout.addLayout(toolbar)
+
+        opRow = QHBoxLayout()
+        bitOpBox = ComboBox()
+        bitOpBox.addItems(["AND", "OR", "XOR", "NOT"])
+        shiftBox = ComboBox()
+        shiftBox.addItems(["<<", ">>"])
+        bitApply = QPushButton(_("Apply"))
+        shiftApply = QPushButton(_("Apply"))
+        for button in (bitApply, shiftApply):
+            button.setObjectName("ip33Secondary")
+        opRow.addWidget(QLabel(_("Bitwise") + ":"))
+        opRow.addWidget(bitOpBox)
+        opRow.addWidget(bitApply)
+        opRow.addSpacing(12)
+        opRow.addWidget(QLabel(_("Shift") + ":"))
+        opRow.addWidget(shiftBox)
+        opRow.addWidget(shiftApply)
+        opRow.addStretch(1)
+        layout.addLayout(opRow)
+
+        viewStack = QStackedWidget()
+        keypad = self.createBitCalculatorKeypad(state)
+        bitGrid = self.createBitGrid(state)
+        viewStack.addWidget(keypad)
+        viewStack.addWidget(bitGrid)
+        keypadButton.clicked.connect(lambda: viewStack.setCurrentIndex(0))
+        bitsButton.clicked.connect(lambda: viewStack.setCurrentIndex(1))
+        layout.addWidget(viewStack)
+
+        wordBox.activated.connect(lambda _idx: self.bitCalcSetWordBits(state, wordBox.currentText()))
+        memoryButton.clicked.connect(lambda: self.bitCalcStoreMemory(state))
+        bitApply.clicked.connect(lambda: self.bitCalcApplyNamedOp(state, bitOpBox.currentText()))
+        shiftApply.clicked.connect(lambda: self.bitCalcPressOperator(state, shiftBox.currentText()))
+
+        card.layout.addWidget(frame)
+        self.bitCalcRefresh(state)
+        return card
+
+    def createBitCalculatorKeypad(self, state):
+        widget = QWidget()
+        grid = QGridLayout()
+        grid.setContentsMargins(0, 0, 0, 0)
+        grid.setSpacing(4)
+        widget.setLayout(grid)
+        rows = [
+            ["A", "<<", ">>", "C", "Back"],
+            ["B", "(", ")", "%", "/"],
+            ["C", "7", "8", "9", "*"],
+            ["D", "4", "5", "6", "-"],
+            ["E", "1", "2", "3", "+"],
+            ["F", "+/-", "0", ".", "="],
+        ]
+        for rowIdx, row in enumerate(rows):
+            for colIdx, label in enumerate(row):
+                button = QPushButton(label)
+                button.setObjectName("bitCalcKey")
+                digitButton = label in "0123456789ABCDEF" and not (rowIdx == 0 and colIdx == 3)
+                if digitButton:
+                    state["digitButtons"][label] = button
+                    button.clicked.connect(lambda _checked=False, value=label: self.bitCalcAppendDigit(state, value))
+                elif label in ["+", "-", "*", "/", "%", "<<", ">>"]:
+                    button.clicked.connect(lambda _checked=False, op=label: self.bitCalcPressOperator(state, op))
+                elif label in ["(", ")"]:
+                    button.clicked.connect(lambda _checked=False, value=label: self.bitCalcPressParen(state, value))
+                elif label == "C":
+                    button.clicked.connect(lambda: self.bitCalcClear(state))
+                elif label == "Back":
+                    button.clicked.connect(lambda: self.bitCalcBackspace(state))
+                elif label == "+/-":
+                    button.clicked.connect(lambda: self.bitCalcToggleSign(state))
+                elif label == "=":
+                    button.clicked.connect(lambda: self.bitCalcEvaluate(state))
+                else:
+                    button.setEnabled(False)
+                grid.addWidget(button, rowIdx, colIdx)
+        return widget
+
+    def createBitGrid(self, state):
+        widget = QWidget()
+        grid = QGridLayout()
+        grid.setContentsMargins(0, 0, 0, 0)
+        grid.setHorizontalSpacing(10)
+        grid.setVerticalSpacing(8)
+        widget.setLayout(grid)
+        for groupIdx, groupStart in enumerate(range(60, -1, -4)):
+            group = QWidget()
+            groupLayout = QVBoxLayout()
+            groupLayout.setContentsMargins(0, 0, 0, 0)
+            groupLayout.setSpacing(2)
+            bitsRow = QHBoxLayout()
+            bitsRow.setSpacing(2)
+            for bit in range(groupStart + 3, groupStart - 1, -1):
+                button = QPushButton("0")
+                button.setObjectName("bitCell")
+                button.setCheckable(True)
+                button.setToolTip(_("Toggle bit") + " {}".format(bit))
+                button.clicked.connect(lambda _checked=False, index=bit: self.bitCalcToggleBit(state, index))
+                bitsRow.addWidget(button)
+                state["bitButtons"][bit] = button
+            label = QLabel(str(groupStart))
+            label.setAlignment(Qt.AlignCenter)
+            groupLayout.addLayout(bitsRow)
+            groupLayout.addWidget(label)
+            group.setLayout(groupLayout)
+            grid.addWidget(group, groupIdx // 4, groupIdx % 4)
+        return widget
+
+    def bitCalcWordMask(self, state):
+        return (1 << state["wordBits"]) - 1
+
+    def bitCalcCurrentValue(self, state):
+        text = state["entry"].strip()
+        if not text:
+            return 0
+        base = {"HEX": 16, "DEC": 10, "OCT": 8, "BIN": 2}[state["base"]]
+        return int(text, base) & self.bitCalcWordMask(state)
+
+    def bitCalcFormatValue(self, value, baseName, wordBits=None):
+        if baseName == "HEX":
+            width = max(1, ((wordBits or 4) + 3) // 4)
+            return "{:0{}X}".format(value, width)
+        if baseName == "OCT":
+            return "{:o}".format(value)
+        if baseName == "BIN":
+            width = wordBits or max(1, value.bit_length())
+            raw = "{:0{}b}".format(value, width)
+            return " ".join(raw[i:i + 4] for i in range(0, len(raw), 4))
+        return str(value)
+
+    def bitCalcSetEntryValue(self, state, value, newEntry=False):
+        value = int(value) & self.bitCalcWordMask(state)
+        state["value"] = value
+        state["entry"] = self.bitCalcFormatValue(value, state["base"]).replace(" ", "")
+        state["newEntry"] = newEntry
+        self.bitCalcRefresh(state)
+
+    def bitCalcRefresh(self, state):
+        try:
+            value = self.bitCalcCurrentValue(state)
+        except Exception:
+            value = state.get("value", 0)
+        state["value"] = value
+        state["display"].setText(self.bitCalcFormatValue(value, state["base"]))
+        state["exprLabel"].setText(state["expr"])
+        for baseName, label in state["baseValues"].items():
+            label.setText(self.bitCalcFormatValue(value, baseName, state["wordBits"]))
+        for baseName, button in state["baseButtons"].items():
+            button.setChecked(baseName == state["base"])
+        allowed = self.bitCalcAllowedDigits(state["base"])
+        for digit, button in state["digitButtons"].items():
+            button.setEnabled(digit in allowed)
+        for bit, button in state["bitButtons"].items():
+            enabled = bit < state["wordBits"]
+            button.setEnabled(enabled)
+            button.setChecked(bool(value & (1 << bit)) if enabled else False)
+            button.setText("1" if enabled and value & (1 << bit) else "0")
+
+    def bitCalcAllowedDigits(self, baseName):
+        if baseName == "HEX":
+            return set("0123456789ABCDEF")
+        if baseName == "DEC":
+            return set("0123456789")
+        if baseName == "OCT":
+            return set("01234567")
+        return set("01")
+
+    def bitCalcSetBase(self, state, baseName):
+        value = self.bitCalcCurrentValue(state)
+        state["base"] = baseName
+        self.bitCalcSetEntryValue(state, value)
+
+    def bitCalcSetWordBits(self, state, wordName):
+        state["wordBits"] = {"BYTE": 8, "WORD": 16, "DWORD": 32, "QWORD": 64}.get(wordName, 64)
+        self.bitCalcSetEntryValue(state, self.bitCalcCurrentValue(state))
+
+    def bitCalcAppendDigit(self, state, digit):
+        if digit not in self.bitCalcAllowedDigits(state["base"]):
+            return
+        if state["newEntry"] or state["entry"] == "0":
+            state["entry"] = digit
+        else:
+            state["entry"] += digit
+        state["newEntry"] = False
+        self.bitCalcSetEntryValue(state, self.bitCalcCurrentValue(state))
+        state["newEntry"] = False
+
+    def bitCalcClear(self, state):
+        state["expr"] = ""
+        self.bitCalcSetEntryValue(state, 0)
+
+    def bitCalcBackspace(self, state):
+        if state["newEntry"]:
+            self.bitCalcSetEntryValue(state, 0)
+            return
+        state["entry"] = state["entry"][:-1] or "0"
+        self.bitCalcSetEntryValue(state, self.bitCalcCurrentValue(state))
+
+    def bitCalcToggleSign(self, state):
+        self.bitCalcSetEntryValue(state, -self.bitCalcCurrentValue(state))
+
+    def bitCalcToggleBit(self, state, bit):
+        if bit >= state["wordBits"]:
+            return
+        value = self.bitCalcCurrentValue(state) ^ (1 << bit)
+        self.bitCalcSetEntryValue(state, value)
+
+    def bitCalcPressOperator(self, state, op):
+        token = {"*": "*", "/": "//", "+": "+", "-": "-", "%": "%", "<<": "<<", ">>": ">>", "AND": "&", "OR": "|", "XOR": "^"}.get(op, op)
+        expr = state["expr"].rstrip()
+        if not expr or not state["newEntry"]:
+            expr = (expr + " " + str(self.bitCalcCurrentValue(state))).strip()
+        expr = re.sub(r"(<<|>>|//|[+\-*%&|^])$", "", expr).rstrip()
+        state["expr"] = (expr + " " + token + " ").lstrip()
+        state["newEntry"] = True
+        self.bitCalcRefresh(state)
+
+    def bitCalcApplyNamedOp(self, state, op):
+        if op == "NOT":
+            self.bitCalcSetEntryValue(state, ~self.bitCalcCurrentValue(state))
+        else:
+            self.bitCalcPressOperator(state, op)
+
+    def bitCalcPressParen(self, state, paren):
+        if paren == "(":
+            state["expr"] += "("
+            state["newEntry"] = True
+        else:
+            if not state["newEntry"]:
+                state["expr"] += str(self.bitCalcCurrentValue(state))
+            state["expr"] += ")"
+            state["newEntry"] = True
+        self.bitCalcRefresh(state)
+
+    def bitCalcEvaluate(self, state):
+        expr = state["expr"].strip()
+        if not expr:
+            self.bitCalcRefresh(state)
+            return
+        if not state["newEntry"] or re.search(r"(<<|>>|//|[+\-*%&|^(])\s*$", expr):
+            expr += " " + str(self.bitCalcCurrentValue(state))
+        try:
+            value = self.bitCalcSafeEval(expr)
+            state["expr"] = ""
+            self.bitCalcSetEntryValue(state, value, newEntry=True)
+        except Exception as e:
+            self.showError(e)
+
+    def bitCalcSafeEval(self, expression):
+        node = ast.parse(expression, mode="eval")
+        return self.bitCalcEvalNode(node.body)
+
+    def bitCalcEvalNode(self, node):
+        if isinstance(node, ast.Constant) and isinstance(node.value, int):
+            return node.value
+        if isinstance(node, ast.Num):
+            return node.n
+        if isinstance(node, ast.UnaryOp):
+            value = self.bitCalcEvalNode(node.operand)
+            if isinstance(node.op, ast.Invert):
+                return ~value
+            if isinstance(node.op, ast.USub):
+                return -value
+            if isinstance(node.op, ast.UAdd):
+                return value
+        if isinstance(node, ast.BinOp):
+            left = self.bitCalcEvalNode(node.left)
+            right = self.bitCalcEvalNode(node.right)
+            if isinstance(node.op, ast.Add):
+                return left + right
+            if isinstance(node.op, ast.Sub):
+                return left - right
+            if isinstance(node.op, ast.Mult):
+                return left * right
+            if isinstance(node.op, ast.FloorDiv):
+                if right == 0:
+                    raise ValueError(_("Divide by zero"))
+                return left // right
+            if isinstance(node.op, ast.Mod):
+                if right == 0:
+                    raise ValueError(_("Divide by zero"))
+                return left % right
+            if isinstance(node.op, ast.LShift):
+                return left << right
+            if isinstance(node.op, ast.RShift):
+                return left >> right
+            if isinstance(node.op, ast.BitAnd):
+                return left & right
+            if isinstance(node.op, ast.BitOr):
+                return left | right
+            if isinstance(node.op, ast.BitXor):
+                return left ^ right
+        raise ValueError(_("Format error"))
+
+    def bitCalcStoreMemory(self, state):
+        state["memory"] = self.bitCalcCurrentValue(state)
+        self.showInfo(_("Value stored to memory"))
+
     def createBitwiseTool(self):
         card = ToolCard(
-            _("Bitwise operations"),
+            _("Multi-bit operations"),
             _("Run byte-level AND, OR, XNOR, XOR, and NOT operations on two text or HEX inputs.")
         )
         hexRadio, _textRadio = self.addInputModeRadios(card)
@@ -1016,6 +1486,84 @@ class Plugin(Plugin_Base):
             self.setOutput(resultFields["notB"], self.formatBytes(bytes((~x) & 0xFF for x in dataB)))
         except Exception as e:
             self.fillErrorResult(resultFields, e)
+
+    def createCaseConvertTool(self):
+        card = ToolCard(
+            _("English case convert"),
+            _("Convert English text between uppercase, lowercase, title case, and swapped case.")
+        )
+        inp, out, _buttons = card.addInputOutput(_("Input English text"), _("Converted text"))
+        card.addButton(_("Uppercase"), lambda: self.convertCaseText(inp, out, "upper"))
+        card.addButton(_("Lowercase"), lambda: self.convertCaseText(inp, out, "lower"))
+        card.addButton(_("Title case"), lambda: self.convertCaseText(inp, out, "title"))
+        card.addButton(_("Swap case"), lambda: self.convertCaseText(inp, out, "swap"))
+        card.addButton(_("Clear"), lambda: self.clearTextPair(inp, out), primary=False)
+        card.finishButtons()
+        return card
+
+    def convertCaseText(self, inp, out, mode):
+        text = inp.toPlainText()
+        if mode == "upper":
+            result = text.upper()
+        elif mode == "lower":
+            result = text.lower()
+        elif mode == "title":
+            result = text.title()
+        else:
+            result = text.swapcase()
+        self.setOutput(out, result)
+        self.showInfo(_("Conversion complete"))
+
+    def createStringReverseTool(self):
+        card = ToolCard(
+            _("String reverse"),
+            _("Reverse the input string by character order.")
+        )
+        inp, out, _buttons = card.addInputOutput(_("Input string"), _("Reversed string"))
+        card.addButton(_("Reverse"), lambda: self.reverseString(inp, out))
+        card.addButton(_("Clear"), lambda: self.clearTextPair(inp, out), primary=False)
+        card.finishButtons()
+        return card
+
+    def reverseString(self, inp, out):
+        self.setOutput(out, inp.toPlainText()[::-1])
+        self.showInfo(_("Conversion complete"))
+
+    def createCharCountTool(self):
+        card = ToolCard(
+            _("Character count"),
+            _("Count characters, non-space characters, words, lines, and UTF-8 bytes in the input string.")
+        )
+        inp = card.addTextArea(_("Input string") + ":", _("Input string"), False, 140)
+        resultFields = {
+            "chars": card.addResultLine(_("Characters") + ":"),
+            "noSpace": card.addResultLine(_("Characters without spaces") + ":"),
+            "words": card.addResultLine(_("Words") + ":"),
+            "lines": card.addResultLine(_("Lines") + ":"),
+            "bytes": card.addResultLine(_("UTF-8 bytes") + ":"),
+        }
+        card.addButton(_("Count"), lambda: self.countString(inp, resultFields))
+        card.addButton(_("Clear"), lambda: self.clearCharCount(inp, resultFields), primary=False)
+        card.finishButtons()
+        return card
+
+    def countString(self, inp, resultFields):
+        text = inp.toPlainText()
+        self.setOutput(resultFields["chars"], str(len(text)))
+        self.setOutput(resultFields["noSpace"], str(len(re.sub(r"\s+", "", text))))
+        self.setOutput(resultFields["words"], str(len(re.findall(r"\S+", text))))
+        self.setOutput(resultFields["lines"], str(0 if text == "" else text.count("\n") + 1))
+        self.setOutput(resultFields["bytes"], str(len(text.encode("utf-8"))))
+        self.showInfo(_("Count complete"))
+
+    def clearTextPair(self, inp, out):
+        inp.clear()
+        out.clear()
+
+    def clearCharCount(self, inp, resultFields):
+        inp.clear()
+        for field in resultFields.values():
+            field.clear()
 
     def createEccTool(self):
         card = ToolCard(
