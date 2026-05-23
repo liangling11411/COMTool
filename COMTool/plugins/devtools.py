@@ -1,4 +1,3 @@
-import binascii
 import base64
 import codecs
 from datetime import datetime
@@ -9,12 +8,13 @@ import re
 import time
 from urllib.parse import quote, unquote
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout,
     QTextEdit, QLabel, QLineEdit, QFileDialog, QStackedWidget, QScrollArea,
-    QGroupBox, QCheckBox, QRadioButton, QButtonGroup
+    QCheckBox, QRadioButton, QButtonGroup, QColorDialog
 )
+from PyQt5.QtGui import QColor, QCursor
 
 try:
     from Combobox import ComboBox
@@ -44,43 +44,16 @@ class ToolCard(QWidget):
         self.setLayout(self.layout)
         self.setObjectName("ip33ToolCard")
         self.setStyleSheet("""
-            QWidget#ip33ToolCard {
-                background: #ffffff;
-            }
             QLabel#ip33Title {
-                color: #333333;
                 font-size: 18px;
                 font-weight: 600;
                 padding: 0 0 8px 0;
             }
             QLabel[class="ip33Label"] {
-                color: #333333;
                 min-width: 96px;
             }
             QLabel#ip33Tip {
-                color: #777777;
                 padding: 2px 0 6px 0;
-            }
-            QTextEdit#ip33TextArea {
-                border: 1px solid #cfd8e3;
-                background: #ffffff;
-                color: #333333;
-                padding: 6px;
-                selection-background-color: #2d7dcc;
-            }
-            QTextEdit#ip33OutputArea {
-                border: 1px solid #cfd8e3;
-                background: #f9fafb;
-                color: #333333;
-                padding: 6px;
-                selection-background-color: #2d7dcc;
-            }
-            QLineEdit#ip33ResultLine {
-                border: 1px solid #cfd8e3;
-                background: #f9fafb;
-                color: #333333;
-                min-height: 26px;
-                padding: 2px 6px;
             }
             QPushButton#ip33Primary {
                 background: #2f75c1;
@@ -94,25 +67,8 @@ class ToolCard(QWidget):
                 background: #1f65af;
             }
             QPushButton#ip33Secondary {
-                background: #f3f6f9;
-                color: #333333;
-                border: 1px solid #cfd8e3;
-                border-radius: 2px;
                 min-height: 28px;
                 padding: 3px 14px;
-            }
-            QGroupBox#ip33Knowledge {
-                border: 1px solid #e1e5ea;
-                margin-top: 12px;
-                padding: 12px 10px 10px 10px;
-                color: #333333;
-                font-weight: 600;
-            }
-            QGroupBox#ip33Knowledge::title {
-                subcontrol-origin: margin;
-                left: 8px;
-                padding: 0 4px;
-                background: #ffffff;
             }
         """)
 
@@ -185,7 +141,6 @@ class ToolCard(QWidget):
     def finishButtons(self):
         self.ensureButtonLayout()
         self.buttonLayout.addStretch(1)
-        self.addKnowledge()
 
     def addResultLine(self, labelText):
         row = QHBoxLayout()
@@ -202,24 +157,6 @@ class ToolCard(QWidget):
         self.layout.addLayout(row)
         return line
 
-    def addKnowledge(self, title=None, text=None):
-        if self.knowledgeAdded:
-            return
-        self.knowledgeAdded = True
-        content = text if text is not None else self.description
-        if not content:
-            return
-        group = QGroupBox(title or _("Knowledge"))
-        group.setObjectName("ip33Knowledge")
-        groupLayout = QVBoxLayout()
-        groupLayout.setContentsMargins(8, 10, 8, 8)
-        groupLayout.setSpacing(4)
-        group.setLayout(groupLayout)
-        label = QLabel(content)
-        label.setWordWrap(True)
-        label.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        groupLayout.addWidget(label)
-        self.layout.addWidget(group)
 
 
 class Plugin(Plugin_Base):
@@ -268,6 +205,7 @@ class Plugin(Plugin_Base):
             ("bcc", _("BCC check")),
             ("crc", _("CRC check")),
             ("rgb", _("RGB color format convert")),
+            ("bitwise", _("Bitwise operations")),
             ("unicode", _("Unicode")),
             ("url", _("URLEncode")),
             ("base64", _("Base64")),
@@ -300,6 +238,7 @@ class Plugin(Plugin_Base):
             "bcc": self.createBccTool,
             "crc": self.createCrcTool,
             "rgb": self.createRgbTool,
+            "bitwise": self.createBitwiseTool,
             "unicode": self.createUnicodeTool,
             "url": self.createUrlTool,
             "base64": self.createBase64Tool,
@@ -347,6 +286,7 @@ class Plugin(Plugin_Base):
             "dec": card.addResultLine("Dec:"),
             "oct": card.addResultLine("Oct:"),
             "bin": card.addResultLine("Bin:"),
+            "appendHex": card.addResultLine(_("Input HEX + check") + ":"),
         }
         card.addButton(actionText, lambda: handler(inp, resultFields, hexRadio.isChecked()))
         card.addButton(_("Clear"), lambda: self.clearByteTool(inp, resultFields), primary=False)
@@ -373,6 +313,19 @@ class Plugin(Plugin_Base):
     def bytesInfo(self, data):
         return _("Input bytes") + ": " + data.hex(" ").upper()
 
+    def formatBytes(self, data):
+        return data.hex(" ").upper()
+
+    def intToBytes(self, value, byteWidth, lowFirst=False):
+        if byteWidth <= 0:
+            return b""
+        data = value.to_bytes(byteWidth, "big")
+        return data[::-1] if lowFirst else data
+
+    def appendCheckHex(self, data, value, byteWidth, lowFirst=False):
+        checkBytes = self.intToBytes(value, byteWidth, lowFirst=lowFirst)
+        return self.formatBytes(data + checkBytes)
+
     def createLrcTool(self):
         return self.createByteTool(
             _("LRC check"),
@@ -385,7 +338,7 @@ class Plugin(Plugin_Base):
         try:
             data = self.parseBytes(inp.toPlainText(), isHex)
             value = (-sum(data)) & 0xFF
-            self.fillByteResult(resultFields, value, 1)
+            self.fillByteResult(resultFields, value, 1, data if isHex else None)
         except Exception as e:
             self.fillErrorResult(resultFields, e)
 
@@ -403,17 +356,22 @@ class Plugin(Plugin_Base):
             value = 0
             for byte in data:
                 value ^= byte
-            self.fillByteResult(resultFields, value, 1)
+            self.fillByteResult(resultFields, value, 1, data if isHex else None)
         except Exception as e:
             self.fillErrorResult(resultFields, e)
 
-    def fillByteResult(self, resultFields, value, byteWidth):
-        hexWidth = byteWidth * 2
-        binWidth = byteWidth * 8
+    def fillByteResult(self, resultFields, value, byteWidth, inputData=None, bitWidth=None):
+        hexWidth = max(1, (bitWidth + 3) // 4) if bitWidth else byteWidth * 2
+        binWidth = bitWidth if bitWidth else byteWidth * 8
         self.setOutput(resultFields["hex"], "0x{:0{}X}".format(value, hexWidth))
         self.setOutput(resultFields["dec"], str(value))
         self.setOutput(resultFields["oct"], "0o{:o}".format(value))
         self.setOutput(resultFields["bin"], "0b{:0{}b}".format(value, binWidth))
+        if "appendHex" in resultFields:
+            self.setOutput(
+                resultFields["appendHex"],
+                self.appendCheckHex(inputData, value, byteWidth) if inputData is not None else ""
+            )
 
     def fillErrorResult(self, resultFields, err):
         self.setOutput(next(iter(resultFields.values())), _("Error") + ": " + str(err))
@@ -427,9 +385,37 @@ class Plugin(Plugin_Base):
         )
         hexRadio, _textRadio = self.addInputModeRadios(card)
         crcBox = ComboBox()
-        crcBox.addItems(["CRC-16/MODBUS", "CRC-16/IBM", "CRC-8", "CRC-32"])
+        crcModels = self.crcModels()
+        crcBox.addItems([model["name"] for model in crcModels])
         crcBox.setToolTip(_("Choose CRC algorithm"))
         card.addFormRow(_("Algorithm") + ":", crcBox)
+        widthInput = QLineEdit()
+        polyInput = QLineEdit()
+        initInput = QLineEdit()
+        xoroutInput = QLineEdit()
+        for edit in (widthInput, polyInput, initInput, xoroutInput):
+            edit.setObjectName("ip33ResultLine")
+            edit.setMaximumWidth(95)
+        refinCheck = QCheckBox("REFIN")
+        refoutCheck = QCheckBox("REFOUT")
+        paramRow1 = QHBoxLayout()
+        paramRow1.addWidget(card.addLabel("WIDTH:"))
+        paramRow1.addWidget(widthInput)
+        paramRow1.addWidget(card.addLabel("POLY:"))
+        paramRow1.addWidget(polyInput)
+        paramRow1.addWidget(card.addLabel("INIT:"))
+        paramRow1.addWidget(initInput)
+        paramRow1.addStretch(1)
+        paramRow2 = QHBoxLayout()
+        paramRow2.addWidget(card.addLabel("XOROUT:"))
+        paramRow2.addWidget(xoroutInput)
+        paramRow2.addWidget(refinCheck)
+        paramRow2.addWidget(refoutCheck)
+        paramRow2.addStretch(1)
+        card.layout.addLayout(paramRow1)
+        card.layout.addLayout(paramRow2)
+        crcBox.activated.connect(lambda _idx: self.applyCrcModel(crcBox, widthInput, polyInput, initInput, xoroutInput, refinCheck, refoutCheck))
+        self.applyCrcModel(crcBox, widthInput, polyInput, initInput, xoroutInput, refinCheck, refoutCheck)
         inp = card.addTextArea(_("Data to check") + ":", _("Input hex bytes or text"), False, 120)
         resultFields = {
             "hex": card.addResultLine("Hex:"),
@@ -438,72 +424,135 @@ class Plugin(Plugin_Base):
             "bin": card.addResultLine("Bin:"),
             "lowHigh": card.addResultLine(_("Low byte first") + ":"),
             "highLow": card.addResultLine(_("High byte first") + ":"),
+            "appendHex": card.addResultLine(_("Input HEX + check") + ":"),
+            "appendHexLow": card.addResultLine(_("Input HEX + low byte first") + ":"),
         }
-        card.addButton(_("Calculate CRC"), lambda: self.calcCrc(inp, resultFields, hexRadio.isChecked(), crcBox.currentText()))
+        card.addButton(
+            _("Calculate CRC"),
+            lambda: self.calcCrc(
+                inp, resultFields, hexRadio.isChecked(), widthInput.text(), polyInput.text(),
+                initInput.text(), xoroutInput.text(), refinCheck.isChecked(), refoutCheck.isChecked()
+            )
+        )
         card.addButton(_("Clear"), lambda: self.clearByteTool(inp, resultFields), primary=False)
         card.finishButtons()
         return card
 
-    def calcCrc(self, inp, resultFields, isHex, algorithm):
+    def crcModels(self):
+        return [
+            {"name": "CRC-4/ITU", "width": 4, "poly": 0x03, "init": 0x00, "xorout": 0x00, "refin": True, "refout": True},
+            {"name": "CRC-5/EPC", "width": 5, "poly": 0x09, "init": 0x09, "xorout": 0x00, "refin": False, "refout": False},
+            {"name": "CRC-5/ITU", "width": 5, "poly": 0x15, "init": 0x00, "xorout": 0x00, "refin": True, "refout": True},
+            {"name": "CRC-5/USB", "width": 5, "poly": 0x05, "init": 0x1F, "xorout": 0x1F, "refin": True, "refout": True},
+            {"name": "CRC-6/ITU", "width": 6, "poly": 0x03, "init": 0x00, "xorout": 0x00, "refin": True, "refout": True},
+            {"name": "CRC-7/MMC", "width": 7, "poly": 0x09, "init": 0x00, "xorout": 0x00, "refin": False, "refout": False},
+            {"name": "CRC-8", "width": 8, "poly": 0x07, "init": 0x00, "xorout": 0x00, "refin": False, "refout": False},
+            {"name": "CRC-8/ITU", "width": 8, "poly": 0x07, "init": 0x00, "xorout": 0x55, "refin": False, "refout": False},
+            {"name": "CRC-8/ROHC", "width": 8, "poly": 0x07, "init": 0xFF, "xorout": 0x00, "refin": True, "refout": True},
+            {"name": "CRC-8/MAXIM", "width": 8, "poly": 0x31, "init": 0x00, "xorout": 0x00, "refin": True, "refout": True},
+            {"name": "CRC-16/IBM", "width": 16, "poly": 0x8005, "init": 0x0000, "xorout": 0x0000, "refin": True, "refout": True},
+            {"name": "CRC-16/MAXIM", "width": 16, "poly": 0x8005, "init": 0x0000, "xorout": 0xFFFF, "refin": True, "refout": True},
+            {"name": "CRC-16/USB", "width": 16, "poly": 0x8005, "init": 0xFFFF, "xorout": 0xFFFF, "refin": True, "refout": True},
+            {"name": "CRC-16/MODBUS", "width": 16, "poly": 0x8005, "init": 0xFFFF, "xorout": 0x0000, "refin": True, "refout": True},
+            {"name": "CRC-16/CCITT", "width": 16, "poly": 0x1021, "init": 0x0000, "xorout": 0x0000, "refin": True, "refout": True},
+            {"name": "CRC-16/CCITT-FALSE", "width": 16, "poly": 0x1021, "init": 0xFFFF, "xorout": 0x0000, "refin": False, "refout": False},
+            {"name": "CRC-16/X25", "width": 16, "poly": 0x1021, "init": 0xFFFF, "xorout": 0xFFFF, "refin": True, "refout": True},
+            {"name": "CRC-16/XMODEM", "width": 16, "poly": 0x1021, "init": 0x0000, "xorout": 0x0000, "refin": False, "refout": False},
+            {"name": "CRC-16/DNP", "width": 16, "poly": 0x3D65, "init": 0x0000, "xorout": 0xFFFF, "refin": True, "refout": True},
+            {"name": "CRC-32", "width": 32, "poly": 0x04C11DB7, "init": 0xFFFFFFFF, "xorout": 0xFFFFFFFF, "refin": True, "refout": True},
+            {"name": "CRC-32/MPEG-2", "width": 32, "poly": 0x04C11DB7, "init": 0xFFFFFFFF, "xorout": 0x00000000, "refin": False, "refout": False},
+        ]
+
+    def applyCrcModel(self, crcBox, widthInput, polyInput, initInput, xoroutInput, refinCheck, refoutCheck):
+        model = self.crcModels()[crcBox.currentIndex()]
+        hexWidth = max(1, (model["width"] + 3) // 4)
+        widthInput.setText(str(model["width"]))
+        polyInput.setText("{:0{}X}".format(model["poly"], hexWidth))
+        initInput.setText("{:0{}X}".format(model["init"], hexWidth))
+        xoroutInput.setText("{:0{}X}".format(model["xorout"], hexWidth))
+        refinCheck.setChecked(model["refin"])
+        refoutCheck.setChecked(model["refout"])
+
+    def calcCrc(self, inp, resultFields, isHex, widthText, polyText, initText, xoroutText, refin, refout):
         try:
             data = self.parseBytes(inp.toPlainText(), isHex)
-            if algorithm == "CRC-16/MODBUS":
-                value = self.crc16(data, 0xFFFF)
-                self.fillCrcResult(resultFields, value, 2)
-            elif algorithm == "CRC-16/IBM":
-                value = self.crc16(data, 0x0000)
-                self.fillCrcResult(resultFields, value, 2)
-            elif algorithm == "CRC-8":
-                value = self.crc8(data)
-                self.fillCrcResult(resultFields, value, 1)
-            else:
-                value = binascii.crc32(data) & 0xFFFFFFFF
-                self.fillCrcResult(resultFields, value, 4)
+            width = int(widthText.strip())
+            poly = int(polyText.strip(), 16)
+            init = int(initText.strip(), 16)
+            xorout = int(xoroutText.strip(), 16)
+            value = self.crcGeneric(data, width, poly, init, xorout, refin, refout)
+            self.fillCrcResult(resultFields, value, max(1, (width + 7) // 8), data if isHex else None, width)
         except Exception as e:
             self.fillErrorResult(resultFields, e)
 
-    def fillCrcResult(self, resultFields, value, byteWidth):
-        self.fillByteResult(resultFields, value, byteWidth)
+    def fillCrcResult(self, resultFields, value, byteWidth, inputData=None, bitWidth=None):
+        self.fillByteResult(resultFields, value, byteWidth, inputData, bitWidth)
         if byteWidth == 1:
             self.setOutput(resultFields["lowHigh"], "")
             self.setOutput(resultFields["highLow"], "")
+            self.setOutput(resultFields["appendHexLow"], "")
             return
-        bytesHighLow = [(value >> shift) & 0xFF for shift in range((byteWidth - 1) * 8, -1, -8)]
-        bytesLowHigh = list(reversed(bytesHighLow))
-        self.setOutput(resultFields["lowHigh"], " ".join("{:02X}".format(byte) for byte in bytesLowHigh))
-        self.setOutput(resultFields["highLow"], " ".join("{:02X}".format(byte) for byte in bytesHighLow))
+        highLowBytes = self.intToBytes(value, byteWidth)
+        lowHighBytes = self.intToBytes(value, byteWidth, lowFirst=True)
+        self.setOutput(resultFields["lowHigh"], self.formatBytes(lowHighBytes))
+        self.setOutput(resultFields["highLow"], self.formatBytes(highLowBytes))
+        self.setOutput(resultFields["appendHexLow"], self.formatBytes(inputData + lowHighBytes) if inputData is not None else "")
 
-    def crc16(self, data, initValue):
-        crc = initValue
+    def reflectBits(self, value, width):
+        reflected = 0
+        for _idx in range(width):
+            reflected = (reflected << 1) | (value & 0x01)
+            value >>= 1
+        return reflected
+
+    def crcGeneric(self, data, width, poly, init, xorout, refin, refout):
+        if width < 1 or width > 32:
+            raise ValueError(_("CRC width must be 1-32"))
+        mask = (1 << width) - 1
+        crc = init & mask
+        if refin:
+            reflectedPoly = self.reflectBits(poly, width)
+            for byte in data:
+                for bitIdx in range(8):
+                    crc ^= (byte >> bitIdx) & 0x01
+                    if crc & 0x01:
+                        crc = (crc >> 1) ^ reflectedPoly
+                    else:
+                        crc >>= 1
+                    crc &= mask
+            if refout != refin:
+                crc = self.reflectBits(crc, width)
+            return (crc ^ xorout) & mask
+
+        if width < 8:
+            shift = 8 - width
+            regMask = 0xFF
+            regTopBit = 0x80
+            regPoly = (poly << shift) & regMask
+            crcReg = (init << shift) & regMask
+            for byte in data:
+                crcReg ^= byte
+                for _idx in range(8):
+                    if crcReg & regTopBit:
+                        crcReg = ((crcReg << 1) ^ regPoly) & regMask
+                    else:
+                        crcReg = (crcReg << 1) & regMask
+            crc = (crcReg >> shift) & mask
+            if refout:
+                crc = self.reflectBits(crc, width)
+            return (crc ^ xorout) & mask
+
+        topBit = 1 << (width - 1)
         for byte in data:
-            crc ^= byte
+            crc ^= (byte << (width - 8)) & mask
             for _idx in range(8):
-                if crc & 0x0001:
-                    crc = (crc >> 1) ^ 0xA001
+                if crc & topBit:
+                    crc = ((crc << 1) ^ poly) & mask
                 else:
-                    crc >>= 1
-        return crc & 0xFFFF
-
-    def crc8(self, data):
-        crc = 0
-        for byte in data:
-            crc ^= byte
-            for _idx in range(8):
-                if crc & 0x80:
-                    crc = ((crc << 1) ^ 0x07) & 0xFF
-                else:
-                    crc = (crc << 1) & 0xFF
-        return crc
-
-    def crc16Output(self, data, algorithm, value):
-        lowHigh = "{:02X} {:02X}".format(value & 0xFF, value >> 8)
-        highLow = "{:02X} {:02X}".format(value >> 8, value & 0xFF)
-        return [
-            self.bytesInfo(data),
-            "{}: 0x{:04X}".format(algorithm, value),
-            _("Low byte first") + ": " + lowHigh,
-            _("High byte first") + ": " + highLow,
-        ]
+                    crc = (crc << 1) & mask
+        if refout:
+            crc = self.reflectBits(crc, width)
+        return (crc ^ xorout) & mask
 
     def createRgbTool(self):
         card = ToolCard(
@@ -513,7 +562,14 @@ class Plugin(Plugin_Base):
         inp = QLineEdit()
         inp.setPlaceholderText("#336699 / rgb(51,102,153) / 51,102,153")
         inp.setObjectName("ip33ResultLine")
-        card.addFormRow(_("RGB color") + ":", inp)
+        paletteButton = QPushButton(_("Palette"))
+        paletteButton.setObjectName("ip33Secondary")
+        screenPickButton = QPushButton(_("Screen pick"))
+        screenPickButton.setObjectName("ip33Secondary")
+        previewButton = QPushButton("")
+        previewButton.setObjectName("ip33Secondary")
+        previewButton.setFixedWidth(54)
+        card.addFormRow(_("RGB color") + ":", [inp, paletteButton, screenPickButton, previewButton])
         resultFields = {
             "hex": card.addResultLine("HEX:"),
             "rgb": card.addResultLine("RGB:"),
@@ -521,25 +577,80 @@ class Plugin(Plugin_Base):
             "dec": card.addResultLine(_("Decimal") + ":"),
             "bgr": card.addResultLine("BGR HEX:"),
         }
-        card.addButton(_("Convert"), lambda: self.convertRgb(inp, resultFields))
-        card.addButton(_("Clear"), lambda: self.clearRgbTool(inp, resultFields), primary=False)
+        paletteButton.clicked.connect(lambda: self.selectRgbColor(card, inp, previewButton, resultFields))
+        screenPickButton.clicked.connect(lambda: self.pickScreenRgbColorDelayed(inp, previewButton, resultFields, screenPickButton))
+        card.addButton(_("Convert"), lambda: self.convertRgb(inp, resultFields, previewButton))
+        card.addButton(_("Clear"), lambda: self.clearRgbTool(inp, resultFields, previewButton), primary=False)
         card.finishButtons()
         return card
 
-    def clearRgbTool(self, inp, resultFields):
+    def clearRgbTool(self, inp, resultFields, previewButton=None):
         inp.clear()
         for field in resultFields.values():
             field.clear()
+        if previewButton is not None:
+            previewButton.setStyleSheet("")
 
-    def convertRgb(self, inp, resultFields):
+    def selectRgbColor(self, parent, inp, previewButton, resultFields):
+        current = QColor("#336699")
+        try:
+            current = QColor(*self.parseRgb(inp.text()))
+        except Exception:
+            pass
+        color = QColorDialog.getColor(current, parent, _("Select color"))
+        if color.isValid():
+            inp.setText(color.name().upper())
+            self.convertRgb(inp, resultFields, previewButton)
+
+    def pickScreenRgbColorDelayed(self, inp, previewButton, resultFields, button):
+        oldText = button.text()
+        button.setText(_("Move cursor to color"))
+        button.setEnabled(False)
+        QTimer.singleShot(1000, lambda: self.pickScreenRgbColor(inp, previewButton, resultFields, button, oldText))
+
+    def pickScreenRgbColor(self, inp, previewButton, resultFields, button, oldText):
+        try:
+            pos = QCursor.pos()
+            screen = QApplication.screenAt(pos) if hasattr(QApplication, "screenAt") else QApplication.primaryScreen()
+            if screen is None:
+                screen = QApplication.primaryScreen()
+            pixmap = screen.grabWindow(0, pos.x(), pos.y(), 1, 1)
+            color = pixmap.toImage().pixelColor(0, 0)
+            if color.isValid():
+                inp.setText(color.name().upper())
+                self.convertRgb(inp, resultFields, previewButton)
+        finally:
+            button.setText(oldText)
+            button.setEnabled(True)
+
+    def updateRgbPreview(self, previewButton, color):
+        if previewButton is None:
+            return
+        qcolor = QColor(color)
+        if not qcolor.isValid():
+            previewButton.setStyleSheet("")
+            return
+        textColor = "black" if (0.299 * qcolor.red() + 0.587 * qcolor.green() + 0.114 * qcolor.blue()) > 160 else "white"
+        hoverColor = qcolor.darker(110).name()
+        pressedColor = qcolor.darker(135).name()
+        previewButton.setStyleSheet(
+            "QPushButton { background-color: %s; border-color: %s; color: %s; }"
+            "QPushButton:hover { background-color: %s; border-color: %s; }"
+            "QPushButton:pressed { background-color: %s; border-color: %s; }"
+            % (color, color, textColor, hoverColor, hoverColor, pressedColor, pressedColor)
+        )
+
+    def convertRgb(self, inp, resultFields, previewButton=None):
         try:
             r, g, b = self.parseRgb(inp.text())
             decimal = (r << 16) + (g << 8) + b
-            self.setOutput(resultFields["hex"], "#{:02X}{:02X}{:02X}".format(r, g, b))
+            hexColor = "#{:02X}{:02X}{:02X}".format(r, g, b)
+            self.setOutput(resultFields["hex"], hexColor)
             self.setOutput(resultFields["rgb"], "rgb({}, {}, {})".format(r, g, b))
             self.setOutput(resultFields["tuple"], "{}, {}, {}".format(r, g, b))
             self.setOutput(resultFields["dec"], str(decimal))
             self.setOutput(resultFields["bgr"], "#{:02X}{:02X}{:02X}".format(b, g, r))
+            self.updateRgbPreview(previewButton, hexColor)
         except Exception as e:
             self.setOutput(resultFields["hex"], _("Error") + ": " + str(e))
 
@@ -574,6 +685,51 @@ class Plugin(Plugin_Base):
                 raise ValueError(_("RGB value must be 0-255"))
             values.append(number)
         return tuple(values)
+
+    def createBitwiseTool(self):
+        card = ToolCard(
+            _("Bitwise operations"),
+            _("Run byte-level AND, OR, XNOR, XOR, and NOT operations on two text or HEX inputs.")
+        )
+        hexRadio, _textRadio = self.addInputModeRadios(card)
+        inputA = card.addTextArea(_("Input A") + ":", _("Input string or HEX"), False, 90)
+        inputB = card.addTextArea(_("Input B") + ":", _("Input string or HEX"), False, 90)
+        output = card.addTextArea(_("Conversion result") + ":", _("Result"), True, 180)
+        card.addButton(_("Calculate"), lambda: self.calcBitwise(inputA, inputB, output, hexRadio.isChecked()))
+        card.addButton(_("Clear"), lambda: self.clearBitwise(inputA, inputB, output), primary=False)
+        card.finishButtons()
+        return card
+
+    def clearBitwise(self, inputA, inputB, output):
+        inputA.clear()
+        inputB.clear()
+        output.clear()
+
+    def calcBitwise(self, inputA, inputB, output, isHex):
+        try:
+            dataA = self.parseBytes(inputA.toPlainText(), isHex)
+            dataB = self.parseBytes(inputB.toPlainText(), isHex)
+            maxLen = max(len(dataA), len(dataB))
+            a = dataA.ljust(maxLen, b"\x00")
+            b = dataB.ljust(maxLen, b"\x00")
+            results = [
+                ("AND", bytes(x & y for x, y in zip(a, b))),
+                ("OR", bytes(x | y for x, y in zip(a, b))),
+                ("XNOR", bytes((~(x ^ y)) & 0xFF for x, y in zip(a, b))),
+                ("XOR", bytes(x ^ y for x, y in zip(a, b))),
+                ("NOT A", bytes((~x) & 0xFF for x in dataA)),
+                ("NOT B", bytes((~x) & 0xFF for x in dataB)),
+            ]
+            lines = []
+            if len(dataA) != len(dataB):
+                lines.append(_("Inputs have different lengths; shorter input is padded with 00 for two-input operations."))
+            for name, data in results:
+                preview = data.decode("utf-8", errors="replace")
+                lines.append("{} HEX: {}".format(name, self.formatBytes(data)))
+                lines.append("{} TEXT: {}".format(name, preview))
+            self.setOutput(output, "\n".join(lines))
+        except Exception as e:
+            self.fail(output, e)
 
     def createUnicodeTool(self):
         card = ToolCard(_("Unicode"), _("Convert text to Unicode escape sequences, or restore Unicode escapes to readable text."))
@@ -690,7 +846,6 @@ class Plugin(Plugin_Base):
         card.layout.addWidget(self.imageBase64Output, 1)
         chooseButton.clicked.connect(self.chooseImageFile)
         encodeButton.clicked.connect(lambda: self.imageToBase64(dataUrlCheck.isChecked()))
-        card.addKnowledge()
         return card
 
     def chooseImageFile(self):
