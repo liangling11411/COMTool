@@ -187,7 +187,8 @@ class HsvColorPlane(QWidget):
         self._image = None
         self._imageHue = None
         self._imageSize = None
-        self.setFixedSize(220, 200)
+        self.setMinimumSize(320, 240)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.setToolTip(_("Drag to choose saturation and value"))
 
     def setHsv(self, hue, saturation, value):
@@ -261,7 +262,9 @@ class HueBar(QWidget):
         self.changedCallback = changedCallback
         self._image = None
         self._imageHeight = None
-        self.setFixedSize(18, 200)
+        self.setFixedWidth(24)
+        self.setMinimumHeight(240)
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
         self.setToolTip(_("Drag to choose hue"))
 
     def setHue(self, hue):
@@ -785,10 +788,13 @@ class Plugin(Plugin_Base):
             _("Color format convert"),
             _("Convert between RGB, HSV, and HTML HEX colors.")
         )
+        titleLabel = card.findChild(QLabel, "ip33Title")
+        if titleLabel is not None:
+            titleLabel.setAlignment(Qt.AlignCenter)
 
         panel = QFrame()
         panel.setObjectName("colorConvertPanel")
-        panel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        panel.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         panel.setStyleSheet("""
             QFrame#colorConvertPanel {
                 border: 1px solid #858585;
@@ -811,13 +817,10 @@ class Plugin(Plugin_Base):
         pickerRow = QHBoxLayout()
         pickerRow.setSpacing(14)
         plane = HsvColorPlane()
-        plane.setFixedSize(238, 190)
         hueBar = HueBar()
-        hueBar.setFixedSize(20, 190)
-        pickerRow.addWidget(plane)
+        pickerRow.addWidget(plane, 1)
         pickerRow.addWidget(hueBar)
-        pickerRow.addStretch(1)
-        panelLayout.addLayout(pickerRow)
+        panelLayout.addLayout(pickerRow, 1)
 
         controlRow = QHBoxLayout()
         controlRow.setSpacing(18)
@@ -860,10 +863,7 @@ class Plugin(Plugin_Base):
         controlRow.addStretch(1)
         panelLayout.addLayout(controlRow)
 
-        panelRow = QHBoxLayout()
-        panelRow.addWidget(panel)
-        panelRow.addStretch(1)
-        card.layout.addLayout(panelRow)
+        card.layout.addWidget(panel, 1)
 
         state = {
             "updating": False,
@@ -1045,19 +1045,64 @@ class Plugin(Plugin_Base):
                 min-height: 20px;
             }
             QPushButton#bitCalcKey {
+                background: palette(button);
+                color: palette(button-text);
+                border: 1px solid palette(mid);
+                border-radius: 4px;
                 min-width: 58px;
                 min-height: 34px;
                 font-size: 16px;
             }
+            QPushButton#bitCalcKey:hover {
+                background: palette(light);
+            }
+            QPushButton#bitCalcKey:pressed {
+                background: #2f75c1;
+                color: #ffffff;
+            }
+            QPushButton#bitCalcKey:disabled {
+                color: palette(mid);
+                background: palette(window);
+            }
             QPushButton#bitCalcBase {
-                min-width: 52px;
-                text-align: left;
+                background: palette(button);
+                color: palette(button-text);
+                border: 1px solid palette(mid);
+                border-radius: 3px;
+                min-width: 42px;
+                max-width: 42px;
+                min-height: 24px;
+                padding: 1px 2px;
             }
             QPushButton#bitCalcBase:checked {
-                border-left: 3px solid #2f75c1;
+                background: #2f75c1;
+                color: #ffffff;
+                border-color: #2f75c1;
                 font-weight: 600;
             }
+            QPushButton#bitCalcToggle, QPushButton#bitCalcAction {
+                background: palette(button);
+                color: palette(button-text);
+                border: 1px solid palette(mid);
+                border-radius: 4px;
+                min-height: 26px;
+                padding: 2px 10px;
+            }
+            QPushButton#bitCalcToggle:checked {
+                background: #2f75c1;
+                color: #ffffff;
+                border-color: #2f75c1;
+            }
+            QPushButton#bitCalcAction:pressed {
+                background: #2f75c1;
+                color: #ffffff;
+                border-color: #2f75c1;
+            }
             QPushButton#bitCell {
+                background: palette(button);
+                color: palette(button-text);
+                border: 1px solid palette(mid);
+                border-radius: 3px;
                 min-width: 22px;
                 max-width: 22px;
                 min-height: 24px;
@@ -1091,7 +1136,6 @@ class Plugin(Plugin_Base):
             "entry": "0",
             "expr": "",
             "newEntry": False,
-            "memory": 0,
             "value": 0,
             "display": display,
             "exprLabel": exprLabel,
@@ -1109,17 +1153,21 @@ class Plugin(Plugin_Base):
         for row, baseName in enumerate(["HEX", "DEC", "OCT", "BIN"]):
             button = QPushButton(baseName)
             button.setObjectName("bitCalcBase")
+            button.setFixedWidth(42)
             button.setCheckable(True)
             button.setToolTip(_("Switch input base") + ": " + baseName)
             button.clicked.connect(lambda _checked=False, base=baseName: self.bitCalcSetBase(state, base))
             baseGroup.addButton(button)
             valueLabel = QLabel("0")
+            valueLabel.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
             valueLabel.setTextInteractionFlags(Qt.TextSelectableByMouse)
             valueLabel.setWordWrap(True)
             baseGrid.addWidget(button, row, 0)
             baseGrid.addWidget(valueLabel, row, 1)
             state["baseButtons"][baseName] = button
             state["baseValues"][baseName] = valueLabel
+        baseGrid.setColumnStretch(0, 0)
+        baseGrid.setColumnStretch(1, 1)
         layout.addLayout(baseGrid)
 
         toolbar = QHBoxLayout()
@@ -1127,7 +1175,7 @@ class Plugin(Plugin_Base):
         bitsButton = QPushButton(_("Bit grid"))
         for button in (keypadButton, bitsButton):
             button.setCheckable(True)
-            button.setObjectName("ip33Secondary")
+            button.setObjectName("bitCalcToggle")
         viewGroup = QButtonGroup(frame)
         viewGroup.setExclusive(True)
         viewGroup.addButton(keypadButton)
@@ -1136,14 +1184,10 @@ class Plugin(Plugin_Base):
         wordBox = ComboBox()
         wordBox.addItems(["QWORD", "DWORD", "WORD", "BYTE"])
         wordBox.setToolTip(_("Word size"))
-        memoryButton = QPushButton("MS")
-        memoryButton.setObjectName("ip33Secondary")
-        memoryButton.setToolTip(_("Store current value to memory"))
         toolbar.addWidget(keypadButton)
         toolbar.addWidget(bitsButton)
         toolbar.addStretch(1)
         toolbar.addWidget(wordBox)
-        toolbar.addWidget(memoryButton)
         layout.addLayout(toolbar)
 
         opRow = QHBoxLayout()
@@ -1154,7 +1198,7 @@ class Plugin(Plugin_Base):
         bitApply = QPushButton(_("Apply"))
         shiftApply = QPushButton(_("Apply"))
         for button in (bitApply, shiftApply):
-            button.setObjectName("ip33Secondary")
+            button.setObjectName("bitCalcAction")
         opRow.addWidget(QLabel(_("Bitwise") + ":"))
         opRow.addWidget(bitOpBox)
         opRow.addWidget(bitApply)
@@ -1175,7 +1219,6 @@ class Plugin(Plugin_Base):
         layout.addWidget(viewStack)
 
         wordBox.activated.connect(lambda _idx: self.bitCalcSetWordBits(state, wordBox.currentText()))
-        memoryButton.clicked.connect(lambda: self.bitCalcStoreMemory(state))
         bitApply.clicked.connect(lambda: self.bitCalcApplyNamedOp(state, bitOpBox.currentText()))
         shiftApply.clicked.connect(lambda: self.bitCalcPressOperator(state, shiftBox.currentText()))
 
@@ -1438,10 +1481,6 @@ class Plugin(Plugin_Base):
                 return left ^ right
         raise ValueError(_("Format error"))
 
-    def bitCalcStoreMemory(self, state):
-        state["memory"] = self.bitCalcCurrentValue(state)
-        self.showInfo(_("Value stored to memory"))
-
     def createBitwiseTool(self):
         card = ToolCard(
             _("Multi-bit operations"),
@@ -1542,6 +1581,8 @@ class Plugin(Plugin_Base):
             "lines": card.addResultLine(_("Lines") + ":"),
             "bytes": card.addResultLine(_("UTF-8 bytes") + ":"),
         }
+        frequencyOutput = card.addTextArea(_("Character frequency") + ":", _("Character frequency"), True, 120)
+        resultFields["frequency"] = frequencyOutput
         card.addButton(_("Count"), lambda: self.countString(inp, resultFields))
         card.addButton(_("Clear"), lambda: self.clearCharCount(inp, resultFields), primary=False)
         card.finishButtons()
@@ -1554,7 +1595,24 @@ class Plugin(Plugin_Base):
         self.setOutput(resultFields["words"], str(len(re.findall(r"\S+", text))))
         self.setOutput(resultFields["lines"], str(0 if text == "" else text.count("\n") + 1))
         self.setOutput(resultFields["bytes"], str(len(text.encode("utf-8"))))
+        counts = {}
+        for char in text:
+            counts[char] = counts.get(char, 0) + 1
+        frequencyLines = [
+            "{}：{}".format(self.formatCountChar(char), count)
+            for char, count in counts.items()
+        ]
+        self.setOutput(resultFields["frequency"], "\n".join(frequencyLines))
         self.showInfo(_("Count complete"))
+
+    def formatCountChar(self, char):
+        if char == "\n":
+            return "\\n"
+        if char == "\t":
+            return "\\t"
+        if char == " ":
+            return _("Space")
+        return char
 
     def clearTextPair(self, inp, out):
         inp.clear()

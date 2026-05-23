@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-05-23 18:50+0800\n"
+"POT-Creation-Date: 2026-05-23 19:12+0800\n"
 "PO-Revision-Date: 2021-12-04 15:20+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant_TW\n"
@@ -451,7 +451,7 @@ msgstr "連接已關閉！"
 msgid "Protocol"
 msgstr "協議"
 
-#: conn/conn_tcp_udp.py:109 plugins/devtools.py:1883
+#: conn/conn_tcp_udp.py:109 plugins/devtools.py:1941
 msgid "Mode"
 msgstr "模式"
 
@@ -495,7 +495,7 @@ msgstr "已關閉"
 msgid "Connecting"
 msgstr "正在連接"
 
-#: plugins/base.py:215 plugins/devtools.py:536
+#: plugins/base.py:215 plugins/devtools.py:539
 msgid "Format error, should be like 00 01 02 03"
 msgstr "格式錯誤，應該如：00 01 02 03"
 
@@ -515,7 +515,7 @@ msgstr "查找下一個"
 msgid "Jump to the next match for this rule"
 msgstr "跳轉到此規則的下一個符合項"
 
-#: plugins/dbg.py:323 plugins/devtools.py:1545
+#: plugins/dbg.py:323 plugins/devtools.py:1586
 msgid "Count"
 msgstr "計數"
 
@@ -812,7 +812,7 @@ msgid ""
 msgstr "当单行内容过长时自动换行显示，不显示横向滚动条"
 
 #: plugins/dbg.py:1058 plugins/dbg.py:1171 plugins/dbg.py:1178
-#: plugins/dbg.py:1288 plugins/devtools.py:382
+#: plugins/dbg.py:1288 plugins/devtools.py:385
 msgid "Color"
 msgstr "顏色"
 
@@ -1233,21 +1233,21 @@ msgstr "發送出錯"
 msgid "get data error"
 msgstr "獲取數據出錯"
 
-#: plugins/devtools.py:123 plugins/devtools.py:1838
+#: plugins/devtools.py:123 plugins/devtools.py:1896
 msgid "Original text"
 msgstr "原始字串"
 
-#: plugins/devtools.py:123 plugins/devtools.py:1838
+#: plugins/devtools.py:123 plugins/devtools.py:1896
 msgid "Input text"
 msgstr "輸入文字"
 
-#: plugins/devtools.py:126 plugins/devtools.py:1579 plugins/devtools.py:1755
-#: plugins/devtools.py:1803
+#: plugins/devtools.py:126 plugins/devtools.py:1637 plugins/devtools.py:1813
+#: plugins/devtools.py:1861
 msgid "Conversion result"
 msgstr "轉換結果"
 
-#: plugins/devtools.py:126 plugins/devtools.py:1579 plugins/devtools.py:1755
-#: plugins/devtools.py:1795
+#: plugins/devtools.py:126 plugins/devtools.py:1637 plugins/devtools.py:1813
+#: plugins/devtools.py:1853
 msgid "Result"
 msgstr "結果"
 
@@ -1259,292 +1259,292 @@ msgstr "複製"
 msgid "Copy result"
 msgstr "複製結果"
 
-#: plugins/devtools.py:191
+#: plugins/devtools.py:192
 msgid "Drag to choose saturation and value"
 msgstr "拖曳選擇飽和度和明度"
 
-#: plugins/devtools.py:265
+#: plugins/devtools.py:268
 msgid "Drag to choose hue"
 msgstr "拖曳選擇色相"
 
-#: plugins/devtools.py:313
+#: plugins/devtools.py:316
 msgid "Programming Tools"
 msgstr "程式小工具"
 
-#: plugins/devtools.py:344
+#: plugins/devtools.py:347
 msgid "Select a programming tool"
 msgstr "選擇程式小工具"
 
-#: plugins/devtools.py:359
+#: plugins/devtools.py:362
 msgid "Open tool"
 msgstr "開啟工具"
 
-#: plugins/devtools.py:377
+#: plugins/devtools.py:380
 msgid "Check"
 msgstr "校驗"
 
-#: plugins/devtools.py:378 plugins/devtools.py:557
+#: plugins/devtools.py:381 plugins/devtools.py:560
 msgid "LRC check"
 msgstr "LRC校驗"
 
-#: plugins/devtools.py:379 plugins/devtools.py:573
+#: plugins/devtools.py:382 plugins/devtools.py:576
 msgid "BCC check"
 msgstr "BCC校驗"
 
-#: plugins/devtools.py:380 plugins/devtools.py:609
+#: plugins/devtools.py:383 plugins/devtools.py:612
 msgid "CRC check"
 msgstr "CRC校驗"
 
-#: plugins/devtools.py:383 plugins/devtools.py:785
+#: plugins/devtools.py:386 plugins/devtools.py:788
 msgid "Color format convert"
 msgstr "顏色格式轉換"
 
-#: plugins/devtools.py:385
+#: plugins/devtools.py:388
 msgid "Bit operations"
 msgstr "位元操作"
 
-#: plugins/devtools.py:386 plugins/devtools.py:1028
+#: plugins/devtools.py:389 plugins/devtools.py:1028
 msgid "Bit calculator"
 msgstr "位元計算器"
 
-#: plugins/devtools.py:387 plugins/devtools.py:1447
+#: plugins/devtools.py:390 plugins/devtools.py:1486
 msgid "Multi-bit operations"
 msgstr "多位元操作"
 
-#: plugins/devtools.py:389
+#: plugins/devtools.py:392
 msgid "String processing"
 msgstr "字串處理"
 
-#: plugins/devtools.py:390 plugins/devtools.py:1492
+#: plugins/devtools.py:393 plugins/devtools.py:1531
 msgid "English case convert"
 msgstr "英文大小寫轉換"
 
-#: plugins/devtools.py:391 plugins/devtools.py:1519
+#: plugins/devtools.py:394 plugins/devtools.py:1558
 msgid "String reverse"
 msgstr "字串反轉"
 
-#: plugins/devtools.py:392 plugins/devtools.py:1534
+#: plugins/devtools.py:395 plugins/devtools.py:1573
 msgid "Character count"
 msgstr "字元計數"
 
-#: plugins/devtools.py:394
+#: plugins/devtools.py:397
 msgid "Encoding"
 msgstr "編碼"
 
-#: plugins/devtools.py:395 plugins/devtools.py:1693
+#: plugins/devtools.py:398 plugins/devtools.py:1751
 msgid "Unicode"
 msgstr "Unicode"
 
-#: plugins/devtools.py:396 plugins/devtools.py:1707
+#: plugins/devtools.py:399 plugins/devtools.py:1765
 msgid "URLEncode"
 msgstr "URL編碼"
 
-#: plugins/devtools.py:397 plugins/devtools.py:1715
+#: plugins/devtools.py:400 plugins/devtools.py:1773
 msgid "Base64"
 msgstr "Base64"
 
-#: plugins/devtools.py:398 plugins/devtools.py:1729
+#: plugins/devtools.py:401 plugins/devtools.py:1787
 msgid "Punycode"
 msgstr "Punycode"
 
-#: plugins/devtools.py:399 plugins/devtools.py:1829
+#: plugins/devtools.py:402 plugins/devtools.py:1887
 msgid "Chinese domain encoding"
 msgstr "中文網域編碼"
 
-#: plugins/devtools.py:400 plugins/devtools.py:1785
+#: plugins/devtools.py:403 plugins/devtools.py:1843
 msgid "Image to Base64"
 msgstr "圖片轉Base64"
 
-#: plugins/devtools.py:402
+#: plugins/devtools.py:405
 msgid "Time"
 msgstr "時間"
 
-#: plugins/devtools.py:403 plugins/devtools.py:1749
+#: plugins/devtools.py:406 plugins/devtools.py:1807
 msgid "Unix timestamp"
 msgstr "Unix時間戳轉換"
 
-#: plugins/devtools.py:405
+#: plugins/devtools.py:408
 msgid "Crypto"
 msgstr "加密"
 
-#: plugins/devtools.py:406 plugins/devtools.py:1837
+#: plugins/devtools.py:409 plugins/devtools.py:1895
 msgid "MD5 encrypt/decrypt"
 msgstr "MD5加密解密"
 
-#: plugins/devtools.py:407 plugins/devtools.py:1870
+#: plugins/devtools.py:410 plugins/devtools.py:1928
 msgid "AES encrypt/decrypt"
 msgstr "AES加密解密"
 
-#: plugins/devtools.py:408 plugins/devtools.py:1570
+#: plugins/devtools.py:411 plugins/devtools.py:1628
 msgid "ECC encrypt/decrypt"
 msgstr "ECC加密解密"
 
-#: plugins/devtools.py:409 plugins/devtools.py:1918
+#: plugins/devtools.py:412 plugins/devtools.py:1976
 msgid "Encode/decode collection"
 msgstr "加密解密合集"
 
-#: plugins/devtools.py:410 plugins/devtools.py:1942
+#: plugins/devtools.py:413 plugins/devtools.py:2000
 msgid "Hash collection"
 msgstr "雜湊合集"
 
-#: plugins/devtools.py:474
+#: plugins/devtools.py:477
 msgid "Info"
 msgstr "資訊"
 
-#: plugins/devtools.py:487
+#: plugins/devtools.py:490
 msgid "Copied"
 msgstr "已複製"
 
-#: plugins/devtools.py:493
+#: plugins/devtools.py:496
 msgid "Hex"
 msgstr "Hex"
 
-#: plugins/devtools.py:494
+#: plugins/devtools.py:497
 msgid "Text"
 msgstr "文字"
 
-#: plugins/devtools.py:500
+#: plugins/devtools.py:503
 msgid "Data format"
 msgstr "資料格式"
 
-#: plugins/devtools.py:502
+#: plugins/devtools.py:505
 msgid "Hex mode accepts values like 01 02 AF; text mode uses UTF-8 bytes."
 msgstr "Hex模式支援 01 02 AF 這樣的輸入；文字模式依UTF-8位元組處理。"
 
-#: plugins/devtools.py:509 plugins/devtools.py:645
+#: plugins/devtools.py:512 plugins/devtools.py:648
 msgid "Data to check"
 msgstr "需要校驗的資料"
 
-#: plugins/devtools.py:509 plugins/devtools.py:645
+#: plugins/devtools.py:512 plugins/devtools.py:648
 msgid "Input hex bytes or text"
 msgstr "輸入十六進位位元組或文字"
 
-#: plugins/devtools.py:515 plugins/devtools.py:653
+#: plugins/devtools.py:518 plugins/devtools.py:656
 msgid "Input HEX + check"
 msgstr "輸入HEX+校驗值"
 
-#: plugins/devtools.py:518 plugins/devtools.py:663 plugins/devtools.py:1462
-#: plugins/devtools.py:1500 plugins/devtools.py:1524 plugins/devtools.py:1546
-#: plugins/devtools.py:1583 plugins/devtools.py:1859
+#: plugins/devtools.py:521 plugins/devtools.py:666 plugins/devtools.py:1501
+#: plugins/devtools.py:1539 plugins/devtools.py:1563 plugins/devtools.py:1587
+#: plugins/devtools.py:1641 plugins/devtools.py:1917
 #: plugins/graph_widgets.py:52
 msgid "Clear"
 msgstr "Clear"
 
-#: plugins/devtools.py:540
+#: plugins/devtools.py:543
 msgid "Input bytes"
 msgstr "輸入位元組"
 
-#: plugins/devtools.py:558
+#: plugins/devtools.py:561
 msgid ""
 "Calculate the longitudinal redundancy check byte. The result is the two's"
 " complement of the byte sum, often used by serial text protocols."
 msgstr "計算縱向冗餘校驗位元組。結果為位元組加總的二補數，常用於串列文字協議。"
 
-#: plugins/devtools.py:559
+#: plugins/devtools.py:562
 msgid "Calculate LRC"
 msgstr "計算LRC"
 
-#: plugins/devtools.py:574
+#: plugins/devtools.py:577
 msgid ""
 "Calculate the block check character by XORing every input byte. It is "
 "useful for simple serial protocol frame checks."
 msgstr "透過對所有輸入位元組進行 XOR 計算區塊校驗字元，適合簡單串列協議幀校驗。"
 
-#: plugins/devtools.py:575
+#: plugins/devtools.py:578
 msgid "Calculate BCC"
 msgstr "計算BCC"
 
-#: plugins/devtools.py:610
+#: plugins/devtools.py:613
 msgid ""
 "Calculate common cyclic redundancy checks for byte data. Hex input "
 "accepts spaces, commas, 0x prefixes, and line breaks."
 msgstr "計算常用循環冗餘校驗。十六進位輸入支援空格、逗號、0x前綴和換行。"
 
-#: plugins/devtools.py:616
+#: plugins/devtools.py:619
 msgid "Choose CRC algorithm"
 msgstr "選擇CRC演算法"
 
-#: plugins/devtools.py:617 plugins/devtools.py:1921
+#: plugins/devtools.py:620 plugins/devtools.py:1979
 msgid "Algorithm"
 msgstr "演算法"
 
-#: plugins/devtools.py:651
+#: plugins/devtools.py:654
 msgid "Low byte first"
 msgstr "低位元組在前"
 
-#: plugins/devtools.py:652
+#: plugins/devtools.py:655
 msgid "High byte first"
 msgstr "高位元組在前"
 
-#: plugins/devtools.py:654
+#: plugins/devtools.py:657
 msgid "Input HEX + low byte first"
 msgstr "輸入HEX+低位元組在前"
 
-#: plugins/devtools.py:657
+#: plugins/devtools.py:660
 msgid "Calculate CRC"
 msgstr "計算CRC"
 
-#: plugins/devtools.py:736
+#: plugins/devtools.py:739
 msgid "CRC width must be 1-32"
 msgstr "CRC寬度必須為1-32"
 
-#: plugins/devtools.py:786
+#: plugins/devtools.py:789
 msgid "Convert between RGB, HSV, and HTML HEX colors."
 msgstr "在RGB、HSV和HTML十六進位顏色之間轉換。"
 
-#: plugins/devtools.py:828
+#: plugins/devtools.py:831
 msgid "Selected color preview"
 msgstr "目前顏色預覽"
 
-#: plugins/devtools.py:834
+#: plugins/devtools.py:837
 msgid "Hue value"
 msgstr "色相值"
 
-#: plugins/devtools.py:835
+#: plugins/devtools.py:838
 msgid "Saturation value"
 msgstr "飽和度值"
 
-#: plugins/devtools.py:836
+#: plugins/devtools.py:839
 msgid "Brightness value"
 msgstr "明度值"
 
-#: plugins/devtools.py:837
+#: plugins/devtools.py:840
 msgid "Red value"
 msgstr "紅色值"
 
-#: plugins/devtools.py:838
+#: plugins/devtools.py:841
 msgid "Green value"
 msgstr "綠色值"
 
-#: plugins/devtools.py:839
+#: plugins/devtools.py:842
 msgid "Blue value"
 msgstr "藍色值"
 
-#: plugins/devtools.py:842
+#: plugins/devtools.py:845
 msgid "HTML HEX color, for example #FFBB00"
 msgstr "HTML十六進位顏色，例如 #FFBB00"
 
-#: plugins/devtools.py:845
+#: plugins/devtools.py:848
 msgid "Hue"
 msgstr "色相"
 
-#: plugins/devtools.py:847
+#: plugins/devtools.py:850
 msgid "Red"
 msgstr "紅色"
 
-#: plugins/devtools.py:849
+#: plugins/devtools.py:852
 msgid "Sat"
 msgstr "飽和"
 
-#: plugins/devtools.py:851
+#: plugins/devtools.py:854
 msgid "Green"
 msgstr "綠色"
 
-#: plugins/devtools.py:853
+#: plugins/devtools.py:856
 msgid "Val"
 msgstr "明度"
 
-#: plugins/devtools.py:855
+#: plugins/devtools.py:858
 msgid "Blue"
 msgstr "藍色"
 
@@ -1552,7 +1552,7 @@ msgstr "藍色"
 msgid "Input is empty"
 msgstr "輸入為空"
 
-#: plugins/devtools.py:936 plugins/devtools.py:1017 plugins/devtools.py:1439
+#: plugins/devtools.py:936 plugins/devtools.py:1017 plugins/devtools.py:1482
 #: plugins/graph_widget_metasenselite.py:591 plugins/graph_widgets.py:167
 msgid "Format error"
 msgstr "格式錯誤"
@@ -1567,427 +1567,427 @@ msgid ""
 "operations, and shift operations."
 msgstr "用於整數進位轉換、位元切換、位元運算和移位運算的程式計算器。"
 
-#: plugins/devtools.py:1113
+#: plugins/devtools.py:1158
 msgid "Switch input base"
 msgstr "切換輸入進位"
 
-#: plugins/devtools.py:1126
+#: plugins/devtools.py:1174
 msgid "Keypad"
 msgstr "鍵盤"
 
-#: plugins/devtools.py:1127
+#: plugins/devtools.py:1175
 msgid "Bit grid"
 msgstr "位元圖"
 
-#: plugins/devtools.py:1138
+#: plugins/devtools.py:1186
 msgid "Word size"
 msgstr "字長"
 
-#: plugins/devtools.py:1141
-msgid "Store current value to memory"
-msgstr "將目前值存入記憶體"
-
-#: plugins/devtools.py:1154 plugins/devtools.py:1155
+#: plugins/devtools.py:1198 plugins/devtools.py:1199
 msgid "Apply"
 msgstr "套用"
 
-#: plugins/devtools.py:1158
+#: plugins/devtools.py:1202
 msgid "Bitwise"
 msgstr "位元運算"
 
-#: plugins/devtools.py:1162
+#: plugins/devtools.py:1206
 msgid "Shift"
 msgstr "移位"
 
-#: plugins/devtools.py:1243
+#: plugins/devtools.py:1286
 msgid "Toggle bit"
 msgstr "切換位元"
 
-#: plugins/devtools.py:1423 plugins/devtools.py:1427
+#: plugins/devtools.py:1466 plugins/devtools.py:1470
 msgid "Divide by zero"
 msgstr "除數不能為0"
 
-#: plugins/devtools.py:1443
-msgid "Value stored to memory"
-msgstr "數值已存入記憶體"
-
-#: plugins/devtools.py:1448
+#: plugins/devtools.py:1487
 msgid ""
 "Run byte-level AND, OR, XNOR, XOR, and NOT operations on two text or HEX "
 "inputs."
 msgstr "對兩個文字或HEX輸入執行位元組級 AND、OR、XNOR、XOR、NOT 運算。"
 
-#: plugins/devtools.py:1451
+#: plugins/devtools.py:1490
 msgid "Input A"
 msgstr "輸入A"
 
-#: plugins/devtools.py:1451 plugins/devtools.py:1452
+#: plugins/devtools.py:1490 plugins/devtools.py:1491
 msgid "Input string or HEX"
 msgstr "輸入字串或HEX"
 
-#: plugins/devtools.py:1452
+#: plugins/devtools.py:1491
 msgid "Input B"
 msgstr "輸入B"
 
-#: plugins/devtools.py:1461
+#: plugins/devtools.py:1500
 msgid "Calculate"
 msgstr "計算"
 
-#: plugins/devtools.py:1480
+#: plugins/devtools.py:1519
 msgid ""
 "Inputs have different lengths; shorter input is padded with 00 for two-"
 "input operations."
 msgstr "兩個輸入長度不同；雙輸入運算會用00補齊較短輸入。"
 
-#: plugins/devtools.py:1493
+#: plugins/devtools.py:1532
 msgid ""
 "Convert English text between uppercase, lowercase, title case, and "
 "swapped case."
 msgstr "在大寫、小寫、標題大小寫和大小寫互換之間轉換英文文字。"
 
-#: plugins/devtools.py:1495
+#: plugins/devtools.py:1534
 msgid "Input English text"
 msgstr "輸入英文文字"
 
-#: plugins/devtools.py:1495
+#: plugins/devtools.py:1534
 msgid "Converted text"
 msgstr "轉換後的文字"
 
-#: plugins/devtools.py:1496
+#: plugins/devtools.py:1535
 msgid "Uppercase"
 msgstr "轉為大寫"
 
-#: plugins/devtools.py:1497
+#: plugins/devtools.py:1536
 msgid "Lowercase"
 msgstr "轉為小寫"
 
-#: plugins/devtools.py:1498
+#: plugins/devtools.py:1537
 msgid "Title case"
 msgstr "標題大小寫"
 
-#: plugins/devtools.py:1499
+#: plugins/devtools.py:1538
 msgid "Swap case"
 msgstr "大小寫互換"
 
-#: plugins/devtools.py:1515 plugins/devtools.py:1530
+#: plugins/devtools.py:1554 plugins/devtools.py:1569
 msgid "Conversion complete"
 msgstr "轉換完成"
 
-#: plugins/devtools.py:1520
+#: plugins/devtools.py:1559
 msgid "Reverse the input string by character order."
 msgstr "按字元順序反轉輸入字串。"
 
-#: plugins/devtools.py:1522 plugins/devtools.py:1537
+#: plugins/devtools.py:1561 plugins/devtools.py:1576
 msgid "Input string"
 msgstr "輸入字串"
 
-#: plugins/devtools.py:1522
+#: plugins/devtools.py:1561
 msgid "Reversed string"
 msgstr "反轉後的字串"
 
-#: plugins/devtools.py:1523
+#: plugins/devtools.py:1562
 msgid "Reverse"
 msgstr "反轉"
 
-#: plugins/devtools.py:1535
+#: plugins/devtools.py:1574
 msgid ""
 "Count characters, non-space characters, words, lines, and UTF-8 bytes in "
 "the input string."
 msgstr "統計輸入字串中的字元數、非空白字元數、單字數、行數和UTF-8位元組數。"
 
-#: plugins/devtools.py:1539
+#: plugins/devtools.py:1578
 msgid "Characters"
 msgstr "字元數"
 
-#: plugins/devtools.py:1540
+#: plugins/devtools.py:1579
 msgid "Characters without spaces"
 msgstr "非空白字元數"
 
-#: plugins/devtools.py:1541
+#: plugins/devtools.py:1580
 msgid "Words"
 msgstr "單字數"
 
-#: plugins/devtools.py:1542
+#: plugins/devtools.py:1581
 msgid "Lines"
 msgstr "行數"
 
-#: plugins/devtools.py:1543
+#: plugins/devtools.py:1582
 msgid "UTF-8 bytes"
 msgstr "UTF-8位元組數"
 
-#: plugins/devtools.py:1557
+#: plugins/devtools.py:1584
+msgid "Character frequency"
+msgstr "字元出現次數"
+
+#: plugins/devtools.py:1606
 msgid "Count complete"
 msgstr "統計完成"
 
-#: plugins/devtools.py:1571
+#: plugins/devtools.py:1614
+msgid "Space"
+msgstr "空格"
+
+#: plugins/devtools.py:1629
 msgid ""
 "Generate ECC key pairs and encrypt/decrypt text with ECIES style ECDH + "
 "AES-GCM."
 msgstr "產生ECC金鑰對，並使用ECIES風格的ECDH + AES-GCM加密/解密文字。"
 
-#: plugins/devtools.py:1575
+#: plugins/devtools.py:1633
 msgid "Curve"
 msgstr "曲線"
 
-#: plugins/devtools.py:1576
+#: plugins/devtools.py:1634
 msgid "Private key"
 msgstr "私鑰"
 
-#: plugins/devtools.py:1576
+#: plugins/devtools.py:1634
 msgid "PEM private key"
 msgstr "PEM私鑰"
 
-#: plugins/devtools.py:1577
+#: plugins/devtools.py:1635
 msgid "Public key"
 msgstr "公鑰"
 
-#: plugins/devtools.py:1577
+#: plugins/devtools.py:1635
 msgid "PEM public key"
 msgstr "PEM公鑰"
 
-#: plugins/devtools.py:1578
+#: plugins/devtools.py:1636
 msgid "Plain text or cipher JSON"
 msgstr "明文或密文JSON"
 
-#: plugins/devtools.py:1578
+#: plugins/devtools.py:1636
 msgid "Input text or ECC cipher JSON"
 msgstr "輸入文字或ECC密文JSON"
 
-#: plugins/devtools.py:1580
+#: plugins/devtools.py:1638
 msgid "Generate key pair"
 msgstr "產生金鑰對"
 
-#: plugins/devtools.py:1581 plugins/devtools.py:1888
+#: plugins/devtools.py:1639 plugins/devtools.py:1946
 msgid "Encrypt"
 msgstr "加密"
 
-#: plugins/devtools.py:1582 plugins/devtools.py:1889
+#: plugins/devtools.py:1640 plugins/devtools.py:1947
 msgid "Decrypt"
 msgstr "解密"
 
-#: plugins/devtools.py:1589
+#: plugins/devtools.py:1647
 msgid "ECC backend not available"
 msgstr "ECC後端不可用"
 
-#: plugins/devtools.py:1619
+#: plugins/devtools.py:1677
 msgid "ECC key pair generated"
 msgstr "ECC金鑰對已產生"
 
-#: plugins/devtools.py:1645
+#: plugins/devtools.py:1703
 msgid "Public key is empty"
 msgstr "公鑰為空"
 
-#: plugins/devtools.py:1648
+#: plugins/devtools.py:1706
 msgid "Public key is not an ECC public key"
 msgstr "公鑰不是ECC公鑰"
 
-#: plugins/devtools.py:1666
+#: plugins/devtools.py:1724
 msgid "ECC encrypt complete"
 msgstr "ECC加密完成"
 
-#: plugins/devtools.py:1676
+#: plugins/devtools.py:1734
 msgid "Private key is empty"
 msgstr "私鑰為空"
 
-#: plugins/devtools.py:1679
+#: plugins/devtools.py:1737
 msgid "Private key is not an ECC private key"
 msgstr "私鑰不是ECC私鑰"
 
-#: plugins/devtools.py:1688
+#: plugins/devtools.py:1746
 msgid "ECC decrypt complete"
 msgstr "ECC解密完成"
 
-#: plugins/devtools.py:1693
+#: plugins/devtools.py:1751
 msgid ""
 "Convert text to Unicode escape sequences, or restore Unicode escapes to "
 "readable text."
 msgstr "將文字轉換為Unicode轉義序列，或將Unicode轉義還原為可讀文字。"
 
-#: plugins/devtools.py:1695 plugins/devtools.py:1709 plugins/devtools.py:1717
-#: plugins/devtools.py:1731 plugins/devtools.py:1831 plugins/devtools.py:1923
+#: plugins/devtools.py:1753 plugins/devtools.py:1767 plugins/devtools.py:1775
+#: plugins/devtools.py:1789 plugins/devtools.py:1889 plugins/devtools.py:1981
 msgid "Encode"
 msgstr "編碼"
 
-#: plugins/devtools.py:1696 plugins/devtools.py:1710 plugins/devtools.py:1718
-#: plugins/devtools.py:1732 plugins/devtools.py:1832 plugins/devtools.py:1924
+#: plugins/devtools.py:1754 plugins/devtools.py:1768 plugins/devtools.py:1776
+#: plugins/devtools.py:1790 plugins/devtools.py:1890 plugins/devtools.py:1982
 msgid "Decode"
 msgstr "解碼"
 
-#: plugins/devtools.py:1707
+#: plugins/devtools.py:1765
 msgid "Encode text for use in URLs, or decode percent-escaped URL text."
 msgstr "將文字編碼為URL可用格式，或解碼百分號轉義URL文字。"
 
-#: plugins/devtools.py:1715
+#: plugins/devtools.py:1773
 msgid ""
 "Encode text as Base64, or decode Base64 back to text with the current "
 "UTF-8 text encoding."
 msgstr "將文字編碼為Base64，或依UTF-8將Base64解碼為文字。"
 
-#: plugins/devtools.py:1729
+#: plugins/devtools.py:1787
 msgid ""
 "Convert internationalized domain names between Unicode text and ASCII "
 "Punycode form."
 msgstr "在Unicode文字和ASCII Punycode格式之間轉換國際化網域。"
 
-#: plugins/devtools.py:1730
+#: plugins/devtools.py:1788
 msgid "Input domain or text"
 msgstr "輸入網域或文字"
 
-#: plugins/devtools.py:1730
+#: plugins/devtools.py:1788
 msgid "Converted value"
 msgstr "轉換結果"
 
-#: plugins/devtools.py:1749
+#: plugins/devtools.py:1807
 msgid ""
 "Convert Unix timestamps and local date-time strings. Date input format: "
 "YYYY-MM-DD HH:MM:SS."
 msgstr "轉換Unix時間戳和本地日期時間字串。日期輸入格式：YYYY-MM-DD HH:MM:SS。"
 
-#: plugins/devtools.py:1751 plugins/devtools.py:1754
+#: plugins/devtools.py:1809 plugins/devtools.py:1812
 msgid "Timestamp or date-time"
 msgstr "時間戳或日期時間"
 
-#: plugins/devtools.py:1752
+#: plugins/devtools.py:1810
 msgid "Enter seconds, milliseconds, or YYYY-MM-DD HH:MM:SS"
 msgstr "輸入秒、毫秒，或YYYY-MM-DD HH:MM:SS"
 
-#: plugins/devtools.py:1756
+#: plugins/devtools.py:1814
 msgid "Now"
 msgstr "目前時間"
 
-#: plugins/devtools.py:1757
+#: plugins/devtools.py:1815
 msgid "To date-time"
 msgstr "轉日期時間"
 
-#: plugins/devtools.py:1758
+#: plugins/devtools.py:1816
 msgid "To timestamp"
 msgstr "轉時間戳"
 
-#: plugins/devtools.py:1785
+#: plugins/devtools.py:1843
 msgid ""
 "Choose an image file and convert it to Base64 text or a data URL for "
 "embedding."
 msgstr "選擇圖片檔並轉換為Base64文字或可嵌入的Data URL。"
 
-#: plugins/devtools.py:1787 plugins/devtools.py:1797
+#: plugins/devtools.py:1845 plugins/devtools.py:1855
 msgid "Image file path"
 msgstr "圖片檔案路徑"
 
-#: plugins/devtools.py:1789 plugins/devtools.py:1810
+#: plugins/devtools.py:1847 plugins/devtools.py:1868
 msgid "Choose file"
 msgstr "選擇檔案"
 
-#: plugins/devtools.py:1791
+#: plugins/devtools.py:1849
 msgid "Convert"
 msgstr "轉換"
 
-#: plugins/devtools.py:1793
+#: plugins/devtools.py:1851
 msgid "Output data URL"
 msgstr "輸出Data URL"
 
-#: plugins/devtools.py:1810
+#: plugins/devtools.py:1868
 msgid "Image files (*.png *.jpg *.jpeg *.gif *.bmp *.webp);;All Files (*)"
 msgstr "圖片檔案 (*.png *.jpg *.jpeg *.gif *.bmp *.webp);;所有檔案 (*)"
 
-#: plugins/devtools.py:1829
+#: plugins/devtools.py:1887
 msgid ""
 "Encode Chinese or other internationalized domain names to IDNA, or decode"
 " xn-- domains back to readable text."
 msgstr "將中文或其他國際化網域編碼為IDNA，或將xn--網域解碼為可讀文字。"
 
-#: plugins/devtools.py:1830
+#: plugins/devtools.py:1888
 msgid "Input domain"
 msgstr "輸入網域"
 
-#: plugins/devtools.py:1830
+#: plugins/devtools.py:1888
 msgid "Converted domain"
 msgstr "轉換後的網域"
 
-#: plugins/devtools.py:1837
+#: plugins/devtools.py:1895
 msgid ""
 "Generate MD5 digests. MD5 is one-way and cannot be truly decrypted; use "
 "the compare field to verify candidate text."
 msgstr "產生MD5摘要。MD5是單向演算法，無法真正解密；可用比較欄位驗證候選文字。"
 
-#: plugins/devtools.py:1840
+#: plugins/devtools.py:1898
 msgid "Optional MD5 hash to compare"
 msgstr "可選：用於比較的MD5雜湊"
 
-#: plugins/devtools.py:1842
+#: plugins/devtools.py:1900
 msgid "Compare hash"
 msgstr "比較雜湊"
 
-#: plugins/devtools.py:1844
+#: plugins/devtools.py:1902
 msgid "Lowercase 32-bit"
 msgstr "小寫32位"
 
-#: plugins/devtools.py:1845
+#: plugins/devtools.py:1903
 msgid "Uppercase 32-bit"
 msgstr "大寫32位"
 
-#: plugins/devtools.py:1846
+#: plugins/devtools.py:1904
 msgid "Lowercase 16-bit"
 msgstr "小寫16位"
 
-#: plugins/devtools.py:1847
+#: plugins/devtools.py:1905
 msgid "Uppercase 16-bit"
 msgstr "大寫16位"
 
-#: plugins/devtools.py:1848
+#: plugins/devtools.py:1906
 msgid "Compare"
 msgstr "比較"
 
-#: plugins/devtools.py:1857
+#: plugins/devtools.py:1915
 msgid "Not match"
 msgstr "不匹配"
 
-#: plugins/devtools.py:1858 plugins/devtools.py:1944
+#: plugins/devtools.py:1916 plugins/devtools.py:2002
 msgid "Generate"
 msgstr "產生"
 
-#: plugins/devtools.py:1870
+#: plugins/devtools.py:1928
 msgid ""
 "AES text encryption and decryption. Supports ECB and CBC with PKCS7 "
 "padding. Key lengths: 16, 24, or 32 bytes."
 msgstr "AES文字加密與解密。支援ECB和CBC模式，使用PKCS7填充。金鑰長度為16、24或32位元組。"
 
-#: plugins/devtools.py:1871
+#: plugins/devtools.py:1929
 msgid "Input text or Base64 cipher text"
 msgstr "輸入文字或Base64密文"
 
-#: plugins/devtools.py:1871
+#: plugins/devtools.py:1929
 msgid "AES result"
 msgstr "AES結果"
 
-#: plugins/devtools.py:1874
+#: plugins/devtools.py:1932
 msgid "AES key"
 msgstr "AES金鑰"
 
-#: plugins/devtools.py:1877
+#: plugins/devtools.py:1935
 msgid "CBC IV, 16 bytes"
 msgstr "CBC IV，16位元組"
 
-#: plugins/devtools.py:1881
+#: plugins/devtools.py:1939
 msgid "Key"
 msgstr "金鑰"
 
-#: plugins/devtools.py:1885
+#: plugins/devtools.py:1943
 msgid "IV"
 msgstr "IV"
 
-#: plugins/devtools.py:1895
+#: plugins/devtools.py:1953
 msgid "AES backend not available"
 msgstr "AES後端不可用"
 
-#: plugins/devtools.py:1900
+#: plugins/devtools.py:1958
 msgid "AES key must be 16, 24, or 32 bytes"
 msgstr "AES金鑰必須為16、24或32位元組"
 
-#: plugins/devtools.py:1918
+#: plugins/devtools.py:1976
 msgid "Common reversible text transforms for quick programming work."
 msgstr "常用可逆文字轉換，方便快速程式處理。"
 
-#: plugins/devtools.py:1942
+#: plugins/devtools.py:2000
 msgid "Generate common hashes for the input text."
 msgstr "為輸入文字產生常用雜湊值。"
 
@@ -2475,3 +2475,9 @@ msgstr "my plugin2"
 
 #~ msgid "Color and bit operations"
 #~ msgstr "顏色與位元操作"
+
+#~ msgid "Store current value to memory"
+#~ msgstr "將目前值存入記憶體"
+
+#~ msgid "Value stored to memory"
+#~ msgstr "數值已存入記憶體"
