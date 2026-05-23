@@ -11,9 +11,9 @@ from urllib.parse import quote, unquote
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout, QTextEdit,
-    QLabel, QLineEdit, QFileDialog, QStackedWidget, QScrollArea,
-    QGroupBox, QCheckBox
+    QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout,
+    QTextEdit, QLabel, QLineEdit, QFileDialog, QStackedWidget, QScrollArea,
+    QGroupBox, QCheckBox, QRadioButton, QButtonGroup
 )
 
 try:
@@ -36,42 +36,190 @@ except Exception:
 class ToolCard(QWidget):
     def __init__(self, title, description, parent=None):
         super().__init__(parent)
+        self.description = description
+        self.knowledgeAdded = False
         self.layout = QVBoxLayout()
-        self.layout.setContentsMargins(10, 10, 10, 10)
-        self.layout.setSpacing(8)
+        self.layout.setContentsMargins(18, 16, 18, 16)
+        self.layout.setSpacing(10)
         self.setLayout(self.layout)
+        self.setObjectName("ip33ToolCard")
+        self.setStyleSheet("""
+            QWidget#ip33ToolCard {
+                background: #ffffff;
+            }
+            QLabel#ip33Title {
+                color: #333333;
+                font-size: 18px;
+                font-weight: 600;
+                padding: 0 0 8px 0;
+            }
+            QLabel[class="ip33Label"] {
+                color: #333333;
+                min-width: 96px;
+            }
+            QLabel#ip33Tip {
+                color: #777777;
+                padding: 2px 0 6px 0;
+            }
+            QTextEdit#ip33TextArea {
+                border: 1px solid #cfd8e3;
+                background: #ffffff;
+                color: #333333;
+                padding: 6px;
+                selection-background-color: #2d7dcc;
+            }
+            QTextEdit#ip33OutputArea {
+                border: 1px solid #cfd8e3;
+                background: #f9fafb;
+                color: #333333;
+                padding: 6px;
+                selection-background-color: #2d7dcc;
+            }
+            QLineEdit#ip33ResultLine {
+                border: 1px solid #cfd8e3;
+                background: #f9fafb;
+                color: #333333;
+                min-height: 26px;
+                padding: 2px 6px;
+            }
+            QPushButton#ip33Primary {
+                background: #2f75c1;
+                color: #ffffff;
+                border: 1px solid #1f65af;
+                border-radius: 2px;
+                min-height: 28px;
+                padding: 3px 18px;
+            }
+            QPushButton#ip33Primary:hover {
+                background: #1f65af;
+            }
+            QPushButton#ip33Secondary {
+                background: #f3f6f9;
+                color: #333333;
+                border: 1px solid #cfd8e3;
+                border-radius: 2px;
+                min-height: 28px;
+                padding: 3px 14px;
+            }
+            QGroupBox#ip33Knowledge {
+                border: 1px solid #e1e5ea;
+                margin-top: 12px;
+                padding: 12px 10px 10px 10px;
+                color: #333333;
+                font-weight: 600;
+            }
+            QGroupBox#ip33Knowledge::title {
+                subcontrol-origin: margin;
+                left: 8px;
+                padding: 0 4px;
+                background: #ffffff;
+            }
+        """)
 
         titleLabel = QLabel(title)
-        titleLabel.setProperty("class", "title")
+        titleLabel.setObjectName("ip33Title")
         titleLabel.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        descLabel = QLabel(description)
-        descLabel.setWordWrap(True)
-        descLabel.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.layout.addWidget(titleLabel)
-        self.layout.addWidget(descLabel)
 
-    def addInputOutput(self, inputPlaceholder=None, outputPlaceholder=None):
-        self.input = QTextEdit()
-        self.input.setAcceptRichText(False)
-        self.input.setPlaceholderText(inputPlaceholder or _("Input text"))
-        self.output = QTextEdit()
-        self.output.setAcceptRichText(False)
-        self.output.setPlaceholderText(outputPlaceholder or _("Result"))
-        self.layout.addWidget(self.input, 2)
+    def addLabel(self, text):
+        label = QLabel(text)
+        label.setProperty("class", "ip33Label")
+        return label
+
+    def addTip(self, text):
+        tip = QLabel(text)
+        tip.setObjectName("ip33Tip")
+        tip.setWordWrap(True)
+        tip.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        self.layout.addWidget(tip)
+        return tip
+
+    def createTextEdit(self, placeholder=None, readOnly=False, minHeight=120):
+        edit = QTextEdit()
+        edit.setAcceptRichText(False)
+        edit.setPlaceholderText(placeholder or "")
+        edit.setReadOnly(readOnly)
+        edit.setObjectName("ip33OutputArea" if readOnly else "ip33TextArea")
+        edit.setMinimumHeight(minHeight)
+        return edit
+
+    def addTextArea(self, labelText, placeholder=None, readOnly=False, minHeight=120):
+        self.layout.addWidget(self.addLabel(labelText))
+        edit = self.createTextEdit(placeholder, readOnly, minHeight)
+        self.layout.addWidget(edit)
+        return edit
+
+    def addInputOutput(self, inputPlaceholder=None, outputPlaceholder=None, inputLabel=None, outputLabel=None):
+        self.input = self.addTextArea(inputLabel or _("Original text") + ":", inputPlaceholder or _("Input text"), False, 130)
         self.buttonLayout = QHBoxLayout()
         self.layout.addLayout(self.buttonLayout)
-        self.layout.addWidget(self.output, 2)
+        self.output = self.addTextArea(outputLabel or _("Conversion result") + ":", outputPlaceholder or _("Result"), True, 130)
         return self.input, self.output, self.buttonLayout
 
-    def addButton(self, text, callback):
+    def addFormRow(self, labelText, widgets, tip=None):
+        row = QHBoxLayout()
+        row.addWidget(self.addLabel(labelText))
+        if not isinstance(widgets, (list, tuple)):
+            widgets = [widgets]
+        for widget in widgets:
+            row.addWidget(widget)
+        row.addStretch(1)
+        self.layout.addLayout(row)
+        if tip:
+            self.addTip(tip)
+
+    def ensureButtonLayout(self):
+        if not hasattr(self, "buttonLayout"):
+            self.buttonLayout = QHBoxLayout()
+            self.layout.addLayout(self.buttonLayout)
+
+    def addButton(self, text, callback, primary=True):
+        self.ensureButtonLayout()
         button = QPushButton(text)
+        button.setObjectName("ip33Primary" if primary else "ip33Secondary")
         button.setToolTip(text)
         button.clicked.connect(callback)
         self.buttonLayout.addWidget(button)
         return button
 
     def finishButtons(self):
+        self.ensureButtonLayout()
         self.buttonLayout.addStretch(1)
+        self.addKnowledge()
+
+    def addResultLine(self, labelText):
+        row = QHBoxLayout()
+        row.addWidget(self.addLabel(labelText))
+        line = QLineEdit()
+        line.setReadOnly(True)
+        line.setObjectName("ip33ResultLine")
+        copyButton = QPushButton(_("Copy"))
+        copyButton.setObjectName("ip33Secondary")
+        copyButton.setToolTip(_("Copy result"))
+        copyButton.clicked.connect(lambda: QApplication.clipboard().setText(line.text()))
+        row.addWidget(line, 1)
+        row.addWidget(copyButton)
+        self.layout.addLayout(row)
+        return line
+
+    def addKnowledge(self, title=None, text=None):
+        if self.knowledgeAdded:
+            return
+        self.knowledgeAdded = True
+        content = text if text is not None else self.description
+        if not content:
+            return
+        group = QGroupBox(title or _("Knowledge"))
+        group.setObjectName("ip33Knowledge")
+        groupLayout = QVBoxLayout()
+        groupLayout.setContentsMargins(8, 10, 8, 8)
+        groupLayout.setSpacing(4)
+        group.setLayout(groupLayout)
+        label = QLabel(content)
+        label.setWordWrap(True)
+        label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        groupLayout.addWidget(label)
+        self.layout.addWidget(group)
 
 
 class Plugin(Plugin_Base):
@@ -167,21 +315,48 @@ class Plugin(Plugin_Base):
         return creators[key]()
 
     def setOutput(self, output, value):
-        output.setPlainText("" if value is None else str(value))
+        text = "" if value is None else str(value)
+        if hasattr(output, "setPlainText"):
+            output.setPlainText(text)
+        else:
+            output.setText(text)
 
     def fail(self, output, err):
         self.setOutput(output, _("Error") + ": " + str(err))
 
+    def addInputModeRadios(self, card):
+        hexRadio = QRadioButton(_("Hex"))
+        textRadio = QRadioButton(_("Text"))
+        hexRadio.setChecked(True)
+        group = QButtonGroup(card)
+        group.addButton(hexRadio)
+        group.addButton(textRadio)
+        card.addFormRow(
+            _("Data format") + ":",
+            [hexRadio, textRadio],
+            _("Hex mode accepts values like 01 02 AF; text mode uses UTF-8 bytes.")
+        )
+        return hexRadio, textRadio
+
     def createByteTool(self, title, description, actionText, handler):
         card = ToolCard(title, description)
-        inp, out, _buttons = card.addInputOutput(_("Input hex bytes or text"), _("Check result"))
-        modeBox = ComboBox()
-        modeBox.addItems([_("Hex bytes"), _("UTF-8 text")])
-        modeBox.setToolTip(_("Choose whether the input is hex bytes like 01 02 AF or plain text"))
-        card.layout.insertWidget(2, modeBox)
-        card.addButton(actionText, lambda: handler(inp, out, modeBox.currentIndex() == 0))
+        hexRadio, _textRadio = self.addInputModeRadios(card)
+        inp = card.addTextArea(_("Data to check") + ":", _("Input hex bytes or text"), False, 120)
+        resultFields = {
+            "hex": card.addResultLine("Hex:"),
+            "dec": card.addResultLine("Dec:"),
+            "oct": card.addResultLine("Oct:"),
+            "bin": card.addResultLine("Bin:"),
+        }
+        card.addButton(actionText, lambda: handler(inp, resultFields, hexRadio.isChecked()))
+        card.addButton(_("Clear"), lambda: self.clearByteTool(inp, resultFields), primary=False)
         card.finishButtons()
         return card
+
+    def clearByteTool(self, inp, resultFields):
+        inp.clear()
+        for field in resultFields.values():
+            field.clear()
 
     def parseBytes(self, text, isHex):
         value = text.strip()
@@ -206,14 +381,13 @@ class Plugin(Plugin_Base):
             self.calcLrc
         )
 
-    def calcLrc(self, inp, out, isHex):
+    def calcLrc(self, inp, resultFields, isHex):
         try:
             data = self.parseBytes(inp.toPlainText(), isHex)
             value = (-sum(data)) & 0xFF
-            lines = [self.bytesInfo(data), "LRC: 0x{:02X}".format(value), _("Append byte") + ": {:02X}".format(value)]
-            self.setOutput(out, "\n".join(lines))
+            self.fillByteResult(resultFields, value, 1)
         except Exception as e:
-            self.fail(out, e)
+            self.fillErrorResult(resultFields, e)
 
     def createBccTool(self):
         return self.createByteTool(
@@ -223,57 +397,81 @@ class Plugin(Plugin_Base):
             self.calcBcc
         )
 
-    def calcBcc(self, inp, out, isHex):
+    def calcBcc(self, inp, resultFields, isHex):
         try:
             data = self.parseBytes(inp.toPlainText(), isHex)
             value = 0
             for byte in data:
                 value ^= byte
-            lines = [self.bytesInfo(data), "BCC: 0x{:02X}".format(value), _("Append byte") + ": {:02X}".format(value)]
-            self.setOutput(out, "\n".join(lines))
+            self.fillByteResult(resultFields, value, 1)
         except Exception as e:
-            self.fail(out, e)
+            self.fillErrorResult(resultFields, e)
+
+    def fillByteResult(self, resultFields, value, byteWidth):
+        hexWidth = byteWidth * 2
+        binWidth = byteWidth * 8
+        self.setOutput(resultFields["hex"], "0x{:0{}X}".format(value, hexWidth))
+        self.setOutput(resultFields["dec"], str(value))
+        self.setOutput(resultFields["oct"], "0o{:o}".format(value))
+        self.setOutput(resultFields["bin"], "0b{:0{}b}".format(value, binWidth))
+
+    def fillErrorResult(self, resultFields, err):
+        self.setOutput(next(iter(resultFields.values())), _("Error") + ": " + str(err))
+        for key, field in list(resultFields.items())[1:]:
+            field.clear()
 
     def createCrcTool(self):
         card = ToolCard(
             _("CRC check"),
             _("Calculate common cyclic redundancy checks for byte data. Hex input accepts spaces, commas, 0x prefixes, and line breaks.")
         )
-        inp, out, _buttons = card.addInputOutput(_("Input hex bytes or text"), _("CRC result"))
-        form = QGridLayout()
-        modeBox = ComboBox()
-        modeBox.addItems([_("Hex bytes"), _("UTF-8 text")])
-        modeBox.setToolTip(_("Choose whether the input is hex bytes like 01 02 AF or plain text"))
+        hexRadio, _textRadio = self.addInputModeRadios(card)
         crcBox = ComboBox()
         crcBox.addItems(["CRC-16/MODBUS", "CRC-16/IBM", "CRC-8", "CRC-32"])
         crcBox.setToolTip(_("Choose CRC algorithm"))
-        form.addWidget(QLabel(_("Input mode")), 0, 0)
-        form.addWidget(modeBox, 0, 1)
-        form.addWidget(QLabel(_("Algorithm")), 0, 2)
-        form.addWidget(crcBox, 0, 3)
-        card.layout.insertLayout(2, form)
-        card.addButton(_("Calculate CRC"), lambda: self.calcCrc(inp, out, modeBox.currentIndex() == 0, crcBox.currentText()))
+        card.addFormRow(_("Algorithm") + ":", crcBox)
+        inp = card.addTextArea(_("Data to check") + ":", _("Input hex bytes or text"), False, 120)
+        resultFields = {
+            "hex": card.addResultLine("Hex:"),
+            "dec": card.addResultLine("Dec:"),
+            "oct": card.addResultLine("Oct:"),
+            "bin": card.addResultLine("Bin:"),
+            "lowHigh": card.addResultLine(_("Low byte first") + ":"),
+            "highLow": card.addResultLine(_("High byte first") + ":"),
+        }
+        card.addButton(_("Calculate CRC"), lambda: self.calcCrc(inp, resultFields, hexRadio.isChecked(), crcBox.currentText()))
+        card.addButton(_("Clear"), lambda: self.clearByteTool(inp, resultFields), primary=False)
         card.finishButtons()
         return card
 
-    def calcCrc(self, inp, out, isHex, algorithm):
+    def calcCrc(self, inp, resultFields, isHex, algorithm):
         try:
             data = self.parseBytes(inp.toPlainText(), isHex)
             if algorithm == "CRC-16/MODBUS":
                 value = self.crc16(data, 0xFFFF)
-                lines = self.crc16Output(data, algorithm, value)
+                self.fillCrcResult(resultFields, value, 2)
             elif algorithm == "CRC-16/IBM":
                 value = self.crc16(data, 0x0000)
-                lines = self.crc16Output(data, algorithm, value)
+                self.fillCrcResult(resultFields, value, 2)
             elif algorithm == "CRC-8":
                 value = self.crc8(data)
-                lines = [self.bytesInfo(data), "{}: 0x{:02X}".format(algorithm, value), _("Append byte") + ": {:02X}".format(value)]
+                self.fillCrcResult(resultFields, value, 1)
             else:
                 value = binascii.crc32(data) & 0xFFFFFFFF
-                lines = [self.bytesInfo(data), "{}: 0x{:08X}".format(algorithm, value), _("Append bytes") + ": {:08X}".format(value)]
-            self.setOutput(out, "\n".join(lines))
+                self.fillCrcResult(resultFields, value, 4)
         except Exception as e:
-            self.fail(out, e)
+            self.fillErrorResult(resultFields, e)
+
+    def fillCrcResult(self, resultFields, value, byteWidth):
+        self.fillByteResult(resultFields, value, byteWidth)
+        if byteWidth == 1:
+            self.setOutput(resultFields["lowHigh"], "")
+            self.setOutput(resultFields["highLow"], "")
+            return
+        bytesHighLow = [(value >> shift) & 0xFF for shift in range((byteWidth - 1) * 8, -1, -8)]
+        bytesLowHigh = list(reversed(bytesHighLow))
+        self.setOutput(resultFields["lowHigh"], " ".join("{:02X}".format(byte) for byte in bytesLowHigh))
+        self.setOutput(resultFields["highLow"], " ".join("{:02X}".format(byte) for byte in bytesHighLow))
 
     def crc16(self, data, initValue):
         crc = initValue
@@ -312,25 +510,38 @@ class Plugin(Plugin_Base):
             _("RGB color format convert"),
             _("Convert common RGB color formats. Supports #RRGGBB, short #RGB, rgb(r,g,b), comma separated RGB, and decimal color values.")
         )
-        inp, out, _buttons = card.addInputOutput(_("Input RGB color"), _("Converted color values"))
-        card.addButton(_("Convert"), lambda: self.convertRgb(inp, out))
+        inp = QLineEdit()
+        inp.setPlaceholderText("#336699 / rgb(51,102,153) / 51,102,153")
+        inp.setObjectName("ip33ResultLine")
+        card.addFormRow(_("RGB color") + ":", inp)
+        resultFields = {
+            "hex": card.addResultLine("HEX:"),
+            "rgb": card.addResultLine("RGB:"),
+            "tuple": card.addResultLine(_("RGB tuple") + ":"),
+            "dec": card.addResultLine(_("Decimal") + ":"),
+            "bgr": card.addResultLine("BGR HEX:"),
+        }
+        card.addButton(_("Convert"), lambda: self.convertRgb(inp, resultFields))
+        card.addButton(_("Clear"), lambda: self.clearRgbTool(inp, resultFields), primary=False)
         card.finishButtons()
         return card
 
-    def convertRgb(self, inp, out):
+    def clearRgbTool(self, inp, resultFields):
+        inp.clear()
+        for field in resultFields.values():
+            field.clear()
+
+    def convertRgb(self, inp, resultFields):
         try:
-            r, g, b = self.parseRgb(inp.toPlainText())
+            r, g, b = self.parseRgb(inp.text())
             decimal = (r << 16) + (g << 8) + b
-            lines = [
-                "HEX: #{:02X}{:02X}{:02X}".format(r, g, b),
-                "RGB: rgb({}, {}, {})".format(r, g, b),
-                "RGB tuple: {}, {}, {}".format(r, g, b),
-                "Decimal: {}".format(decimal),
-                "BGR hex: #{:02X}{:02X}{:02X}".format(b, g, r),
-            ]
-            self.setOutput(out, "\n".join(lines))
+            self.setOutput(resultFields["hex"], "#{:02X}{:02X}{:02X}".format(r, g, b))
+            self.setOutput(resultFields["rgb"], "rgb({}, {}, {})".format(r, g, b))
+            self.setOutput(resultFields["tuple"], "{}, {}, {}".format(r, g, b))
+            self.setOutput(resultFields["dec"], str(decimal))
+            self.setOutput(resultFields["bgr"], "#{:02X}{:02X}{:02X}".format(b, g, r))
         except Exception as e:
-            self.fail(out, e)
+            self.setOutput(resultFields["hex"], _("Error") + ": " + str(e))
 
     def parseRgb(self, text):
         value = text.strip()
@@ -422,25 +633,16 @@ class Plugin(Plugin_Base):
 
     def createTimestampTool(self):
         card = ToolCard(_("Unix timestamp"), _("Convert Unix timestamps and local date-time strings. Date input format: YYYY-MM-DD HH:MM:SS."))
-        layout = QGridLayout()
-        card.layout.addLayout(layout)
         self.timestampInput = QLineEdit()
         self.timestampInput.setPlaceholderText(_("Timestamp or date-time"))
         self.timestampInput.setToolTip(_("Enter seconds, milliseconds, or YYYY-MM-DD HH:MM:SS"))
-        nowButton = QPushButton(_("Now"))
-        toDateButton = QPushButton(_("To date-time"))
-        toStampButton = QPushButton(_("To timestamp"))
-        self.timestampOutput = QTextEdit()
-        self.timestampOutput.setAcceptRichText(False)
-        layout.addWidget(QLabel(_("Input")), 0, 0)
-        layout.addWidget(self.timestampInput, 0, 1, 1, 3)
-        layout.addWidget(nowButton, 1, 0)
-        layout.addWidget(toDateButton, 1, 1)
-        layout.addWidget(toStampButton, 1, 2)
-        card.layout.addWidget(self.timestampOutput, 1)
-        nowButton.clicked.connect(self.fillCurrentTimestamp)
-        toDateButton.clicked.connect(self.timestampToDate)
-        toStampButton.clicked.connect(self.dateToTimestamp)
+        self.timestampInput.setObjectName("ip33ResultLine")
+        card.addFormRow(_("Timestamp or date-time") + ":", self.timestampInput)
+        self.timestampOutput = card.addTextArea(_("Conversion result") + ":", _("Result"), True, 120)
+        card.addButton(_("Now"), self.fillCurrentTimestamp)
+        card.addButton(_("To date-time"), self.timestampToDate)
+        card.addButton(_("To timestamp"), self.dateToTimestamp)
+        card.finishButtons()
         return card
 
     def fillCurrentTimestamp(self):
@@ -469,21 +671,26 @@ class Plugin(Plugin_Base):
         card = ToolCard(_("Image to Base64"), _("Choose an image file and convert it to Base64 text or a data URL for embedding."))
         self.imagePathInput = QLineEdit()
         self.imagePathInput.setPlaceholderText(_("Image file path"))
+        self.imagePathInput.setObjectName("ip33ResultLine")
         chooseButton = QPushButton(_("Choose file"))
+        chooseButton.setObjectName("ip33Secondary")
         encodeButton = QPushButton(_("Convert"))
+        encodeButton.setObjectName("ip33Primary")
         dataUrlCheck = QCheckBox(_("Output data URL"))
         dataUrlCheck.setChecked(True)
-        self.imageBase64Output = QTextEdit()
-        self.imageBase64Output.setAcceptRichText(False)
+        self.imageBase64Output = card.createTextEdit(_("Result"), True, 180)
         row = QHBoxLayout()
+        row.addWidget(card.addLabel(_("Image file path") + ":"))
         row.addWidget(self.imagePathInput, 1)
         row.addWidget(chooseButton)
         row.addWidget(encodeButton)
         row.addWidget(dataUrlCheck)
         card.layout.addLayout(row)
+        card.layout.addWidget(card.addLabel(_("Conversion result") + ":"))
         card.layout.addWidget(self.imageBase64Output, 1)
         chooseButton.clicked.connect(self.chooseImageFile)
         encodeButton.clicked.connect(lambda: self.imageToBase64(dataUrlCheck.isChecked()))
+        card.addKnowledge()
         return card
 
     def chooseImageFile(self):
@@ -515,25 +722,36 @@ class Plugin(Plugin_Base):
 
     def createMd5Tool(self):
         card = ToolCard(_("MD5 encrypt/decrypt"), _("Generate MD5 digests. MD5 is one-way and cannot be truly decrypted; use the compare field to verify candidate text."))
-        inp, out, _buttons = card.addInputOutput(_("Input text"), _("MD5 result"))
+        inp = card.addTextArea(_("Original text") + ":", _("Input text"), False, 120)
         compare = QLineEdit()
         compare.setPlaceholderText(_("Optional MD5 hash to compare"))
-        card.layout.insertWidget(2, compare)
+        compare.setObjectName("ip33ResultLine")
+        card.addFormRow(_("Compare hash") + ":", compare)
+        resultFields = {
+            "lower32": card.addResultLine(_("Lowercase 32-bit") + ":"),
+            "upper32": card.addResultLine(_("Uppercase 32-bit") + ":"),
+            "lower16": card.addResultLine(_("Lowercase 16-bit") + ":"),
+            "upper16": card.addResultLine(_("Uppercase 16-bit") + ":"),
+            "compare": card.addResultLine(_("Compare") + ":"),
+        }
         def run():
             digest = hashlib.md5(inp.toPlainText().encode("utf-8")).hexdigest()
-            result = [
-                "32 lower: " + digest,
-                "32 upper: " + digest.upper(),
-                "16 lower: " + digest[8:24],
-                "16 upper: " + digest[8:24].upper(),
-            ]
+            self.setOutput(resultFields["lower32"], digest)
+            self.setOutput(resultFields["upper32"], digest.upper())
+            self.setOutput(resultFields["lower16"], digest[8:24])
+            self.setOutput(resultFields["upper16"], digest[8:24].upper())
             candidate = compare.text().strip().lower()
-            if candidate:
-                result.append(_("Compare") + ": " + ("OK" if candidate == digest else _("Not match")))
-            self.setOutput(out, "\n".join(result))
+            self.setOutput(resultFields["compare"], "" if not candidate else ("OK" if candidate == digest else _("Not match")))
         card.addButton(_("Generate"), run)
+        card.addButton(_("Clear"), lambda: self.clearMd5Tool(inp, compare, resultFields), primary=False)
         card.finishButtons()
         return card
+
+    def clearMd5Tool(self, inp, compare, resultFields):
+        inp.clear()
+        compare.clear()
+        for field in resultFields.values():
+            field.clear()
 
     def createAesTool(self):
         card = ToolCard(_("AES encrypt/decrypt"), _("AES text encryption and decryption. Supports ECB and CBC with PKCS7 padding. Key lengths: 16, 24, or 32 bytes."))
@@ -541,8 +759,10 @@ class Plugin(Plugin_Base):
         form = QGridLayout()
         keyInput = QLineEdit()
         keyInput.setPlaceholderText(_("AES key"))
+        keyInput.setObjectName("ip33ResultLine")
         ivInput = QLineEdit()
         ivInput.setPlaceholderText(_("CBC IV, 16 bytes"))
+        ivInput.setObjectName("ip33ResultLine")
         modeBox = ComboBox()
         modeBox.addItems(["CBC", "ECB"])
         form.addWidget(QLabel(_("Key")), 0, 0)
@@ -551,7 +771,7 @@ class Plugin(Plugin_Base):
         form.addWidget(modeBox, 0, 3)
         form.addWidget(QLabel(_("IV")), 1, 0)
         form.addWidget(ivInput, 1, 1, 1, 3)
-        card.layout.insertLayout(2, form)
+        card.layout.insertLayout(3, form)
         card.addButton(_("Encrypt"), lambda: self.aesCrypt(inp, out, keyInput.text(), ivInput.text(), modeBox.currentText(), True))
         card.addButton(_("Decrypt"), lambda: self.aesCrypt(inp, out, keyInput.text(), ivInput.text(), modeBox.currentText(), False))
         card.finishButtons()
@@ -583,10 +803,10 @@ class Plugin(Plugin_Base):
 
     def createCodecTool(self):
         card = ToolCard(_("Encode/decode collection"), _("Common reversible text transforms for quick programming work."))
-        inp, out, _buttons = card.addInputOutput()
         method = ComboBox()
         method.addItems(["Hex", "ROT13", "HTML"])
-        card.layout.insertWidget(2, method)
+        card.addFormRow(_("Algorithm") + ":", method)
+        inp, out, _buttons = card.addInputOutput()
         card.addButton(_("Encode"), lambda: self.codecTransform(inp, out, method.currentText(), True))
         card.addButton(_("Decode"), lambda: self.codecTransform(inp, out, method.currentText(), False))
         card.finishButtons()

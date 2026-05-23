@@ -961,6 +961,7 @@ class Plugin(Plugin_Base):
         self.receiveArea = FontSizeTextEdit(self.adjustReceiveFontSize)
         self.receiveArea.setObjectName("receiveArea")
         self.receiveArea.setToolTip(_("Received RX/TX log output"))
+        self.receiveArea.setReadOnly(True)
         self.receiveArea.setStyleSheet(
             "QTextEdit#receiveArea QScrollBar::handle:vertical { min-height: 48px; }"
             "QTextEdit#receiveArea QScrollBar::handle:horizontal { min-width: 48px; }"
