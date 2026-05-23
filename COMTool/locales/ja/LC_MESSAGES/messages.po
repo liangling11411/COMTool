@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-05-23 21:11+0800\n"
+"POT-Creation-Date: 2026-05-23 19:12+0800\n"
 "PO-Revision-Date: 2021-12-04 15:20+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -90,12 +90,12 @@ msgstr "未接続"
 #: main2.py:276 main2.py:326 main2.py:481 main2.py:486 main2.py:890
 #: pluginItems.py:203 pluginItems.py:206 pluginItems.py:320 pluginItems.py:332
 #: plugins/base.py:194 plugins/base.py:199 plugins/base.py:215
-#: plugins/base.py:224 plugins/dbg.py:226 plugins/dbg.py:1969
-#: plugins/dbg.py:1978 plugins/dbg.py:2182 plugins/dbg.py:2188
-#: plugins/dbg.py:2769 plugins/dbg.py:2783 plugins/dbg.py:2793
-#: plugins/dbg.py:2816 plugins/dbg.py:2883 plugins/dbg.py:2891
-#: plugins/graph.py:259 plugins/graph_widget_metasenselite.py:591
-#: plugins/graph_widgets.py:167 plugins/myplugin.py:62
+#: plugins/base.py:224 plugins/dbg.py:1882 plugins/dbg.py:1891
+#: plugins/dbg.py:1919 plugins/dbg.py:2495 plugins/dbg.py:2509
+#: plugins/dbg.py:2519 plugins/dbg.py:2542 plugins/dbg.py:2609
+#: plugins/dbg.py:2617 plugins/graph.py:259
+#: plugins/graph_widget_metasenselite.py:591 plugins/graph_widgets.py:167
+#: plugins/myplugin.py:62
 #: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
 #: plugins/protocol.py:488 plugins/protocol.py:515 plugins/protocol.py:524
 #: plugins/protocol.py:587
@@ -110,7 +110,7 @@ msgstr "プラグインの読み込みに失敗しました"
 msgid "Load plugin fail"
 msgstr "プラグインの読み込みに失敗しました"
 
-#: conn/conn_ssh.py:239 main2.py:320 plugins/dbg.py:2277 plugins/dbg.py:2291
+#: conn/conn_ssh.py:239 main2.py:320 plugins/dbg.py:2004 plugins/dbg.py:2018
 msgid "Select file"
 msgstr "ファイルを選択"
 
@@ -154,13 +154,12 @@ msgstr "新しいウィンドウ"
 msgid "Rename"
 msgstr "名前変更"
 
-#: main2.py:522 plugins/dbg.py:2262
+#: main2.py:522
 msgid "Page name"
 msgstr "ページ名"
 
-#: main2.py:529 pluginItems.py:209 plugins/dbg.py:1899 plugins/dbg.py:2099
-#: plugins/dbg.py:2178 plugins/dbg.py:2796 plugins/protocol.py:609
-#: plugins/protocol.py:631
+#: main2.py:529 pluginItems.py:209 plugins/dbg.py:1812 plugins/dbg.py:2522
+#: plugins/protocol.py:609 plugins/protocol.py:631
 msgid "Warning"
 msgstr "警告"
 
@@ -308,11 +307,11 @@ msgstr "Input remark"
 msgid "Input value"
 msgstr "Input value"
 
-#: plugins/dbg.py:2635 widgets.py:691 widgets.py:727
+#: plugins/dbg.py:2361 widgets.py:691 widgets.py:727
 msgid "Select icon"
 msgstr "Select icon"
 
-#: plugins/dbg.py:1180 plugins/protocol.py:277 widgets.py:698 widgets.py:768
+#: plugins/dbg.py:1087 plugins/protocol.py:277 widgets.py:698 widgets.py:768
 msgid "Record"
 msgstr "記録"
 
@@ -324,8 +323,8 @@ msgstr "Shortcut"
 msgid "Press key to record, or click Cancel"
 msgstr "Press key to record, or click Cancel"
 
-#: plugins/dbg.py:1947 plugins/dbg.py:2064 plugins/dbg.py:2635
-#: plugins/dbg.py:2767 plugins/dbg.py:2781 widgets.py:708 widgets.py:727
+#: plugins/dbg.py:1860 plugins/dbg.py:1947 plugins/dbg.py:2361
+#: plugins/dbg.py:2493 plugins/dbg.py:2507 widgets.py:708 widgets.py:727
 msgid "OK"
 msgstr "OK"
 
@@ -428,7 +427,7 @@ msgstr "入力"
 msgid "error"
 msgstr "エラー"
 
-#: conn/conn_ssh.py:241 plugins/dbg.py:2279
+#: conn/conn_ssh.py:241 plugins/dbg.py:2006
 msgid "All Files (*)"
 msgstr "すべてのファイル (*)"
 
@@ -456,7 +455,7 @@ msgstr "Connection closed!"
 msgid "Protocol"
 msgstr "プロトコル"
 
-#: conn/conn_tcp_udp.py:109 plugins/devtools.py:1958
+#: conn/conn_tcp_udp.py:109 plugins/devtools.py:1941
 msgid "Mode"
 msgstr "モード"
 
@@ -508,326 +507,276 @@ msgstr "フォーマットエラー、00 01 02 03 のようになります"
 msgid "Escape is on, but escape error:"
 msgstr "エスケープはオンですが、エスケープエラー："
 
-#: plugins/dbg.py:158 plugins/dbg.py:1314
-msgid "More log settings"
-msgstr "ログ詳細設定"
-
-#: plugins/dbg.py:166 plugins/dbg.py:2108
-msgid "Auto new file"
-msgstr "自動新規ファイル"
-
-#: plugins/dbg.py:167
-msgid "When start a new connection, will automatically create a new log file"
-msgstr "新しい接続を開始すると、自動的に新しいログファイルが作成されます"
-
-#: plugins/dbg.py:168 plugins/dbg.py:2109
-msgid "Timed log"
-msgstr "時間指定ログ"
-
-#: plugins/dbg.py:169
-msgid "Stop saving log automatically after the configured duration"
-msgstr "設定時間に達したらログ保存を自動停止します"
-
-#: plugins/dbg.py:170
-msgid "Append log information at stop"
-msgstr "停止時にログ情報を追加"
-
-#: plugins/dbg.py:171
-msgid ""
-"Append start time, pause history, log size, and connection settings to "
-"the end of the log"
-msgstr "開始時刻、一時停止履歴、ログサイズ、接続設定をログ末尾に追加します"
-
-#: plugins/dbg.py:185
-msgid "Only numbers are allowed"
-msgstr "数字のみ入力できます"
-
-#: plugins/dbg.py:194
-msgid "Hours"
-msgstr "時"
-
-#: plugins/dbg.py:196
-msgid "Minutes"
-msgstr "分"
-
-#: plugins/dbg.py:198
-msgid "Seconds"
-msgstr "秒"
-
-#: plugins/dbg.py:226
-msgid "Timed log duration must be greater than zero"
-msgstr "タイマー記録時間は 0 より大きくしてください"
-
-#: plugins/dbg.py:391 plugins/dbg.py:682
+#: plugins/dbg.py:310 plugins/dbg.py:601
 msgid "Advanced find settings"
 msgstr "詳細検索設定"
 
-#: plugins/dbg.py:402
+#: plugins/dbg.py:321
 msgid "Find next"
 msgstr "次を検索"
 
-#: plugins/dbg.py:403
+#: plugins/dbg.py:322
 msgid "Jump to the next match for this rule"
 msgstr "このルールの次の一致へ移動"
 
-#: plugins/dbg.py:404 plugins/devtools.py:1603
+#: plugins/dbg.py:323 plugins/devtools.py:1586
 msgid "Count"
 msgstr "カウント"
 
-#: plugins/dbg.py:405
+#: plugins/dbg.py:324
 msgid "Count matches for this rule in the receive buffer"
 msgstr "受信バッファ内のこのルールの一致数を数える"
 
-#: plugins/dbg.py:412
+#: plugins/dbg.py:331
 msgid "Find options"
 msgstr "検索オプション"
 
-#: plugins/dbg.py:415
+#: plugins/dbg.py:334
 msgid "Reverse find"
 msgstr "逆方向検索"
 
-#: plugins/dbg.py:416
+#: plugins/dbg.py:335
 msgid "Search upward when jumping to the next match"
 msgstr "次の一致へ移動するとき上方向に検索"
 
-#: plugins/dbg.py:417
+#: plugins/dbg.py:336
 msgid "Whole word"
 msgstr "単語全体"
 
-#: plugins/dbg.py:418
+#: plugins/dbg.py:337
 msgid "Match only whole words"
 msgstr "単語全体のみ一致"
 
-#: plugins/dbg.py:419
+#: plugins/dbg.py:338
 msgid "Case sensitive"
 msgstr "大文字小文字を区別"
 
-#: plugins/dbg.py:420
+#: plugins/dbg.py:339
 msgid "Match uppercase and lowercase exactly"
 msgstr "大文字と小文字を厳密に一致"
 
-#: plugins/dbg.py:421
+#: plugins/dbg.py:340
 msgid "Wrap around"
 msgstr "循環検索"
 
-#: plugins/dbg.py:422
+#: plugins/dbg.py:341
 msgid "Continue from the other end when no match is found"
 msgstr "一致がない場合は反対側から続行"
 
-#: plugins/dbg.py:423
+#: plugins/dbg.py:342
 msgid "Regular expression"
 msgstr "正規表現"
 
-#: plugins/dbg.py:424
+#: plugins/dbg.py:343
 msgid "Treat the find text as a Python regular expression"
 msgstr "検索テキストを Python 正規表現として扱う"
 
-#: plugins/dbg.py:425
+#: plugins/dbg.py:344
 msgid "Dot matches newline"
 msgstr "ドットで改行に一致"
 
-#: plugins/dbg.py:426
+#: plugins/dbg.py:345
 msgid "Let '.' in regular expressions match line breaks"
 msgstr "正規表現の '.' が改行に一致するようにする"
 
-#: plugins/dbg.py:437 plugins/dbg.py:586
+#: plugins/dbg.py:356 plugins/dbg.py:505
 msgid "Close"
 msgstr "閉じる"
 
-#: plugins/dbg.py:460
+#: plugins/dbg.py:379
 msgid "No find rule selected"
 msgstr "検索ルールが選択されていません"
 
-#: plugins/dbg.py:485 plugins/dbg.py:676
+#: plugins/dbg.py:404 plugins/dbg.py:595
 msgid "Find text"
 msgstr "検索テキスト"
 
-#: plugins/dbg.py:485
+#: plugins/dbg.py:404
 msgid "Empty"
 msgstr "空"
 
-#: plugins/dbg.py:527
+#: plugins/dbg.py:446
 msgid "Matches"
 msgstr "一致数"
 
-#: plugins/dbg.py:542
+#: plugins/dbg.py:461
 msgid "Find in receive area"
 msgstr "受信エリアで検索"
 
-#: plugins/dbg.py:548
+#: plugins/dbg.py:467
 msgid "Find rules (top rules have higher priority)"
 msgstr "検索ルール（上ほど優先度が高い）"
 
-#: plugins/dbg.py:551
+#: plugins/dbg.py:470
 msgid "Select all"
 msgstr "すべて選択"
 
-#: plugins/dbg.py:552
+#: plugins/dbg.py:471
 msgid "Select all find rules for batch actions"
 msgstr "一括操作用にすべての検索ルールを選択"
 
-#: plugins/dbg.py:553
+#: plugins/dbg.py:472
 msgid "Highlight color"
 msgstr "ハイライト色"
 
-#: plugins/dbg.py:554
+#: plugins/dbg.py:473
 msgid "Choose highlight color for new rules or selected rules"
 msgstr "新規ルールまたは選択ルールのハイライト色を選択"
 
-#: plugins/dbg.py:556
+#: plugins/dbg.py:475
 msgid "Apply color"
 msgstr "色を適用"
 
-#: plugins/dbg.py:557
+#: plugins/dbg.py:476
 msgid "Clear color"
 msgstr "色をクリア"
 
-#: plugins/dbg.py:558
+#: plugins/dbg.py:477
 msgid "Delete selected"
 msgstr "選択を削除"
 
-#: plugins/dbg.py:559
+#: plugins/dbg.py:478
 msgid "Apply the current highlight color to all selected rules"
 msgstr "現在のハイライト色を選択ルールすべてに適用"
 
-#: plugins/dbg.py:560
+#: plugins/dbg.py:479
 msgid "Remove highlight color from all selected rules"
 msgstr "選択ルールすべてからハイライト色を削除"
 
-#: plugins/dbg.py:561
+#: plugins/dbg.py:480
 msgid "Delete all selected find rules"
 msgstr "選択した検索ルールをすべて削除"
 
-#: plugins/dbg.py:584
+#: plugins/dbg.py:503
 msgid "Add find rule"
 msgstr "検索ルールを追加"
 
-#: plugins/dbg.py:587
+#: plugins/dbg.py:506
 msgid "Close find window"
 msgstr "検索ウィンドウを閉じる"
 
-#: plugins/dbg.py:611 plugins/dbg.py:795 plugins/dbg.py:1763
-#: plugins/dbg.py:1777 plugins/dbg.py:2566 plugins/dbg.py:2622
+#: plugins/dbg.py:530 plugins/dbg.py:714 plugins/dbg.py:1676
+#: plugins/dbg.py:1690 plugins/dbg.py:2292 plugins/dbg.py:2348
 msgid "Select color"
 msgstr "色を選択"
 
-#: plugins/dbg.py:666
+#: plugins/dbg.py:585
 msgid "Select"
 msgstr "選択"
 
-#: plugins/dbg.py:667
+#: plugins/dbg.py:586
 msgid "Select this rule for batch edit actions"
 msgstr "一括編集用にこのルールを選択"
 
-#: plugins/dbg.py:670
+#: plugins/dbg.py:589
 msgid "Drag before another find rule to change priority"
 msgstr "別の検索ルールの前にドラッグして優先度を変更"
 
-#: plugins/dbg.py:672 plugins/graph_widgets.py:55
+#: plugins/dbg.py:591 plugins/graph_widgets.py:55
 msgid "Enable"
 msgstr "Enable"
 
-#: plugins/dbg.py:673
+#: plugins/dbg.py:592
 msgid "Enable this rule for highlighting, navigation, and scrollbar markers"
 msgstr "ハイライト、移動、スクロールバーマーカーにこのルールを有効化"
 
-#: plugins/dbg.py:677
+#: plugins/dbg.py:596
 msgid ""
 "Plain text searches exact text. Use advanced settings for regular "
 "expressions."
 msgstr "通常テキストは完全一致で検索します。正規表現は詳細設定で有効にしてください。"
 
-#: plugins/dbg.py:679
+#: plugins/dbg.py:598
 msgid "Set highlight color, right click to clear"
 msgstr "ハイライト色を設定、右クリックでクリア"
 
-#: plugins/dbg.py:685
+#: plugins/dbg.py:604
 msgid "Delete this find rule"
 msgstr "この検索ルールを削除"
 
-#: plugins/dbg.py:938
+#: plugins/dbg.py:857
 msgid "Send Receive"
 msgstr "Send Receive"
 
-#: plugins/dbg.py:954
+#: plugins/dbg.py:873
 msgid "Shortcut:"
 msgstr "ホットキー："
 
-#: plugins/dbg.py:955
+#: plugins/dbg.py:874
 msgid "Full screen"
 msgstr "フルスクリーン"
 
-#: plugins/dbg.py:956
+#: plugins/dbg.py:875
 msgid "Send data"
 msgstr "データを送る"
 
-#: plugins/dbg.py:957
+#: plugins/dbg.py:876
 msgid "Clear Send Area"
 msgstr "送信エリアをクリアする"
 
-#: plugins/dbg.py:958
+#: plugins/dbg.py:877
 msgid "Clear Receive Area"
 msgstr "清除接収区"
 
-#: plugins/dbg.py:1044
+#: plugins/dbg.py:951
 msgid "Clear RX"
 msgstr "RXをクリア"
 
-#: plugins/dbg.py:1045
+#: plugins/dbg.py:952
 msgid "Clear receive area"
 msgstr "受信エリアをクリア"
 
-#: plugins/dbg.py:1047
+#: plugins/dbg.py:954
 msgid "Clear TX"
 msgstr "TXをクリア"
 
-#: plugins/dbg.py:1048
+#: plugins/dbg.py:955
 msgid "Clear TX input"
 msgstr "TX入力をクリア"
 
-#: plugins/dbg.py:1056
+#: plugins/dbg.py:963
 msgid "Received RX/TX log output"
 msgstr "RX/TXログ出力"
 
-#: plugins/dbg.py:1067
+#: plugins/dbg.py:974
 msgid "Input data to send"
 msgstr "送信するデータを入力"
 
-#: plugins/dbg.py:1071
+#: plugins/dbg.py:978
 msgid "Find and highlight receive text"
 msgstr "受信テキストを検索してハイライト"
 
-#: plugins/dbg.py:1074
+#: plugins/dbg.py:981
 msgid "Send input data"
 msgstr "入力データを送信"
 
-#: plugins/dbg.py:1077
+#: plugins/dbg.py:984
 msgid "Send history"
 msgstr "送信履歴"
 
-#: plugins/dbg.py:1120
+#: plugins/dbg.py:1027
 msgid "Receive Settings"
 msgstr "受信設定"
 
-#: plugins/dbg.py:1121 plugins/dbg.py:1165 plugins/protocol.py:269
+#: plugins/dbg.py:1028 plugins/dbg.py:1072 plugins/protocol.py:269
 msgid "ASCII"
 msgstr "ASCII"
 
-#: plugins/dbg.py:1122
+#: plugins/dbg.py:1029
 msgid ""
 "Show recived data as visible format, select decode method at top right "
 "corner"
 msgstr "表示されている文字を使用して受信データを表示し、右上隅でデコード方法を選択します"
 
-#: plugins/dbg.py:1123 plugins/dbg.py:1166 plugins/protocol.py:270
+#: plugins/dbg.py:1030 plugins/dbg.py:1073 plugins/protocol.py:270
 msgid "HEX"
 msgstr "HEX"
 
-#: plugins/dbg.py:1124
+#: plugins/dbg.py:1031
 msgid "Show recived data as hex format"
 msgstr "16進表記を使用して受信データを表示します"
 
-#: plugins/dbg.py:1126
+#: plugins/dbg.py:1033
 msgid ""
 "Auto\n"
 "Linefeed\n"
@@ -837,33 +786,33 @@ msgstr ""
 "ラインフィード\n"
 "ms"
 
-#: plugins/dbg.py:1127 plugins/dbg.py:1130
+#: plugins/dbg.py:1034 plugins/dbg.py:1037
 msgid "Auto linefeed after interval, unit: ms"
 msgstr "超オーバー・トタイム時自PP换行、単位：ms"
 
-#: plugins/dbg.py:1133 plugins/dbg.py:1150
+#: plugins/dbg.py:1040 plugins/dbg.py:1057
 msgid "Timestamp"
 msgstr "タイムスタンプ"
 
-#: plugins/dbg.py:1134
+#: plugins/dbg.py:1041
 msgid ""
 "Add timestamp before received data, will automatically enable auto line "
 "feed"
 msgstr "受信データの前にタイムスタンプを追加すると、自動改行が自動的に有効になります"
 
-#: plugins/dbg.py:1135 plugins/protocol.py:244
+#: plugins/dbg.py:1042 plugins/protocol.py:244
 msgid "Display wrap"
 msgstr "Display wrap"
 
-#: plugins/dbg.py:1136 plugins/dbg.py:1182 plugins/protocol.py:279
+#: plugins/dbg.py:1043 plugins/dbg.py:1089 plugins/protocol.py:279
 msgid "Escape"
 msgstr "エスケープ"
 
-#: plugins/dbg.py:1137 plugins/dbg.py:1183 plugins/protocol.py:280
+#: plugins/dbg.py:1044 plugins/dbg.py:1090 plugins/protocol.py:280
 msgid "Enable escape characters support like \\t \\r \\n \\x01 \\001"
 msgstr "\\t \\r \\n \\x01 \\001 のようなエスケープ文字のサポートを有効にする"
 
-#: plugins/dbg.py:1138 plugins/protocol.py:245
+#: plugins/dbg.py:1045 plugins/protocol.py:245
 msgid ""
 "When content in a line is too long, always auto wrap to show, and no "
 "scroll bar"
@@ -871,42 +820,42 @@ msgstr ""
 "When content in a line is too long, always auto wrap to show, and no "
 "scroll bar"
 
-#: plugins/dbg.py:1151 plugins/dbg.py:1264 plugins/dbg.py:1271
-#: plugins/dbg.py:1379 plugins/devtools.py:385
+#: plugins/dbg.py:1058 plugins/dbg.py:1171 plugins/dbg.py:1178
+#: plugins/dbg.py:1288 plugins/devtools.py:385
 msgid "Color"
 msgstr "色"
 
-#: plugins/dbg.py:1152
+#: plugins/dbg.py:1059
 msgid "Timestamp color in receive area"
 msgstr "受信エリアのタイムスタンプ色"
 
-#: plugins/dbg.py:1153
+#: plugins/dbg.py:1060
 msgid "Newline after timestamp"
 msgstr "タイムスタンプ後に改行"
 
-#: plugins/dbg.py:1154
+#: plugins/dbg.py:1061
 msgid "Display received data on the next line after timestamp"
 msgstr "タイムスタンプの次の行に受信データを表示します"
 
-#: plugins/dbg.py:1156
+#: plugins/dbg.py:1063
 msgid "Timestamp color"
 msgstr "タイムスタンプ色"
 
-#: plugins/dbg.py:1164
+#: plugins/dbg.py:1071
 msgid "Send Settings"
 msgstr "送信設定"
 
-#: plugins/dbg.py:1167 plugins/protocol.py:271
+#: plugins/dbg.py:1074 plugins/protocol.py:271
 msgid ""
 "Get send data as visible format, select encoding method at top right "
 "corner"
 msgstr "表示文字形式で送信するデータを取得し、右上隅でエンコード方法を選択します"
 
-#: plugins/dbg.py:1168 plugins/protocol.py:272
+#: plugins/dbg.py:1075 plugins/protocol.py:272
 msgid "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
 msgstr "16進数の「313233」などの16進数形式で送信するデータを取得し、ASCIIコードの「123」は同等です。"
 
-#: plugins/dbg.py:1170
+#: plugins/dbg.py:1077
 msgid ""
 "Timed Send\n"
 "ms"
@@ -914,456 +863,360 @@ msgstr ""
 "時限送信\n"
 "ms"
 
-#: plugins/dbg.py:1171 plugins/dbg.py:1174
+#: plugins/dbg.py:1078 plugins/dbg.py:1081
 msgid "Timed send, unit: ms"
 msgstr "定時間P送、単位：ms"
 
-#: plugins/dbg.py:1177 plugins/protocol.py:274
+#: plugins/dbg.py:1084 plugins/protocol.py:274
 msgid "<CRLF>"
 msgstr "<CRLF>"
 
-#: plugins/dbg.py:1178 plugins/protocol.py:275
+#: plugins/dbg.py:1085 plugins/protocol.py:275
 msgid "Select to send \\r\\n instead of \\n"
 msgstr "選択中ρ送信\\ r \\ n圧電不是\\ n"
 
-#: plugins/dbg.py:1181 plugins/protocol.py:278
+#: plugins/dbg.py:1088 plugins/protocol.py:278
 msgid "Record send data"
 msgstr "送信データを記録する"
 
-#: plugins/dbg.py:1184
+#: plugins/dbg.py:1091
 msgid "Newline"
 msgstr "Newline"
 
-#: plugins/dbg.py:1185
+#: plugins/dbg.py:1092
 msgid "Auto add new line when send"
 msgstr "Auto add new line when send"
 
-#: plugins/dbg.py:1216
+#: plugins/dbg.py:1123
 msgid "Auto line feed value error, must be integer"
 msgstr "自動改行値エラー、整数である必要があります"
 
-#: plugins/dbg.py:1217
+#: plugins/dbg.py:1124
 msgid "Timed send value error, must be integer"
 msgstr "時限送信値エラー。整数である必要があります"
 
-#: plugins/dbg.py:1256
+#: plugins/dbg.py:1163
 msgid "Default font"
 msgstr "既定フォント"
 
-#: plugins/dbg.py:1260
+#: plugins/dbg.py:1167
 msgid "Font family for received RX text"
 msgstr "受信RXテキストのフォント"
 
-#: plugins/dbg.py:1263
+#: plugins/dbg.py:1170
 msgid "Font size for received RX text"
 msgstr "受信RXテキストのサイズ"
 
-#: plugins/dbg.py:1265
+#: plugins/dbg.py:1172
 msgid "Color for received RX text in the receive area"
 msgstr "受信エリアのRXテキスト色"
 
-#: plugins/dbg.py:1267
+#: plugins/dbg.py:1174
 msgid "Font family for TX input text"
 msgstr "TX入力テキストのフォント"
 
-#: plugins/dbg.py:1270
+#: plugins/dbg.py:1177
 msgid "Font size for TX input text"
 msgstr "TX入力テキストのサイズ"
 
-#: plugins/dbg.py:1272
+#: plugins/dbg.py:1179
 msgid "Color for TX input text and recorded TX lines"
 msgstr "TX入力テキストと記録TX行の色"
 
-#: plugins/dbg.py:1273
+#: plugins/dbg.py:1180
 msgid "RX font"
 msgstr "RXフォント"
 
-#: plugins/dbg.py:1275
+#: plugins/dbg.py:1182
 msgid "RX size"
 msgstr "RXサイズ"
 
-#: plugins/dbg.py:1277
+#: plugins/dbg.py:1184
 msgid "RX color"
 msgstr "RX色"
 
-#: plugins/dbg.py:1279
+#: plugins/dbg.py:1186
 msgid "TX font"
 msgstr "TXフォント"
 
-#: plugins/dbg.py:1281
+#: plugins/dbg.py:1188
 msgid "TX size"
 msgstr "TXサイズ"
 
-#: plugins/dbg.py:1283
+#: plugins/dbg.py:1190
 msgid "TX color"
 msgstr "TX色"
 
-#: plugins/dbg.py:1288
+#: plugins/dbg.py:1195
 msgid "Path of the file to send"
 msgstr "送信するファイルのパス"
 
-#: plugins/dbg.py:1289
+#: plugins/dbg.py:1196
 msgid "Open File"
 msgstr "打開き文件"
 
-#: plugins/dbg.py:1290
+#: plugins/dbg.py:1197
 msgid "Select a file to send"
 msgstr "送信するファイルを選択"
 
-#: plugins/dbg.py:1291 plugins/dbg.py:1295
+#: plugins/dbg.py:1198 plugins/dbg.py:1202
 msgid "Send File"
 msgstr "ファイルを送信"
 
-#: plugins/dbg.py:1292
+#: plugins/dbg.py:1199
 msgid "Send the selected file over the current connection"
 msgstr "現在の接続で選択したファイルを送信します"
 
-#: plugins/dbg.py:1293
+#: plugins/dbg.py:1200
 msgid "Clear TX History"
 msgstr "TX履歴をクリア"
 
-#: plugins/dbg.py:1294
+#: plugins/dbg.py:1201
 msgid "Clear TX send history"
 msgstr "TX送信履歴をクリア"
 
-#: plugins/dbg.py:1302
+#: plugins/dbg.py:1209
 msgid "Save log"
 msgstr "ログを保存"
 
-#: plugins/dbg.py:1306
+#: plugins/dbg.py:1213
+msgid "Enable saving received and recorded sent data to a log file"
+msgstr "受信データと記録した送信データをログファイルに保存します"
+
+#: plugins/dbg.py:1215
 msgid "Log file path"
 msgstr "ログファイルパス"
 
-#: plugins/dbg.py:1307 plugins/dbg.py:2261
+#: plugins/dbg.py:1216
 msgid "Log path"
 msgstr "ログパス"
 
-#: plugins/dbg.py:1308
+#: plugins/dbg.py:1217
 msgid "Select log file path"
 msgstr "ログファイルパスを選択"
 
-#: plugins/dbg.py:1309 plugins/dbg.py:2084
-msgid "Start record"
-msgstr "記録開始"
+#: plugins/dbg.py:1218
+msgid "Auto new file"
+msgstr "自動新規ファイル"
 
-#: plugins/dbg.py:1310
-msgid "Start or pause log recording"
-msgstr "ログ記録を開始または一時停止します"
+#: plugins/dbg.py:1219
+msgid "When start a new connection, will automatically create a new log file"
+msgstr "新しい接続を開始すると、自動的に新しいログファイルが作成されます"
 
-#: plugins/dbg.py:1311
-msgid "Stop record"
-msgstr "記録停止"
+#: plugins/dbg.py:1220
+msgid "Timed log"
+msgstr "時間指定ログ"
 
-#: plugins/dbg.py:1312
-msgid "Stop log recording"
-msgstr "ログ記録を停止します"
+#: plugins/dbg.py:1221
+msgid "Stop saving log automatically after the configured duration"
+msgstr "設定時間に達したらログ保存を自動停止します"
 
-#: plugins/dbg.py:1315
-msgid "Configure auto new file, timed log, and log information summary"
-msgstr "自動新規ファイル、タイマー記録、ログ情報概要を設定します"
+#: plugins/dbg.py:1226
+msgid "Timed log duration, format: HH:MM:SS"
+msgstr "ログ時間、形式: HH:MM:SS"
 
-#: plugins/dbg.py:1318
-msgid "Current log settings"
-msgstr "現在のログ設定"
-
-#: plugins/dbg.py:1319
+#: plugins/dbg.py:1227
 msgid "Log: 00:00:00 / 0 B"
 msgstr "Log: 00:00:00 / 0 B"
 
-#: plugins/dbg.py:1320
+#: plugins/dbg.py:1228
 msgid "Current log recording duration and file size"
 msgstr "現在のログ記録時間とファイルサイズ"
 
-#: plugins/dbg.py:1323
+#: plugins/dbg.py:1231
 msgid "RX buffer size"
 msgstr "RXバッファサイズ"
 
-#: plugins/dbg.py:1329
+#: plugins/dbg.py:1237
 msgid "RX buffer size, only editable while the connection is closed"
 msgstr "RXバッファサイズ。接続が閉じているときのみ変更可能"
 
-#: plugins/dbg.py:1366
+#: plugins/dbg.py:1275
 msgid "Import"
 msgstr "インポート"
 
-#: plugins/dbg.py:1367
+#: plugins/dbg.py:1276
 msgid "Export"
 msgstr "エクスポート"
 
-#: plugins/dbg.py:1368
+#: plugins/dbg.py:1277
 msgid "Add a custom send item"
 msgstr "カスタム送信項目を追加"
 
-#: plugins/dbg.py:1369
+#: plugins/dbg.py:1278
 msgid "Import custom send items from JSON"
 msgstr "JSONからカスタム送信項目をインポート"
 
-#: plugins/dbg.py:1370
+#: plugins/dbg.py:1279
 msgid "Export custom send items to JSON"
 msgstr "カスタム送信項目をJSONへエクスポート"
 
-#: plugins/dbg.py:1375
+#: plugins/dbg.py:1284
 msgid "Search remark or command"
 msgstr "ラベルまたはコマンドを検索"
 
-#: plugins/dbg.py:1376
+#: plugins/dbg.py:1285
 msgid "Search custom send items by remark or command"
 msgstr "ラベルまたはコマンドでカスタム送信項目を検索"
 
-#: plugins/dbg.py:1377
+#: plugins/dbg.py:1286
 msgid "All"
 msgstr "すべて"
 
-#: plugins/dbg.py:1378
+#: plugins/dbg.py:1287
 msgid "Select visible custom send items"
 msgstr "表示中のカスタム送信項目を選択"
 
-#: plugins/dbg.py:1380
+#: plugins/dbg.py:1289
 msgid "Icon"
 msgstr "アイコン"
 
-#: plugins/dbg.py:1381 plugins/dbg.py:2455 plugins/dbg.py:2652
+#: plugins/dbg.py:1290 plugins/dbg.py:2181 plugins/dbg.py:2378
 #: plugins/protocol.py:257
 msgid "Delete"
 msgstr "Delete"
 
-#: plugins/dbg.py:1382
+#: plugins/dbg.py:1291
 msgid "Set color for selected custom send items"
 msgstr "選択したカスタム送信項目の色を設定"
 
-#: plugins/dbg.py:1383
+#: plugins/dbg.py:1292
 msgid "Set icon for selected custom send items"
 msgstr "選択したカスタム送信項目のアイコンを設定"
 
-#: plugins/dbg.py:1384
+#: plugins/dbg.py:1293
 msgid "Delete selected custom send items"
 msgstr "選択したカスタム送信項目を削除"
 
-#: plugins/dbg.py:1391
+#: plugins/dbg.py:1300
 msgid "Cutom send"
 msgstr "カスタム送信"
 
-#: plugins/dbg.py:1651 plugins/dbg.py:1684
+#: plugins/dbg.py:1564 plugins/dbg.py:1597
 msgid "Find"
 msgstr "検索"
 
-#: plugins/dbg.py:1651
+#: plugins/dbg.py:1564
 msgid "No match found"
 msgstr "一致が見つかりません"
 
-#: plugins/dbg.py:1684
+#: plugins/dbg.py:1597
 msgid "No more matches"
 msgstr "これ以上の一致はありません"
 
-#: plugins/dbg.py:1899
+#: plugins/dbg.py:1812
 msgid "linefeed always on if timestamp or record send is on"
 msgstr "タイムスタンプまたはレコード送信がオンの場合、改行は常にオンになります"
 
-#: plugins/dbg.py:1947
+#: plugins/dbg.py:1860
 msgid "History cleared!"
 msgstr "履歴がクリアされました！"
 
-#: plugins/dbg.py:1950
+#: plugins/dbg.py:1863
 msgid "Confirm clear"
 msgstr "クリア確認"
 
-#: plugins/dbg.py:1954
+#: plugins/dbg.py:1867
 msgid "Clear receive area?"
 msgstr "受信エリアをクリアしますか？"
 
-#: plugins/dbg.py:1958
+#: plugins/dbg.py:1871
 msgid "Clear send input?"
 msgstr "送信入力をクリアしますか？"
 
-#: plugins/dbg.py:1962
+#: plugins/dbg.py:1875
 msgid "Clear TX history?"
 msgstr "TX履歴をクリアしますか？"
 
-#: plugins/dbg.py:1969 plugins/graph.py:259 plugins/protocol.py:524
+#: plugins/dbg.py:1882 plugins/graph.py:259 plugins/protocol.py:524
 msgid "Send data failed!"
 msgstr "Send data failed!"
 
-#: plugins/dbg.py:1974
+#: plugins/dbg.py:1887
 msgid "Send file"
 msgstr "Send file"
 
-#: plugins/dbg.py:1978
+#: plugins/dbg.py:1891
 msgid "Send file failed!"
 msgstr "Send file failed!"
 
-#: plugins/dbg.py:2038
-msgid "Confirm stop"
-msgstr "停止確認"
+#: plugins/dbg.py:1919
+msgid "Timed log duration error, format: HH:MM:SS"
+msgstr "Timed log duration error, format: HH:MM:SS"
 
-#: plugins/dbg.py:2038
-msgid "Stop log recording?"
-msgstr "ログ記録を停止しますか？"
-
-#: plugins/dbg.py:2064
+#: plugins/dbg.py:1947
 msgid "Timed log stopped"
 msgstr "Timed log stopped"
 
-#: plugins/dbg.py:2085
-msgid "Start log recording"
-msgstr "ログ記録を開始"
-
-#: plugins/dbg.py:2089
-msgid "Resume record"
-msgstr "記録再開"
-
-#: plugins/dbg.py:2090
-msgid "Resume log recording"
-msgstr "ログ記録を再開"
-
-#: plugins/dbg.py:2093
-msgid "Pause record"
-msgstr "記録一時停止"
-
-#: plugins/dbg.py:2094
-msgid "Pause log recording"
-msgstr "ログ記録を一時停止"
-
-#: plugins/dbg.py:2099
-msgid "Log settings are locked while recording or paused"
-msgstr "記録中または一時停止中はログ設定を変更できません"
-
-#: plugins/dbg.py:2108 plugins/dbg.py:2110
-msgid "On"
-msgstr "オン"
-
-#: plugins/dbg.py:2108 plugins/dbg.py:2109 plugins/dbg.py:2110
-msgid "Off"
-msgstr "オフ"
-
-#: plugins/dbg.py:2110
-msgid "Append info"
-msgstr "情報追加"
-
-#: plugins/dbg.py:2178
-msgid "Select log file path before starting log"
-msgstr "記録開始前にログファイルのパスを選択してください"
-
-#: plugins/dbg.py:2182
-msgid "Log folder does not exist"
-msgstr "ログフォルダーが存在しません"
-
-#: plugins/dbg.py:2188
-msgid "Open log file failed"
-msgstr "ログファイルを開けませんでした"
-
-#: plugins/dbg.py:2215
+#: plugins/dbg.py:1997
 msgid "Log"
 msgstr "Log"
 
-#: plugins/dbg.py:2242
-msgid "Log information"
-msgstr "ログ情報"
-
-#: plugins/dbg.py:2243
-msgid "Start time"
-msgstr "開始時刻"
-
-#: plugins/dbg.py:2244
-msgid "End time"
-msgstr "終了時刻"
-
-#: plugins/dbg.py:2245
-msgid "Active duration"
-msgstr "実記録時間"
-
-#: plugins/dbg.py:2246
-msgid "Pause count"
-msgstr "一時停止回数"
-
-#: plugins/dbg.py:2251 plugins/dbg.py:2258
-msgid "Pause time"
-msgstr "一時停止時間"
-
-#: plugins/dbg.py:2258
-msgid "None"
-msgstr "なし"
-
-#: plugins/dbg.py:2260
-msgid "Log size"
-msgstr "ログサイズ"
-
-#: plugins/dbg.py:2263
-msgid "Connection type"
-msgstr "接続タイプ"
-
-#: plugins/dbg.py:2264
-msgid "Connection status"
-msgstr "接続状態"
-
-#: plugins/dbg.py:2265
-msgid "Connection settings"
-msgstr "接続設定"
-
-#: plugins/dbg.py:2293
+#: plugins/dbg.py:2020
 msgid "Log file (*.log);;txt file (*.txt);;All Files (*)"
 msgstr "Log file (*.log);;txt file (*.txt);;All Files (*)"
 
-#: plugins/dbg.py:2388
+#: plugins/dbg.py:2114
 msgid "Select for batch edit"
 msgstr "Select for batch edit"
 
-#: plugins/dbg.py:2392
+#: plugins/dbg.py:2118
 msgid "Drag before another item to reorder"
 msgstr "Drag before another item to reorder"
 
-#: plugins/dbg.py:2399
+#: plugins/dbg.py:2125
 msgid "Click to set button color, right click to clear"
 msgstr "Click to set button color, right click to clear"
 
-#: plugins/dbg.py:2405
+#: plugins/dbg.py:2131
 msgid "Edit custom send remark and icon"
 msgstr "カスタム送信のラベルとアイコンを編集"
 
-#: plugins/dbg.py:2414
+#: plugins/dbg.py:2140
 msgid "Delete this custom send item"
 msgstr "このカスタム送信項目を削除"
 
-#: plugins/dbg.py:2455
+#: plugins/dbg.py:2181
 msgid "Delete selected custom send item?"
 msgstr "選択したカスタム送信項目を削除しますか？"
 
-#: plugins/dbg.py:2651
+#: plugins/dbg.py:2377
 msgid "Delete selected custom send items?"
 msgstr "選択したカスタム送信項目を削除しますか？"
 
-#: plugins/dbg.py:2754
+#: plugins/dbg.py:2480
 msgid "Import custom send"
 msgstr "カスタム送信をインポート"
 
-#: plugins/dbg.py:2756 plugins/dbg.py:2775
+#: plugins/dbg.py:2482 plugins/dbg.py:2501
 msgid "JSON file (*.json);;All Files (*)"
 msgstr "JSON file (*.json);;All Files (*)"
 
-#: plugins/dbg.py:2765
+#: plugins/dbg.py:2491
 msgid "Custom send file must be a JSON list"
 msgstr "カスタム送信ファイルはJSON配列である必要があります"
 
-#: plugins/dbg.py:2767
+#: plugins/dbg.py:2493
 msgid "Custom send items imported!"
 msgstr "カスタム送信項目をインポートしました！"
 
-#: plugins/dbg.py:2769
+#: plugins/dbg.py:2495
 msgid "Import custom send failed!"
 msgstr "カスタム送信のインポートに失敗しました！"
 
-#: plugins/dbg.py:2773
+#: plugins/dbg.py:2499
 msgid "Export custom send"
 msgstr "カスタム送信をエクスポート"
 
-#: plugins/dbg.py:2781
+#: plugins/dbg.py:2507
 msgid "Custom send items exported!"
 msgstr "カスタム送信項目をエクスポートしました！"
 
-#: plugins/dbg.py:2783
+#: plugins/dbg.py:2509
 msgid "Export custom send failed!"
 msgstr "カスタム送信のエクスポートに失敗しました！"
 
-#: plugins/dbg.py:2793
+#: plugins/dbg.py:2519
 msgid ""
 "File path error\n"
 "path"
@@ -1371,41 +1224,41 @@ msgstr ""
 "ファイルパスエラー\n"
 "ファイルパス"
 
-#: plugins/dbg.py:2796
+#: plugins/dbg.py:2522
 msgid "Connect first please"
 msgstr "最初に接続してください"
 
-#: plugins/dbg.py:2799
+#: plugins/dbg.py:2525
 msgid "Sending file"
 msgstr "Sending file"
 
-#: plugins/dbg.py:2816
+#: plugins/dbg.py:2542
 msgid "Time format error"
 msgstr "タイムフォーマットエラー"
 
-#: plugins/dbg.py:2883
+#: plugins/dbg.py:2609
 msgid "Send Error"
 msgstr "エラーの送信"
 
-#: plugins/dbg.py:2891
+#: plugins/dbg.py:2617
 msgid "get data error"
 msgstr "get data error"
 
-#: plugins/devtools.py:123 plugins/devtools.py:1913
+#: plugins/devtools.py:123 plugins/devtools.py:1896
 msgid "Original text"
 msgstr "元の文字列"
 
-#: plugins/devtools.py:123 plugins/devtools.py:1913
+#: plugins/devtools.py:123 plugins/devtools.py:1896
 msgid "Input text"
 msgstr "入力テキスト"
 
-#: plugins/devtools.py:126 plugins/devtools.py:1654 plugins/devtools.py:1830
-#: plugins/devtools.py:1878
+#: plugins/devtools.py:126 plugins/devtools.py:1637 plugins/devtools.py:1813
+#: plugins/devtools.py:1861
 msgid "Conversion result"
 msgstr "変換結果"
 
-#: plugins/devtools.py:126 plugins/devtools.py:1654 plugins/devtools.py:1830
-#: plugins/devtools.py:1870
+#: plugins/devtools.py:126 plugins/devtools.py:1637 plugins/devtools.py:1813
+#: plugins/devtools.py:1853
 msgid "Result"
 msgstr "結果"
 
@@ -1465,7 +1318,7 @@ msgstr "ビット操作"
 msgid "Bit calculator"
 msgstr "ビット計算機"
 
-#: plugins/devtools.py:390 plugins/devtools.py:1503
+#: plugins/devtools.py:390 plugins/devtools.py:1486
 msgid "Multi-bit operations"
 msgstr "複数バイトビット演算"
 
@@ -1473,15 +1326,15 @@ msgstr "複数バイトビット演算"
 msgid "String processing"
 msgstr "文字列処理"
 
-#: plugins/devtools.py:393 plugins/devtools.py:1548
+#: plugins/devtools.py:393 plugins/devtools.py:1531
 msgid "English case convert"
 msgstr "英字大小文字変換"
 
-#: plugins/devtools.py:394 plugins/devtools.py:1575
+#: plugins/devtools.py:394 plugins/devtools.py:1558
 msgid "String reverse"
 msgstr "文字列反転"
 
-#: plugins/devtools.py:395 plugins/devtools.py:1590
+#: plugins/devtools.py:395 plugins/devtools.py:1573
 msgid "Character count"
 msgstr "文字数カウント"
 
@@ -1489,27 +1342,27 @@ msgstr "文字数カウント"
 msgid "Encoding"
 msgstr "エンコード"
 
-#: plugins/devtools.py:398 plugins/devtools.py:1768
+#: plugins/devtools.py:398 plugins/devtools.py:1751
 msgid "Unicode"
 msgstr "Unicode"
 
-#: plugins/devtools.py:399 plugins/devtools.py:1782
+#: plugins/devtools.py:399 plugins/devtools.py:1765
 msgid "URLEncode"
 msgstr "URLエンコード"
 
-#: plugins/devtools.py:400 plugins/devtools.py:1790
+#: plugins/devtools.py:400 plugins/devtools.py:1773
 msgid "Base64"
 msgstr "Base64"
 
-#: plugins/devtools.py:401 plugins/devtools.py:1804
+#: plugins/devtools.py:401 plugins/devtools.py:1787
 msgid "Punycode"
 msgstr "Punycode"
 
-#: plugins/devtools.py:402 plugins/devtools.py:1904
+#: plugins/devtools.py:402 plugins/devtools.py:1887
 msgid "Chinese domain encoding"
 msgstr "中国語ドメインエンコード"
 
-#: plugins/devtools.py:403 plugins/devtools.py:1860
+#: plugins/devtools.py:403 plugins/devtools.py:1843
 msgid "Image to Base64"
 msgstr "画像をBase64へ変換"
 
@@ -1517,7 +1370,7 @@ msgstr "画像をBase64へ変換"
 msgid "Time"
 msgstr "時間"
 
-#: plugins/devtools.py:406 plugins/devtools.py:1824
+#: plugins/devtools.py:406 plugins/devtools.py:1807
 msgid "Unix timestamp"
 msgstr "Unixタイムスタンプ変換"
 
@@ -1525,23 +1378,23 @@ msgstr "Unixタイムスタンプ変換"
 msgid "Crypto"
 msgstr "暗号"
 
-#: plugins/devtools.py:409 plugins/devtools.py:1912
+#: plugins/devtools.py:409 plugins/devtools.py:1895
 msgid "MD5 encrypt/decrypt"
 msgstr "MD5暗号化/復号"
 
-#: plugins/devtools.py:410 plugins/devtools.py:1945
+#: plugins/devtools.py:410 plugins/devtools.py:1928
 msgid "AES encrypt/decrypt"
 msgstr "AES暗号化/復号"
 
-#: plugins/devtools.py:411 plugins/devtools.py:1645
+#: plugins/devtools.py:411 plugins/devtools.py:1628
 msgid "ECC encrypt/decrypt"
 msgstr "ECC暗号化/復号"
 
-#: plugins/devtools.py:412 plugins/devtools.py:1993
+#: plugins/devtools.py:412 plugins/devtools.py:1976
 msgid "Encode/decode collection"
 msgstr "エンコード/デコード集"
 
-#: plugins/devtools.py:413 plugins/devtools.py:2017
+#: plugins/devtools.py:413 plugins/devtools.py:2000
 msgid "Hash collection"
 msgstr "ハッシュ集"
 
@@ -1581,9 +1434,9 @@ msgstr "16進バイトまたはテキストを入力"
 msgid "Input HEX + check"
 msgstr "入力HEX+チェック値"
 
-#: plugins/devtools.py:521 plugins/devtools.py:666 plugins/devtools.py:1518
-#: plugins/devtools.py:1556 plugins/devtools.py:1580 plugins/devtools.py:1604
-#: plugins/devtools.py:1658 plugins/devtools.py:1934
+#: plugins/devtools.py:521 plugins/devtools.py:666 plugins/devtools.py:1501
+#: plugins/devtools.py:1539 plugins/devtools.py:1563 plugins/devtools.py:1587
+#: plugins/devtools.py:1641 plugins/devtools.py:1917
 #: plugins/graph_widgets.py:52
 msgid "Clear"
 msgstr "Clear"
@@ -1628,7 +1481,7 @@ msgstr ""
 msgid "Choose CRC algorithm"
 msgstr "CRCアルゴリズムを選択"
 
-#: plugins/devtools.py:620 plugins/devtools.py:1996
+#: plugins/devtools.py:620 plugins/devtools.py:1979
 msgid "Algorithm"
 msgstr "アルゴリズム"
 
@@ -1716,7 +1569,7 @@ msgstr "青"
 msgid "Input is empty"
 msgstr "入力が空です"
 
-#: plugins/devtools.py:936 plugins/devtools.py:1017 plugins/devtools.py:1499
+#: plugins/devtools.py:936 plugins/devtools.py:1017 plugins/devtools.py:1482
 #: plugins/graph_widget_metasenselite.py:591 plugins/graph_widgets.py:167
 msgid "Format error"
 msgstr "Format error"
@@ -1731,237 +1584,237 @@ msgid ""
 "operations, and shift operations."
 msgstr "整数の基数変換、ビット切り替え、ビット演算、シフト演算を行うプログラマ向け計算機です。"
 
-#: plugins/devtools.py:1075
+#: plugins/devtools.py:1158
 msgid "Switch input base"
 msgstr "入力基数を切り替え"
 
-#: plugins/devtools.py:1091
+#: plugins/devtools.py:1174
 msgid "Keypad"
 msgstr "キーパッド"
 
-#: plugins/devtools.py:1092
+#: plugins/devtools.py:1175
 msgid "Bit grid"
 msgstr "ビットグリッド"
 
-#: plugins/devtools.py:1103
+#: plugins/devtools.py:1186
 msgid "Word size"
 msgstr "ワードサイズ"
 
-#: plugins/devtools.py:1115 plugins/devtools.py:1116
+#: plugins/devtools.py:1198 plugins/devtools.py:1199
 msgid "Apply"
 msgstr "適用"
 
-#: plugins/devtools.py:1119
+#: plugins/devtools.py:1202
 msgid "Bitwise"
 msgstr "ビット演算"
 
-#: plugins/devtools.py:1123
+#: plugins/devtools.py:1206
 msgid "Shift"
 msgstr "シフト"
 
-#: plugins/devtools.py:1303
+#: plugins/devtools.py:1286
 msgid "Toggle bit"
 msgstr "ビットを切り替え"
 
-#: plugins/devtools.py:1483 plugins/devtools.py:1487
+#: plugins/devtools.py:1466 plugins/devtools.py:1470
 msgid "Divide by zero"
 msgstr "0で除算できません"
 
-#: plugins/devtools.py:1504
+#: plugins/devtools.py:1487
 msgid ""
 "Run byte-level AND, OR, XNOR, XOR, and NOT operations on two text or HEX "
 "inputs."
 msgstr "2つのテキストまたはHEX入力に対してバイト単位のAND、OR、XNOR、XOR、NOT演算を行います。"
 
-#: plugins/devtools.py:1507
+#: plugins/devtools.py:1490
 msgid "Input A"
 msgstr "入力A"
 
-#: plugins/devtools.py:1507 plugins/devtools.py:1508
+#: plugins/devtools.py:1490 plugins/devtools.py:1491
 msgid "Input string or HEX"
 msgstr "文字列またはHEXを入力"
 
-#: plugins/devtools.py:1508
+#: plugins/devtools.py:1491
 msgid "Input B"
 msgstr "入力B"
 
-#: plugins/devtools.py:1517
+#: plugins/devtools.py:1500
 msgid "Calculate"
 msgstr "計算"
 
-#: plugins/devtools.py:1536
+#: plugins/devtools.py:1519
 msgid ""
 "Inputs have different lengths; shorter input is padded with 00 for two-"
 "input operations."
 msgstr "入力長が異なります。2入力演算では短い側を00で埋めます。"
 
-#: plugins/devtools.py:1549
+#: plugins/devtools.py:1532
 msgid ""
 "Convert English text between uppercase, lowercase, title case, and "
 "swapped case."
 msgstr "英字テキストを大文字、小文字、タイトルケース、大小文字反転に変換します。"
 
-#: plugins/devtools.py:1551
+#: plugins/devtools.py:1534
 msgid "Input English text"
 msgstr "英字テキストを入力"
 
-#: plugins/devtools.py:1551
+#: plugins/devtools.py:1534
 msgid "Converted text"
 msgstr "変換後のテキスト"
 
-#: plugins/devtools.py:1552
+#: plugins/devtools.py:1535
 msgid "Uppercase"
 msgstr "大文字へ"
 
-#: plugins/devtools.py:1553
+#: plugins/devtools.py:1536
 msgid "Lowercase"
 msgstr "小文字へ"
 
-#: plugins/devtools.py:1554
+#: plugins/devtools.py:1537
 msgid "Title case"
 msgstr "タイトルケース"
 
-#: plugins/devtools.py:1555
+#: plugins/devtools.py:1538
 msgid "Swap case"
 msgstr "大小文字を反転"
 
-#: plugins/devtools.py:1571 plugins/devtools.py:1586
+#: plugins/devtools.py:1554 plugins/devtools.py:1569
 msgid "Conversion complete"
 msgstr "変換完了"
 
-#: plugins/devtools.py:1576
+#: plugins/devtools.py:1559
 msgid "Reverse the input string by character order."
 msgstr "入力文字列を文字順で反転します。"
 
-#: plugins/devtools.py:1578 plugins/devtools.py:1593
+#: plugins/devtools.py:1561 plugins/devtools.py:1576
 msgid "Input string"
 msgstr "文字列を入力"
 
-#: plugins/devtools.py:1578
+#: plugins/devtools.py:1561
 msgid "Reversed string"
 msgstr "反転後の文字列"
 
-#: plugins/devtools.py:1579
+#: plugins/devtools.py:1562
 msgid "Reverse"
 msgstr "反転"
 
-#: plugins/devtools.py:1591
+#: plugins/devtools.py:1574
 msgid ""
 "Count characters, non-space characters, words, lines, and UTF-8 bytes in "
 "the input string."
 msgstr "入力文字列の文字数、空白を除いた文字数、単語数、行数、UTF-8バイト数を数えます。"
 
-#: plugins/devtools.py:1595
+#: plugins/devtools.py:1578
 msgid "Characters"
 msgstr "文字数"
 
-#: plugins/devtools.py:1596
+#: plugins/devtools.py:1579
 msgid "Characters without spaces"
 msgstr "空白を除いた文字数"
 
-#: plugins/devtools.py:1597
+#: plugins/devtools.py:1580
 msgid "Words"
 msgstr "単語数"
 
-#: plugins/devtools.py:1598
+#: plugins/devtools.py:1581
 msgid "Lines"
 msgstr "行数"
 
-#: plugins/devtools.py:1599
+#: plugins/devtools.py:1582
 msgid "UTF-8 bytes"
 msgstr "UTF-8バイト数"
 
-#: plugins/devtools.py:1601
+#: plugins/devtools.py:1584
 msgid "Character frequency"
 msgstr "文字出現回数"
 
-#: plugins/devtools.py:1623
+#: plugins/devtools.py:1606
 msgid "Count complete"
 msgstr "カウント完了"
 
-#: plugins/devtools.py:1631
+#: plugins/devtools.py:1614
 msgid "Space"
 msgstr "空白"
 
-#: plugins/devtools.py:1646
+#: plugins/devtools.py:1629
 msgid ""
 "Generate ECC key pairs and encrypt/decrypt text with ECIES style ECDH + "
 "AES-GCM."
 msgstr "ECC鍵ペアを生成し、ECIES形式のECDH + AES-GCMでテキストを暗号化/復号します。"
 
-#: plugins/devtools.py:1650
+#: plugins/devtools.py:1633
 msgid "Curve"
 msgstr "曲線"
 
-#: plugins/devtools.py:1651
+#: plugins/devtools.py:1634
 msgid "Private key"
 msgstr "秘密鍵"
 
-#: plugins/devtools.py:1651
+#: plugins/devtools.py:1634
 msgid "PEM private key"
 msgstr "PEM秘密鍵"
 
-#: plugins/devtools.py:1652
+#: plugins/devtools.py:1635
 msgid "Public key"
 msgstr "公開鍵"
 
-#: plugins/devtools.py:1652
+#: plugins/devtools.py:1635
 msgid "PEM public key"
 msgstr "PEM公開鍵"
 
-#: plugins/devtools.py:1653
+#: plugins/devtools.py:1636
 msgid "Plain text or cipher JSON"
 msgstr "平文または暗号JSON"
 
-#: plugins/devtools.py:1653
+#: plugins/devtools.py:1636
 msgid "Input text or ECC cipher JSON"
 msgstr "テキストまたはECC暗号JSONを入力"
 
-#: plugins/devtools.py:1655
+#: plugins/devtools.py:1638
 msgid "Generate key pair"
 msgstr "鍵ペア生成"
 
-#: plugins/devtools.py:1656 plugins/devtools.py:1963
+#: plugins/devtools.py:1639 plugins/devtools.py:1946
 msgid "Encrypt"
 msgstr "暗号化"
 
-#: plugins/devtools.py:1657 plugins/devtools.py:1964
+#: plugins/devtools.py:1640 plugins/devtools.py:1947
 msgid "Decrypt"
 msgstr "復号"
 
-#: plugins/devtools.py:1664
+#: plugins/devtools.py:1647
 msgid "ECC backend not available"
 msgstr "ECCバックエンドが利用できません"
 
-#: plugins/devtools.py:1694
+#: plugins/devtools.py:1677
 msgid "ECC key pair generated"
 msgstr "ECC鍵ペアを生成しました"
 
-#: plugins/devtools.py:1720
+#: plugins/devtools.py:1703
 msgid "Public key is empty"
 msgstr "公開鍵が空です"
 
-#: plugins/devtools.py:1723
+#: plugins/devtools.py:1706
 msgid "Public key is not an ECC public key"
 msgstr "公開鍵がECC公開鍵ではありません"
 
-#: plugins/devtools.py:1741
+#: plugins/devtools.py:1724
 msgid "ECC encrypt complete"
 msgstr "ECC暗号化が完了しました"
 
-#: plugins/devtools.py:1751
+#: plugins/devtools.py:1734
 msgid "Private key is empty"
 msgstr "秘密鍵が空です"
 
-#: plugins/devtools.py:1754
+#: plugins/devtools.py:1737
 msgid "Private key is not an ECC private key"
 msgstr "秘密鍵がECC秘密鍵ではありません"
 
-#: plugins/devtools.py:1763
+#: plugins/devtools.py:1746
 msgid "ECC decrypt complete"
 msgstr "ECC復号が完了しました"
 
-#: plugins/devtools.py:1768
+#: plugins/devtools.py:1751
 msgid ""
 "Convert text to Unicode escape sequences, or restore Unicode escapes to "
 "readable text."
@@ -1969,21 +1822,21 @@ msgstr ""
 "Convert text to Unicode escape sequences, or restore Unicode escapes to "
 "readable text."
 
-#: plugins/devtools.py:1770 plugins/devtools.py:1784 plugins/devtools.py:1792
-#: plugins/devtools.py:1806 plugins/devtools.py:1906 plugins/devtools.py:1998
+#: plugins/devtools.py:1753 plugins/devtools.py:1767 plugins/devtools.py:1775
+#: plugins/devtools.py:1789 plugins/devtools.py:1889 plugins/devtools.py:1981
 msgid "Encode"
 msgstr "エンコード"
 
-#: plugins/devtools.py:1771 plugins/devtools.py:1785 plugins/devtools.py:1793
-#: plugins/devtools.py:1807 plugins/devtools.py:1907 plugins/devtools.py:1999
+#: plugins/devtools.py:1754 plugins/devtools.py:1768 plugins/devtools.py:1776
+#: plugins/devtools.py:1790 plugins/devtools.py:1890 plugins/devtools.py:1982
 msgid "Decode"
 msgstr "デコード"
 
-#: plugins/devtools.py:1782
+#: plugins/devtools.py:1765
 msgid "Encode text for use in URLs, or decode percent-escaped URL text."
 msgstr "Encode text for use in URLs, or decode percent-escaped URL text."
 
-#: plugins/devtools.py:1790
+#: plugins/devtools.py:1773
 msgid ""
 "Encode text as Base64, or decode Base64 back to text with the current "
 "UTF-8 text encoding."
@@ -1991,7 +1844,7 @@ msgstr ""
 "Encode text as Base64, or decode Base64 back to text with the current "
 "UTF-8 text encoding."
 
-#: plugins/devtools.py:1804
+#: plugins/devtools.py:1787
 msgid ""
 "Convert internationalized domain names between Unicode text and ASCII "
 "Punycode form."
@@ -1999,15 +1852,15 @@ msgstr ""
 "Convert internationalized domain names between Unicode text and ASCII "
 "Punycode form."
 
-#: plugins/devtools.py:1805
+#: plugins/devtools.py:1788
 msgid "Input domain or text"
 msgstr "ドメインまたはテキストを入力"
 
-#: plugins/devtools.py:1805
+#: plugins/devtools.py:1788
 msgid "Converted value"
 msgstr "変換結果"
 
-#: plugins/devtools.py:1824
+#: plugins/devtools.py:1807
 msgid ""
 "Convert Unix timestamps and local date-time strings. Date input format: "
 "YYYY-MM-DD HH:MM:SS."
@@ -2015,27 +1868,27 @@ msgstr ""
 "Convert Unix timestamps and local date-time strings. Date input format: "
 "YYYY-MM-DD HH:MM:SS."
 
-#: plugins/devtools.py:1826 plugins/devtools.py:1829
+#: plugins/devtools.py:1809 plugins/devtools.py:1812
 msgid "Timestamp or date-time"
 msgstr "タイムスタンプまたは日時"
 
-#: plugins/devtools.py:1827
+#: plugins/devtools.py:1810
 msgid "Enter seconds, milliseconds, or YYYY-MM-DD HH:MM:SS"
 msgstr "秒、ミリ秒、またはYYYY-MM-DD HH:MM:SSを入力"
 
-#: plugins/devtools.py:1831
+#: plugins/devtools.py:1814
 msgid "Now"
 msgstr "現在時刻"
 
-#: plugins/devtools.py:1832
+#: plugins/devtools.py:1815
 msgid "To date-time"
 msgstr "日時へ変換"
 
-#: plugins/devtools.py:1833
+#: plugins/devtools.py:1816
 msgid "To timestamp"
 msgstr "タイムスタンプへ変換"
 
-#: plugins/devtools.py:1860
+#: plugins/devtools.py:1843
 msgid ""
 "Choose an image file and convert it to Base64 text or a data URL for "
 "embedding."
@@ -2043,27 +1896,27 @@ msgstr ""
 "Choose an image file and convert it to Base64 text or a data URL for "
 "embedding."
 
-#: plugins/devtools.py:1862 plugins/devtools.py:1872
+#: plugins/devtools.py:1845 plugins/devtools.py:1855
 msgid "Image file path"
 msgstr "画像ファイルパス"
 
-#: plugins/devtools.py:1864 plugins/devtools.py:1885
+#: plugins/devtools.py:1847 plugins/devtools.py:1868
 msgid "Choose file"
 msgstr "ファイルを選択"
 
-#: plugins/devtools.py:1866
+#: plugins/devtools.py:1849
 msgid "Convert"
 msgstr "変換"
 
-#: plugins/devtools.py:1868
+#: plugins/devtools.py:1851
 msgid "Output data URL"
 msgstr "Data URLを出力"
 
-#: plugins/devtools.py:1885
+#: plugins/devtools.py:1868
 msgid "Image files (*.png *.jpg *.jpeg *.gif *.bmp *.webp);;All Files (*)"
 msgstr "画像ファイル (*.png *.jpg *.jpeg *.gif *.bmp *.webp);;すべてのファイル (*)"
 
-#: plugins/devtools.py:1904
+#: plugins/devtools.py:1887
 msgid ""
 "Encode Chinese or other internationalized domain names to IDNA, or decode"
 " xn-- domains back to readable text."
@@ -2071,15 +1924,15 @@ msgstr ""
 "Encode Chinese or other internationalized domain names to IDNA, or decode"
 " xn-- domains back to readable text."
 
-#: plugins/devtools.py:1905
+#: plugins/devtools.py:1888
 msgid "Input domain"
 msgstr "ドメインを入力"
 
-#: plugins/devtools.py:1905
+#: plugins/devtools.py:1888
 msgid "Converted domain"
 msgstr "変換後のドメイン"
 
-#: plugins/devtools.py:1912
+#: plugins/devtools.py:1895
 msgid ""
 "Generate MD5 digests. MD5 is one-way and cannot be truly decrypted; use "
 "the compare field to verify candidate text."
@@ -2087,43 +1940,43 @@ msgstr ""
 "Generate MD5 digests. MD5 is one-way and cannot be truly decrypted; use "
 "the compare field to verify candidate text."
 
-#: plugins/devtools.py:1915
+#: plugins/devtools.py:1898
 msgid "Optional MD5 hash to compare"
 msgstr "比較するMD5ハッシュ（任意）"
 
-#: plugins/devtools.py:1917
+#: plugins/devtools.py:1900
 msgid "Compare hash"
 msgstr "比較ハッシュ"
 
-#: plugins/devtools.py:1919
+#: plugins/devtools.py:1902
 msgid "Lowercase 32-bit"
 msgstr "小文字32桁"
 
-#: plugins/devtools.py:1920
+#: plugins/devtools.py:1903
 msgid "Uppercase 32-bit"
 msgstr "大文字32桁"
 
-#: plugins/devtools.py:1921
+#: plugins/devtools.py:1904
 msgid "Lowercase 16-bit"
 msgstr "小文字16桁"
 
-#: plugins/devtools.py:1922
+#: plugins/devtools.py:1905
 msgid "Uppercase 16-bit"
 msgstr "大文字16桁"
 
-#: plugins/devtools.py:1923
+#: plugins/devtools.py:1906
 msgid "Compare"
 msgstr "比較"
 
-#: plugins/devtools.py:1932
+#: plugins/devtools.py:1915
 msgid "Not match"
 msgstr "一致しません"
 
-#: plugins/devtools.py:1933 plugins/devtools.py:2019
+#: plugins/devtools.py:1916 plugins/devtools.py:2002
 msgid "Generate"
 msgstr "生成"
 
-#: plugins/devtools.py:1945
+#: plugins/devtools.py:1928
 msgid ""
 "AES text encryption and decryption. Supports ECB and CBC with PKCS7 "
 "padding. Key lengths: 16, 24, or 32 bytes."
@@ -2131,43 +1984,43 @@ msgstr ""
 "AES text encryption and decryption. Supports ECB and CBC with PKCS7 "
 "padding. Key lengths: 16, 24, or 32 bytes."
 
-#: plugins/devtools.py:1946
+#: plugins/devtools.py:1929
 msgid "Input text or Base64 cipher text"
 msgstr "テキストまたはBase64暗号文を入力"
 
-#: plugins/devtools.py:1946
+#: plugins/devtools.py:1929
 msgid "AES result"
 msgstr "AES結果"
 
-#: plugins/devtools.py:1949
+#: plugins/devtools.py:1932
 msgid "AES key"
 msgstr "AESキー"
 
-#: plugins/devtools.py:1952
+#: plugins/devtools.py:1935
 msgid "CBC IV, 16 bytes"
 msgstr "CBC IV、16バイト"
 
-#: plugins/devtools.py:1956
+#: plugins/devtools.py:1939
 msgid "Key"
 msgstr "キー"
 
-#: plugins/devtools.py:1960
+#: plugins/devtools.py:1943
 msgid "IV"
 msgstr "IV"
 
-#: plugins/devtools.py:1970
+#: plugins/devtools.py:1953
 msgid "AES backend not available"
 msgstr "AESバックエンドが利用できません"
 
-#: plugins/devtools.py:1975
+#: plugins/devtools.py:1958
 msgid "AES key must be 16, 24, or 32 bytes"
 msgstr "AESキーは16、24、32バイトである必要があります"
 
-#: plugins/devtools.py:1993
+#: plugins/devtools.py:1976
 msgid "Common reversible text transforms for quick programming work."
 msgstr "Common reversible text transforms for quick programming work."
 
-#: plugins/devtools.py:2017
+#: plugins/devtools.py:2000
 msgid "Generate common hashes for the input text."
 msgstr "Generate common hashes for the input text."
 
@@ -2667,9 +2520,3 @@ msgstr "my plugin2"
 
 #~ msgid "Value stored to memory"
 #~ msgstr "値をメモリに保存しました"
-
-#~ msgid "Enable saving received and recorded sent data to a log file"
-#~ msgstr "受信データと記録した送信データをログファイルに保存します"
-
-#~ msgid "Timed log duration error, format: HH:MM:SS"
-#~ msgstr "Timed log duration error, format: HH:MM:SS\"\\"

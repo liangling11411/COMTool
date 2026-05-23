@@ -29,7 +29,7 @@ from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QMimeData, QTimer
 from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSpinBox, QSizePolicy,
-                             QColorDialog, QFontComboBox, QDialog, QScrollBar, QDialogButtonBox)
+                             QColorDialog, QFontComboBox, QDialog, QScrollBar)
 from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QDrag, QTextOption, QPalette, QKeySequence, QPainter
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
 import os, threading, time, re, json
@@ -150,87 +150,6 @@ class FontSizeTextEdit(QTextEdit):
                 event.accept()
                 return
         super().wheelEvent(event)
-
-class LogSettingsDialog(QDialog):
-    def __init__(self, plugin, parent=None):
-        super().__init__(parent)
-        self.plugin = plugin
-        self.setWindowTitle(_("More log settings"))
-        self.setModal(True)
-
-        layout = QVBoxLayout()
-        layout.setContentsMargins(14, 12, 14, 12)
-        layout.setSpacing(10)
-        self.setLayout(layout)
-
-        self.autoNewCheck = QCheckBox(_("Auto new file"))
-        self.autoNewCheck.setToolTip(_("When start a new connection, will automatically create a new log file"))
-        self.timedCheck = QCheckBox(_("Timed log"))
-        self.timedCheck.setToolTip(_("Stop saving log automatically after the configured duration"))
-        self.appendInfoCheck = QCheckBox(_("Append log information at stop"))
-        self.appendInfoCheck.setToolTip(_("Append start time, pause history, log size, and connection settings to the end of the log"))
-
-        duration = int(plugin.config.get("saveLogDuration", 60))
-        hours, minutes, seconds = plugin.splitSeconds(duration)
-        self.hoursInput = NoWheelSpinBox()
-        self.minutesInput = NoWheelSpinBox()
-        self.secondsInput = NoWheelSpinBox()
-        for spin, value in [
-            (self.hoursInput, hours),
-            (self.minutesInput, minutes),
-            (self.secondsInput, seconds)
-        ]:
-            spin.setRange(0, 999999)
-            spin.setValue(value)
-            spin.setToolTip(_("Only numbers are allowed"))
-        self.minutesInput.setRange(0, 59)
-        self.secondsInput.setRange(0, 59)
-
-        grid = QGridLayout()
-        grid.setHorizontalSpacing(8)
-        grid.setVerticalSpacing(8)
-        grid.addWidget(self.autoNewCheck, 0, 0, 1, 4)
-        grid.addWidget(self.timedCheck, 1, 0, 1, 4)
-        grid.addWidget(QLabel(_("Hours")), 2, 0)
-        grid.addWidget(self.hoursInput, 2, 1)
-        grid.addWidget(QLabel(_("Minutes")), 2, 2)
-        grid.addWidget(self.minutesInput, 2, 3)
-        grid.addWidget(QLabel(_("Seconds")), 3, 0)
-        grid.addWidget(self.secondsInput, 3, 1)
-        grid.addWidget(self.appendInfoCheck, 4, 0, 1, 4)
-        layout.addLayout(grid)
-
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout.addWidget(buttons)
-
-        self.autoNewCheck.setChecked(bool(plugin.config.get("saveLogAutoNew", False)))
-        self.timedCheck.setChecked(bool(plugin.config.get("saveLogTimed", False)))
-        self.appendInfoCheck.setChecked(bool(plugin.config.get("saveLogAppendInfo", False)))
-        self.timedCheck.toggled.connect(self.updateTimedInputs)
-        self.updateTimedInputs()
-
-    def updateTimedInputs(self):
-        enabled = self.timedCheck.isChecked()
-        for widget in [self.hoursInput, self.minutesInput, self.secondsInput]:
-            widget.setEnabled(enabled)
-
-    def accept(self):
-        duration = (
-            self.hoursInput.value() * 3600 +
-            self.minutesInput.value() * 60 +
-            self.secondsInput.value()
-        )
-        if self.timedCheck.isChecked() and duration <= 0:
-            QMessageBox.warning(self, _("Error"), _("Timed log duration must be greater than zero"))
-            return
-        self.plugin.config["saveLogAutoNew"] = self.autoNewCheck.isChecked()
-        self.plugin.config["saveLogTimed"] = self.timedCheck.isChecked()
-        self.plugin.config["saveLogDuration"] = duration
-        self.plugin.config["saveLogAppendInfo"] = self.appendInfoCheck.isChecked()
-        self.plugin.updateLogSettingsSummary()
-        super().accept()
 
 class WrapRemarkButton(QPushButton):
     def __init__(self, text="", parent=None):
@@ -985,7 +904,6 @@ class Plugin(Plugin_Base):
             "saveLog" : False,
             "saveLogTimed": False,
             "saveLogDuration": 60,
-            "saveLogAppendInfo": False,
             "wrap": False,
             "saveLogAutoNew": False,
             "color" : False,
@@ -1008,7 +926,6 @@ class Plugin(Plugin_Base):
         for k in default:
             if not k in self.config:
                 self.config[k] = default[k]
-        self.config["saveLog"] = False
         if not hasReceiveFontSize:
             self.config["receiveFontSize"] = 10
         if not hasSendFontSize:
@@ -1023,16 +940,6 @@ class Plugin(Plugin_Base):
         self.saveLogStopTimer = None
         self.saveLogStatusTimer = None
         self.logStartTime = None
-        self.logSessionActive = False
-        self.logPaused = False
-        self.logSessionPath = ""
-        self.logSessionStartDt = None
-        self.logPauseStartTime = None
-        self.logPauseStartDt = None
-        self.logPausePeriods = []
-        self.logTimedDeadline = None
-        self.logTimedRemaining = None
-        self.logLastSize = 0
         self.receiveFindDialog = None
         self.receiveFindRuleErrors = set()
         self.receiveFindMarkerTimer = None
@@ -1219,11 +1126,11 @@ class Plugin(Plugin_Base):
         self.receiveSettingsWrap.clicked.connect(self.onSettingWrap)
         self.receiveEscape.clicked.connect(lambda: self.bindVar(self.receiveEscape, self.config, "receiveEscape"))
         self.sendFileButton.clicked.connect(self.sendFile)
+        self.saveLogCheckbox.clicked.connect(self.setSaveLog)
         self.logFileBtn.clicked.connect(self.selectLogFile)
-        self.logFilePath.editingFinished.connect(self.onLogFilePathChanged)
-        self.saveLogStartButton.clicked.connect(self.toggleSaveLogRecording)
-        self.saveLogStopButton.clicked.connect(self.confirmStopSaveLog)
-        self.logMoreSettingsButton.clicked.connect(self.openLogSettingsDialog)
+        self.saveLogAutoNew.clicked.connect(lambda: self.bindVar(self.saveLogAutoNew, self.config, "saveLogAutoNew"))
+        self.saveLogTimed.clicked.connect(self.onSaveLogTimedChanged)
+        self.saveLogDuration.editingFinished.connect(self.onSaveLogDurationChanged)
         self.openFileButton.clicked.connect(self.selectFile)
         self.clearHistoryButton.clicked.connect(self.clearHistoryWithConfirm)
         self.receiveFontSizeInput.valueChanged.connect(self.changeReceiveFontSize)
@@ -1302,20 +1209,21 @@ class Plugin(Plugin_Base):
         self.logFileGroupBox = QGroupBox(_("Save log"))
         logFileWrapper = QVBoxLayout()
         logFileLayout = QHBoxLayout()
+        self.saveLogCheckbox = QCheckBox()
+        self.saveLogCheckbox.setToolTip(_("Enable saving received and recorded sent data to a log file"))
         self.logFilePath = QLineEdit()
         self.logFilePath.setToolTip(_("Log file path"))
         self.logFileBtn = QPushButton(_("Log path"))
         self.logFileBtn.setToolTip(_("Select log file path"))
-        self.saveLogStartButton = QPushButton(_("Start record"))
-        self.saveLogStartButton.setToolTip(_("Start or pause log recording"))
-        self.saveLogStopButton = QPushButton(_("Stop record"))
-        self.saveLogStopButton.setToolTip(_("Stop log recording"))
-        self.saveLogStopButton.setEnabled(False)
-        self.logMoreSettingsButton = QPushButton(_("More log settings"))
-        self.logMoreSettingsButton.setToolTip(_("Configure auto new file, timed log, and log information summary"))
-        self.logSettingsSummaryLabel = QLabel("")
-        self.logSettingsSummaryLabel.setWordWrap(True)
-        self.logSettingsSummaryLabel.setToolTip(_("Current log settings"))
+        self.saveLogAutoNew = QCheckBox(_("Auto new file"))
+        self.saveLogAutoNew.setToolTip(_("When start a new connection, will automatically create a new log file"))
+        self.saveLogTimed = QCheckBox(_("Timed log"))
+        self.saveLogTimed.setToolTip(_("Stop saving log automatically after the configured duration"))
+        self.saveLogDuration = QLineEdit("00:01:00")
+        self.saveLogDuration.setProperty("class", "smallInput")
+        self.saveLogDuration.setMaximumWidth(90)
+        self.saveLogDuration.setPlaceholderText("HH:MM:SS")
+        self.saveLogDuration.setToolTip(_("Timed log duration, format: HH:MM:SS"))
         self.saveLogStatusLabel = QLabel(_("Log: 00:00:00 / 0 B"))
         self.saveLogStatusLabel.setToolTip(_("Current log recording duration and file size"))
         self.logFileGroupBox.setLayout(logFileWrapper)
@@ -1331,15 +1239,16 @@ class Plugin(Plugin_Base):
         rxBufferLayout.addStretch(1)
         self.rxBufferGroupBox.setLayout(rxBufferLayout)
 
+        logFileLayout.addWidget(self.saveLogCheckbox)
         logFileLayout.addWidget(self.logFilePath)
         logFileLayout.addWidget(self.logFileBtn)
-        logControlLayout = QHBoxLayout()
-        logControlLayout.addWidget(self.saveLogStartButton)
-        logControlLayout.addWidget(self.saveLogStopButton)
+        logTimedLayout = QHBoxLayout()
+        logTimedLayout.addWidget(self.saveLogTimed)
+        logTimedLayout.addWidget(self.saveLogDuration)
+        logTimedLayout.addStretch(1)
         logFileWrapper.addLayout(logFileLayout)
-        logFileWrapper.addLayout(logControlLayout)
-        logFileWrapper.addWidget(self.logMoreSettingsButton)
-        logFileWrapper.addWidget(self.logSettingsSummaryLabel)
+        logFileWrapper.addWidget(self.saveLogAutoNew)
+        logFileWrapper.addLayout(logTimedLayout)
         logFileWrapper.addWidget(self.saveLogStatusLabel)
 
         parentLayout.addWidget(self.fontSettingsGroupBox)
@@ -1486,15 +1395,15 @@ class Plugin(Plugin_Base):
             self.sendHistory.addItem(text)
         self.logFilePath.setText(paramObj["saveLogPath"])
         self.logFilePath.setToolTip(paramObj["saveLogPath"])
-        paramObj["saveLog"] = False
+        self.saveLogCheckbox.setChecked(paramObj["saveLog"])
+        self.saveLogAutoNew.setChecked(paramObj["saveLogAutoNew"])
+        self.saveLogTimed.setChecked(paramObj["saveLogTimed"])
         try:
             duration = int(paramObj["saveLogDuration"])
             paramObj["saveLogDuration"] = duration
         except Exception:
             duration = 60
-            paramObj["saveLogDuration"] = duration
-        self.updateLogSettingsSummary()
-        self.updateSaveLogButtons()
+        self.saveLogDuration.setText(self.secondsToHms(duration))
         self.updateSaveLogStatus()
         # wrap
         self.applyWrapMode()
@@ -1521,6 +1430,10 @@ class Plugin(Plugin_Base):
             self.normalizeReceiveFindRule(rule)
             for rule in paramObj.get("receiveFindRules", [])
         ]
+        if paramObj["saveLog"]:
+            self.logStartTime = time.time()
+            self.startSaveLogStatus()
+        self.startTimedSaveLog()
         self.updateClosedOnlyControls()
 
         self.receiveProcess = threading.Thread(target=self.receiveDataProcess)
@@ -1978,171 +1891,60 @@ class Plugin(Plugin_Base):
             self.hintSignal.emit("error", _("Error"), _("Send file failed!") + " " + msg)
 
     def setSaveLog(self):
-        self.toggleSaveLogRecording()
-
-    def toggleSaveLogRecording(self):
-        if not self.logSessionActive:
-            self.startSaveLogRecording()
-        elif self.logPaused:
-            self.resumeSaveLogRecording()
+        if self.saveLogCheckbox.isChecked():
+            self.config["saveLog"] = True
+            self.logStartTime = time.time()
+            self.startSaveLogStatus()
+            self.startTimedSaveLog()
         else:
-            self.pauseSaveLogRecording()
+            self.config["saveLog"] = False
+            self.stopSaveLogStatus()
+            self.stopSaveLogTimer()
 
-    def startSaveLogRecording(self):
-        self.onLogFilePathChanged()
-        if self.config.get("saveLogAutoNew", False):
-            self.updateLogPath()
-        path = self.configuredLogPath()
-        if not self.ensureLogFileReady(path):
-            return
-        self.logSessionActive = True
-        self.logPaused = False
-        self.logSessionPath = path
-        self.logStartTime = time.time()
-        self.logSessionStartDt = datetime.now()
-        self.logPauseStartTime = None
-        self.logPauseStartDt = None
-        self.logPausePeriods = []
-        self.logTimedRemaining = int(self.config.get("saveLogDuration", 60))
-        self.config["saveLog"] = True
-        self.updateSaveLogButtons()
-        self.startSaveLogStatus()
-        self.startTimedSaveLog()
-
-    def pauseSaveLogRecording(self):
-        if not self.logSessionActive or self.logPaused:
-            return
-        self.logPaused = True
-        self.config["saveLog"] = False
-        self.logPauseStartTime = time.time()
-        self.logPauseStartDt = datetime.now()
-        if self.logTimedDeadline is not None:
-            self.logTimedRemaining = max(1, int(self.logTimedDeadline - time.time() + 0.999))
-        self.stopSaveLogTimer(clearDeadline=True)
-        self.stopSaveLogStatus()
-        self.updateSaveLogButtons()
-
-    def resumeSaveLogRecording(self):
-        if not self.logSessionActive or not self.logPaused:
-            return
-        self.closeCurrentLogPause()
-        self.logPaused = False
-        self.config["saveLog"] = True
-        self.updateSaveLogButtons()
-        self.startSaveLogStatus()
-        self.startTimedSaveLog()
-
-    def confirmStopSaveLog(self):
-        if not self.logSessionActive:
-            return
-        if QMessageBox.question(self.mainWidget, _("Confirm stop"), _("Stop log recording?"),
-                                QMessageBox.Yes | QMessageBox.No, QMessageBox.No) != QMessageBox.Yes:
-            return
-        self.finishSaveLogRecording()
-
-    def finishSaveLogRecording(self, timed=False):
-        if not self.logSessionActive:
-            return
-        endDt = datetime.now()
-        if self.logPaused:
-            self.closeCurrentLogPause(endDt=endDt, endTime=time.time())
-        if self.config.get("saveLogAppendInfo", False):
-            self.appendLogInformation(endDt)
-        self.config["saveLog"] = False
-        self.logSessionActive = False
-        self.logPaused = False
-        self.logStartTime = None
-        self.logSessionStartDt = None
-        self.logPauseStartTime = None
-        self.logPauseStartDt = None
-        self.logTimedRemaining = None
-        self.stopSaveLogTimer(clearDeadline=True)
-        self.stopSaveLogStatus()
-        self.updateSaveLogButtons()
-        self.updateSaveLogStatus()
-        if timed:
-            self.hintSignal.emit("info", _("OK"), _("Timed log stopped"))
-
-    def closeCurrentLogPause(self, endDt=None, endTime=None):
-        if self.logPauseStartTime is None or self.logPauseStartDt is None:
-            return
-        if endDt is None:
-            endDt = datetime.now()
-        if endTime is None:
-            endTime = time.time()
-        duration = max(0, int(endTime - self.logPauseStartTime))
-        self.logPausePeriods.append((self.logPauseStartDt, endDt, duration))
-        self.logPauseStartTime = None
-        self.logPauseStartDt = None
-
-    def updateSaveLogButtons(self):
-        if not hasattr(self, "saveLogStartButton"):
-            return
-        self.saveLogStopButton.setEnabled(self.logSessionActive)
-        self.logMoreSettingsButton.setEnabled(not self.logSessionActive)
-        if not self.logSessionActive:
-            self.saveLogStartButton.setText(_("Start record"))
-            self.saveLogStartButton.setToolTip(_("Start log recording"))
-            self.saveLogStartButton.setStyleSheet("")
-            return
-        if self.logPaused:
-            self.saveLogStartButton.setText(_("Resume record"))
-            self.saveLogStartButton.setToolTip(_("Resume log recording"))
-            self.saveLogStartButton.setStyleSheet("background:#f9a825;color:#212121;")
+    def onSaveLogTimedChanged(self):
+        self.bindVar(self.saveLogTimed, self.config, "saveLogTimed")
+        if self.config["saveLog"]:
+            self.startTimedSaveLog()
         else:
-            self.saveLogStartButton.setText(_("Pause record"))
-            self.saveLogStartButton.setToolTip(_("Pause log recording"))
-            self.saveLogStartButton.setStyleSheet("background:#2e7d32;color:#ffffff;")
+            self.stopSaveLogTimer()
 
-    def openLogSettingsDialog(self):
-        if self.logSessionActive:
-            self.hintSignal.emit("warning", _("Warning"), _("Log settings are locked while recording or paused"))
+    def onSaveLogDurationChanged(self):
+        text = self.saveLogDuration.text().strip()
+        if not text:
+            text = "00:00:00"
+        try:
+            self.config["saveLogDuration"] = self.parseHmsToSeconds(text)
+        except Exception:
+            self.saveLogDuration.setText(self.secondsToHms(self.config["saveLogDuration"]))
+            self.hintSignal.emit("error", _("Error"), _("Timed log duration error, format: HH:MM:SS"))
             return
-        dialog = LogSettingsDialog(self, self.mainWidget)
-        dialog.exec()
+        self.saveLogDuration.setText(self.secondsToHms(self.config["saveLogDuration"]))
+        if self.config["saveLog"] and self.config["saveLogTimed"]:
+            self.startTimedSaveLog()
 
-    def updateLogSettingsSummary(self):
-        if not hasattr(self, "logSettingsSummaryLabel"):
-            return
-        items = [
-            "{}: {}".format(_("Auto new file"), _("On") if self.config.get("saveLogAutoNew", False) else _("Off")),
-            "{}: {}".format(_("Timed log"), self.secondsToHms(self.config.get("saveLogDuration", 60)) if self.config.get("saveLogTimed", False) else _("Off")),
-            "{}: {}".format(_("Append info"), _("On") if self.config.get("saveLogAppendInfo", False) else _("Off")),
-        ]
-        self.logSettingsSummaryLabel.setText(" | ".join(items))
-
-    def onLogFilePathChanged(self):
-        if not hasattr(self, "logFilePath"):
-            return
-        path = self.logFilePath.text().strip()
-        self.config["saveLogPath"] = path
-        if not self.config.get("saveLogAutoNew", False):
-            self.config["saveLogPath2"] = path
-        self.logFilePath.setToolTip(path)
-
-    def stopSaveLogTimer(self, clearDeadline=False):
+    def stopSaveLogTimer(self):
         if self.saveLogStopTimer is not None:
             self.saveLogStopTimer.stop()
-        if clearDeadline:
-            self.logTimedDeadline = None
 
     def startTimedSaveLog(self):
         if self.saveLogStopTimer is None:
             return
-        self.stopSaveLogTimer(clearDeadline=True)
-        if not self.logSessionActive or self.logPaused or not self.config.get("saveLogTimed", False):
+        self.stopSaveLogTimer()
+        if not self.config.get("saveLog") or not self.config.get("saveLogTimed"):
             return
-        duration = self.logTimedRemaining
-        if duration is None:
-            duration = int(self.config.get("saveLogDuration", 60))
+        duration = int(self.config.get("saveLogDuration", 60))
         if duration <= 0:
             duration = 1
-        self.logTimedRemaining = duration
-        self.logTimedDeadline = time.time() + duration
+            self.config["saveLogDuration"] = duration
+            self.saveLogDuration.setText(self.secondsToHms(duration))
         self.saveLogStopTimer.start(duration * 1000)
 
     def stopTimedSaveLog(self):
-        self.finishSaveLogRecording(timed=True)
+        self.config["saveLog"] = False
+        if hasattr(self, "saveLogCheckbox"):
+            self.saveLogCheckbox.setChecked(False)
+        self.stopSaveLogStatus()
+        self.hintSignal.emit("info", _("OK"), _("Timed log stopped"))
 
     def secondsToHms(self, seconds):
         seconds = max(0, int(seconds))
@@ -2151,9 +1953,14 @@ class Plugin(Plugin_Base):
         s = seconds % 60
         return "{:02d}:{:02d}:{:02d}".format(h, m, s)
 
-    def splitSeconds(self, seconds):
-        seconds = max(0, int(seconds))
-        return seconds // 3600, (seconds % 3600) // 60, seconds % 60
+    def parseHmsToSeconds(self, text):
+        parts = text.split(":")
+        if len(parts) != 3:
+            raise ValueError(text)
+        h, m, s = [int(part) for part in parts]
+        if h < 0 or m < 0 or s < 0 or m >= 60 or s >= 60:
+            raise ValueError(text)
+        return h * 3600 + m * 60 + s
 
     def formatFileSize(self, size):
         units = ["B", "KB", "MB", "GB"]
@@ -2167,36 +1974,12 @@ class Plugin(Plugin_Base):
             return "{} B".format(int(value))
         return "{:.2f} {}".format(value, unit)
 
-    def configuredLogPath(self):
-        return self.config["saveLogPath2"] if self.config.get("saveLogAutoNew", False) else self.config["saveLogPath"]
-
     def currentLogPath(self):
-        return self.logSessionPath if self.logSessionActive and self.logSessionPath else self.configuredLogPath()
-
-    def ensureLogFileReady(self, path):
-        if not path:
-            self.hintSignal.emit("warning", _("Warning"), _("Select log file path before starting log"))
-            return False
-        folder = os.path.dirname(os.path.abspath(path))
-        if folder and not os.path.exists(folder):
-            self.hintSignal.emit("error", _("Error"), _("Log folder does not exist") + ": " + folder)
-            return False
-        try:
-            with open(path, "a+", encoding=self.configGlobal["encoding"], newline="\n"):
-                pass
-        except Exception as e:
-            self.hintSignal.emit("error", _("Error"), _("Open log file failed") + ": " + str(e))
-            return False
-        return True
-
-    def currentLogElapsed(self):
-        if not self.logSessionActive or self.logStartTime is None:
-            return 0
-        end = self.logPauseStartTime if self.logPaused and self.logPauseStartTime is not None else time.time()
-        paused = sum(period[2] for period in self.logPausePeriods)
-        return max(0, int(end - self.logStartTime - paused))
+        return self.config["saveLogPath2"] if self.config["saveLogAutoNew"] else self.config["saveLogPath"]
 
     def startSaveLogStatus(self):
+        if self.logStartTime is None:
+            self.logStartTime = time.time()
         self.updateSaveLogStatus()
         if self.saveLogStatusTimer is not None:
             self.saveLogStatusTimer.start()
@@ -2207,79 +1990,11 @@ class Plugin(Plugin_Base):
         self.updateSaveLogStatus()
 
     def updateSaveLogStatus(self):
-        elapsed = self.currentLogElapsed()
+        elapsed = 0 if self.logStartTime is None else int(time.time() - self.logStartTime)
         path = self.currentLogPath()
         size = os.path.getsize(path) if path and os.path.exists(path) else 0
-        self.logLastSize = size
         if hasattr(self, "saveLogStatusLabel"):
             self.saveLogStatusLabel.setText("{}: {} / {}".format(_("Log"), self.secondsToHms(elapsed), self.formatFileSize(size)))
-
-    def formatLogDateTime(self, value):
-        return value.strftime("%Y-%m-%d %H:%M:%S") if value else "-"
-
-    def currentPageLogInfo(self):
-        for item in self.configGlobal.get("items", []):
-            config = item.get("config", {})
-            if config.get("plugin") is self.config:
-                conns = config.get("conns", {})
-                connId = conns.get("currConn", "")
-                return item.get("name", ""), connId, conns.get(connId, {})
-        return "", "", {}
-
-    def appendLogInformation(self, endDt):
-        path = self.currentLogPath()
-        if not path:
-            return
-        pageName, connId, connSettings = self.currentPageLogInfo()
-        try:
-            connSettingsText = json.dumps(connSettings, ensure_ascii=False, sort_keys=True)
-        except Exception:
-            connSettingsText = str(connSettings)
-        baseSize = os.path.getsize(path) if os.path.exists(path) else 0
-
-        def buildSummary(sizeText):
-            lines = [
-                "",
-                "",
-                "========== {} ==========".format(_("Log information")),
-                "{}: {}".format(_("Start time"), self.formatLogDateTime(self.logSessionStartDt)),
-                "{}: {}".format(_("End time"), self.formatLogDateTime(endDt)),
-                "{}: {}".format(_("Active duration"), self.secondsToHms(self.currentLogElapsed())),
-                "{}: {}".format(_("Pause count"), len(self.logPausePeriods)),
-            ]
-            if self.logPausePeriods:
-                for idx, (startDt, endPauseDt, duration) in enumerate(self.logPausePeriods, start=1):
-                    lines.append("{} {}: {} - {} ({})".format(
-                        _("Pause time"),
-                        idx,
-                        self.formatLogDateTime(startDt),
-                        self.formatLogDateTime(endPauseDt),
-                        self.secondsToHms(duration)
-                    ))
-            else:
-                lines.append("{}: {}".format(_("Pause time"), _("None")))
-            lines.extend([
-                "{}: {}".format(_("Log size"), sizeText),
-                "{}: {}".format(_("Log path"), path),
-                "{}: {}".format(_("Page name"), pageName or "-"),
-                "{}: {}".format(_("Connection type"), connId or "-"),
-                "{}: {}".format(_("Connection status"), self.currentConnStatus.name),
-                "{}: {}".format(_("Connection settings"), connSettingsText or "-"),
-                "====================================",
-                ""
-            ])
-            return "\n".join(lines)
-
-        encoding = self.configGlobal["encoding"]
-        summary = buildSummary(self.formatFileSize(baseSize))
-        for _i in range(3):
-            finalSize = baseSize + len(summary.encode(encoding, errors="ignore"))
-            nextSummary = buildSummary(self.formatFileSize(finalSize))
-            if nextSummary == summary:
-                break
-            summary = nextSummary
-        with open(path, "a+", encoding=self.configGlobal["encoding"], newline="\n") as f:
-            f.write(summary)
 
     def selectFile(self):
         oldPath = self.filePathWidget.text()
@@ -2324,7 +2039,7 @@ class Plugin(Plugin_Base):
 
     def onLog(self, text):
         path = self.currentLogPath()
-        if self.logSessionActive and (not self.logPaused) and self.config["saveLog"] and path:
+        if self.config["saveLog"] and path:
             with open(path, "a+", encoding=self.configGlobal["encoding"], newline="\n") as f:
                 f.write(text)
             self.updateSaveLogStatus()
@@ -2340,10 +2055,9 @@ class Plugin(Plugin_Base):
         self.updateReceiveFindMarkers()
         if status == ConnectionStatus.CONNECTED and self.config["saveLogAutoNew"]:
             self.updateLogPath()
-            if self.logSessionActive:
-                self.logSessionPath = self.configuredLogPath()
-                self.ensureLogFileReady(self.logSessionPath)
-                self.updateSaveLogStatus()
+            if self.config["saveLog"]:
+                self.logStartTime = time.time()
+                self.startSaveLogStatus()
 
     def onKeyPressEvent(self, event):
         if event.matches(QKeySequence.Find):
@@ -3343,8 +3057,6 @@ class Plugin(Plugin_Base):
 
 
     def onDel(self):
-        if self.logSessionActive:
-            self.finishSaveLogRecording()
         self.receiveProgressStop = True
         self.stopSaveLogTimer()
         self.stopSaveLogStatus()
