@@ -54,6 +54,7 @@ class PluginItem:
         self.plugin.hintSignal = self.hintSignal
         self.plugin.reloadWindowSignal = self.reloadWindowSignal
         self.plugin.connCallbak = connCallback
+        self.plugin.pageName = name
         self.plugin.onInit(config=itemConfig)
         if not "version" in itemConfig:
             raise Exception("{} {}".format(_("version not found in config of plugin:"), self.plugin.id))
@@ -142,6 +143,7 @@ class PluginItem:
         self.functionalWidget.setLayout(layout3)
         loadConfigBtn = QPushButton(_("Import page"))
         shareConfigBtn = QPushButton(_("Save page"))
+        self.loadConfigBtn = loadConfigBtn
         loadConfigBtn.setToolTip(_("Import this page name, connection settings, and plugin settings from a page file"))
         shareConfigBtn.setToolTip(_("Save this page name, connection settings, and plugin settings to a page file"))
         configButtonsInSettings = getattr(self.plugin, "onConfigButtonsInSettings", lambda: False)
@@ -174,6 +176,16 @@ class PluginItem:
         self.plugin.onUiInitDone()
         return wrapper
 
+    def setImportPageEnabled(self, enabled):
+        if hasattr(self, "loadConfigBtn"):
+            self.loadConfigBtn.setEnabled(enabled)
+
+    def canImportPage(self):
+        try:
+            return self.plugin.getConnStatus() == ConnectionStatus.CLOSED
+        except Exception:
+            return True
+
     # event
     def selectSharefile(self):
         oldPath = os.getcwd()
@@ -191,6 +203,9 @@ class PluginItem:
         return False
 
     def selectLoadfile(self):
+        if not self.canImportPage():
+            self.hintSignal.emit("warning", _("Warning"), _("Close the current connection before importing this page"))
+            return
         oldPath = os.getcwd()
         fileName_choose, filetype = QFileDialog.getOpenFileName(self.functionalWidget,
                                 _("Import page"),

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-05-24 11:24+0800\n"
+"POT-Creation-Date: 2026-05-24 18:21+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -96,8 +96,14 @@ msgstr ""
 #: plugins/graph.py:259 plugins/graph_widget_metasenselite.py:591
 #: plugins/graph_widgets.py:167 plugins/myplugin.py:62
 #: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
-#: plugins/protocol.py:488 plugins/protocol.py:515 plugins/protocol.py:524
-#: plugins/protocol.py:587
+#: plugins/protocol.py:760 plugins/protocol.py:1316 plugins/protocol.py:1330
+#: plugins/protocol.py:1564 plugins/protocol.py:1570 plugins/protocol.py:2020
+#: plugins/protocol.py:2027 plugins/protocol.py:2059 plugins/protocol.py:2078
+#: plugins/protocol.py:2091 plugins/protocol.py:2163
+#: plugins/protocol_capture.py:745 plugins/protocol_capture.py:782
+#: plugins/protocol_capture.py:817 plugins/protocol_capture.py:834
+#: plugins/protocol_capture.py:898 plugins/protocol_capture.py:983
+#: plugins/protocol_capture.py:999
 msgid "Error"
 msgstr ""
 
@@ -110,6 +116,7 @@ msgid "Load plugin fail"
 msgstr ""
 
 #: conn/conn_ssh.py:239 main2.py:320 plugins/dbg.py:2418 plugins/dbg.py:2432
+#: plugins/protocol.py:1376
 msgid "Select file"
 msgstr ""
 
@@ -158,8 +165,10 @@ msgid "Page name"
 msgstr ""
 
 #: main2.py:529 pluginItems.py:209 plugins/dbg.py:1963 plugins/dbg.py:2162
-#: plugins/dbg.py:2239 plugins/dbg.py:2926 plugins/protocol.py:609
-#: plugins/protocol.py:631
+#: plugins/dbg.py:2239 plugins/dbg.py:2926 plugins/protocol.py:765
+#: plugins/protocol.py:1500 plugins/protocol.py:1560 plugins/protocol.py:2185
+#: plugins/protocol.py:2207 plugins/protocol_capture.py:925
+#: plugins/protocol_capture.py:971
 msgid "Warning"
 msgstr ""
 
@@ -303,11 +312,11 @@ msgstr ""
 msgid "Input value"
 msgstr ""
 
-#: plugins/dbg.py:2765 widgets.py:691 widgets.py:727
+#: plugins/dbg.py:2765 plugins/protocol.py:1190 widgets.py:691 widgets.py:727
 msgid "Select icon"
 msgstr ""
 
-#: plugins/dbg.py:1244 plugins/protocol.py:277 widgets.py:698 widgets.py:768
+#: plugins/dbg.py:1244 plugins/protocol.py:341 widgets.py:698 widgets.py:768
 msgid "Record"
 msgstr ""
 
@@ -320,7 +329,9 @@ msgid "Press key to record, or click Cancel"
 msgstr ""
 
 #: plugins/dbg.py:2011 plugins/dbg.py:2127 plugins/dbg.py:2765
-#: plugins/dbg.py:2897 plugins/dbg.py:2911 widgets.py:708 widgets.py:727
+#: plugins/dbg.py:2897 plugins/dbg.py:2911 plugins/protocol.py:1190
+#: plugins/protocol.py:1314 plugins/protocol.py:1328 plugins/protocol.py:1465
+#: widgets.py:708 widgets.py:727
 msgid "OK"
 msgstr ""
 
@@ -495,7 +506,7 @@ msgstr ""
 msgid "Connecting"
 msgstr ""
 
-#: plugins/base.py:221 plugins/devtools.py:562
+#: plugins/base.py:221 plugins/devtools.py:562 plugins/protocol.py:760
 msgid "Format error, should be like 00 01 02 03"
 msgstr ""
 
@@ -503,11 +514,11 @@ msgstr ""
 msgid "Escape is on, but escape error:"
 msgstr ""
 
-#: plugins/dbg.py:158 plugins/dbg.py:1378
+#: plugins/dbg.py:158 plugins/dbg.py:1378 plugins/protocol.py:467
 msgid "More log settings"
 msgstr ""
 
-#: plugins/dbg.py:166 plugins/dbg.py:2171
+#: plugins/dbg.py:166 plugins/dbg.py:2171 plugins/protocol.py:1358
 msgid "Timed log"
 msgstr ""
 
@@ -699,6 +710,8 @@ msgstr ""
 
 #: plugins/dbg.py:627 plugins/dbg.py:811 plugins/dbg.py:1827
 #: plugins/dbg.py:1841 plugins/dbg.py:2696 plugins/dbg.py:2752
+#: plugins/protocol.py:829 plugins/protocol.py:843 plugins/protocol.py:1121
+#: plugins/protocol.py:1177
 msgid "Select color"
 msgstr ""
 
@@ -760,31 +773,38 @@ msgstr ""
 msgid "Clear Receive Area"
 msgstr ""
 
-#: plugins/dbg.py:1063 plugins/dbg.py:2358
+#: plugins/dbg.py:1063 plugins/dbg.py:2358 plugins/protocol.py:1342
+#: plugins/protocol.py:1609
 msgid "Start time"
 msgstr ""
 
-#: plugins/dbg.py:1064 plugins/dbg.py:2360
+#: plugins/dbg.py:1064 plugins/dbg.py:2360 plugins/protocol.py:1343
+#: plugins/protocol.py:1611
 msgid "End time"
 msgstr ""
 
-#: plugins/dbg.py:1065 plugins/dbg.py:2362
+#: plugins/dbg.py:1065 plugins/dbg.py:2362 plugins/protocol.py:1344
+#: plugins/protocol.py:1613
 msgid "Active duration"
 msgstr ""
 
-#: plugins/dbg.py:1066 plugins/dbg.py:2364
+#: plugins/dbg.py:1066 plugins/dbg.py:2364 plugins/protocol.py:1345
+#: plugins/protocol.py:1615
 msgid "Pause count"
 msgstr ""
 
 #: plugins/dbg.py:1067 plugins/dbg.py:2369 plugins/dbg.py:2376
+#: plugins/protocol.py:1346 plugins/protocol.py:1617
 msgid "Pause time"
 msgstr ""
 
-#: plugins/dbg.py:1068 plugins/dbg.py:2378
+#: plugins/dbg.py:1068 plugins/dbg.py:2378 plugins/protocol.py:1347
+#: plugins/protocol.py:1619
 msgid "Log size"
 msgstr ""
 
 #: plugins/dbg.py:1069 plugins/dbg.py:1371 plugins/dbg.py:2380
+#: plugins/protocol.py:460 plugins/protocol.py:1348 plugins/protocol.py:1621
 msgid "Log path"
 msgstr ""
 
@@ -812,7 +832,7 @@ msgstr ""
 msgid "Clear RX"
 msgstr ""
 
-#: plugins/dbg.py:1109
+#: plugins/dbg.py:1109 plugins/protocol.py:242
 msgid "Clear receive area"
 msgstr ""
 
@@ -828,11 +848,11 @@ msgstr ""
 msgid "Received RX/TX log output"
 msgstr ""
 
-#: plugins/dbg.py:1131
+#: plugins/dbg.py:1131 plugins/protocol.py:365
 msgid "Input data to send"
 msgstr ""
 
-#: plugins/dbg.py:1135
+#: plugins/dbg.py:1135 plugins/protocol.py:245
 msgid "Find and highlight receive text"
 msgstr ""
 
@@ -844,189 +864,197 @@ msgstr ""
 msgid "Send history"
 msgstr ""
 
-#: plugins/dbg.py:1184
+#: plugins/dbg.py:1184 plugins/protocol.py:283
 msgid "Receive Settings"
 msgstr ""
 
-#: plugins/dbg.py:1185 plugins/dbg.py:1229 plugins/protocol.py:269
+#: plugins/dbg.py:1185 plugins/dbg.py:1229 plugins/protocol.py:284
+#: plugins/protocol.py:327
 msgid "ASCII"
 msgstr ""
 
-#: plugins/dbg.py:1186
+#: plugins/dbg.py:1186 plugins/protocol.py:285
 msgid ""
 "Show recived data as visible format, select decode method at top right "
 "corner"
 msgstr ""
 
-#: plugins/dbg.py:1187 plugins/dbg.py:1230 plugins/protocol.py:270
+#: plugins/dbg.py:1187 plugins/dbg.py:1230 plugins/protocol.py:286
+#: plugins/protocol.py:328
 msgid "HEX"
 msgstr ""
 
-#: plugins/dbg.py:1188
+#: plugins/dbg.py:1188 plugins/protocol.py:287
 msgid "Show recived data as hex format"
 msgstr ""
 
-#: plugins/dbg.py:1190
+#: plugins/dbg.py:1190 plugins/protocol.py:289
 msgid ""
 "Auto\n"
 "Linefeed\n"
 "ms"
 msgstr ""
 
-#: plugins/dbg.py:1191 plugins/dbg.py:1194
+#: plugins/dbg.py:1191 plugins/dbg.py:1194 plugins/protocol.py:290
+#: plugins/protocol.py:293
 msgid "Auto linefeed after interval, unit: ms"
 msgstr ""
 
-#: plugins/dbg.py:1197 plugins/dbg.py:1214
+#: plugins/dbg.py:1197 plugins/dbg.py:1214 plugins/protocol.py:311
+#: plugins/protocol.py:312
 msgid "Timestamp"
 msgstr ""
 
-#: plugins/dbg.py:1198
+#: plugins/dbg.py:1198 plugins/protocol.py:313
 msgid ""
 "Add timestamp before received data, will automatically enable auto line "
 "feed"
 msgstr ""
 
-#: plugins/dbg.py:1199 plugins/protocol.py:244
+#: plugins/dbg.py:1199 plugins/protocol.py:296
 msgid "Display wrap"
 msgstr ""
 
-#: plugins/dbg.py:1200 plugins/dbg.py:1246 plugins/protocol.py:279
+#: plugins/dbg.py:1200 plugins/dbg.py:1246 plugins/protocol.py:297
+#: plugins/protocol.py:343
 msgid "Escape"
 msgstr ""
 
-#: plugins/dbg.py:1201 plugins/dbg.py:1247 plugins/protocol.py:280
+#: plugins/dbg.py:1201 plugins/dbg.py:1247 plugins/protocol.py:298
+#: plugins/protocol.py:344
 msgid "Enable escape characters support like \\t \\r \\n \\x01 \\001"
 msgstr ""
 
-#: plugins/dbg.py:1202 plugins/protocol.py:245
+#: plugins/dbg.py:1202 plugins/protocol.py:299
 msgid ""
 "When content in a line is too long, always auto wrap to show, and no "
 "scroll bar"
 msgstr ""
 
 #: plugins/dbg.py:1215 plugins/dbg.py:1328 plugins/dbg.py:1335
-#: plugins/dbg.py:1443 plugins/devtools.py:408
+#: plugins/dbg.py:1443 plugins/devtools.py:408 plugins/protocol.py:314
+#: plugins/protocol.py:432 plugins/protocol.py:439 plugins/protocol.py:517
 msgid "Color"
 msgstr ""
 
-#: plugins/dbg.py:1216
+#: plugins/dbg.py:1216 plugins/protocol.py:315
 msgid "Timestamp color in receive area"
 msgstr ""
 
-#: plugins/dbg.py:1217
+#: plugins/dbg.py:1217 plugins/protocol.py:316
 msgid "Newline after timestamp"
 msgstr ""
 
-#: plugins/dbg.py:1218
+#: plugins/dbg.py:1218 plugins/protocol.py:317
 msgid "Display received data on the next line after timestamp"
 msgstr ""
 
-#: plugins/dbg.py:1220
+#: plugins/dbg.py:1220 plugins/protocol.py:319
 msgid "Timestamp color"
 msgstr ""
 
-#: plugins/dbg.py:1228
+#: plugins/dbg.py:1228 plugins/protocol.py:326
 msgid "Send Settings"
 msgstr ""
 
-#: plugins/dbg.py:1231 plugins/protocol.py:271
+#: plugins/dbg.py:1231 plugins/protocol.py:329
 msgid ""
 "Get send data as visible format, select encoding method at top right "
 "corner"
 msgstr ""
 
-#: plugins/dbg.py:1232 plugins/protocol.py:272
+#: plugins/dbg.py:1232 plugins/protocol.py:330
 msgid "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
 msgstr ""
 
-#: plugins/dbg.py:1234
+#: plugins/dbg.py:1234 plugins/protocol.py:332
 msgid ""
 "Timed Send\n"
 "ms"
 msgstr ""
 
-#: plugins/dbg.py:1235 plugins/dbg.py:1238
+#: plugins/dbg.py:1235 plugins/dbg.py:1238 plugins/protocol.py:333
+#: plugins/protocol.py:336
 msgid "Timed send, unit: ms"
 msgstr ""
 
-#: plugins/dbg.py:1241 plugins/protocol.py:274
+#: plugins/dbg.py:1241 plugins/protocol.py:339
 msgid "<CRLF>"
 msgstr ""
 
-#: plugins/dbg.py:1242 plugins/protocol.py:275
+#: plugins/dbg.py:1242 plugins/protocol.py:340
 msgid "Select to send \\r\\n instead of \\n"
 msgstr ""
 
-#: plugins/dbg.py:1245 plugins/protocol.py:278
+#: plugins/dbg.py:1245 plugins/protocol.py:342
 msgid "Record send data"
 msgstr ""
 
-#: plugins/dbg.py:1248
+#: plugins/dbg.py:1248 plugins/protocol.py:345
 msgid "Newline"
 msgstr ""
 
-#: plugins/dbg.py:1249
+#: plugins/dbg.py:1249 plugins/protocol.py:346
 msgid "Auto add new line when send"
 msgstr ""
 
-#: plugins/dbg.py:1280
+#: plugins/dbg.py:1280 plugins/protocol.py:394
 msgid "Auto line feed value error, must be integer"
 msgstr ""
 
-#: plugins/dbg.py:1281
+#: plugins/dbg.py:1281 plugins/protocol.py:395
 msgid "Timed send value error, must be integer"
 msgstr ""
 
-#: plugins/dbg.py:1320
+#: plugins/dbg.py:1320 plugins/protocol.py:424
 msgid "Default font"
 msgstr ""
 
-#: plugins/dbg.py:1324
+#: plugins/dbg.py:1324 plugins/protocol.py:428
 msgid "Font family for received RX text"
 msgstr ""
 
-#: plugins/dbg.py:1327
+#: plugins/dbg.py:1327 plugins/protocol.py:431
 msgid "Font size for received RX text"
 msgstr ""
 
-#: plugins/dbg.py:1329
+#: plugins/dbg.py:1329 plugins/protocol.py:433
 msgid "Color for received RX text in the receive area"
 msgstr ""
 
-#: plugins/dbg.py:1331
+#: plugins/dbg.py:1331 plugins/protocol.py:435
 msgid "Font family for TX input text"
 msgstr ""
 
-#: plugins/dbg.py:1334
+#: plugins/dbg.py:1334 plugins/protocol.py:438
 msgid "Font size for TX input text"
 msgstr ""
 
-#: plugins/dbg.py:1336
+#: plugins/dbg.py:1336 plugins/protocol.py:440
 msgid "Color for TX input text and recorded TX lines"
 msgstr ""
 
-#: plugins/dbg.py:1337
+#: plugins/dbg.py:1337 plugins/protocol.py:441
 msgid "RX font"
 msgstr ""
 
-#: plugins/dbg.py:1339
+#: plugins/dbg.py:1339 plugins/protocol.py:443
 msgid "RX size"
 msgstr ""
 
-#: plugins/dbg.py:1341
+#: plugins/dbg.py:1341 plugins/protocol.py:445
 msgid "RX color"
 msgstr ""
 
-#: plugins/dbg.py:1343
+#: plugins/dbg.py:1343 plugins/protocol.py:447
 msgid "TX font"
 msgstr ""
 
-#: plugins/dbg.py:1345
+#: plugins/dbg.py:1345 plugins/protocol.py:449
 msgid "TX size"
 msgstr ""
 
-#: plugins/dbg.py:1347
+#: plugins/dbg.py:1347 plugins/protocol.py:451
 msgid "TX color"
 msgstr ""
 
@@ -1058,132 +1086,135 @@ msgstr ""
 msgid "Clear TX send history"
 msgstr ""
 
-#: plugins/dbg.py:1366 plugins/dbg.py:2276
+#: plugins/dbg.py:1366 plugins/dbg.py:2276 plugins/protocol.py:455
+#: plugins/protocol.py:1597
 msgid "Log"
 msgstr ""
 
-#: plugins/dbg.py:1370
+#: plugins/dbg.py:1370 plugins/protocol.py:459
 msgid "Log file path"
 msgstr ""
 
-#: plugins/dbg.py:1372
+#: plugins/dbg.py:1372 plugins/protocol.py:461
 msgid "Select log file path"
 msgstr ""
 
-#: plugins/dbg.py:1373 plugins/dbg.py:2147
+#: plugins/dbg.py:1373 plugins/dbg.py:2147 plugins/protocol.py:462
+#: plugins/protocol.py:1485
 msgid "Start record"
 msgstr ""
 
-#: plugins/dbg.py:1374
+#: plugins/dbg.py:1374 plugins/protocol.py:463
 msgid "Start or pause log recording"
 msgstr ""
 
-#: plugins/dbg.py:1375
+#: plugins/dbg.py:1375 plugins/protocol.py:464
 msgid "Stop record"
 msgstr ""
 
-#: plugins/dbg.py:1376
+#: plugins/dbg.py:1376 plugins/protocol.py:465
 msgid "Stop log recording"
 msgstr ""
 
-#: plugins/dbg.py:1379
+#: plugins/dbg.py:1379 plugins/protocol.py:468
 msgid "Configure auto new file, timed log, and log information summary"
 msgstr ""
 
-#: plugins/dbg.py:1382
+#: plugins/dbg.py:1382 plugins/protocol.py:471
 msgid "Current log settings"
 msgstr ""
 
-#: plugins/dbg.py:1383
+#: plugins/dbg.py:1383 plugins/protocol.py:472
 msgid "Log: 00:00:00 / 0 B"
 msgstr ""
 
-#: plugins/dbg.py:1384
+#: plugins/dbg.py:1384 plugins/protocol.py:473
 msgid "Current log recording duration and file size"
 msgstr ""
 
-#: plugins/dbg.py:1387
+#: plugins/dbg.py:1387 plugins/protocol.py:475
 msgid "RX buffer size"
 msgstr ""
 
-#: plugins/dbg.py:1393
+#: plugins/dbg.py:1393 plugins/protocol.py:481
 msgid "RX buffer size, only editable while the connection is closed"
 msgstr ""
 
-#: plugins/dbg.py:1430
+#: plugins/dbg.py:1430 plugins/protocol.py:504
 msgid "Import"
 msgstr ""
 
-#: plugins/dbg.py:1431
+#: plugins/dbg.py:1431 plugins/protocol.py:505
 msgid "Export"
 msgstr ""
 
-#: plugins/dbg.py:1432
+#: plugins/dbg.py:1432 plugins/protocol.py:506
 msgid "Add a custom send item"
 msgstr ""
 
-#: plugins/dbg.py:1433
+#: plugins/dbg.py:1433 plugins/protocol.py:507
 msgid "Import custom send items from JSON"
 msgstr ""
 
-#: plugins/dbg.py:1434
+#: plugins/dbg.py:1434 plugins/protocol.py:508
 msgid "Export custom send items to JSON"
 msgstr ""
 
-#: plugins/dbg.py:1439
+#: plugins/dbg.py:1439 plugins/protocol.py:513
 msgid "Search remark or command"
 msgstr ""
 
-#: plugins/dbg.py:1440
+#: plugins/dbg.py:1440 plugins/protocol.py:514
 msgid "Search custom send items by remark or command"
 msgstr ""
 
-#: plugins/dbg.py:1441
+#: plugins/dbg.py:1441 plugins/protocol.py:515
 msgid "All"
 msgstr ""
 
-#: plugins/dbg.py:1442
+#: plugins/dbg.py:1442 plugins/protocol.py:516
 msgid "Select visible custom send items"
 msgstr ""
 
-#: plugins/dbg.py:1444
+#: plugins/dbg.py:1444 plugins/protocol.py:518
 msgid "Icon"
 msgstr ""
 
 #: plugins/dbg.py:1445 plugins/dbg.py:2585 plugins/dbg.py:2782
-#: plugins/protocol.py:257
+#: plugins/protocol.py:519 plugins/protocol.py:1053 plugins/protocol.py:1207
 msgid "Delete"
 msgstr ""
 
-#: plugins/dbg.py:1446
+#: plugins/dbg.py:1446 plugins/protocol.py:520
 msgid "Set color for selected custom send items"
 msgstr ""
 
-#: plugins/dbg.py:1447
+#: plugins/dbg.py:1447 plugins/protocol.py:521
 msgid "Set icon for selected custom send items"
 msgstr ""
 
-#: plugins/dbg.py:1448
+#: plugins/dbg.py:1448 plugins/protocol.py:522
 msgid "Delete selected custom send items"
 msgstr ""
 
-#: plugins/dbg.py:1455
+#: plugins/dbg.py:1455 plugins/protocol.py:527
 msgid "Cutom send"
 msgstr ""
 
-#: plugins/dbg.py:1715 plugins/dbg.py:1748
+#: plugins/dbg.py:1715 plugins/dbg.py:1748 plugins/protocol.py:1834
+#: plugins/protocol.py:1867
 msgid "Find"
 msgstr ""
 
-#: plugins/dbg.py:1715
+#: plugins/dbg.py:1715 plugins/protocol.py:1834
 msgid "No match found"
 msgstr ""
 
-#: plugins/dbg.py:1748
+#: plugins/dbg.py:1748 plugins/protocol.py:1867
 msgid "No more matches"
 msgstr ""
 
-#: plugins/dbg.py:1963
+#: plugins/dbg.py:1963 plugins/protocol.py:765
 msgid "linefeed always on if timestamp or record send is on"
 msgstr ""
 
@@ -1191,7 +1222,8 @@ msgstr ""
 msgid "History cleared!"
 msgstr ""
 
-#: plugins/dbg.py:2014
+#: plugins/dbg.py:2014 plugins/protocol_capture.py:952
+#: plugins/protocol_capture.py:961
 msgid "Confirm clear"
 msgstr ""
 
@@ -1207,7 +1239,7 @@ msgstr ""
 msgid "Clear TX history?"
 msgstr ""
 
-#: plugins/dbg.py:2033 plugins/graph.py:259 plugins/protocol.py:524
+#: plugins/dbg.py:2033 plugins/graph.py:259 plugins/protocol.py:2091
 msgid "Send data failed!"
 msgstr ""
 
@@ -1219,63 +1251,64 @@ msgstr ""
 msgid "Send file failed!"
 msgstr ""
 
-#: plugins/dbg.py:2101
+#: plugins/dbg.py:2101 plugins/protocol.py:1439
 msgid "Confirm stop"
 msgstr ""
 
-#: plugins/dbg.py:2101
+#: plugins/dbg.py:2101 plugins/protocol.py:1439
 msgid "Stop log recording?"
 msgstr ""
 
-#: plugins/dbg.py:2127
+#: plugins/dbg.py:2127 plugins/protocol.py:1465
 msgid "Timed log stopped"
 msgstr ""
 
-#: plugins/dbg.py:2148
+#: plugins/dbg.py:2148 plugins/protocol.py:1486
 msgid "Start log recording"
 msgstr ""
 
-#: plugins/dbg.py:2152
+#: plugins/dbg.py:2152 plugins/protocol.py:1490
 msgid "Resume record"
 msgstr ""
 
-#: plugins/dbg.py:2153
+#: plugins/dbg.py:2153 plugins/protocol.py:1491
 msgid "Resume log recording"
 msgstr ""
 
-#: plugins/dbg.py:2156
+#: plugins/dbg.py:2156 plugins/protocol.py:1494
 msgid "Pause record"
 msgstr ""
 
-#: plugins/dbg.py:2157
+#: plugins/dbg.py:2157 plugins/protocol.py:1495
 msgid "Pause log recording"
 msgstr ""
 
-#: plugins/dbg.py:2162
+#: plugins/dbg.py:2162 plugins/protocol.py:1500
 msgid "Log settings are locked while recording or paused"
 msgstr ""
 
-#: plugins/dbg.py:2171 plugins/dbg.py:2172
+#: plugins/dbg.py:2171 plugins/dbg.py:2172 plugins/protocol.py:1358
+#: plugins/protocol.py:1359
 msgid "Off"
 msgstr ""
 
-#: plugins/dbg.py:2172
+#: plugins/dbg.py:2172 plugins/protocol.py:1359
 msgid "Append info"
 msgstr ""
 
-#: plugins/dbg.py:2172
+#: plugins/dbg.py:2172 plugins/protocol.py:1359
 msgid "On"
 msgstr ""
 
-#: plugins/dbg.py:2239
+#: plugins/dbg.py:2239 plugins/protocol.py:1560
 msgid "Select log file path before starting log"
 msgstr ""
 
-#: plugins/dbg.py:2243
+#: plugins/dbg.py:2243 plugins/protocol.py:1564
 msgid "Log folder does not exist"
 msgstr ""
 
-#: plugins/dbg.py:2249
+#: plugins/dbg.py:2249 plugins/protocol.py:1570
 msgid "Open log file failed"
 msgstr ""
 
@@ -1299,7 +1332,7 @@ msgstr ""
 msgid "No events"
 msgstr ""
 
-#: plugins/dbg.py:2355
+#: plugins/dbg.py:2355 plugins/protocol.py:1607
 msgid "Log information"
 msgstr ""
 
@@ -1307,67 +1340,68 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: plugins/dbg.py:2434
+#: plugins/dbg.py:2434 plugins/protocol.py:1378
 msgid "Log file (*.log);;txt file (*.txt);;All Files (*)"
 msgstr ""
 
-#: plugins/dbg.py:2518
+#: plugins/dbg.py:2518 plugins/protocol.py:986
 msgid "Select for batch edit"
 msgstr ""
 
-#: plugins/dbg.py:2522
+#: plugins/dbg.py:2522 plugins/protocol.py:990
 msgid "Drag before another item to reorder"
 msgstr ""
 
-#: plugins/dbg.py:2529
+#: plugins/dbg.py:2529 plugins/protocol.py:997
 msgid "Click to set button color, right click to clear"
 msgstr ""
 
-#: plugins/dbg.py:2535
+#: plugins/dbg.py:2535 plugins/protocol.py:1003
 msgid "Edit custom send remark and icon"
 msgstr ""
 
-#: plugins/dbg.py:2544
+#: plugins/dbg.py:2544 plugins/protocol.py:1012
 msgid "Delete this custom send item"
 msgstr ""
 
-#: plugins/dbg.py:2585
+#: plugins/dbg.py:2585 plugins/protocol.py:1053
 msgid "Delete selected custom send item?"
 msgstr ""
 
-#: plugins/dbg.py:2781
+#: plugins/dbg.py:2781 plugins/protocol.py:1206
 msgid "Delete selected custom send items?"
 msgstr ""
 
-#: plugins/dbg.py:2884
+#: plugins/dbg.py:2884 plugins/protocol.py:1301
 msgid "Import custom send"
 msgstr ""
 
-#: plugins/dbg.py:2886 plugins/dbg.py:2905
+#: plugins/dbg.py:2886 plugins/dbg.py:2905 plugins/protocol.py:1303
+#: plugins/protocol.py:1322
 msgid "JSON file (*.json);;All Files (*)"
 msgstr ""
 
-#: plugins/dbg.py:2895
+#: plugins/dbg.py:2895 plugins/protocol.py:1312
 msgid "Custom send file must be a JSON list"
 msgstr ""
 
-#: plugins/dbg.py:2897
+#: plugins/dbg.py:2897 plugins/protocol.py:1314
 msgid "Custom send items imported!"
 msgstr ""
 
-#: plugins/dbg.py:2899
+#: plugins/dbg.py:2899 plugins/protocol.py:1316
 msgid "Import custom send failed!"
 msgstr ""
 
-#: plugins/dbg.py:2903
+#: plugins/dbg.py:2903 plugins/protocol.py:1320
 msgid "Export custom send"
 msgstr ""
 
-#: plugins/dbg.py:2911
+#: plugins/dbg.py:2911 plugins/protocol.py:1328
 msgid "Custom send items exported!"
 msgstr ""
 
-#: plugins/dbg.py:2913
+#: plugins/dbg.py:2913 plugins/protocol.py:1330
 msgid "Export custom send failed!"
 msgstr ""
 
@@ -1385,7 +1419,7 @@ msgstr ""
 msgid "Sending file"
 msgstr ""
 
-#: plugins/dbg.py:2946
+#: plugins/dbg.py:2946 plugins/protocol.py:2059
 msgid "Time format error"
 msgstr ""
 
@@ -1393,7 +1427,7 @@ msgstr ""
 msgid "Send Error"
 msgstr ""
 
-#: plugins/dbg.py:3021
+#: plugins/dbg.py:3021 plugins/protocol.py:2020
 msgid "get data error"
 msgstr ""
 
@@ -1551,7 +1585,9 @@ msgstr ""
 msgid "Hash collection"
 msgstr ""
 
-#: plugins/devtools.py:500
+#: plugins/devtools.py:500 plugins/protocol_capture.py:762
+#: plugins/protocol_capture.py:785 plugins/protocol_capture.py:787
+#: plugins/protocol_capture.py:985 plugins/protocol_capture.py:1001
 msgid "Info"
 msgstr ""
 
@@ -1590,7 +1626,7 @@ msgstr ""
 #: plugins/devtools.py:544 plugins/devtools.py:689 plugins/devtools.py:1544
 #: plugins/devtools.py:1582 plugins/devtools.py:1606 plugins/devtools.py:1630
 #: plugins/devtools.py:1684 plugins/devtools.py:1960
-#: plugins/graph_widgets.py:52
+#: plugins/graph_widgets.py:52 plugins/protocol.py:369
 msgid "Clear"
 msgstr ""
 
@@ -2240,6 +2276,7 @@ msgstr ""
 
 #: plugins/graph_widget_metasenselite.py:310 plugins/myplugin.py:44
 #: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:52
+#: plugins/protocol.py:367 plugins/protocol.py:368
 msgid "Send"
 msgstr ""
 
@@ -2338,69 +2375,243 @@ msgstr ""
 msgid "Input data first please"
 msgstr ""
 
-#: plugins/protocol.py:58
+#: plugins/protocol.py:72 plugins/protocol_capture.py:562
+#: plugins/protocol_capture.py:587
 msgid "protocol"
 msgstr ""
 
-#: plugins/protocol.py:155
-msgid "Key mode"
+#: plugins/protocol.py:80
+msgid "Protocol page"
 msgstr ""
 
-#: plugins/protocol.py:241
-msgid "Receive settings"
+#: plugins/protocol.py:81
+msgid ""
+"Use Python encode/decode scripts and Multi-channel Data Capture to "
+"transform serial data, keep raw logs, and extract live table/curve data."
 msgstr ""
 
-#: plugins/protocol.py:247
-msgid "En-decoding settings"
+#: plugins/protocol.py:82
+msgid "Multi-channel Data Capture script"
 msgstr ""
 
-#: plugins/protocol.py:251
-msgid "Custom, input name"
+#: plugins/protocol.py:83
+msgid ""
+"Define tables, columns, plots, and parse(line, ctx). Return None to "
+"ignore, a dict with table, or list[dict] for multi-channel rows."
 msgstr ""
 
-#: plugins/protocol.py:252
-msgid "Load defaults"
+#: plugins/protocol.py:360
+msgid "Send content"
 msgstr ""
 
-#: plugins/protocol.py:255 plugins/protocol.py:575 plugins/protocol.py:599
-#: plugins/protocol.py:602 plugins/protocol.py:622
-msgid "Save"
+#: plugins/protocol.py:370
+msgid "Clear send input"
 msgstr ""
 
-#: plugins/protocol.py:261
-msgid "Defaults"
-msgstr ""
-
-#: plugins/protocol.py:263
-msgid "Code"
-msgstr ""
-
-#: plugins/protocol.py:267
-msgid "Send settings"
-msgstr ""
-
-#: plugins/protocol.py:488
+#: plugins/protocol.py:2027
 msgid "Run decode error"
 msgstr ""
 
-#: plugins/protocol.py:515
+#: plugins/protocol.py:2078
 msgid "Run encode error"
 msgstr ""
 
-#: plugins/protocol.py:583
+#: plugins/protocol.py:2151 plugins/protocol.py:2175 plugins/protocol.py:2178
+#: plugins/protocol.py:2198
+msgid "Save"
+msgstr ""
+
+#: plugins/protocol.py:2159
 msgid "decode and encode method should be in code"
 msgstr ""
 
-#: plugins/protocol.py:586
+#: plugins/protocol.py:2162
 msgid "Method error"
 msgstr ""
 
-#: plugins/protocol.py:609
+#: plugins/protocol.py:2185
 msgid "Please input code profile name first"
 msgstr ""
 
-#: plugins/protocol.py:631
+#: plugins/protocol.py:2207
 msgid "Please select a code profile name first to delete"
+msgstr ""
+
+#: plugins/protocol_capture.py:88
+msgid "parse(line, ctx) method should be in code"
+msgstr ""
+
+#: plugins/protocol_capture.py:101
+msgid "tables should be a list"
+msgstr ""
+
+#: plugins/protocol_capture.py:118
+msgid "columns should be a list"
+msgstr ""
+
+#: plugins/protocol_capture.py:124
+msgid "plots should be a list"
+msgstr ""
+
+#: plugins/protocol_capture.py:129 plugins/protocol_capture.py:344
+#: plugins/protocol_capture.py:348 plugins/protocol_capture.py:373
+msgid "Plot"
+msgstr ""
+
+#: plugins/protocol_capture.py:169
+msgid "Capture script is not loaded"
+msgstr ""
+
+#: plugins/protocol_capture.py:179
+msgid "captured row missing table field"
+msgstr ""
+
+#: plugins/protocol_capture.py:201 plugins/protocol_capture.py:203
+msgid "parse should return None, dict, or list[dict]"
+msgstr ""
+
+#: plugins/protocol_capture.py:305 plugins/protocol_capture.py:516
+#: plugins/protocol_capture.py:521 plugins/protocol_capture.py:971
+msgid "No data to export"
+msgstr ""
+
+#: plugins/protocol_capture.py:344
+msgid "pyqtgraph is not installed"
+msgstr ""
+
+#: plugins/protocol_capture.py:606
+msgid "Multi-channel Data Capture"
+msgstr ""
+
+#: plugins/protocol_capture.py:617 plugins/protocol_capture.py:879
+msgid "Enable Capture"
+msgstr ""
+
+#: plugins/protocol_capture.py:618
+msgid "Stop Capture"
+msgstr ""
+
+#: plugins/protocol_capture.py:619 plugins/protocol_capture.py:722
+#: plugins/protocol_capture.py:761 plugins/protocol_capture.py:837
+msgid "Apply Script"
+msgstr ""
+
+#: plugins/protocol_capture.py:620 plugins/protocol_capture.py:769
+msgid "Test Script"
+msgstr ""
+
+#: plugins/protocol_capture.py:621
+msgid "View Charts"
+msgstr ""
+
+#: plugins/protocol_capture.py:622
+msgid "Clear Tables"
+msgstr ""
+
+#: plugins/protocol_capture.py:623
+msgid "Clear Plots"
+msgstr ""
+
+#: plugins/protocol_capture.py:624
+msgid "Export Current Table CSV"
+msgstr ""
+
+#: plugins/protocol_capture.py:625 plugins/protocol_capture.py:990
+msgid "Export All Tables CSV"
+msgstr ""
+
+#: plugins/protocol_capture.py:638 plugins/protocol_capture.py:880
+msgid "Disabled"
+msgstr ""
+
+#: plugins/protocol_capture.py:651
+msgid "Time format"
+msgstr ""
+
+#: plugins/protocol_capture.py:653
+msgid "X axis"
+msgstr ""
+
+#: plugins/protocol_capture.py:655
+msgid "Max rows"
+msgstr ""
+
+#: plugins/protocol_capture.py:657
+msgid "Max points"
+msgstr ""
+
+#: plugins/protocol_capture.py:659
+msgid "Flush ms"
+msgstr ""
+
+#: plugins/protocol_capture.py:745 plugins/protocol_capture.py:782
+#: plugins/protocol_capture.py:817 plugins/protocol_capture.py:898
+#: plugins/protocol_capture.py:925
+msgid "Run capture script error"
+msgstr ""
+
+#: plugins/protocol_capture.py:762
+msgid "Capture script applied"
+msgstr ""
+
+#: plugins/protocol_capture.py:770
+msgid "Input received line"
+msgstr ""
+
+#: plugins/protocol_capture.py:785
+msgid "No data captured"
+msgstr ""
+
+#: plugins/protocol_capture.py:787
+msgid "Captured"
+msgstr ""
+
+#: plugins/protocol_capture.py:834
+msgid "Open capture storage failed"
+msgstr ""
+
+#: plugins/protocol_capture.py:873
+msgid "Pause Capture"
+msgstr ""
+
+#: plugins/protocol_capture.py:874
+msgid "Enabled"
+msgstr ""
+
+#: plugins/protocol_capture.py:876
+msgid "Resume Capture"
+msgstr ""
+
+#: plugins/protocol_capture.py:877
+msgid "Paused"
+msgstr ""
+
+#: plugins/protocol_capture.py:949
+msgid "Rows"
+msgstr ""
+
+#: plugins/protocol_capture.py:952
+msgid "Clear tables?"
+msgstr ""
+
+#: plugins/protocol_capture.py:961
+msgid "Clear plots?"
+msgstr ""
+
+#: plugins/protocol_capture.py:974
+msgid "Export CSV"
+msgstr ""
+
+#: plugins/protocol_capture.py:974
+msgid "CSV file (*.csv);;All Files (*)"
+msgstr ""
+
+#: plugins/protocol_capture.py:983 plugins/protocol_capture.py:999
+msgid "Export CSV failed"
+msgstr ""
+
+#: plugins/protocol_capture.py:985 plugins/protocol_capture.py:1001
+msgid "Export CSV success"
 msgstr ""
 
 #: plugins/terminal.py:674
@@ -2409,4 +2620,97 @@ msgstr ""
 
 #: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:30
 msgid "my plugin2"
+msgstr ""
+
+msgid "Scroll receive area to bottom"
+msgstr ""
+
+msgid "Receive area find"
+msgstr ""
+
+msgid "Receive clear history"
+msgstr ""
+
+msgid "No receive clear records"
+msgstr ""
+
+msgid "Receive area cleared"
+msgstr ""
+
+msgid "Close all connections before importing a page"
+msgstr ""
+
+msgid "Close the current connection before importing this page"
+msgstr ""
+
+msgid "Clear Line Charts"
+msgstr ""
+
+msgid "Drag before another item to reorder; double click to move this item to top"
+msgstr ""
+
+msgid "Captured rows for this table"
+msgstr ""
+
+msgid "Realtime line chart for captured numeric fields"
+msgstr ""
+
+msgid "Visible curves"
+msgstr ""
+
+msgid "Select which captured curves are visible in this chart"
+msgstr ""
+
+msgid "Show or hide this curve"
+msgstr ""
+
+msgid "Write Python capture script here"
+msgstr ""
+
+msgid "Start, pause, or resume data capture"
+msgstr ""
+
+msgid "Stop the current capture session"
+msgstr ""
+
+msgid "Apply the script and rebuild table and chart definitions"
+msgstr ""
+
+msgid "Run the script against a sample received line"
+msgstr ""
+
+msgid "Open captured tables and line charts in a separate window"
+msgstr ""
+
+msgid "Clear captured table data after confirmation"
+msgstr ""
+
+msgid "Clear line chart data after confirmation"
+msgstr ""
+
+msgid "Export the currently selected table to CSV"
+msgstr ""
+
+msgid "Export all captured tables to CSV files"
+msgstr ""
+
+msgid "Select the displayed time format for captured rows"
+msgstr ""
+
+msgid "Select the X axis field for line charts"
+msgstr ""
+
+msgid "Maximum visible rows kept in each table"
+msgstr ""
+
+msgid "Maximum visible points kept for each curve"
+msgstr ""
+
+msgid "Batch UI refresh interval in milliseconds"
+msgstr ""
+
+msgid "Current capture status"
+msgstr ""
+
+msgid "Capture input queue is full; capture stopped to protect memory"
 msgstr ""

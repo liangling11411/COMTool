@@ -32,10 +32,81 @@ from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesk
                              QColorDialog, QFontComboBox, QDialog, QScrollBar, QDialogButtonBox)
 from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QDrag, QTextOption, QPalette, QKeySequence, QPainter
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
-import os, threading, time, re, json
+import os, threading, time, re, json, queue
 from datetime import datetime
 
 DEFAULT_TEXT_FONT = "Consolas"
+
+
+class AsyncTextFileWriter:
+    def __init__(self, encoding):
+        self.encoding = encoding
+        self.path = ""
+        self.queue = None
+        self.thread = None
+        self.active = False
+
+    def start(self, path, encoding=None):
+        self.stop()
+        self.path = path
+        if encoding:
+            self.encoding = encoding
+        self.queue = queue.Queue()
+        self.active = True
+        self.thread = threading.Thread(target=self.writeProcess)
+        self.thread.setDaemon(True)
+        self.thread.start()
+
+    def write(self, text):
+        if not text or not self.active or self.queue is None:
+            return False
+        self.queue.put(text)
+        return True
+
+    def flush(self):
+        if self.queue is not None:
+            self.queue.join()
+
+    def stop(self):
+        if self.queue is not None and self.active:
+            self.active = False
+            self.queue.put(None)
+            if self.thread is not None and self.thread is not threading.current_thread():
+                self.thread.join(timeout=5)
+        self.queue = None
+        self.thread = None
+        self.active = False
+
+    def writeProcess(self):
+        try:
+            with open(self.path, "a+", encoding=self.encoding, newline="\n") as f:
+                lastFlush = time.time()
+                while True:
+                    item = self.queue.get()
+                    try:
+                        if item is None:
+                            break
+                        f.write(item)
+                        while True:
+                            try:
+                                nextItem = self.queue.get_nowait()
+                            except queue.Empty:
+                                break
+                            try:
+                                if nextItem is None:
+                                    f.flush()
+                                    return
+                                f.write(nextItem)
+                            finally:
+                                self.queue.task_done()
+                        if time.time() - lastFlush >= 1:
+                            f.flush()
+                            lastFlush = time.time()
+                    finally:
+                        self.queue.task_done()
+                f.flush()
+        except Exception as e:
+            log.e("async log writer failed: {}".format(e))
 
 
 class CustomSendItemWidget(QWidget):
@@ -111,6 +182,17 @@ class CustomSendDragHandle(QPushButton):
     def mouseReleaseEvent(self, event):
         self.setCursor(Qt.OpenHandCursor)
         super().mouseReleaseEvent(event)
+
+    def mouseDoubleClickEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            plugin = getattr(self.itemWidget, "plugin", None)
+            if plugin is not None:
+                idx = plugin.customSendItemsLayout.indexOf(self.itemWidget)
+                if idx > 0:
+                    plugin.moveCustomSendItemBefore(idx, 0)
+            event.accept()
+            return
+        super().mouseDoubleClickEvent(event)
 
 
 class CustomSendColorButton(QPushButton):
@@ -1050,9 +1132,11 @@ class Plugin(Plugin_Base):
         self.logPauseStartDt = None
         self.logPausePeriods = []
         self.logConnectionEvents = []
+        self.receiveClearRecords = []
         self.logTimedDeadline = None
         self.logTimedRemaining = None
         self.logLastSize = 0
+        self.logWriter = AsyncTextFileWriter(self.configGlobal["encoding"])
         self.receiveFindDialog = None
         self.receiveFindRuleErrors = set()
         self.receiveFindMarkerTimer = None
@@ -1073,6 +1157,7 @@ class Plugin(Plugin_Base):
             ("connectionSettings", _("Connection settings")),
             ("portOpenCloseHistory", _("Port open/close history")),
             ("portDropReconnectHistory", _("Port disconnect/reconnect history")),
+            ("receiveClearHistory", _("Receive clear history")),
         ]
 
     def normalizeLogAppendInfoItems(self):
@@ -1134,6 +1219,9 @@ class Plugin(Plugin_Base):
         self.receiveFindButton = QPushButton("")
         self.receiveFindButton.setToolTip(_("Find and highlight receive text"))
         utils_ui.setButtonIcon(self.receiveFindButton, "fa.search")
+        self.receiveScrollBottomButton = QPushButton("")
+        self.receiveScrollBottomButton.setToolTip(_("Scroll receive area to bottom"))
+        utils_ui.setButtonIcon(self.receiveScrollBottomButton, "fa.arrow-down")
         self.sendButton = QPushButton("")
         self.sendButton.setToolTip(_("Send input data"))
         utils_ui.setButtonIcon(self.sendButton, "fa.send")
@@ -1150,6 +1238,7 @@ class Plugin(Plugin_Base):
         sendWidget.setLayout(sendAreaWidgetsLayout)
         buttonLayout = QVBoxLayout()
         buttonLayout.addWidget(self.receiveFindButton)
+        buttonLayout.addWidget(self.receiveScrollBottomButton)
         buttonLayout.addWidget(self.clearReceiveButtion)
         buttonLayout.addWidget(self.clearSendButtion)
         buttonLayout.addWidget(self.clearHistoryButton)
@@ -1165,6 +1254,7 @@ class Plugin(Plugin_Base):
         self.mainWidget.setStretchFactor(2, 1)
         # event
         self.receiveFindButton.clicked.connect(self.openReceiveFindDialog)
+        self.receiveScrollBottomButton.clicked.connect(self.scrollReceiveToBottom)
         self.sendButton.clicked.connect(self.onSendData)
         self.clearReceiveButtion.clicked.connect(self.clearReceiveBufferWithConfirm)
         self.clearSendButtion.clicked.connect(self.clearSendInputWithConfirm)
@@ -1616,13 +1706,25 @@ class Plugin(Plugin_Base):
         self.receiveFindRuleErrors.clear()
         self.rerenderReceiveArea()
 
+    def receiveFindDialogTitle(self):
+        return "{}-{}".format(getattr(self, "pageName", self.name), _("Receive area find"))
+
     def openReceiveFindDialog(self):
         if self.receiveFindDialog is None:
             self.receiveFindDialog = ReceiveFindDialog(self, self.mainWidget)
+        self.receiveFindDialog.setWindowTitle(self.receiveFindDialogTitle())
         self.receiveFindDialog.refreshRules()
         self.receiveFindDialog.show()
         self.receiveFindDialog.raise_()
         self.receiveFindDialog.activateWindow()
+
+    def scrollReceiveToBottom(self):
+        if not hasattr(self, "receiveArea"):
+            return
+        self.receiveArea.moveCursor(QTextCursor.End)
+        self.receiveArea.ensureCursorVisible()
+        bar = self.receiveArea.verticalScrollBar()
+        bar.setValue(bar.maximum())
 
     def plainTextFindRanges(self, text, pattern, caseSensitive=True):
         if not pattern:
@@ -1868,7 +1970,9 @@ class Plugin(Plugin_Base):
         font.setFamily(self.config.get("receiveFontFamily", DEFAULT_TEXT_FONT))
         font.setPointSize(self.config["receiveFontSize"])
         self.receiveArea.setFont(font)
-        self.setTextEditPaletteColor(self.receiveArea, self.config["receiveFontColor"])
+        self.defaultColor = None
+        self.defaultBg = None
+        self.setTextEditPaletteColor(self.receiveArea, self.config["receiveFontColor"], updateDocument=True)
 
     def applySendFont(self):
         font = self.sendArea.currentFont()
@@ -2066,7 +2170,9 @@ class Plugin(Plugin_Base):
         self.logPauseStartDt = None
         self.logPausePeriods = []
         self.logConnectionEvents = []
+        self.receiveClearRecords = []
         self.logTimedRemaining = int(self.config.get("saveLogDuration", 60))
+        self.logWriter.start(path, self.configGlobal["encoding"])
         self.config["saveLog"] = True
         self.updateSaveLogButtons()
         self.startSaveLogStatus()
@@ -2109,9 +2215,11 @@ class Plugin(Plugin_Base):
         endDt = datetime.now()
         if self.logPaused:
             self.closeCurrentLogPause(endDt=endDt, endTime=time.time())
+        self.config["saveLog"] = False
+        self.logWriter.flush()
         if self.config.get("saveLogAppendInfo", False):
             self.appendLogInformation(endDt)
-        self.config["saveLog"] = False
+        self.logWriter.stop()
         self.logSessionActive = False
         self.logPaused = False
         self.logStartTime = None
@@ -2142,6 +2250,10 @@ class Plugin(Plugin_Base):
         if not hasattr(self, "saveLogStartButton"):
             return
         self.saveLogStopButton.setEnabled(self.logSessionActive)
+        self.saveLogStopButton.setStyleSheet(
+            "QPushButton {background:#d32f2f;color:#ffffff;}"
+            "QPushButton:disabled {background:#8a2a2a;color:#dddddd;}"
+        )
         self.logMoreSettingsButton.setEnabled(not self.logSessionActive)
         if not self.logSessionActive:
             self.saveLogStartButton.setText(_("Start record"))
@@ -2337,6 +2449,18 @@ class Plugin(Plugin_Base):
             ))
         return lines
 
+    def recordReceiveClear(self):
+        self.receiveClearRecords.append(datetime.now())
+
+    def formatReceiveClearRecordLines(self, title):
+        lines = ["{}:".format(title)]
+        if not self.receiveClearRecords:
+            lines.append("  - {}".format(_("No receive clear records")))
+            return lines
+        for clearDt in self.receiveClearRecords:
+            lines.append("  - {}: {}".format(self.formatLogDateTime(clearDt), _("Receive area cleared")))
+        return lines
+
     def appendLogInformation(self, endDt):
         path = self.currentLogPath()
         if not path:
@@ -2396,6 +2520,8 @@ class Plugin(Plugin_Base):
                     _("Port disconnect/reconnect history"),
                     {"drop", "reconnect"}
                 ))
+            if self.logAppendInfoEnabled("receiveClearHistory"):
+                lines.extend(self.formatReceiveClearRecordLines(_("Receive clear history")))
             lines.extend(["====================================", ""])
             return "\n".join(lines)
 
@@ -2443,9 +2569,9 @@ class Plugin(Plugin_Base):
     def onLog(self, text):
         path = self.currentLogPath()
         if self.logSessionActive and (not self.logPaused) and self.config["saveLog"] and path:
-            with open(path, "a+", encoding=self.configGlobal["encoding"], newline="\n") as f:
-                f.write(text)
-            self.updateSaveLogStatus()
+            if not self.logWriter.write(text):
+                with open(path, "a+", encoding=self.configGlobal["encoding"], newline="\n") as f:
+                    f.write(text)
 
     def onConnChanged(self, status:ConnectionStatus, msg:str):
         previousStatus = self.currentConnStatus
@@ -2519,7 +2645,7 @@ class Plugin(Plugin_Base):
         dragHandle = CustomSendDragHandle(item)
         utils_ui.setButtonIcon(dragHandle, "fa.bars")
         dragHandle.setProperty("class", "remark")
-        dragHandle.setToolTip(_("Drag before another item to reorder"))
+        dragHandle.setToolTip(_("Drag before another item to reorder; double click to move this item to top"))
         cmd = QLineEdit(customItem["text"])
         send = WrapRemarkButton(customItem["remark"])
         utils_ui.setButtonIcon(send, customItem["icon"])
@@ -3359,6 +3485,7 @@ class Plugin(Plugin_Base):
         return isHexString, dataPlain, dataColored
 
     def clearReceiveBuffer(self):
+        self.recordReceiveClear()
         self.receiveArea.clear()
         self.receiveDisplayRecords.clear()
         if hasattr(self, "receiveFindScrollBar"):
@@ -3463,6 +3590,7 @@ class Plugin(Plugin_Base):
     def onDel(self):
         if self.logSessionActive:
             self.finishSaveLogRecording()
+        self.logWriter.stop()
         self.receiveProgressStop = True
         self.stopSaveLogTimer()
         self.stopSaveLogStatus()
