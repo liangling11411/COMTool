@@ -2216,10 +2216,9 @@ class Plugin(Plugin_Base):
         if self.logPaused:
             self.closeCurrentLogPause(endDt=endDt, endTime=time.time())
         self.config["saveLog"] = False
-        self.logWriter.flush()
+        self.logWriter.stop()
         if self.config.get("saveLogAppendInfo", False):
             self.appendLogInformation(endDt)
-        self.logWriter.stop()
         self.logSessionActive = False
         self.logPaused = False
         self.logStartTime = None
@@ -3109,7 +3108,6 @@ class Plugin(Plugin_Base):
                         sendStr = sendStr.upper()
                     head = self.buildRecordHead("=>", self.config["showTimestamp"], isHexStr, leadingLineBreak=True)
                     self.receiveUpdateSignal.emit(head, [sendStr], self.configGlobal["encoding"], True)
-                    self.sendRecord.insert(0, head + sendStr)
                 self.send(data_bytes=data, callback = self.onSent)
                 self.justSent = True # flag for receive thread
                 if data_bytes:
@@ -3344,6 +3342,7 @@ class Plugin(Plugin_Base):
         }
         self.receiveDisplayRecords.append(record)
         self.appendReceivedDataRecord(record)
+        self.onLog(self.receiveRecordText(record))
         if self.trimReceiveDisplayRecords():
             self.rerenderReceiveArea()
         else:
@@ -3505,12 +3504,10 @@ class Plugin(Plugin_Base):
         self.receiveProgressStop = False
         timeLastReceive = 0
         new_line = True
-        logData = None
         buffer = b''
         remain = b''
         self.lock_wait_rx.acquire()
         while(not self.receiveProgressStop):
-            logData = None
             head = ""
             new = b''
             # ok means got new data
@@ -3577,14 +3574,8 @@ class Plugin(Plugin_Base):
                                                      hexstr)
                         new_line = False
                     self.receiveUpdateSignal.emit(head, [colorData], self.configGlobal["encoding"], False)
-                    logData = head + data
             if len(new) > 0:
                 timeLastReceive = time.time()
-
-            while len(self.sendRecord) > 0:
-                self.onLog(self.sendRecord.pop())
-            if logData:
-                self.onLog(logData)
 
 
     def onDel(self):

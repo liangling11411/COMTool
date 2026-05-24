@@ -1511,10 +1511,9 @@ def parse(line, ctx):
         if self.logPaused:
             self.closeCurrentLogPause(endDt=endDt, endTime=time.time())
         self.config["saveLog"] = False
-        self.logWriter.flush()
+        self.logWriter.stop()
         if self.config.get("saveLogAppendInfo", False):
             self.appendLogInformation(endDt)
-        self.logWriter.stop()
         self.logSessionActive = False
         self.logPaused = False
         self.logStartTime = None
@@ -1856,7 +1855,7 @@ def parse(line, ctx):
     def showReceivedData(self, text: str):
         self.receiveDisplayRecords.append(text)
         self.appendReceiveText(text)
-        self.onLog(self.logTextWithTimestamps(text))
+        self.onLog(text)
         if self.trimReceiveDisplayRecords():
             self.rerenderReceiveArea()
 
