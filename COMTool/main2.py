@@ -189,8 +189,10 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
                         self.config, pluginConfig,
                         self.hintSignal, self.reloadWindowSignal,
                         self.onConnChnaged, self.onItemNameChanged)
+        item.canImportPage = self.canImportPage
         self.tabAddItem(item)
         self.items.append(item)
+        self.updateImportPageButtons()
         if setCurrent:
             self.tabWidget.setCurrentWidget(item.widget)
         if not nameSaved:
@@ -237,8 +239,29 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         idx = self.tabWidget.indexOf(item.widget)
         if idx >= 0:
             self.setTabDisplay(idx, item)
+        if hasattr(item.plugin, "setPageName"):
+            item.plugin.setPageName(newName)
+        else:
+            item.plugin.pageName = newName
         item.widget.setWindowTitle(newName)
         return newName
+
+    def hasOpenConnection(self):
+        for item in self.items:
+            try:
+                if item.plugin.getConnStatus() != ConnectionStatus.CLOSED:
+                    return True
+            except Exception:
+                continue
+        return False
+
+    def canImportPage(self):
+        return not self.hasOpenConnection()
+
+    def updateImportPageButtons(self):
+        enabled = self.canImportPage()
+        for item in self.items:
+            item.setImportPageEnabled(enabled)
 
     def onConnChnaged(self, plugin, status:ConnectionStatus, msg):
         for item in self.items:
@@ -248,6 +271,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
                         self.setTabIcon(status, i)
                         break
                 item.widget.setWindowTitle(item.name + " - {}".format(_("Connected" if status == ConnectionStatus.CONNECTED else _("Connection lose") if status == ConnectionStatus.LOSE else _("Disconnected"))))
+        self.updateImportPageButtons()
 
     def setTabIcon(self, status:ConnectionStatus, i:int):
         if status == ConnectionStatus.CONNECTED:
