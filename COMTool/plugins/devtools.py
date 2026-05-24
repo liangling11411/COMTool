@@ -317,6 +317,7 @@ class Plugin(Plugin_Base):
 
     def onInit(self, config):
         super().onInit(config)
+        self.bitCalculatorFrames = []
 
     def globalConfigValue(self, key, default=None):
         config = self.configGlobal
@@ -339,6 +340,19 @@ class Plugin(Plugin_Base):
 
     def onSettingsWidgetStretch(self):
         return 1
+
+    def onSkinChanged(self, skin):
+        style = self.bitCalculatorStyleSheet(skin)
+        aliveFrames = []
+        for frame in self.bitCalculatorFrames:
+            try:
+                frame.setStyleSheet(style)
+                frame.style().unpolish(frame)
+                frame.style().polish(frame)
+                aliveFrames.append(frame)
+            except RuntimeError:
+                pass
+        self.bitCalculatorFrames = aliveFrames
 
     def onWidgetSettings(self, parent):
         panel = QWidget()
@@ -1040,6 +1054,7 @@ class Plugin(Plugin_Base):
         frame = QFrame()
         frame.setObjectName("bitCalculator")
         frame.setStyleSheet(self.bitCalculatorStyleSheet())
+        self.bitCalculatorFrames.append(frame)
         layout = QVBoxLayout()
         layout.setContentsMargins(14, 12, 14, 14)
         layout.setSpacing(8)
@@ -1152,8 +1167,10 @@ class Plugin(Plugin_Base):
         self.bitCalcRefresh(state)
         return card
 
-    def bitCalculatorStyleSheet(self):
-        dark = self.globalConfigValue("skin", "light") == "dark"
+    def bitCalculatorStyleSheet(self, skin=None):
+        if skin is None:
+            skin = self.globalConfigValue("skin", "light")
+        dark = skin == "dark"
         colors = {
             "frameBorder": "#565656" if dark else "#858585",
             "expr": "#a8a8a8" if dark else "#777777",

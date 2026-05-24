@@ -169,6 +169,7 @@ class LogSettingsDialog(QDialog):
         self.timedCheck.setToolTip(_("Stop saving log automatically after the configured duration"))
         self.appendInfoCheck = QCheckBox(_("Append log information at stop"))
         self.appendInfoCheck.setToolTip(_("Append start time, pause history, log size, and connection settings to the end of the log"))
+        self.appendInfoItemChecks = {}
 
         duration = int(plugin.config.get("saveLogDuration", 60))
         hours, minutes, seconds = plugin.splitSeconds(duration)
@@ -198,6 +199,16 @@ class LogSettingsDialog(QDialog):
         grid.addWidget(QLabel(_("Seconds")), 3, 0)
         grid.addWidget(self.secondsInput, 3, 1)
         grid.addWidget(self.appendInfoCheck, 4, 0, 1, 4)
+        self.appendItemsGroup = QGroupBox(_("Append information items"))
+        appendItemsLayout = QGridLayout()
+        self.appendItemsGroup.setLayout(appendItemsLayout)
+        appendInfoItems = plugin.config.get("saveLogAppendInfoItems", {})
+        for idx, (key, label) in enumerate(plugin.logAppendInfoOptions()):
+            check = QCheckBox(label)
+            check.setChecked(bool(appendInfoItems.get(key, True)))
+            appendItemsLayout.addWidget(check, idx // 2, idx % 2)
+            self.appendInfoItemChecks[key] = check
+        grid.addWidget(self.appendItemsGroup, 5, 0, 1, 4)
         layout.addLayout(grid)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -209,12 +220,18 @@ class LogSettingsDialog(QDialog):
         self.timedCheck.setChecked(bool(plugin.config.get("saveLogTimed", False)))
         self.appendInfoCheck.setChecked(bool(plugin.config.get("saveLogAppendInfo", False)))
         self.timedCheck.toggled.connect(self.updateTimedInputs)
+        self.appendInfoCheck.toggled.connect(self.updateAppendInputs)
         self.updateTimedInputs()
+        self.updateAppendInputs()
 
     def updateTimedInputs(self):
         enabled = self.timedCheck.isChecked()
         for widget in [self.hoursInput, self.minutesInput, self.secondsInput]:
             widget.setEnabled(enabled)
+
+    def updateAppendInputs(self):
+        enabled = self.appendInfoCheck.isChecked()
+        self.appendItemsGroup.setEnabled(enabled)
 
     def accept(self):
         duration = (
@@ -229,6 +246,10 @@ class LogSettingsDialog(QDialog):
         self.plugin.config["saveLogTimed"] = self.timedCheck.isChecked()
         self.plugin.config["saveLogDuration"] = duration
         self.plugin.config["saveLogAppendInfo"] = self.appendInfoCheck.isChecked()
+        self.plugin.config["saveLogAppendInfoItems"] = {
+            key: check.isChecked()
+            for key, check in self.appendInfoItemChecks.items()
+        }
         self.plugin.updateLogSettingsSummary()
         super().accept()
 
@@ -986,6 +1007,7 @@ class Plugin(Plugin_Base):
             "saveLogTimed": False,
             "saveLogDuration": 60,
             "saveLogAppendInfo": False,
+            "saveLogAppendInfoItems": {},
             "wrap": False,
             "saveLogAutoNew": False,
             "color" : False,
@@ -1009,6 +1031,7 @@ class Plugin(Plugin_Base):
             if not k in self.config:
                 self.config[k] = default[k]
         self.config["saveLog"] = False
+        self.normalizeLogAppendInfoItems()
         if not hasReceiveFontSize:
             self.config["receiveFontSize"] = 10
         if not hasSendFontSize:
@@ -1030,6 +1053,7 @@ class Plugin(Plugin_Base):
         self.logPauseStartTime = None
         self.logPauseStartDt = None
         self.logPausePeriods = []
+        self.logConnectionEvents = []
         self.logTimedDeadline = None
         self.logTimedRemaining = None
         self.logLastSize = 0
@@ -1037,6 +1061,41 @@ class Plugin(Plugin_Base):
         self.receiveFindRuleErrors = set()
         self.receiveFindMarkerTimer = None
         self.currentConnStatus = ConnectionStatus.CLOSED
+
+    def logAppendInfoOptions(self):
+        return [
+            ("startTime", _("Start time")),
+            ("endTime", _("End time")),
+            ("activeDuration", _("Active duration")),
+            ("pauseCount", _("Pause count")),
+            ("pauseTime", _("Pause time")),
+            ("logSize", _("Log size")),
+            ("logPath", _("Log path")),
+            ("pageName", _("Page name")),
+            ("connectionType", _("Connection type")),
+            ("connectionStatus", _("Connection status")),
+            ("connectionSettings", _("Connection settings")),
+            ("portOpenCloseHistory", _("Port open/close history")),
+            ("portDropReconnectHistory", _("Port disconnect/reconnect history")),
+        ]
+
+    def normalizeLogAppendInfoItems(self):
+        defaults = {key: True for key, _label in self.logAppendInfoOptions()}
+        value = self.config.get("saveLogAppendInfoItems", {})
+        if isinstance(value, dict):
+            normalized = defaults.copy()
+            for key in normalized:
+                if key in value:
+                    normalized[key] = bool(value[key])
+        elif isinstance(value, list):
+            normalized = {key: key in value for key in defaults}
+        else:
+            normalized = defaults
+        self.config["saveLogAppendInfoItems"] = normalized
+        return normalized
+
+    def logAppendInfoEnabled(self, key):
+        return bool(self.config.get("saveLogAppendInfoItems", {}).get(key, True))
 
     def globalConfigValue(self, key, default=None):
         config = self.configGlobal
@@ -1308,7 +1367,7 @@ class Plugin(Plugin_Base):
         fileSendGridLayout.addWidget(self.sendFileButton, 1, 0, 1, 2)
         self.fileSendGroupBox.setLayout(fileSendGridLayout)
 
-        self.logFileGroupBox = QGroupBox(_("Save log"))
+        self.logFileGroupBox = QGroupBox(_("Log"))
         logFileWrapper = QVBoxLayout()
         logFileLayout = QHBoxLayout()
         self.logFilePath = QLineEdit()
@@ -2012,6 +2071,7 @@ class Plugin(Plugin_Base):
         self.logPauseStartTime = None
         self.logPauseStartDt = None
         self.logPausePeriods = []
+        self.logConnectionEvents = []
         self.logTimedRemaining = int(self.config.get("saveLogDuration", 60))
         self.config["saveLog"] = True
         self.updateSaveLogButtons()
@@ -2235,6 +2295,56 @@ class Plugin(Plugin_Base):
                 return item.get("name", ""), connId, conns.get(connId, {})
         return "", "", {}
 
+    def recordLogConnectionEvent(self, previousStatus, status, msg):
+        if not self.logSessionActive:
+            return
+        eventType = None
+        if status == ConnectionStatus.CONNECTED and previousStatus == ConnectionStatus.LOSE:
+            eventType = "reconnect"
+        elif status == ConnectionStatus.CONNECTED and previousStatus != ConnectionStatus.CONNECTED:
+            eventType = "open"
+        elif status == ConnectionStatus.CLOSED and previousStatus != ConnectionStatus.CLOSED:
+            eventType = "close"
+        elif status == ConnectionStatus.LOSE and previousStatus != ConnectionStatus.LOSE:
+            eventType = "drop"
+        if eventType is None:
+            return
+        self.logConnectionEvents.append({
+            "time": datetime.now(),
+            "type": eventType,
+            "message": msg or "",
+            "from": previousStatus.name if previousStatus is not None else "",
+            "to": status.name
+        })
+
+    def logConnectionEventLabel(self, eventType):
+        labels = {
+            "open": _("Port opened"),
+            "close": _("Port closed"),
+            "drop": _("Port disconnected"),
+            "reconnect": _("Port reconnected"),
+        }
+        return labels.get(eventType, eventType)
+
+    def formatLogConnectionEventLines(self, title, eventTypes):
+        lines = ["{}:".format(title)]
+        events = [
+            event for event in self.logConnectionEvents
+            if event.get("type") in eventTypes
+        ]
+        if not events:
+            lines.append("  - {}".format(_("No events")))
+            return lines
+        for event in events:
+            msg = event.get("message", "")
+            msgPart = " - {}".format(msg) if msg else ""
+            lines.append("  - {}: {}{}".format(
+                self.formatLogDateTime(event.get("time")),
+                self.logConnectionEventLabel(event.get("type")),
+                msgPart
+            ))
+        return lines
+
     def appendLogInformation(self, endDt):
         path = self.currentLogPath()
         if not path:
@@ -2251,32 +2361,50 @@ class Plugin(Plugin_Base):
                 "",
                 "",
                 "========== {} ==========".format(_("Log information")),
-                "{}: {}".format(_("Start time"), self.formatLogDateTime(self.logSessionStartDt)),
-                "{}: {}".format(_("End time"), self.formatLogDateTime(endDt)),
-                "{}: {}".format(_("Active duration"), self.secondsToHms(self.currentLogElapsed())),
-                "{}: {}".format(_("Pause count"), len(self.logPausePeriods)),
             ]
-            if self.logPausePeriods:
-                for idx, (startDt, endPauseDt, duration) in enumerate(self.logPausePeriods, start=1):
-                    lines.append("{} {}: {} - {} ({})".format(
-                        _("Pause time"),
-                        idx,
-                        self.formatLogDateTime(startDt),
-                        self.formatLogDateTime(endPauseDt),
-                        self.secondsToHms(duration)
-                    ))
-            else:
-                lines.append("{}: {}".format(_("Pause time"), _("None")))
-            lines.extend([
-                "{}: {}".format(_("Log size"), sizeText),
-                "{}: {}".format(_("Log path"), path),
-                "{}: {}".format(_("Page name"), pageName or "-"),
-                "{}: {}".format(_("Connection type"), connId or "-"),
-                "{}: {}".format(_("Connection status"), self.currentConnStatus.name),
-                "{}: {}".format(_("Connection settings"), connSettingsText or "-"),
-                "====================================",
-                ""
-            ])
+            if self.logAppendInfoEnabled("startTime"):
+                lines.append("{}: {}".format(_("Start time"), self.formatLogDateTime(self.logSessionStartDt)))
+            if self.logAppendInfoEnabled("endTime"):
+                lines.append("{}: {}".format(_("End time"), self.formatLogDateTime(endDt)))
+            if self.logAppendInfoEnabled("activeDuration"):
+                lines.append("{}: {}".format(_("Active duration"), self.secondsToHms(self.currentLogElapsed())))
+            if self.logAppendInfoEnabled("pauseCount"):
+                lines.append("{}: {}".format(_("Pause count"), len(self.logPausePeriods)))
+            if self.logAppendInfoEnabled("pauseTime"):
+                if self.logPausePeriods:
+                    for idx, (startDt, endPauseDt, duration) in enumerate(self.logPausePeriods, start=1):
+                        lines.append("{} {}: {} - {} ({})".format(
+                            _("Pause time"),
+                            idx,
+                            self.formatLogDateTime(startDt),
+                            self.formatLogDateTime(endPauseDt),
+                            self.secondsToHms(duration)
+                        ))
+                else:
+                    lines.append("{}: {}".format(_("Pause time"), _("None")))
+            if self.logAppendInfoEnabled("logSize"):
+                lines.append("{}: {}".format(_("Log size"), sizeText))
+            if self.logAppendInfoEnabled("logPath"):
+                lines.append("{}: {}".format(_("Log path"), path))
+            if self.logAppendInfoEnabled("pageName"):
+                lines.append("{}: {}".format(_("Page name"), pageName or "-"))
+            if self.logAppendInfoEnabled("connectionType"):
+                lines.append("{}: {}".format(_("Connection type"), connId or "-"))
+            if self.logAppendInfoEnabled("connectionStatus"):
+                lines.append("{}: {}".format(_("Connection status"), self.currentConnStatus.name))
+            if self.logAppendInfoEnabled("connectionSettings"):
+                lines.append("{}: {}".format(_("Connection settings"), connSettingsText or "-"))
+            if self.logAppendInfoEnabled("portOpenCloseHistory"):
+                lines.extend(self.formatLogConnectionEventLines(
+                    _("Port open/close history"),
+                    {"open", "close"}
+                ))
+            if self.logAppendInfoEnabled("portDropReconnectHistory"):
+                lines.extend(self.formatLogConnectionEventLines(
+                    _("Port disconnect/reconnect history"),
+                    {"drop", "reconnect"}
+                ))
+            lines.extend(["====================================", ""])
             return "\n".join(lines)
 
         encoding = self.configGlobal["encoding"]
@@ -2339,6 +2467,8 @@ class Plugin(Plugin_Base):
             self.updateSaveLogStatus()
 
     def onConnChanged(self, status:ConnectionStatus, msg:str):
+        previousStatus = self.currentConnStatus
+        self.recordLogConnectionEvent(previousStatus, status, msg)
         self.currentConnStatus = status
         super().onConnChanged(status, msg)
         self.updateClosedOnlyControls()

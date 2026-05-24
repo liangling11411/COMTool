@@ -770,6 +770,8 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         self.app.setStyleSheet(file.read().replace("$DataPath", self.DataPath))
         utils_ui.setSkin(skin)
         self.config["skin"] = skin
+        for item in self.items:
+            item.plugin.onSkinChanged(skin)
 
     def showAbout(self):
         help = helpAbout.HelpInfo()

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/Neutree/COMTool/issues\n"
-"POT-Creation-Date: 2026-05-23 21:11+0800\n"
+"POT-Creation-Date: 2026-05-24 11:14+0800\n"
 "PO-Revision-Date: 2021-12-04 15:20+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans_CN\n"
@@ -87,13 +87,13 @@ msgid "Disconnected"
 msgstr "已断开"
 
 #: conn/conn_serial.py:338 conn/conn_ssh.py:296 conn/conn_tcp_udp.py:430
-#: main2.py:276 main2.py:326 main2.py:481 main2.py:486 main2.py:890
+#: main2.py:276 main2.py:326 main2.py:481 main2.py:486 main2.py:892
 #: pluginItems.py:203 pluginItems.py:206 pluginItems.py:320 pluginItems.py:332
-#: plugins/base.py:194 plugins/base.py:199 plugins/base.py:215
-#: plugins/base.py:224 plugins/dbg.py:226 plugins/dbg.py:1969
-#: plugins/dbg.py:1978 plugins/dbg.py:2182 plugins/dbg.py:2188
-#: plugins/dbg.py:2769 plugins/dbg.py:2783 plugins/dbg.py:2793
-#: plugins/dbg.py:2816 plugins/dbg.py:2883 plugins/dbg.py:2891
+#: plugins/base.py:200 plugins/base.py:205 plugins/base.py:221
+#: plugins/base.py:230 plugins/dbg.py:243 plugins/dbg.py:2037
+#: plugins/dbg.py:2046 plugins/dbg.py:2251 plugins/dbg.py:2257
+#: plugins/dbg.py:2920 plugins/dbg.py:2934 plugins/dbg.py:2944
+#: plugins/dbg.py:2967 plugins/dbg.py:3034 plugins/dbg.py:3042
 #: plugins/graph.py:259 plugins/graph_widget_metasenselite.py:591
 #: plugins/graph_widgets.py:167 plugins/myplugin.py:62
 #: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
@@ -110,7 +110,7 @@ msgstr "加载插件失败"
 msgid "Load plugin fail"
 msgstr "加载插件失败"
 
-#: conn/conn_ssh.py:239 main2.py:320 plugins/dbg.py:2277 plugins/dbg.py:2291
+#: conn/conn_ssh.py:239 main2.py:320 plugins/dbg.py:2426 plugins/dbg.py:2440
 msgid "Select file"
 msgstr "选择文件"
 
@@ -130,7 +130,7 @@ msgstr "切换皮肤"
 msgid "Switch language"
 msgstr "切换语言"
 
-#: main2.py:361 main2.py:777
+#: main2.py:361 main2.py:779
 msgid "About"
 msgstr "关于"
 
@@ -154,12 +154,12 @@ msgstr "新窗口"
 msgid "Rename"
 msgstr "重命名"
 
-#: main2.py:522 plugins/dbg.py:2262
+#: main2.py:522 plugins/dbg.py:1074 plugins/dbg.py:2390
 msgid "Page name"
 msgstr "页面名称"
 
-#: main2.py:529 pluginItems.py:209 plugins/dbg.py:1899 plugins/dbg.py:2099
-#: plugins/dbg.py:2178 plugins/dbg.py:2796 plugins/protocol.py:609
+#: main2.py:529 pluginItems.py:209 plugins/dbg.py:1967 plugins/dbg.py:2168
+#: plugins/dbg.py:2247 plugins/dbg.py:2947 plugins/protocol.py:609
 #: plugins/protocol.py:631
 msgid "Warning"
 msgstr "警告"
@@ -192,23 +192,23 @@ msgstr "现在就重启软件以生效？"
 msgid "Closing ..."
 msgstr "关闭中 ..."
 
-#: main2.py:799
+#: main2.py:801
 msgid "New versioin detected, please click learn more to download"
 msgstr "检测到了新版本， 请点击 了解更多 以下载"
 
-#: main2.py:800
+#: main2.py:802
 msgid "Learn More"
 msgstr "了解更多"
 
-#: main2.py:801
+#: main2.py:803
 msgid "Skip this version"
 msgstr "跳过此版本"
 
-#: main2.py:802
+#: main2.py:804
 msgid "Remind me next time"
 msgstr "下次提醒我"
 
-#: main2.py:803
+#: main2.py:805
 msgid "Need update"
 msgstr "需要更新"
 
@@ -304,11 +304,11 @@ msgstr "输入标记"
 msgid "Input value"
 msgstr "输入值"
 
-#: plugins/dbg.py:2635 widgets.py:691 widgets.py:727
+#: plugins/dbg.py:2786 widgets.py:691 widgets.py:727
 msgid "Select icon"
 msgstr "选择图标"
 
-#: plugins/dbg.py:1180 plugins/protocol.py:277 widgets.py:698 widgets.py:768
+#: plugins/dbg.py:1248 plugins/protocol.py:277 widgets.py:698 widgets.py:768
 msgid "Record"
 msgstr "记录"
 
@@ -320,8 +320,8 @@ msgstr "快捷键"
 msgid "Press key to record, or click Cancel"
 msgstr "按键以记录，或点击取消按钮"
 
-#: plugins/dbg.py:1947 plugins/dbg.py:2064 plugins/dbg.py:2635
-#: plugins/dbg.py:2767 plugins/dbg.py:2781 widgets.py:708 widgets.py:727
+#: plugins/dbg.py:2015 plugins/dbg.py:2133 plugins/dbg.py:2786
+#: plugins/dbg.py:2918 plugins/dbg.py:2932 widgets.py:708 widgets.py:727
 msgid "OK"
 msgstr "完成"
 
@@ -424,7 +424,7 @@ msgstr "输入"
 msgid "error"
 msgstr "错误"
 
-#: conn/conn_ssh.py:241 plugins/dbg.py:2279
+#: conn/conn_ssh.py:241 plugins/dbg.py:2428
 msgid "All Files (*)"
 msgstr "所有文件 (*)"
 
@@ -452,7 +452,7 @@ msgstr "连接已关闭！"
 msgid "Protocol"
 msgstr "协议"
 
-#: conn/conn_tcp_udp.py:109 plugins/devtools.py:1958
+#: conn/conn_tcp_udp.py:109 plugins/devtools.py:1984
 msgid "Mode"
 msgstr "模式"
 
@@ -496,19 +496,19 @@ msgstr "已关闭"
 msgid "Connecting"
 msgstr "连接中"
 
-#: plugins/base.py:215 plugins/devtools.py:539
+#: plugins/base.py:221 plugins/devtools.py:562
 msgid "Format error, should be like 00 01 02 03"
 msgstr "格式错误，格式应该应该如 00 01 02 03"
 
-#: plugins/base.py:224
+#: plugins/base.py:230
 msgid "Escape is on, but escape error:"
 msgstr "转移符支持已打开，但是转义时错误"
 
-#: plugins/dbg.py:158 plugins/dbg.py:1314
+#: plugins/dbg.py:158 plugins/dbg.py:1382
 msgid "More log settings"
 msgstr "更多日志设置"
 
-#: plugins/dbg.py:166 plugins/dbg.py:2108
+#: plugins/dbg.py:166 plugins/dbg.py:2177
 msgid "Auto new file"
 msgstr "自动新建文件"
 
@@ -516,7 +516,7 @@ msgstr "自动新建文件"
 msgid "When start a new connection, will automatically create a new log file"
 msgstr "每次连接成功时，会自动新建一个日志文件"
 
-#: plugins/dbg.py:168 plugins/dbg.py:2109
+#: plugins/dbg.py:168 plugins/dbg.py:2178
 msgid "Timed log"
 msgstr "定时日志"
 
@@ -534,825 +534,853 @@ msgid ""
 "the end of the log"
 msgstr "将开始时间、暂停记录、日志大小和连接设置追加到日志末尾"
 
-#: plugins/dbg.py:185
+#: plugins/dbg.py:186
 msgid "Only numbers are allowed"
 msgstr "仅允许输入数字"
 
-#: plugins/dbg.py:194
+#: plugins/dbg.py:195
 msgid "Hours"
 msgstr "小时"
 
-#: plugins/dbg.py:196
+#: plugins/dbg.py:197
 msgid "Minutes"
 msgstr "分钟"
 
-#: plugins/dbg.py:198
+#: plugins/dbg.py:199
 msgid "Seconds"
 msgstr "秒"
 
-#: plugins/dbg.py:226
+#: plugins/dbg.py:202
+msgid "Append information items"
+msgstr "追加信息项目"
+
+#: plugins/dbg.py:243
 msgid "Timed log duration must be greater than zero"
 msgstr "定时日志时长必须大于零"
 
-#: plugins/dbg.py:391 plugins/dbg.py:682
+#: plugins/dbg.py:412 plugins/dbg.py:703
 msgid "Advanced find settings"
 msgstr "高级查找设置"
 
-#: plugins/dbg.py:402
+#: plugins/dbg.py:423
 msgid "Find next"
 msgstr "查找下一个"
 
-#: plugins/dbg.py:403
+#: plugins/dbg.py:424
 msgid "Jump to the next match for this rule"
 msgstr "跳转到此规则的下一个匹配"
 
-#: plugins/dbg.py:404 plugins/devtools.py:1603
+#: plugins/dbg.py:425 plugins/devtools.py:1629
 msgid "Count"
 msgstr "计数"
 
-#: plugins/dbg.py:405
+#: plugins/dbg.py:426
 msgid "Count matches for this rule in the receive buffer"
 msgstr "统计此规则在接收缓冲区中的匹配数"
 
-#: plugins/dbg.py:412
+#: plugins/dbg.py:433
 msgid "Find options"
 msgstr "查找选项"
 
-#: plugins/dbg.py:415
+#: plugins/dbg.py:436
 msgid "Reverse find"
 msgstr "反向查找"
 
-#: plugins/dbg.py:416
+#: plugins/dbg.py:437
 msgid "Search upward when jumping to the next match"
 msgstr "跳转下一个匹配时向上搜索"
 
-#: plugins/dbg.py:417
+#: plugins/dbg.py:438
 msgid "Whole word"
 msgstr "全词匹配"
 
-#: plugins/dbg.py:418
+#: plugins/dbg.py:439
 msgid "Match only whole words"
 msgstr "仅匹配完整单词"
 
-#: plugins/dbg.py:419
+#: plugins/dbg.py:440
 msgid "Case sensitive"
 msgstr "区分大小写"
 
-#: plugins/dbg.py:420
+#: plugins/dbg.py:441
 msgid "Match uppercase and lowercase exactly"
 msgstr "严格匹配大小写"
 
-#: plugins/dbg.py:421
+#: plugins/dbg.py:442
 msgid "Wrap around"
 msgstr "循环查找"
 
-#: plugins/dbg.py:422
+#: plugins/dbg.py:443
 msgid "Continue from the other end when no match is found"
 msgstr "未找到匹配时从另一端继续"
 
-#: plugins/dbg.py:423
+#: plugins/dbg.py:444
 msgid "Regular expression"
 msgstr "正则表达式"
 
-#: plugins/dbg.py:424
+#: plugins/dbg.py:445
 msgid "Treat the find text as a Python regular expression"
 msgstr "将查找文本按 Python 正则表达式处理"
 
-#: plugins/dbg.py:425
+#: plugins/dbg.py:446
 msgid "Dot matches newline"
 msgstr "点号匹配换行"
 
-#: plugins/dbg.py:426
+#: plugins/dbg.py:447
 msgid "Let '.' in regular expressions match line breaks"
 msgstr "允许正则表达式中的 '.' 匹配换行"
 
-#: plugins/dbg.py:437 plugins/dbg.py:586
+#: plugins/dbg.py:458 plugins/dbg.py:607
 msgid "Close"
 msgstr "关闭"
 
-#: plugins/dbg.py:460
+#: plugins/dbg.py:481
 msgid "No find rule selected"
 msgstr "未选择查找规则"
 
-#: plugins/dbg.py:485 plugins/dbg.py:676
+#: plugins/dbg.py:506 plugins/dbg.py:697
 msgid "Find text"
 msgstr "查找文本"
 
-#: plugins/dbg.py:485
+#: plugins/dbg.py:506
 msgid "Empty"
 msgstr "空"
 
-#: plugins/dbg.py:527
+#: plugins/dbg.py:548
 msgid "Matches"
 msgstr "匹配数"
 
-#: plugins/dbg.py:542
+#: plugins/dbg.py:563
 msgid "Find in receive area"
 msgstr "接收区查找"
 
-#: plugins/dbg.py:548
+#: plugins/dbg.py:569
 msgid "Find rules (top rules have higher priority)"
 msgstr "查找规则（越靠上优先级越高）"
 
-#: plugins/dbg.py:551
+#: plugins/dbg.py:572
 msgid "Select all"
 msgstr "全选"
 
-#: plugins/dbg.py:552
+#: plugins/dbg.py:573
 msgid "Select all find rules for batch actions"
 msgstr "选择全部查找规则进行批量操作"
 
-#: plugins/dbg.py:553
+#: plugins/dbg.py:574
 msgid "Highlight color"
 msgstr "高亮颜色"
 
-#: plugins/dbg.py:554
+#: plugins/dbg.py:575
 msgid "Choose highlight color for new rules or selected rules"
 msgstr "为新规则或所选规则选择高亮颜色"
 
-#: plugins/dbg.py:556
+#: plugins/dbg.py:577
 msgid "Apply color"
 msgstr "应用颜色"
 
-#: plugins/dbg.py:557
+#: plugins/dbg.py:578
 msgid "Clear color"
 msgstr "清除颜色"
 
-#: plugins/dbg.py:558
+#: plugins/dbg.py:579
 msgid "Delete selected"
 msgstr "删除所选"
 
-#: plugins/dbg.py:559
+#: plugins/dbg.py:580
 msgid "Apply the current highlight color to all selected rules"
 msgstr "将当前高亮颜色应用到所有选中规则"
 
-#: plugins/dbg.py:560
+#: plugins/dbg.py:581
 msgid "Remove highlight color from all selected rules"
 msgstr "从所有选中规则移除高亮颜色"
 
-#: plugins/dbg.py:561
+#: plugins/dbg.py:582
 msgid "Delete all selected find rules"
 msgstr "删除所有选中查找规则"
 
-#: plugins/dbg.py:584
+#: plugins/dbg.py:605
 msgid "Add find rule"
 msgstr "添加查找规则"
 
-#: plugins/dbg.py:587
+#: plugins/dbg.py:608
 msgid "Close find window"
 msgstr "关闭查找窗口"
 
-#: plugins/dbg.py:611 plugins/dbg.py:795 plugins/dbg.py:1763
-#: plugins/dbg.py:1777 plugins/dbg.py:2566 plugins/dbg.py:2622
+#: plugins/dbg.py:632 plugins/dbg.py:816 plugins/dbg.py:1831
+#: plugins/dbg.py:1845 plugins/dbg.py:2717 plugins/dbg.py:2773
 msgid "Select color"
 msgstr "选择颜色"
 
-#: plugins/dbg.py:666
+#: plugins/dbg.py:687
 msgid "Select"
 msgstr "选择"
 
-#: plugins/dbg.py:667
+#: plugins/dbg.py:688
 msgid "Select this rule for batch edit actions"
 msgstr "选择此规则进行批量编辑"
 
-#: plugins/dbg.py:670
+#: plugins/dbg.py:691
 msgid "Drag before another find rule to change priority"
 msgstr "拖拽到另一条查找规则前方以调整优先级"
 
-#: plugins/dbg.py:672 plugins/graph_widgets.py:55
+#: plugins/dbg.py:693 plugins/graph_widgets.py:55
 msgid "Enable"
 msgstr "Enable"
 
-#: plugins/dbg.py:673
+#: plugins/dbg.py:694
 msgid "Enable this rule for highlighting, navigation, and scrollbar markers"
 msgstr "启用此规则用于高亮、跳转和滚动条标记"
 
-#: plugins/dbg.py:677
+#: plugins/dbg.py:698
 msgid ""
 "Plain text searches exact text. Use advanced settings for regular "
 "expressions."
 msgstr "普通文本按原文匹配，正则表达式请在高级设置中启用。"
 
-#: plugins/dbg.py:679
+#: plugins/dbg.py:700
 msgid "Set highlight color, right click to clear"
 msgstr "设置高亮颜色，右键清除"
 
-#: plugins/dbg.py:685
+#: plugins/dbg.py:706
 msgid "Delete this find rule"
 msgstr "删除此查找规则"
 
-#: plugins/dbg.py:938
+#: plugins/dbg.py:959
 msgid "Send Receive"
 msgstr "收发"
 
-#: plugins/dbg.py:954
+#: plugins/dbg.py:975
 msgid "Shortcut:"
 msgstr "快捷键："
 
-#: plugins/dbg.py:955
+#: plugins/dbg.py:976
 msgid "Full screen"
 msgstr "全屏"
 
-#: plugins/dbg.py:956
+#: plugins/dbg.py:977
 msgid "Send data"
 msgstr "发送数据"
 
-#: plugins/dbg.py:957
+#: plugins/dbg.py:978
 msgid "Clear Send Area"
 msgstr "清除发送区"
 
-#: plugins/dbg.py:958
+#: plugins/dbg.py:979
 msgid "Clear Receive Area"
 msgstr "清除接收区"
 
-#: plugins/dbg.py:1044
+#: plugins/dbg.py:1067 plugins/dbg.py:2366
+msgid "Start time"
+msgstr "开始时间"
+
+#: plugins/dbg.py:1068 plugins/dbg.py:2368
+msgid "End time"
+msgstr "结束时间"
+
+#: plugins/dbg.py:1069 plugins/dbg.py:2370
+msgid "Active duration"
+msgstr "实际记录时长"
+
+#: plugins/dbg.py:1070 plugins/dbg.py:2372
+msgid "Pause count"
+msgstr "暂停次数"
+
+#: plugins/dbg.py:1071 plugins/dbg.py:2377 plugins/dbg.py:2384
+msgid "Pause time"
+msgstr "暂停时间"
+
+#: plugins/dbg.py:1072 plugins/dbg.py:2386
+msgid "Log size"
+msgstr "日志大小"
+
+#: plugins/dbg.py:1073 plugins/dbg.py:1375 plugins/dbg.py:2388
+msgid "Log path"
+msgstr "日志路径"
+
+#: plugins/dbg.py:1075 plugins/dbg.py:2392
+msgid "Connection type"
+msgstr "连接类型"
+
+#: plugins/dbg.py:1076 plugins/dbg.py:2394
+msgid "Connection status"
+msgstr "连接状态"
+
+#: plugins/dbg.py:1077 plugins/dbg.py:2396
+msgid "Connection settings"
+msgstr "连接设置"
+
+#: plugins/dbg.py:1078 plugins/dbg.py:2399
+msgid "Port open/close history"
+msgstr "串口开启/关闭记录"
+
+#: plugins/dbg.py:1079 plugins/dbg.py:2404
+msgid "Port disconnect/reconnect history"
+msgstr "串口掉连/重连记录"
+
+#: plugins/dbg.py:1112
 msgid "Clear RX"
 msgstr "清除RX"
 
-#: plugins/dbg.py:1045
+#: plugins/dbg.py:1113
 msgid "Clear receive area"
 msgstr "清除接收区"
 
-#: plugins/dbg.py:1047
+#: plugins/dbg.py:1115
 msgid "Clear TX"
 msgstr "清除TX"
 
-#: plugins/dbg.py:1048
+#: plugins/dbg.py:1116
 msgid "Clear TX input"
 msgstr "清除TX输入"
 
-#: plugins/dbg.py:1056
+#: plugins/dbg.py:1124
 msgid "Received RX/TX log output"
 msgstr "接收区RX/TX日志输出"
 
-#: plugins/dbg.py:1067
+#: plugins/dbg.py:1135
 msgid "Input data to send"
 msgstr "输入要发送的数据"
 
-#: plugins/dbg.py:1071
+#: plugins/dbg.py:1139
 msgid "Find and highlight receive text"
 msgstr "查找并高亮接收文本"
 
-#: plugins/dbg.py:1074
+#: plugins/dbg.py:1142
 msgid "Send input data"
 msgstr "发送输入框数据"
 
-#: plugins/dbg.py:1077
+#: plugins/dbg.py:1145
 msgid "Send history"
 msgstr "发送历史"
 
-#: plugins/dbg.py:1120
+#: plugins/dbg.py:1188
 msgid "Receive Settings"
 msgstr "接收设置"
 
-#: plugins/dbg.py:1121 plugins/dbg.py:1165 plugins/protocol.py:269
+#: plugins/dbg.py:1189 plugins/dbg.py:1233 plugins/protocol.py:269
 msgid "ASCII"
 msgstr "ASCII"
 
-#: plugins/dbg.py:1122
+#: plugins/dbg.py:1190
 msgid ""
 "Show recived data as visible format, select decode method at top right "
 "corner"
 msgstr "使用可见字符显示收到的数据，在右上角选择解码的方法"
 
-#: plugins/dbg.py:1123 plugins/dbg.py:1166 plugins/protocol.py:270
+#: plugins/dbg.py:1191 plugins/dbg.py:1234 plugins/protocol.py:270
 msgid "HEX"
 msgstr "HEX"
 
-#: plugins/dbg.py:1124
+#: plugins/dbg.py:1192
 msgid "Show recived data as hex format"
 msgstr "使用十六进制表示方法显示收到的数据"
 
-#: plugins/dbg.py:1126
+#: plugins/dbg.py:1194
 msgid ""
 "Auto\n"
 "Linefeed\n"
 "ms"
 msgstr "自动换行"
 
-#: plugins/dbg.py:1127 plugins/dbg.py:1130
+#: plugins/dbg.py:1195 plugins/dbg.py:1198
 msgid "Auto linefeed after interval, unit: ms"
 msgstr "超过这个时间自动换行，单位：ms"
 
-#: plugins/dbg.py:1133 plugins/dbg.py:1150
+#: plugins/dbg.py:1201 plugins/dbg.py:1218
 msgid "Timestamp"
 msgstr "时间戳"
 
-#: plugins/dbg.py:1134
+#: plugins/dbg.py:1202
 msgid ""
 "Add timestamp before received data, will automatically enable auto line "
 "feed"
 msgstr "在收到的数据前添加时间戳， 会自动使能自动换行"
 
-#: plugins/dbg.py:1135 plugins/protocol.py:244
+#: plugins/dbg.py:1203 plugins/protocol.py:244
 msgid "Display wrap"
 msgstr "自动换行显示"
 
-#: plugins/dbg.py:1136 plugins/dbg.py:1182 plugins/protocol.py:279
+#: plugins/dbg.py:1204 plugins/dbg.py:1250 plugins/protocol.py:279
 msgid "Escape"
 msgstr "转义符"
 
-#: plugins/dbg.py:1137 plugins/dbg.py:1183 plugins/protocol.py:280
+#: plugins/dbg.py:1205 plugins/dbg.py:1251 plugins/protocol.py:280
 msgid "Enable escape characters support like \\t \\r \\n \\x01 \\001"
 msgstr "使能转义字符支持，比如 \\t \\r \\n \\x01 \\001"
 
-#: plugins/dbg.py:1138 plugins/protocol.py:245
+#: plugins/dbg.py:1206 plugins/protocol.py:245
 msgid ""
 "When content in a line is too long, always auto wrap to show, and no "
 "scroll bar"
 msgstr "当单行内容过长时自动换行显示，不显示横向滚动条"
 
-#: plugins/dbg.py:1151 plugins/dbg.py:1264 plugins/dbg.py:1271
-#: plugins/dbg.py:1379 plugins/devtools.py:385
+#: plugins/dbg.py:1219 plugins/dbg.py:1332 plugins/dbg.py:1339
+#: plugins/dbg.py:1447 plugins/devtools.py:408
 msgid "Color"
 msgstr "颜色"
 
-#: plugins/dbg.py:1152
+#: plugins/dbg.py:1220
 msgid "Timestamp color in receive area"
 msgstr "接收区时间戳颜色"
 
-#: plugins/dbg.py:1153
+#: plugins/dbg.py:1221
 msgid "Newline after timestamp"
 msgstr "时间戳后换行"
 
-#: plugins/dbg.py:1154
+#: plugins/dbg.py:1222
 msgid "Display received data on the next line after timestamp"
 msgstr "在时间戳下一行显示接收数据"
 
-#: plugins/dbg.py:1156
+#: plugins/dbg.py:1224
 msgid "Timestamp color"
 msgstr "时间戳颜色"
 
-#: plugins/dbg.py:1164
+#: plugins/dbg.py:1232
 msgid "Send Settings"
 msgstr "发送设置"
 
-#: plugins/dbg.py:1167 plugins/protocol.py:271
+#: plugins/dbg.py:1235 plugins/protocol.py:271
 msgid ""
 "Get send data as visible format, select encoding method at top right "
 "corner"
 msgstr "以可见字符的方式获取将要发送的数据，在右上角选择编码的方法"
 
-#: plugins/dbg.py:1168 plugins/protocol.py:272
+#: plugins/dbg.py:1236 plugins/protocol.py:272
 msgid "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
 msgstr "以十六进制的格式获取将要发送的数据，比如 十六进制的'31 32 33' 和 ascii编码的 '123' 等效"
 
-#: plugins/dbg.py:1170
+#: plugins/dbg.py:1238
 msgid ""
 "Timed Send\n"
 "ms"
 msgstr "定时发送"
 
-#: plugins/dbg.py:1171 plugins/dbg.py:1174
+#: plugins/dbg.py:1239 plugins/dbg.py:1242
 msgid "Timed send, unit: ms"
 msgstr "定时发送，单位：ms"
 
-#: plugins/dbg.py:1177 plugins/protocol.py:274
+#: plugins/dbg.py:1245 plugins/protocol.py:274
 msgid "<CRLF>"
 msgstr "<CRLF>"
 
-#: plugins/dbg.py:1178 plugins/protocol.py:275
+#: plugins/dbg.py:1246 plugins/protocol.py:275
 msgid "Select to send \\r\\n instead of \\n"
 msgstr "选中发送 \\r\\n 而不是 \\n"
 
-#: plugins/dbg.py:1181 plugins/protocol.py:278
+#: plugins/dbg.py:1249 plugins/protocol.py:278
 msgid "Record send data"
 msgstr "记录发送的数据"
 
-#: plugins/dbg.py:1184
+#: plugins/dbg.py:1252
 msgid "Newline"
 msgstr "换行"
 
-#: plugins/dbg.py:1185
+#: plugins/dbg.py:1253
 msgid "Auto add new line when send"
 msgstr "发送时自动追加换行"
 
-#: plugins/dbg.py:1216
+#: plugins/dbg.py:1284
 msgid "Auto line feed value error, must be integer"
 msgstr "自动换行值错误，必须是整数"
 
-#: plugins/dbg.py:1217
+#: plugins/dbg.py:1285
 msgid "Timed send value error, must be integer"
 msgstr "定时发送值错误，必须是整数"
 
-#: plugins/dbg.py:1256
+#: plugins/dbg.py:1324
 msgid "Default font"
 msgstr "默认字体"
 
-#: plugins/dbg.py:1260
+#: plugins/dbg.py:1328
 msgid "Font family for received RX text"
 msgstr "接收区RX文本字体"
 
-#: plugins/dbg.py:1263
+#: plugins/dbg.py:1331
 msgid "Font size for received RX text"
 msgstr "接收区RX文本字号"
 
-#: plugins/dbg.py:1265
+#: plugins/dbg.py:1333
 msgid "Color for received RX text in the receive area"
 msgstr "接收区RX文本颜色"
 
-#: plugins/dbg.py:1267
+#: plugins/dbg.py:1335
 msgid "Font family for TX input text"
 msgstr "TX输入文本字体"
 
-#: plugins/dbg.py:1270
+#: plugins/dbg.py:1338
 msgid "Font size for TX input text"
 msgstr "TX输入文本字号"
 
-#: plugins/dbg.py:1272
+#: plugins/dbg.py:1340
 msgid "Color for TX input text and recorded TX lines"
 msgstr "TX输入文本和记录的TX行颜色"
 
-#: plugins/dbg.py:1273
+#: plugins/dbg.py:1341
 msgid "RX font"
 msgstr "RX字体"
 
-#: plugins/dbg.py:1275
+#: plugins/dbg.py:1343
 msgid "RX size"
 msgstr "RX字号"
 
-#: plugins/dbg.py:1277
+#: plugins/dbg.py:1345
 msgid "RX color"
 msgstr "RX颜色"
 
-#: plugins/dbg.py:1279
+#: plugins/dbg.py:1347
 msgid "TX font"
 msgstr "TX字体"
 
-#: plugins/dbg.py:1281
+#: plugins/dbg.py:1349
 msgid "TX size"
 msgstr "TX字号"
 
-#: plugins/dbg.py:1283
+#: plugins/dbg.py:1351
 msgid "TX color"
 msgstr "TX颜色"
 
-#: plugins/dbg.py:1288
+#: plugins/dbg.py:1356
 msgid "Path of the file to send"
 msgstr "要发送的文件路径"
 
-#: plugins/dbg.py:1289
+#: plugins/dbg.py:1357
 msgid "Open File"
 msgstr "打开文件"
 
-#: plugins/dbg.py:1290
+#: plugins/dbg.py:1358
 msgid "Select a file to send"
 msgstr "选择要发送的文件"
 
-#: plugins/dbg.py:1291 plugins/dbg.py:1295
+#: plugins/dbg.py:1359 plugins/dbg.py:1363
 msgid "Send File"
 msgstr "发送文件"
 
-#: plugins/dbg.py:1292
+#: plugins/dbg.py:1360
 msgid "Send the selected file over the current connection"
 msgstr "通过当前连接发送所选文件"
 
-#: plugins/dbg.py:1293
+#: plugins/dbg.py:1361
 msgid "Clear TX History"
 msgstr "清除TX历史"
 
-#: plugins/dbg.py:1294
+#: plugins/dbg.py:1362
 msgid "Clear TX send history"
 msgstr "清除TX发送历史"
 
-#: plugins/dbg.py:1302
-msgid "Save log"
-msgstr "保存日志"
+#: plugins/dbg.py:1370 plugins/dbg.py:2284
+msgid "Log"
+msgstr "日志"
 
-#: plugins/dbg.py:1306
+#: plugins/dbg.py:1374
 msgid "Log file path"
 msgstr "日志文件路径"
 
-#: plugins/dbg.py:1307 plugins/dbg.py:2261
-msgid "Log path"
-msgstr "日志路径"
-
-#: plugins/dbg.py:1308
+#: plugins/dbg.py:1376
 msgid "Select log file path"
 msgstr "选择日志文件路径"
 
-#: plugins/dbg.py:1309 plugins/dbg.py:2084
+#: plugins/dbg.py:1377 plugins/dbg.py:2153
 msgid "Start record"
 msgstr "开始记录"
 
-#: plugins/dbg.py:1310
+#: plugins/dbg.py:1378
 msgid "Start or pause log recording"
 msgstr "开始或暂停日志记录"
 
-#: plugins/dbg.py:1311
+#: plugins/dbg.py:1379
 msgid "Stop record"
 msgstr "停止记录"
 
-#: plugins/dbg.py:1312
+#: plugins/dbg.py:1380
 msgid "Stop log recording"
 msgstr "停止日志记录"
 
-#: plugins/dbg.py:1315
+#: plugins/dbg.py:1383
 msgid "Configure auto new file, timed log, and log information summary"
 msgstr "配置自动新建文件、定时日志和日志信息摘要"
 
-#: plugins/dbg.py:1318
+#: plugins/dbg.py:1386
 msgid "Current log settings"
 msgstr "当前日志设置"
 
-#: plugins/dbg.py:1319
+#: plugins/dbg.py:1387
 msgid "Log: 00:00:00 / 0 B"
 msgstr "日志：00:00:00 / 0 B"
 
-#: plugins/dbg.py:1320
+#: plugins/dbg.py:1388
 msgid "Current log recording duration and file size"
 msgstr "当前日志记录时长和文件大小"
 
-#: plugins/dbg.py:1323
+#: plugins/dbg.py:1391
 msgid "RX buffer size"
 msgstr "RX缓冲区大小"
 
-#: plugins/dbg.py:1329
+#: plugins/dbg.py:1397
 msgid "RX buffer size, only editable while the connection is closed"
 msgstr "RX缓冲区大小，仅在连接关闭时可修改"
 
-#: plugins/dbg.py:1366
+#: plugins/dbg.py:1434
 msgid "Import"
 msgstr "导入"
 
-#: plugins/dbg.py:1367
+#: plugins/dbg.py:1435
 msgid "Export"
 msgstr "导出"
 
-#: plugins/dbg.py:1368
+#: plugins/dbg.py:1436
 msgid "Add a custom send item"
 msgstr "添加自定义发送词条"
 
-#: plugins/dbg.py:1369
+#: plugins/dbg.py:1437
 msgid "Import custom send items from JSON"
 msgstr "从JSON导入自定义发送词条"
 
-#: plugins/dbg.py:1370
+#: plugins/dbg.py:1438
 msgid "Export custom send items to JSON"
 msgstr "将自定义发送词条导出为JSON"
 
-#: plugins/dbg.py:1375
+#: plugins/dbg.py:1443
 msgid "Search remark or command"
 msgstr "搜索标记或指令"
 
-#: plugins/dbg.py:1376
+#: plugins/dbg.py:1444
 msgid "Search custom send items by remark or command"
 msgstr "按标记或指令搜索自定义发送词条"
 
-#: plugins/dbg.py:1377
+#: plugins/dbg.py:1445
 msgid "All"
 msgstr "全选"
 
-#: plugins/dbg.py:1378
+#: plugins/dbg.py:1446
 msgid "Select visible custom send items"
 msgstr "选择当前可见的自定义发送词条"
 
-#: plugins/dbg.py:1380
+#: plugins/dbg.py:1448
 msgid "Icon"
 msgstr "图标"
 
-#: plugins/dbg.py:1381 plugins/dbg.py:2455 plugins/dbg.py:2652
+#: plugins/dbg.py:1449 plugins/dbg.py:2606 plugins/dbg.py:2803
 #: plugins/protocol.py:257
 msgid "Delete"
 msgstr "删除"
 
-#: plugins/dbg.py:1382
+#: plugins/dbg.py:1450
 msgid "Set color for selected custom send items"
 msgstr "设置所选自定义发送词条颜色"
 
-#: plugins/dbg.py:1383
+#: plugins/dbg.py:1451
 msgid "Set icon for selected custom send items"
 msgstr "设置所选自定义发送词条图标"
 
-#: plugins/dbg.py:1384
+#: plugins/dbg.py:1452
 msgid "Delete selected custom send items"
 msgstr "删除所选自定义发送词条"
 
-#: plugins/dbg.py:1391
+#: plugins/dbg.py:1459
 msgid "Cutom send"
 msgstr "自定义发送"
 
-#: plugins/dbg.py:1651 plugins/dbg.py:1684
+#: plugins/dbg.py:1719 plugins/dbg.py:1752
 msgid "Find"
 msgstr "查找"
 
-#: plugins/dbg.py:1651
+#: plugins/dbg.py:1719
 msgid "No match found"
 msgstr "未找到匹配"
 
-#: plugins/dbg.py:1684
+#: plugins/dbg.py:1752
 msgid "No more matches"
 msgstr "没有更多匹配"
 
-#: plugins/dbg.py:1899
+#: plugins/dbg.py:1967
 msgid "linefeed always on if timestamp or record send is on"
 msgstr "当时间戳和记录发送时，自动换行需要打开"
 
-#: plugins/dbg.py:1947
+#: plugins/dbg.py:2015
 msgid "History cleared!"
 msgstr "历史已清除"
 
-#: plugins/dbg.py:1950
+#: plugins/dbg.py:2018
 msgid "Confirm clear"
 msgstr "确认清除"
 
-#: plugins/dbg.py:1954
+#: plugins/dbg.py:2022
 msgid "Clear receive area?"
 msgstr "确定清除接收区吗？"
 
-#: plugins/dbg.py:1958
+#: plugins/dbg.py:2026
 msgid "Clear send input?"
 msgstr "确定清除发送输入吗？"
 
-#: plugins/dbg.py:1962
+#: plugins/dbg.py:2030
 msgid "Clear TX history?"
 msgstr "确定清除TX历史记录吗？"
 
-#: plugins/dbg.py:1969 plugins/graph.py:259 plugins/protocol.py:524
+#: plugins/dbg.py:2037 plugins/graph.py:259 plugins/protocol.py:524
 msgid "Send data failed!"
 msgstr "发送数据失败！"
 
-#: plugins/dbg.py:1974
+#: plugins/dbg.py:2042
 msgid "Send file"
 msgstr "发送文件"
 
-#: plugins/dbg.py:1978
+#: plugins/dbg.py:2046
 msgid "Send file failed!"
 msgstr "发送文件失败！"
 
-#: plugins/dbg.py:2038
+#: plugins/dbg.py:2107
 msgid "Confirm stop"
 msgstr "确认停止"
 
-#: plugins/dbg.py:2038
+#: plugins/dbg.py:2107
 msgid "Stop log recording?"
 msgstr "确定停止日志记录吗？"
 
-#: plugins/dbg.py:2064
+#: plugins/dbg.py:2133
 msgid "Timed log stopped"
 msgstr "定时日志已停止"
 
-#: plugins/dbg.py:2085
+#: plugins/dbg.py:2154
 msgid "Start log recording"
 msgstr "开始日志记录"
 
-#: plugins/dbg.py:2089
+#: plugins/dbg.py:2158
 msgid "Resume record"
 msgstr "继续记录"
 
-#: plugins/dbg.py:2090
+#: plugins/dbg.py:2159
 msgid "Resume log recording"
 msgstr "继续日志记录"
 
-#: plugins/dbg.py:2093
+#: plugins/dbg.py:2162
 msgid "Pause record"
 msgstr "暂停记录"
 
-#: plugins/dbg.py:2094
+#: plugins/dbg.py:2163
 msgid "Pause log recording"
 msgstr "暂停日志记录"
 
-#: plugins/dbg.py:2099
+#: plugins/dbg.py:2168
 msgid "Log settings are locked while recording or paused"
 msgstr "正在记录或暂停记录时不能修改日志设置"
 
-#: plugins/dbg.py:2108 plugins/dbg.py:2110
+#: plugins/dbg.py:2177 plugins/dbg.py:2179
 msgid "On"
 msgstr "开启"
 
-#: plugins/dbg.py:2108 plugins/dbg.py:2109 plugins/dbg.py:2110
+#: plugins/dbg.py:2177 plugins/dbg.py:2178 plugins/dbg.py:2179
 msgid "Off"
 msgstr "关闭"
 
-#: plugins/dbg.py:2110
+#: plugins/dbg.py:2179
 msgid "Append info"
 msgstr "追加信息"
 
-#: plugins/dbg.py:2178
+#: plugins/dbg.py:2247
 msgid "Select log file path before starting log"
 msgstr "开始记录前请选择日志文件路径"
 
-#: plugins/dbg.py:2182
+#: plugins/dbg.py:2251
 msgid "Log folder does not exist"
 msgstr "日志目录不存在"
 
-#: plugins/dbg.py:2188
+#: plugins/dbg.py:2257
 msgid "Open log file failed"
 msgstr "打开日志文件失败"
 
-#: plugins/dbg.py:2215
-msgid "Log"
-msgstr "日志"
+#: plugins/dbg.py:2322
+msgid "Port opened"
+msgstr "串口已开启"
 
-#: plugins/dbg.py:2242
+#: plugins/dbg.py:2323
+msgid "Port closed"
+msgstr "串口已关闭"
+
+#: plugins/dbg.py:2324
+msgid "Port disconnected"
+msgstr "串口已掉连"
+
+#: plugins/dbg.py:2325
+msgid "Port reconnected"
+msgstr "串口已重连"
+
+#: plugins/dbg.py:2336
+msgid "No events"
+msgstr "无事件"
+
+#: plugins/dbg.py:2363
 msgid "Log information"
 msgstr "日志信息"
 
-#: plugins/dbg.py:2243
-msgid "Start time"
-msgstr "开始时间"
-
-#: plugins/dbg.py:2244
-msgid "End time"
-msgstr "结束时间"
-
-#: plugins/dbg.py:2245
-msgid "Active duration"
-msgstr "实际记录时长"
-
-#: plugins/dbg.py:2246
-msgid "Pause count"
-msgstr "暂停次数"
-
-#: plugins/dbg.py:2251 plugins/dbg.py:2258
-msgid "Pause time"
-msgstr "暂停时间"
-
-#: plugins/dbg.py:2258
+#: plugins/dbg.py:2384
 msgid "None"
 msgstr "无"
 
-#: plugins/dbg.py:2260
-msgid "Log size"
-msgstr "日志大小"
-
-#: plugins/dbg.py:2263
-msgid "Connection type"
-msgstr "连接类型"
-
-#: plugins/dbg.py:2264
-msgid "Connection status"
-msgstr "连接状态"
-
-#: plugins/dbg.py:2265
-msgid "Connection settings"
-msgstr "连接设置"
-
-#: plugins/dbg.py:2293
+#: plugins/dbg.py:2442
 msgid "Log file (*.log);;txt file (*.txt);;All Files (*)"
 msgstr "日志文件 (*.log);;文本文件 (*.txt);;所有文件 (*)"
 
-#: plugins/dbg.py:2388
+#: plugins/dbg.py:2539
 msgid "Select for batch edit"
 msgstr "选择后进行批量编辑"
 
-#: plugins/dbg.py:2392
+#: plugins/dbg.py:2543
 msgid "Drag before another item to reorder"
 msgstr "拖拽到另一词条前方以重新排序"
 
-#: plugins/dbg.py:2399
+#: plugins/dbg.py:2550
 msgid "Click to set button color, right click to clear"
 msgstr "点击设置按钮颜色，右键清除颜色"
 
-#: plugins/dbg.py:2405
+#: plugins/dbg.py:2556
 msgid "Edit custom send remark and icon"
 msgstr "编辑自定义发送标记和图标"
 
-#: plugins/dbg.py:2414
+#: plugins/dbg.py:2565
 msgid "Delete this custom send item"
 msgstr "删除此自定义发送词条"
 
-#: plugins/dbg.py:2455
+#: plugins/dbg.py:2606
 msgid "Delete selected custom send item?"
 msgstr "确定删除所选自定义发送词条吗？"
 
-#: plugins/dbg.py:2651
+#: plugins/dbg.py:2802
 msgid "Delete selected custom send items?"
 msgstr "确定删除所选自定义发送词条吗？"
 
-#: plugins/dbg.py:2754
+#: plugins/dbg.py:2905
 msgid "Import custom send"
 msgstr "导入自定义发送"
 
-#: plugins/dbg.py:2756 plugins/dbg.py:2775
+#: plugins/dbg.py:2907 plugins/dbg.py:2926
 msgid "JSON file (*.json);;All Files (*)"
 msgstr "JSON 文件 (*.json);;所有文件 (*)"
 
-#: plugins/dbg.py:2765
+#: plugins/dbg.py:2916
 msgid "Custom send file must be a JSON list"
 msgstr "自定义发送文件必须是JSON数组"
 
-#: plugins/dbg.py:2767
+#: plugins/dbg.py:2918
 msgid "Custom send items imported!"
 msgstr "自定义发送词条已导入！"
 
-#: plugins/dbg.py:2769
+#: plugins/dbg.py:2920
 msgid "Import custom send failed!"
 msgstr "导入自定义发送失败！"
 
-#: plugins/dbg.py:2773
+#: plugins/dbg.py:2924
 msgid "Export custom send"
 msgstr "导出自定义发送"
 
-#: plugins/dbg.py:2781
+#: plugins/dbg.py:2932
 msgid "Custom send items exported!"
 msgstr "自定义发送词条已导出！"
 
-#: plugins/dbg.py:2783
+#: plugins/dbg.py:2934
 msgid "Export custom send failed!"
 msgstr "导出自定义发送失败！"
 
-#: plugins/dbg.py:2793
+#: plugins/dbg.py:2944
 msgid ""
 "File path error\n"
 "path"
@@ -1360,41 +1388,41 @@ msgstr ""
 "文件路径错误\n"
 "路径"
 
-#: plugins/dbg.py:2796
+#: plugins/dbg.py:2947
 msgid "Connect first please"
 msgstr "请先连接"
 
-#: plugins/dbg.py:2799
+#: plugins/dbg.py:2950
 msgid "Sending file"
 msgstr "发送文件中"
 
-#: plugins/dbg.py:2816
+#: plugins/dbg.py:2967
 msgid "Time format error"
 msgstr "时间格式错误"
 
-#: plugins/dbg.py:2883
+#: plugins/dbg.py:3034
 msgid "Send Error"
 msgstr "发送出错"
 
-#: plugins/dbg.py:2891
+#: plugins/dbg.py:3042
 msgid "get data error"
 msgstr "获取数据错误"
 
-#: plugins/devtools.py:123 plugins/devtools.py:1913
+#: plugins/devtools.py:123 plugins/devtools.py:1939
 msgid "Original text"
 msgstr "原字符串"
 
-#: plugins/devtools.py:123 plugins/devtools.py:1913
+#: plugins/devtools.py:123 plugins/devtools.py:1939
 msgid "Input text"
 msgstr "输入文本"
 
-#: plugins/devtools.py:126 plugins/devtools.py:1654 plugins/devtools.py:1830
-#: plugins/devtools.py:1878
+#: plugins/devtools.py:126 plugins/devtools.py:1680 plugins/devtools.py:1856
+#: plugins/devtools.py:1904
 msgid "Conversion result"
 msgstr "转换结果"
 
-#: plugins/devtools.py:126 plugins/devtools.py:1654 plugins/devtools.py:1830
-#: plugins/devtools.py:1870
+#: plugins/devtools.py:126 plugins/devtools.py:1680 plugins/devtools.py:1856
+#: plugins/devtools.py:1896
 msgid "Result"
 msgstr "结果"
 
@@ -1418,723 +1446,723 @@ msgstr "拖动选择色相"
 msgid "Programming Tools"
 msgstr "编程小工具"
 
-#: plugins/devtools.py:347
+#: plugins/devtools.py:370
 msgid "Select a programming tool"
 msgstr "选择编程小工具"
 
-#: plugins/devtools.py:362
+#: plugins/devtools.py:385
 msgid "Open tool"
 msgstr "打开工具"
 
-#: plugins/devtools.py:380
+#: plugins/devtools.py:403
 msgid "Check"
 msgstr "校验"
 
-#: plugins/devtools.py:381 plugins/devtools.py:560
+#: plugins/devtools.py:404 plugins/devtools.py:583
 msgid "LRC check"
 msgstr "LRC校验"
 
-#: plugins/devtools.py:382 plugins/devtools.py:576
+#: plugins/devtools.py:405 plugins/devtools.py:599
 msgid "BCC check"
 msgstr "BCC校验"
 
-#: plugins/devtools.py:383 plugins/devtools.py:612
+#: plugins/devtools.py:406 plugins/devtools.py:635
 msgid "CRC check"
 msgstr "CRC校验"
 
-#: plugins/devtools.py:386 plugins/devtools.py:788
+#: plugins/devtools.py:409 plugins/devtools.py:811
 msgid "Color format convert"
 msgstr "颜色格式转换"
 
-#: plugins/devtools.py:388
+#: plugins/devtools.py:411
 msgid "Bit operations"
 msgstr "位操作"
 
-#: plugins/devtools.py:389 plugins/devtools.py:1028
+#: plugins/devtools.py:412 plugins/devtools.py:1051
 msgid "Bit calculator"
 msgstr "位计算器"
 
-#: plugins/devtools.py:390 plugins/devtools.py:1503
+#: plugins/devtools.py:413 plugins/devtools.py:1529
 msgid "Multi-bit operations"
 msgstr "多位操作"
 
-#: plugins/devtools.py:392
+#: plugins/devtools.py:415
 msgid "String processing"
 msgstr "字符串处理"
 
-#: plugins/devtools.py:393 plugins/devtools.py:1548
+#: plugins/devtools.py:416 plugins/devtools.py:1574
 msgid "English case convert"
 msgstr "英文字符大小写转换"
 
-#: plugins/devtools.py:394 plugins/devtools.py:1575
+#: plugins/devtools.py:417 plugins/devtools.py:1601
 msgid "String reverse"
 msgstr "字符串反转"
 
-#: plugins/devtools.py:395 plugins/devtools.py:1590
+#: plugins/devtools.py:418 plugins/devtools.py:1616
 msgid "Character count"
 msgstr "字符计数"
 
-#: plugins/devtools.py:397
+#: plugins/devtools.py:420
 msgid "Encoding"
 msgstr "编码"
 
-#: plugins/devtools.py:398 plugins/devtools.py:1768
+#: plugins/devtools.py:421 plugins/devtools.py:1794
 msgid "Unicode"
 msgstr "Unicode"
 
-#: plugins/devtools.py:399 plugins/devtools.py:1782
+#: plugins/devtools.py:422 plugins/devtools.py:1808
 msgid "URLEncode"
 msgstr "URL编码"
 
-#: plugins/devtools.py:400 plugins/devtools.py:1790
+#: plugins/devtools.py:423 plugins/devtools.py:1816
 msgid "Base64"
 msgstr "Base64"
 
-#: plugins/devtools.py:401 plugins/devtools.py:1804
+#: plugins/devtools.py:424 plugins/devtools.py:1830
 msgid "Punycode"
 msgstr "Punycode"
 
-#: plugins/devtools.py:402 plugins/devtools.py:1904
+#: plugins/devtools.py:425 plugins/devtools.py:1930
 msgid "Chinese domain encoding"
 msgstr "中文域名编码"
 
-#: plugins/devtools.py:403 plugins/devtools.py:1860
+#: plugins/devtools.py:426 plugins/devtools.py:1886
 msgid "Image to Base64"
 msgstr "图片转Base64"
 
-#: plugins/devtools.py:405
+#: plugins/devtools.py:428
 msgid "Time"
 msgstr "时间"
 
-#: plugins/devtools.py:406 plugins/devtools.py:1824
+#: plugins/devtools.py:429 plugins/devtools.py:1850
 msgid "Unix timestamp"
 msgstr "Unix时间戳转换"
 
-#: plugins/devtools.py:408
+#: plugins/devtools.py:431
 msgid "Crypto"
 msgstr "加密"
 
-#: plugins/devtools.py:409 plugins/devtools.py:1912
+#: plugins/devtools.py:432 plugins/devtools.py:1938
 msgid "MD5 encrypt/decrypt"
 msgstr "MD5加密解密"
 
-#: plugins/devtools.py:410 plugins/devtools.py:1945
+#: plugins/devtools.py:433 plugins/devtools.py:1971
 msgid "AES encrypt/decrypt"
 msgstr "AES加密解密"
 
-#: plugins/devtools.py:411 plugins/devtools.py:1645
+#: plugins/devtools.py:434 plugins/devtools.py:1671
 msgid "ECC encrypt/decrypt"
 msgstr "ECC加密解密"
 
-#: plugins/devtools.py:412 plugins/devtools.py:1993
+#: plugins/devtools.py:435 plugins/devtools.py:2019
 msgid "Encode/decode collection"
 msgstr "加密解密合集"
 
-#: plugins/devtools.py:413 plugins/devtools.py:2017
+#: plugins/devtools.py:436 plugins/devtools.py:2043
 msgid "Hash collection"
 msgstr "散列哈希合集"
 
-#: plugins/devtools.py:477
+#: plugins/devtools.py:500
 msgid "Info"
 msgstr "信息"
 
-#: plugins/devtools.py:490
+#: plugins/devtools.py:513
 msgid "Copied"
 msgstr "已复制"
 
-#: plugins/devtools.py:496
+#: plugins/devtools.py:519
 msgid "Hex"
 msgstr "Hex"
 
-#: plugins/devtools.py:497
+#: plugins/devtools.py:520
 msgid "Text"
 msgstr "文本"
 
-#: plugins/devtools.py:503
+#: plugins/devtools.py:526
 msgid "Data format"
 msgstr "数据格式"
 
-#: plugins/devtools.py:505
+#: plugins/devtools.py:528
 msgid "Hex mode accepts values like 01 02 AF; text mode uses UTF-8 bytes."
 msgstr "Hex模式支持 01 02 AF 这样的输入；文本模式按UTF-8字节处理。"
 
-#: plugins/devtools.py:512 plugins/devtools.py:648
+#: plugins/devtools.py:535 plugins/devtools.py:671
 msgid "Data to check"
 msgstr "需要校验的数据"
 
-#: plugins/devtools.py:512 plugins/devtools.py:648
+#: plugins/devtools.py:535 plugins/devtools.py:671
 msgid "Input hex bytes or text"
 msgstr "输入十六进制字节或文本"
 
-#: plugins/devtools.py:518 plugins/devtools.py:656
+#: plugins/devtools.py:541 plugins/devtools.py:679
 msgid "Input HEX + check"
 msgstr "输入HEX+校验值"
 
-#: plugins/devtools.py:521 plugins/devtools.py:666 plugins/devtools.py:1518
-#: plugins/devtools.py:1556 plugins/devtools.py:1580 plugins/devtools.py:1604
-#: plugins/devtools.py:1658 plugins/devtools.py:1934
+#: plugins/devtools.py:544 plugins/devtools.py:689 plugins/devtools.py:1544
+#: plugins/devtools.py:1582 plugins/devtools.py:1606 plugins/devtools.py:1630
+#: plugins/devtools.py:1684 plugins/devtools.py:1960
 #: plugins/graph_widgets.py:52
 msgid "Clear"
 msgstr "Clear"
 
-#: plugins/devtools.py:543
+#: plugins/devtools.py:566
 msgid "Input bytes"
 msgstr "输入字节"
 
-#: plugins/devtools.py:561
+#: plugins/devtools.py:584
 msgid ""
 "Calculate the longitudinal redundancy check byte. The result is the two's"
 " complement of the byte sum, often used by serial text protocols."
 msgstr "计算纵向冗余校验字节。结果为字节累加和的二进制补码，常用于串口文本协议。"
 
-#: plugins/devtools.py:562
+#: plugins/devtools.py:585
 msgid "Calculate LRC"
 msgstr "计算LRC"
 
-#: plugins/devtools.py:577
+#: plugins/devtools.py:600
 msgid ""
 "Calculate the block check character by XORing every input byte. It is "
 "useful for simple serial protocol frame checks."
 msgstr "通过对所有输入字节异或计算块校验字符，适合简单串口协议帧校验。"
 
-#: plugins/devtools.py:578
+#: plugins/devtools.py:601
 msgid "Calculate BCC"
 msgstr "计算BCC"
 
-#: plugins/devtools.py:613
+#: plugins/devtools.py:636
 msgid ""
 "Calculate common cyclic redundancy checks for byte data. Hex input "
 "accepts spaces, commas, 0x prefixes, and line breaks."
 msgstr "计算常用循环冗余校验。十六进制输入支持空格、逗号、0x前缀和换行。"
 
-#: plugins/devtools.py:619
+#: plugins/devtools.py:642
 msgid "Choose CRC algorithm"
 msgstr "选择CRC算法"
 
-#: plugins/devtools.py:620 plugins/devtools.py:1996
+#: plugins/devtools.py:643 plugins/devtools.py:2022
 msgid "Algorithm"
 msgstr "算法"
 
-#: plugins/devtools.py:654
+#: plugins/devtools.py:677
 msgid "Low byte first"
 msgstr "低字节在前"
 
-#: plugins/devtools.py:655
+#: plugins/devtools.py:678
 msgid "High byte first"
 msgstr "高字节在前"
 
-#: plugins/devtools.py:657
+#: plugins/devtools.py:680
 msgid "Input HEX + low byte first"
 msgstr "输入HEX+低字节在前"
 
-#: plugins/devtools.py:660
+#: plugins/devtools.py:683
 msgid "Calculate CRC"
 msgstr "计算CRC"
 
-#: plugins/devtools.py:739
+#: plugins/devtools.py:762
 msgid "CRC width must be 1-32"
 msgstr "CRC宽度必须为1-32"
 
-#: plugins/devtools.py:789
+#: plugins/devtools.py:812
 msgid "Convert between RGB, HSV, and HTML HEX colors."
 msgstr "在RGB、HSV和HTML十六进制颜色之间转换。"
 
-#: plugins/devtools.py:831
+#: plugins/devtools.py:854
 msgid "Selected color preview"
 msgstr "当前颜色预览"
 
-#: plugins/devtools.py:837
+#: plugins/devtools.py:860
 msgid "Hue value"
 msgstr "色相值"
 
-#: plugins/devtools.py:838
+#: plugins/devtools.py:861
 msgid "Saturation value"
 msgstr "饱和度值"
 
-#: plugins/devtools.py:839
+#: plugins/devtools.py:862
 msgid "Brightness value"
 msgstr "明度值"
 
-#: plugins/devtools.py:840
+#: plugins/devtools.py:863
 msgid "Red value"
 msgstr "红色值"
 
-#: plugins/devtools.py:841
+#: plugins/devtools.py:864
 msgid "Green value"
 msgstr "绿色值"
 
-#: plugins/devtools.py:842
+#: plugins/devtools.py:865
 msgid "Blue value"
 msgstr "蓝色值"
 
-#: plugins/devtools.py:845
+#: plugins/devtools.py:868
 msgid "HTML HEX color, for example #FFBB00"
 msgstr "HTML十六进制颜色，例如 #FFBB00"
 
-#: plugins/devtools.py:848
+#: plugins/devtools.py:871
 msgid "Hue"
 msgstr "色相"
 
-#: plugins/devtools.py:850
+#: plugins/devtools.py:873
 msgid "Red"
 msgstr "红色"
 
-#: plugins/devtools.py:852
+#: plugins/devtools.py:875
 msgid "Sat"
 msgstr "饱和"
 
-#: plugins/devtools.py:854
+#: plugins/devtools.py:877
 msgid "Green"
 msgstr "绿色"
 
-#: plugins/devtools.py:856
+#: plugins/devtools.py:879
 msgid "Val"
 msgstr "明度"
 
-#: plugins/devtools.py:858
+#: plugins/devtools.py:881
 msgid "Blue"
 msgstr "蓝色"
 
-#: plugins/devtools.py:925 plugins/devtools.py:997
+#: plugins/devtools.py:948 plugins/devtools.py:1020
 msgid "Input is empty"
 msgstr "输入为空"
 
-#: plugins/devtools.py:936 plugins/devtools.py:1017 plugins/devtools.py:1499
+#: plugins/devtools.py:959 plugins/devtools.py:1040 plugins/devtools.py:1525
 #: plugins/graph_widget_metasenselite.py:591 plugins/graph_widgets.py:167
 msgid "Format error"
 msgstr "格式错误"
 
-#: plugins/devtools.py:1022
+#: plugins/devtools.py:1045
 msgid "RGB value must be 0-255"
 msgstr "RGB值必须为0-255"
 
-#: plugins/devtools.py:1029
+#: plugins/devtools.py:1052
 msgid ""
 "Programmer calculator for integer base conversion, bit toggling, bitwise "
 "operations, and shift operations."
 msgstr "用于整数进制转换、位切换、按位运算和移位运算的编程计算器。"
 
-#: plugins/devtools.py:1075
+#: plugins/devtools.py:1099
 msgid "Switch input base"
 msgstr "切换输入进制"
 
-#: plugins/devtools.py:1091
+#: plugins/devtools.py:1115
 msgid "Keypad"
 msgstr "键盘"
 
-#: plugins/devtools.py:1092
+#: plugins/devtools.py:1116
 msgid "Bit grid"
 msgstr "位图"
 
-#: plugins/devtools.py:1103
+#: plugins/devtools.py:1127
 msgid "Word size"
 msgstr "字长"
 
-#: plugins/devtools.py:1115 plugins/devtools.py:1116
+#: plugins/devtools.py:1139 plugins/devtools.py:1140
 msgid "Apply"
 msgstr "应用"
 
-#: plugins/devtools.py:1119
+#: plugins/devtools.py:1143
 msgid "Bitwise"
 msgstr "按位"
 
-#: plugins/devtools.py:1123
+#: plugins/devtools.py:1147
 msgid "Shift"
 msgstr "移位"
 
-#: plugins/devtools.py:1303
+#: plugins/devtools.py:1329
 msgid "Toggle bit"
 msgstr "切换位"
 
-#: plugins/devtools.py:1483 plugins/devtools.py:1487
+#: plugins/devtools.py:1509 plugins/devtools.py:1513
 msgid "Divide by zero"
 msgstr "除数不能为0"
 
-#: plugins/devtools.py:1504
+#: plugins/devtools.py:1530
 msgid ""
 "Run byte-level AND, OR, XNOR, XOR, and NOT operations on two text or HEX "
 "inputs."
 msgstr "对两个文本或HEX输入执行字节级与、或、同或、异或、非运算。"
 
-#: plugins/devtools.py:1507
+#: plugins/devtools.py:1533
 msgid "Input A"
 msgstr "输入A"
 
-#: plugins/devtools.py:1507 plugins/devtools.py:1508
+#: plugins/devtools.py:1533 plugins/devtools.py:1534
 msgid "Input string or HEX"
 msgstr "输入字符串或HEX"
 
-#: plugins/devtools.py:1508
+#: plugins/devtools.py:1534
 msgid "Input B"
 msgstr "输入B"
 
-#: plugins/devtools.py:1517
+#: plugins/devtools.py:1543
 msgid "Calculate"
 msgstr "计算"
 
-#: plugins/devtools.py:1536
+#: plugins/devtools.py:1562
 msgid ""
 "Inputs have different lengths; shorter input is padded with 00 for two-"
 "input operations."
 msgstr "两个输入长度不同；双输入运算会用00补齐较短输入。"
 
-#: plugins/devtools.py:1549
+#: plugins/devtools.py:1575
 msgid ""
 "Convert English text between uppercase, lowercase, title case, and "
 "swapped case."
 msgstr "在大写、小写、标题大小写和大小写互换之间转换英文文本。"
 
-#: plugins/devtools.py:1551
+#: plugins/devtools.py:1577
 msgid "Input English text"
 msgstr "输入英文文本"
 
-#: plugins/devtools.py:1551
+#: plugins/devtools.py:1577
 msgid "Converted text"
 msgstr "转换后的文本"
 
-#: plugins/devtools.py:1552
+#: plugins/devtools.py:1578
 msgid "Uppercase"
 msgstr "转为大写"
 
-#: plugins/devtools.py:1553
+#: plugins/devtools.py:1579
 msgid "Lowercase"
 msgstr "转为小写"
 
-#: plugins/devtools.py:1554
+#: plugins/devtools.py:1580
 msgid "Title case"
 msgstr "标题大小写"
 
-#: plugins/devtools.py:1555
+#: plugins/devtools.py:1581
 msgid "Swap case"
 msgstr "大小写互换"
 
-#: plugins/devtools.py:1571 plugins/devtools.py:1586
+#: plugins/devtools.py:1597 plugins/devtools.py:1612
 msgid "Conversion complete"
 msgstr "转换完成"
 
-#: plugins/devtools.py:1576
+#: plugins/devtools.py:1602
 msgid "Reverse the input string by character order."
 msgstr "按字符顺序反转输入字符串。"
 
-#: plugins/devtools.py:1578 plugins/devtools.py:1593
+#: plugins/devtools.py:1604 plugins/devtools.py:1619
 msgid "Input string"
 msgstr "输入字符串"
 
-#: plugins/devtools.py:1578
+#: plugins/devtools.py:1604
 msgid "Reversed string"
 msgstr "反转后的字符串"
 
-#: plugins/devtools.py:1579
+#: plugins/devtools.py:1605
 msgid "Reverse"
 msgstr "反转"
 
-#: plugins/devtools.py:1591
+#: plugins/devtools.py:1617
 msgid ""
 "Count characters, non-space characters, words, lines, and UTF-8 bytes in "
 "the input string."
 msgstr "统计输入字符串中的字符数、非空白字符数、单词数、行数和UTF-8字节数。"
 
-#: plugins/devtools.py:1595
+#: plugins/devtools.py:1621
 msgid "Characters"
 msgstr "字符数"
 
-#: plugins/devtools.py:1596
+#: plugins/devtools.py:1622
 msgid "Characters without spaces"
 msgstr "非空白字符数"
 
-#: plugins/devtools.py:1597
+#: plugins/devtools.py:1623
 msgid "Words"
 msgstr "单词数"
 
-#: plugins/devtools.py:1598
+#: plugins/devtools.py:1624
 msgid "Lines"
 msgstr "行数"
 
-#: plugins/devtools.py:1599
+#: plugins/devtools.py:1625
 msgid "UTF-8 bytes"
 msgstr "UTF-8字节数"
 
-#: plugins/devtools.py:1601
+#: plugins/devtools.py:1627
 msgid "Character frequency"
 msgstr "字符出现次数"
 
-#: plugins/devtools.py:1623
+#: plugins/devtools.py:1649
 msgid "Count complete"
 msgstr "统计完成"
 
-#: plugins/devtools.py:1631
+#: plugins/devtools.py:1657
 msgid "Space"
 msgstr "空格"
 
-#: plugins/devtools.py:1646
+#: plugins/devtools.py:1672
 msgid ""
 "Generate ECC key pairs and encrypt/decrypt text with ECIES style ECDH + "
 "AES-GCM."
 msgstr "生成ECC密钥对，并使用ECIES风格的ECDH + AES-GCM加密/解密文本。"
 
-#: plugins/devtools.py:1650
+#: plugins/devtools.py:1676
 msgid "Curve"
 msgstr "曲线"
 
-#: plugins/devtools.py:1651
+#: plugins/devtools.py:1677
 msgid "Private key"
 msgstr "私钥"
 
-#: plugins/devtools.py:1651
+#: plugins/devtools.py:1677
 msgid "PEM private key"
 msgstr "PEM私钥"
 
-#: plugins/devtools.py:1652
+#: plugins/devtools.py:1678
 msgid "Public key"
 msgstr "公钥"
 
-#: plugins/devtools.py:1652
+#: plugins/devtools.py:1678
 msgid "PEM public key"
 msgstr "PEM公钥"
 
-#: plugins/devtools.py:1653
+#: plugins/devtools.py:1679
 msgid "Plain text or cipher JSON"
 msgstr "明文或密文JSON"
 
-#: plugins/devtools.py:1653
+#: plugins/devtools.py:1679
 msgid "Input text or ECC cipher JSON"
 msgstr "输入文本或ECC密文JSON"
 
-#: plugins/devtools.py:1655
+#: plugins/devtools.py:1681
 msgid "Generate key pair"
 msgstr "生成密钥对"
 
-#: plugins/devtools.py:1656 plugins/devtools.py:1963
+#: plugins/devtools.py:1682 plugins/devtools.py:1989
 msgid "Encrypt"
 msgstr "加密"
 
-#: plugins/devtools.py:1657 plugins/devtools.py:1964
+#: plugins/devtools.py:1683 plugins/devtools.py:1990
 msgid "Decrypt"
 msgstr "解密"
 
-#: plugins/devtools.py:1664
+#: plugins/devtools.py:1690
 msgid "ECC backend not available"
 msgstr "ECC后端不可用"
 
-#: plugins/devtools.py:1694
+#: plugins/devtools.py:1720
 msgid "ECC key pair generated"
 msgstr "ECC密钥对已生成"
 
-#: plugins/devtools.py:1720
+#: plugins/devtools.py:1746
 msgid "Public key is empty"
 msgstr "公钥为空"
 
-#: plugins/devtools.py:1723
+#: plugins/devtools.py:1749
 msgid "Public key is not an ECC public key"
 msgstr "公钥不是ECC公钥"
 
-#: plugins/devtools.py:1741
+#: plugins/devtools.py:1767
 msgid "ECC encrypt complete"
 msgstr "ECC加密完成"
 
-#: plugins/devtools.py:1751
+#: plugins/devtools.py:1777
 msgid "Private key is empty"
 msgstr "私钥为空"
 
-#: plugins/devtools.py:1754
+#: plugins/devtools.py:1780
 msgid "Private key is not an ECC private key"
 msgstr "私钥不是ECC私钥"
 
-#: plugins/devtools.py:1763
+#: plugins/devtools.py:1789
 msgid "ECC decrypt complete"
 msgstr "ECC解密完成"
 
-#: plugins/devtools.py:1768
+#: plugins/devtools.py:1794
 msgid ""
 "Convert text to Unicode escape sequences, or restore Unicode escapes to "
 "readable text."
 msgstr "将文本转换为Unicode转义序列，或将Unicode转义还原为可读文本。"
 
-#: plugins/devtools.py:1770 plugins/devtools.py:1784 plugins/devtools.py:1792
-#: plugins/devtools.py:1806 plugins/devtools.py:1906 plugins/devtools.py:1998
+#: plugins/devtools.py:1796 plugins/devtools.py:1810 plugins/devtools.py:1818
+#: plugins/devtools.py:1832 plugins/devtools.py:1932 plugins/devtools.py:2024
 msgid "Encode"
 msgstr "编码"
 
-#: plugins/devtools.py:1771 plugins/devtools.py:1785 plugins/devtools.py:1793
-#: plugins/devtools.py:1807 plugins/devtools.py:1907 plugins/devtools.py:1999
+#: plugins/devtools.py:1797 plugins/devtools.py:1811 plugins/devtools.py:1819
+#: plugins/devtools.py:1833 plugins/devtools.py:1933 plugins/devtools.py:2025
 msgid "Decode"
 msgstr "解码"
 
-#: plugins/devtools.py:1782
+#: plugins/devtools.py:1808
 msgid "Encode text for use in URLs, or decode percent-escaped URL text."
 msgstr "将文本编码为URL可用格式，或解码百分号转义URL文本。"
 
-#: plugins/devtools.py:1790
+#: plugins/devtools.py:1816
 msgid ""
 "Encode text as Base64, or decode Base64 back to text with the current "
 "UTF-8 text encoding."
 msgstr "将文本编码为Base64，或按UTF-8将Base64解码为文本。"
 
-#: plugins/devtools.py:1804
+#: plugins/devtools.py:1830
 msgid ""
 "Convert internationalized domain names between Unicode text and ASCII "
 "Punycode form."
 msgstr "在Unicode文本和ASCII Punycode格式之间转换国际化域名。"
 
-#: plugins/devtools.py:1805
+#: plugins/devtools.py:1831
 msgid "Input domain or text"
 msgstr "输入域名或文本"
 
-#: plugins/devtools.py:1805
+#: plugins/devtools.py:1831
 msgid "Converted value"
 msgstr "转换结果"
 
-#: plugins/devtools.py:1824
+#: plugins/devtools.py:1850
 msgid ""
 "Convert Unix timestamps and local date-time strings. Date input format: "
 "YYYY-MM-DD HH:MM:SS."
 msgstr "转换Unix时间戳和本地日期时间字符串。日期输入格式：YYYY-MM-DD HH:MM:SS。"
 
-#: plugins/devtools.py:1826 plugins/devtools.py:1829
+#: plugins/devtools.py:1852 plugins/devtools.py:1855
 msgid "Timestamp or date-time"
 msgstr "时间戳或日期时间"
 
-#: plugins/devtools.py:1827
+#: plugins/devtools.py:1853
 msgid "Enter seconds, milliseconds, or YYYY-MM-DD HH:MM:SS"
 msgstr "输入秒、毫秒，或YYYY-MM-DD HH:MM:SS"
 
-#: plugins/devtools.py:1831
+#: plugins/devtools.py:1857
 msgid "Now"
 msgstr "当前时间"
 
-#: plugins/devtools.py:1832
+#: plugins/devtools.py:1858
 msgid "To date-time"
 msgstr "转日期时间"
 
-#: plugins/devtools.py:1833
+#: plugins/devtools.py:1859
 msgid "To timestamp"
 msgstr "转时间戳"
 
-#: plugins/devtools.py:1860
+#: plugins/devtools.py:1886
 msgid ""
 "Choose an image file and convert it to Base64 text or a data URL for "
 "embedding."
 msgstr "选择图片文件并转换为Base64文本或可嵌入的Data URL。"
 
-#: plugins/devtools.py:1862 plugins/devtools.py:1872
+#: plugins/devtools.py:1888 plugins/devtools.py:1898
 msgid "Image file path"
 msgstr "图片文件路径"
 
-#: plugins/devtools.py:1864 plugins/devtools.py:1885
+#: plugins/devtools.py:1890 plugins/devtools.py:1911
 msgid "Choose file"
 msgstr "选择文件"
 
-#: plugins/devtools.py:1866
+#: plugins/devtools.py:1892
 msgid "Convert"
 msgstr "转换"
 
-#: plugins/devtools.py:1868
+#: plugins/devtools.py:1894
 msgid "Output data URL"
 msgstr "输出Data URL"
 
-#: plugins/devtools.py:1885
+#: plugins/devtools.py:1911
 msgid "Image files (*.png *.jpg *.jpeg *.gif *.bmp *.webp);;All Files (*)"
 msgstr "图片文件 (*.png *.jpg *.jpeg *.gif *.bmp *.webp);;所有文件 (*)"
 
-#: plugins/devtools.py:1904
+#: plugins/devtools.py:1930
 msgid ""
 "Encode Chinese or other internationalized domain names to IDNA, or decode"
 " xn-- domains back to readable text."
 msgstr "将中文或其他国际化域名编码为IDNA，或将xn--域名解码为可读文本。"
 
-#: plugins/devtools.py:1905
+#: plugins/devtools.py:1931
 msgid "Input domain"
 msgstr "输入域名"
 
-#: plugins/devtools.py:1905
+#: plugins/devtools.py:1931
 msgid "Converted domain"
 msgstr "转换后的域名"
 
-#: plugins/devtools.py:1912
+#: plugins/devtools.py:1938
 msgid ""
 "Generate MD5 digests. MD5 is one-way and cannot be truly decrypted; use "
 "the compare field to verify candidate text."
 msgstr "生成MD5摘要。MD5是单向算法，不能真正解密；可用比较字段验证候选文本。"
 
-#: plugins/devtools.py:1915
+#: plugins/devtools.py:1941
 msgid "Optional MD5 hash to compare"
 msgstr "可选：用于比较的MD5哈希"
 
-#: plugins/devtools.py:1917
+#: plugins/devtools.py:1943
 msgid "Compare hash"
 msgstr "比较哈希"
 
-#: plugins/devtools.py:1919
+#: plugins/devtools.py:1945
 msgid "Lowercase 32-bit"
 msgstr "小写32位"
 
-#: plugins/devtools.py:1920
+#: plugins/devtools.py:1946
 msgid "Uppercase 32-bit"
 msgstr "大写32位"
 
-#: plugins/devtools.py:1921
+#: plugins/devtools.py:1947
 msgid "Lowercase 16-bit"
 msgstr "小写16位"
 
-#: plugins/devtools.py:1922
+#: plugins/devtools.py:1948
 msgid "Uppercase 16-bit"
 msgstr "大写16位"
 
-#: plugins/devtools.py:1923
+#: plugins/devtools.py:1949
 msgid "Compare"
 msgstr "比较"
 
-#: plugins/devtools.py:1932
+#: plugins/devtools.py:1958
 msgid "Not match"
 msgstr "不匹配"
 
-#: plugins/devtools.py:1933 plugins/devtools.py:2019
+#: plugins/devtools.py:1959 plugins/devtools.py:2045
 msgid "Generate"
 msgstr "生成"
 
-#: plugins/devtools.py:1945
+#: plugins/devtools.py:1971
 msgid ""
 "AES text encryption and decryption. Supports ECB and CBC with PKCS7 "
 "padding. Key lengths: 16, 24, or 32 bytes."
 msgstr "AES文本加密与解密。支持ECB和CBC模式，使用PKCS7填充。密钥长度为16、24或32字节。"
 
-#: plugins/devtools.py:1946
+#: plugins/devtools.py:1972
 msgid "Input text or Base64 cipher text"
 msgstr "输入文本或Base64密文"
 
-#: plugins/devtools.py:1946
+#: plugins/devtools.py:1972
 msgid "AES result"
 msgstr "AES结果"
 
-#: plugins/devtools.py:1949
+#: plugins/devtools.py:1975
 msgid "AES key"
 msgstr "AES密钥"
 
-#: plugins/devtools.py:1952
+#: plugins/devtools.py:1978
 msgid "CBC IV, 16 bytes"
 msgstr "CBC IV，16字节"
 
-#: plugins/devtools.py:1956
+#: plugins/devtools.py:1982
 msgid "Key"
 msgstr "密钥"
 
-#: plugins/devtools.py:1960
+#: plugins/devtools.py:1986
 msgid "IV"
 msgstr "IV"
 
-#: plugins/devtools.py:1970
+#: plugins/devtools.py:1996
 msgid "AES backend not available"
 msgstr "AES后端不可用"
 
-#: plugins/devtools.py:1975
+#: plugins/devtools.py:2001
 msgid "AES key must be 16, 24, or 32 bytes"
 msgstr "AES密钥必须为16、24或32字节"
 
-#: plugins/devtools.py:1993
+#: plugins/devtools.py:2019
 msgid "Common reversible text transforms for quick programming work."
 msgstr "常用可逆文本转换，方便快速编程处理。"
 
-#: plugins/devtools.py:2017
+#: plugins/devtools.py:2043
 msgid "Generate common hashes for the input text."
 msgstr "为输入文本生成常用哈希值。"
 
@@ -2583,3 +2611,6 @@ msgstr "我的插件2"
 
 #~ msgid "Timed log duration error, format: HH:MM:SS"
 #~ msgstr "定时日志时长错误，格式：HH:MM:SS\"\\"
+
+#~ msgid "Save log"
+#~ msgstr "保存日志"
