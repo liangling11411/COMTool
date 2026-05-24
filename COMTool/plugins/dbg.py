@@ -163,8 +163,6 @@ class LogSettingsDialog(QDialog):
         layout.setSpacing(10)
         self.setLayout(layout)
 
-        self.autoNewCheck = QCheckBox(_("Auto new file"))
-        self.autoNewCheck.setToolTip(_("When start a new connection, will automatically create a new log file"))
         self.timedCheck = QCheckBox(_("Timed log"))
         self.timedCheck.setToolTip(_("Stop saving log automatically after the configured duration"))
         self.appendInfoCheck = QCheckBox(_("Append log information at stop"))
@@ -190,15 +188,14 @@ class LogSettingsDialog(QDialog):
         grid = QGridLayout()
         grid.setHorizontalSpacing(8)
         grid.setVerticalSpacing(8)
-        grid.addWidget(self.autoNewCheck, 0, 0, 1, 4)
-        grid.addWidget(self.timedCheck, 1, 0, 1, 4)
-        grid.addWidget(QLabel(_("Hours")), 2, 0)
-        grid.addWidget(self.hoursInput, 2, 1)
-        grid.addWidget(QLabel(_("Minutes")), 2, 2)
-        grid.addWidget(self.minutesInput, 2, 3)
-        grid.addWidget(QLabel(_("Seconds")), 3, 0)
-        grid.addWidget(self.secondsInput, 3, 1)
-        grid.addWidget(self.appendInfoCheck, 4, 0, 1, 4)
+        grid.addWidget(self.timedCheck, 0, 0, 1, 4)
+        grid.addWidget(QLabel(_("Hours")), 1, 0)
+        grid.addWidget(self.hoursInput, 1, 1)
+        grid.addWidget(QLabel(_("Minutes")), 1, 2)
+        grid.addWidget(self.minutesInput, 1, 3)
+        grid.addWidget(QLabel(_("Seconds")), 2, 0)
+        grid.addWidget(self.secondsInput, 2, 1)
+        grid.addWidget(self.appendInfoCheck, 3, 0, 1, 4)
         self.appendItemsGroup = QGroupBox(_("Append information items"))
         appendItemsLayout = QGridLayout()
         self.appendItemsGroup.setLayout(appendItemsLayout)
@@ -208,7 +205,7 @@ class LogSettingsDialog(QDialog):
             check.setChecked(bool(appendInfoItems.get(key, True)))
             appendItemsLayout.addWidget(check, idx // 2, idx % 2)
             self.appendInfoItemChecks[key] = check
-        grid.addWidget(self.appendItemsGroup, 5, 0, 1, 4)
+        grid.addWidget(self.appendItemsGroup, 4, 0, 1, 4)
         layout.addLayout(grid)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -216,7 +213,6 @@ class LogSettingsDialog(QDialog):
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
 
-        self.autoNewCheck.setChecked(bool(plugin.config.get("saveLogAutoNew", False)))
         self.timedCheck.setChecked(bool(plugin.config.get("saveLogTimed", False)))
         self.appendInfoCheck.setChecked(bool(plugin.config.get("saveLogAppendInfo", False)))
         self.timedCheck.toggled.connect(self.updateTimedInputs)
@@ -242,7 +238,6 @@ class LogSettingsDialog(QDialog):
         if self.timedCheck.isChecked() and duration <= 0:
             QMessageBox.warning(self, _("Error"), _("Timed log duration must be greater than zero"))
             return
-        self.plugin.config["saveLogAutoNew"] = self.autoNewCheck.isChecked()
         self.plugin.config["saveLogTimed"] = self.timedCheck.isChecked()
         self.plugin.config["saveLogDuration"] = duration
         self.plugin.config["saveLogAppendInfo"] = self.appendInfoCheck.isChecked()
@@ -1031,6 +1026,7 @@ class Plugin(Plugin_Base):
             if not k in self.config:
                 self.config[k] = default[k]
         self.config["saveLog"] = False
+        self.config["saveLogAutoNew"] = False
         self.normalizeLogAppendInfoItems()
         if not hasReceiveFontSize:
             self.config["receiveFontSize"] = 10
@@ -2058,8 +2054,6 @@ class Plugin(Plugin_Base):
 
     def startSaveLogRecording(self):
         self.onLogFilePathChanged()
-        if self.config.get("saveLogAutoNew", False):
-            self.updateLogPath()
         path = self.configuredLogPath()
         if not self.ensureLogFileReady(path):
             return
@@ -2174,7 +2168,6 @@ class Plugin(Plugin_Base):
         if not hasattr(self, "logSettingsSummaryLabel"):
             return
         items = [
-            "{}: {}".format(_("Auto new file"), _("On") if self.config.get("saveLogAutoNew", False) else _("Off")),
             "{}: {}".format(_("Timed log"), self.secondsToHms(self.config.get("saveLogDuration", 60)) if self.config.get("saveLogTimed", False) else _("Off")),
             "{}: {}".format(_("Append info"), _("On") if self.config.get("saveLogAppendInfo", False) else _("Off")),
         ]
@@ -2185,8 +2178,7 @@ class Plugin(Plugin_Base):
             return
         path = self.logFilePath.text().strip()
         self.config["saveLogPath"] = path
-        if not self.config.get("saveLogAutoNew", False):
-            self.config["saveLogPath2"] = path
+        self.config["saveLogPath2"] = path
         self.logFilePath.setToolTip(path)
 
     def stopSaveLogTimer(self, clearDeadline=False):
@@ -2237,7 +2229,7 @@ class Plugin(Plugin_Base):
         return "{:.2f} {}".format(value, unit)
 
     def configuredLogPath(self):
-        return self.config["saveLogPath2"] if self.config.get("saveLogAutoNew", False) else self.config["saveLogPath"]
+        return self.config["saveLogPath"]
 
     def currentLogPath(self):
         return self.logSessionPath if self.logSessionActive and self.logSessionPath else self.configuredLogPath()
@@ -2448,17 +2440,6 @@ class Plugin(Plugin_Base):
         self.config["saveLogPath"] = fileName_choose
         self.config["saveLogPath2"] = fileName_choose
 
-    def updateLogPath(self):
-        '''
-            update log path add datetiem and com port name
-        '''
-        if not self.config["saveLogPath"]:
-            return
-        date = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        path = os.path.splitext(self.config['saveLogPath'])
-        self.config["saveLogPath2"] = f"{path[0]}_{date}{path[1]}"
-
-
     def onLog(self, text):
         path = self.currentLogPath()
         if self.logSessionActive and (not self.logPaused) and self.config["saveLog"] and path:
@@ -2477,12 +2458,10 @@ class Plugin(Plugin_Base):
         if advanced is not None:
             advanced.updateFindNextState()
         self.updateReceiveFindMarkers()
-        if status == ConnectionStatus.CONNECTED and self.config["saveLogAutoNew"]:
-            self.updateLogPath()
-            if self.logSessionActive:
-                self.logSessionPath = self.configuredLogPath()
-                self.ensureLogFileReady(self.logSessionPath)
-                self.updateSaveLogStatus()
+        if status == ConnectionStatus.CONNECTED and self.logSessionActive:
+            self.logSessionPath = self.configuredLogPath()
+            self.ensureLogFileReady(self.logSessionPath)
+            self.updateSaveLogStatus()
 
     def onKeyPressEvent(self, event):
         if event.matches(QKeySequence.Find):

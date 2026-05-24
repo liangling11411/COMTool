@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/Neutree/COMTool/issues\n"
-"POT-Creation-Date: 2026-05-24 11:14+0800\n"
+"POT-Creation-Date: 2026-05-24 11:24+0800\n"
 "PO-Revision-Date: 2021-12-04 15:20+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans_CN\n"
@@ -90,10 +90,10 @@ msgstr "已断开"
 #: main2.py:276 main2.py:326 main2.py:481 main2.py:486 main2.py:892
 #: pluginItems.py:203 pluginItems.py:206 pluginItems.py:320 pluginItems.py:332
 #: plugins/base.py:200 plugins/base.py:205 plugins/base.py:221
-#: plugins/base.py:230 plugins/dbg.py:243 plugins/dbg.py:2037
-#: plugins/dbg.py:2046 plugins/dbg.py:2251 plugins/dbg.py:2257
-#: plugins/dbg.py:2920 plugins/dbg.py:2934 plugins/dbg.py:2944
-#: plugins/dbg.py:2967 plugins/dbg.py:3034 plugins/dbg.py:3042
+#: plugins/base.py:230 plugins/dbg.py:239 plugins/dbg.py:2033
+#: plugins/dbg.py:2042 plugins/dbg.py:2243 plugins/dbg.py:2249
+#: plugins/dbg.py:2899 plugins/dbg.py:2913 plugins/dbg.py:2923
+#: plugins/dbg.py:2946 plugins/dbg.py:3013 plugins/dbg.py:3021
 #: plugins/graph.py:259 plugins/graph_widget_metasenselite.py:591
 #: plugins/graph_widgets.py:167 plugins/myplugin.py:62
 #: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
@@ -110,7 +110,7 @@ msgstr "加载插件失败"
 msgid "Load plugin fail"
 msgstr "加载插件失败"
 
-#: conn/conn_ssh.py:239 main2.py:320 plugins/dbg.py:2426 plugins/dbg.py:2440
+#: conn/conn_ssh.py:239 main2.py:320 plugins/dbg.py:2418 plugins/dbg.py:2432
 msgid "Select file"
 msgstr "选择文件"
 
@@ -154,12 +154,12 @@ msgstr "新窗口"
 msgid "Rename"
 msgstr "重命名"
 
-#: main2.py:522 plugins/dbg.py:1074 plugins/dbg.py:2390
+#: main2.py:522 plugins/dbg.py:1070 plugins/dbg.py:2382
 msgid "Page name"
 msgstr "页面名称"
 
-#: main2.py:529 pluginItems.py:209 plugins/dbg.py:1967 plugins/dbg.py:2168
-#: plugins/dbg.py:2247 plugins/dbg.py:2947 plugins/protocol.py:609
+#: main2.py:529 pluginItems.py:209 plugins/dbg.py:1963 plugins/dbg.py:2162
+#: plugins/dbg.py:2239 plugins/dbg.py:2926 plugins/protocol.py:609
 #: plugins/protocol.py:631
 msgid "Warning"
 msgstr "警告"
@@ -304,11 +304,11 @@ msgstr "输入标记"
 msgid "Input value"
 msgstr "输入值"
 
-#: plugins/dbg.py:2786 widgets.py:691 widgets.py:727
+#: plugins/dbg.py:2765 widgets.py:691 widgets.py:727
 msgid "Select icon"
 msgstr "选择图标"
 
-#: plugins/dbg.py:1248 plugins/protocol.py:277 widgets.py:698 widgets.py:768
+#: plugins/dbg.py:1244 plugins/protocol.py:277 widgets.py:698 widgets.py:768
 msgid "Record"
 msgstr "记录"
 
@@ -320,8 +320,8 @@ msgstr "快捷键"
 msgid "Press key to record, or click Cancel"
 msgstr "按键以记录，或点击取消按钮"
 
-#: plugins/dbg.py:2015 plugins/dbg.py:2133 plugins/dbg.py:2786
-#: plugins/dbg.py:2918 plugins/dbg.py:2932 widgets.py:708 widgets.py:727
+#: plugins/dbg.py:2011 plugins/dbg.py:2127 plugins/dbg.py:2765
+#: plugins/dbg.py:2897 plugins/dbg.py:2911 widgets.py:708 widgets.py:727
 msgid "OK"
 msgstr "完成"
 
@@ -424,7 +424,7 @@ msgstr "输入"
 msgid "error"
 msgstr "错误"
 
-#: conn/conn_ssh.py:241 plugins/dbg.py:2428
+#: conn/conn_ssh.py:241 plugins/dbg.py:2420
 msgid "All Files (*)"
 msgstr "所有文件 (*)"
 
@@ -504,883 +504,875 @@ msgstr "格式错误，格式应该应该如 00 01 02 03"
 msgid "Escape is on, but escape error:"
 msgstr "转移符支持已打开，但是转义时错误"
 
-#: plugins/dbg.py:158 plugins/dbg.py:1382
+#: plugins/dbg.py:158 plugins/dbg.py:1378
 msgid "More log settings"
 msgstr "更多日志设置"
 
-#: plugins/dbg.py:166 plugins/dbg.py:2177
-msgid "Auto new file"
-msgstr "自动新建文件"
-
-#: plugins/dbg.py:167
-msgid "When start a new connection, will automatically create a new log file"
-msgstr "每次连接成功时，会自动新建一个日志文件"
-
-#: plugins/dbg.py:168 plugins/dbg.py:2178
+#: plugins/dbg.py:166 plugins/dbg.py:2171
 msgid "Timed log"
 msgstr "定时日志"
 
-#: plugins/dbg.py:169
+#: plugins/dbg.py:167
 msgid "Stop saving log automatically after the configured duration"
 msgstr "达到设置时长后自动停止保存日志"
 
-#: plugins/dbg.py:170
+#: plugins/dbg.py:168
 msgid "Append log information at stop"
 msgstr "停止时追加日志信息"
 
-#: plugins/dbg.py:171
+#: plugins/dbg.py:169
 msgid ""
 "Append start time, pause history, log size, and connection settings to "
 "the end of the log"
 msgstr "将开始时间、暂停记录、日志大小和连接设置追加到日志末尾"
 
-#: plugins/dbg.py:186
+#: plugins/dbg.py:184
 msgid "Only numbers are allowed"
 msgstr "仅允许输入数字"
 
-#: plugins/dbg.py:195
+#: plugins/dbg.py:192
 msgid "Hours"
 msgstr "小时"
 
-#: plugins/dbg.py:197
+#: plugins/dbg.py:194
 msgid "Minutes"
 msgstr "分钟"
 
-#: plugins/dbg.py:199
+#: plugins/dbg.py:196
 msgid "Seconds"
 msgstr "秒"
 
-#: plugins/dbg.py:202
+#: plugins/dbg.py:199
 msgid "Append information items"
 msgstr "追加信息项目"
 
-#: plugins/dbg.py:243
+#: plugins/dbg.py:239
 msgid "Timed log duration must be greater than zero"
 msgstr "定时日志时长必须大于零"
 
-#: plugins/dbg.py:412 plugins/dbg.py:703
+#: plugins/dbg.py:407 plugins/dbg.py:698
 msgid "Advanced find settings"
 msgstr "高级查找设置"
 
-#: plugins/dbg.py:423
+#: plugins/dbg.py:418
 msgid "Find next"
 msgstr "查找下一个"
 
-#: plugins/dbg.py:424
+#: plugins/dbg.py:419
 msgid "Jump to the next match for this rule"
 msgstr "跳转到此规则的下一个匹配"
 
-#: plugins/dbg.py:425 plugins/devtools.py:1629
+#: plugins/dbg.py:420 plugins/devtools.py:1629
 msgid "Count"
 msgstr "计数"
 
-#: plugins/dbg.py:426
+#: plugins/dbg.py:421
 msgid "Count matches for this rule in the receive buffer"
 msgstr "统计此规则在接收缓冲区中的匹配数"
 
-#: plugins/dbg.py:433
+#: plugins/dbg.py:428
 msgid "Find options"
 msgstr "查找选项"
 
-#: plugins/dbg.py:436
+#: plugins/dbg.py:431
 msgid "Reverse find"
 msgstr "反向查找"
 
-#: plugins/dbg.py:437
+#: plugins/dbg.py:432
 msgid "Search upward when jumping to the next match"
 msgstr "跳转下一个匹配时向上搜索"
 
-#: plugins/dbg.py:438
+#: plugins/dbg.py:433
 msgid "Whole word"
 msgstr "全词匹配"
 
-#: plugins/dbg.py:439
+#: plugins/dbg.py:434
 msgid "Match only whole words"
 msgstr "仅匹配完整单词"
 
-#: plugins/dbg.py:440
+#: plugins/dbg.py:435
 msgid "Case sensitive"
 msgstr "区分大小写"
 
-#: plugins/dbg.py:441
+#: plugins/dbg.py:436
 msgid "Match uppercase and lowercase exactly"
 msgstr "严格匹配大小写"
 
-#: plugins/dbg.py:442
+#: plugins/dbg.py:437
 msgid "Wrap around"
 msgstr "循环查找"
 
-#: plugins/dbg.py:443
+#: plugins/dbg.py:438
 msgid "Continue from the other end when no match is found"
 msgstr "未找到匹配时从另一端继续"
 
-#: plugins/dbg.py:444
+#: plugins/dbg.py:439
 msgid "Regular expression"
 msgstr "正则表达式"
 
-#: plugins/dbg.py:445
+#: plugins/dbg.py:440
 msgid "Treat the find text as a Python regular expression"
 msgstr "将查找文本按 Python 正则表达式处理"
 
-#: plugins/dbg.py:446
+#: plugins/dbg.py:441
 msgid "Dot matches newline"
 msgstr "点号匹配换行"
 
-#: plugins/dbg.py:447
+#: plugins/dbg.py:442
 msgid "Let '.' in regular expressions match line breaks"
 msgstr "允许正则表达式中的 '.' 匹配换行"
 
-#: plugins/dbg.py:458 plugins/dbg.py:607
+#: plugins/dbg.py:453 plugins/dbg.py:602
 msgid "Close"
 msgstr "关闭"
 
-#: plugins/dbg.py:481
+#: plugins/dbg.py:476
 msgid "No find rule selected"
 msgstr "未选择查找规则"
 
-#: plugins/dbg.py:506 plugins/dbg.py:697
+#: plugins/dbg.py:501 plugins/dbg.py:692
 msgid "Find text"
 msgstr "查找文本"
 
-#: plugins/dbg.py:506
+#: plugins/dbg.py:501
 msgid "Empty"
 msgstr "空"
 
-#: plugins/dbg.py:548
+#: plugins/dbg.py:543
 msgid "Matches"
 msgstr "匹配数"
 
-#: plugins/dbg.py:563
+#: plugins/dbg.py:558
 msgid "Find in receive area"
 msgstr "接收区查找"
 
-#: plugins/dbg.py:569
+#: plugins/dbg.py:564
 msgid "Find rules (top rules have higher priority)"
 msgstr "查找规则（越靠上优先级越高）"
 
-#: plugins/dbg.py:572
+#: plugins/dbg.py:567
 msgid "Select all"
 msgstr "全选"
 
-#: plugins/dbg.py:573
+#: plugins/dbg.py:568
 msgid "Select all find rules for batch actions"
 msgstr "选择全部查找规则进行批量操作"
 
-#: plugins/dbg.py:574
+#: plugins/dbg.py:569
 msgid "Highlight color"
 msgstr "高亮颜色"
 
-#: plugins/dbg.py:575
+#: plugins/dbg.py:570
 msgid "Choose highlight color for new rules or selected rules"
 msgstr "为新规则或所选规则选择高亮颜色"
 
-#: plugins/dbg.py:577
+#: plugins/dbg.py:572
 msgid "Apply color"
 msgstr "应用颜色"
 
-#: plugins/dbg.py:578
+#: plugins/dbg.py:573
 msgid "Clear color"
 msgstr "清除颜色"
 
-#: plugins/dbg.py:579
+#: plugins/dbg.py:574
 msgid "Delete selected"
 msgstr "删除所选"
 
-#: plugins/dbg.py:580
+#: plugins/dbg.py:575
 msgid "Apply the current highlight color to all selected rules"
 msgstr "将当前高亮颜色应用到所有选中规则"
 
-#: plugins/dbg.py:581
+#: plugins/dbg.py:576
 msgid "Remove highlight color from all selected rules"
 msgstr "从所有选中规则移除高亮颜色"
 
-#: plugins/dbg.py:582
+#: plugins/dbg.py:577
 msgid "Delete all selected find rules"
 msgstr "删除所有选中查找规则"
 
-#: plugins/dbg.py:605
+#: plugins/dbg.py:600
 msgid "Add find rule"
 msgstr "添加查找规则"
 
-#: plugins/dbg.py:608
+#: plugins/dbg.py:603
 msgid "Close find window"
 msgstr "关闭查找窗口"
 
-#: plugins/dbg.py:632 plugins/dbg.py:816 plugins/dbg.py:1831
-#: plugins/dbg.py:1845 plugins/dbg.py:2717 plugins/dbg.py:2773
+#: plugins/dbg.py:627 plugins/dbg.py:811 plugins/dbg.py:1827
+#: plugins/dbg.py:1841 plugins/dbg.py:2696 plugins/dbg.py:2752
 msgid "Select color"
 msgstr "选择颜色"
 
-#: plugins/dbg.py:687
+#: plugins/dbg.py:682
 msgid "Select"
 msgstr "选择"
 
-#: plugins/dbg.py:688
+#: plugins/dbg.py:683
 msgid "Select this rule for batch edit actions"
 msgstr "选择此规则进行批量编辑"
 
-#: plugins/dbg.py:691
+#: plugins/dbg.py:686
 msgid "Drag before another find rule to change priority"
 msgstr "拖拽到另一条查找规则前方以调整优先级"
 
-#: plugins/dbg.py:693 plugins/graph_widgets.py:55
+#: plugins/dbg.py:688 plugins/graph_widgets.py:55
 msgid "Enable"
 msgstr "Enable"
 
-#: plugins/dbg.py:694
+#: plugins/dbg.py:689
 msgid "Enable this rule for highlighting, navigation, and scrollbar markers"
 msgstr "启用此规则用于高亮、跳转和滚动条标记"
 
-#: plugins/dbg.py:698
+#: plugins/dbg.py:693
 msgid ""
 "Plain text searches exact text. Use advanced settings for regular "
 "expressions."
 msgstr "普通文本按原文匹配，正则表达式请在高级设置中启用。"
 
-#: plugins/dbg.py:700
+#: plugins/dbg.py:695
 msgid "Set highlight color, right click to clear"
 msgstr "设置高亮颜色，右键清除"
 
-#: plugins/dbg.py:706
+#: plugins/dbg.py:701
 msgid "Delete this find rule"
 msgstr "删除此查找规则"
 
-#: plugins/dbg.py:959
+#: plugins/dbg.py:954
 msgid "Send Receive"
 msgstr "收发"
 
-#: plugins/dbg.py:975
+#: plugins/dbg.py:970
 msgid "Shortcut:"
 msgstr "快捷键："
 
-#: plugins/dbg.py:976
+#: plugins/dbg.py:971
 msgid "Full screen"
 msgstr "全屏"
 
-#: plugins/dbg.py:977
+#: plugins/dbg.py:972
 msgid "Send data"
 msgstr "发送数据"
 
-#: plugins/dbg.py:978
+#: plugins/dbg.py:973
 msgid "Clear Send Area"
 msgstr "清除发送区"
 
-#: plugins/dbg.py:979
+#: plugins/dbg.py:974
 msgid "Clear Receive Area"
 msgstr "清除接收区"
 
-#: plugins/dbg.py:1067 plugins/dbg.py:2366
+#: plugins/dbg.py:1063 plugins/dbg.py:2358
 msgid "Start time"
 msgstr "开始时间"
 
-#: plugins/dbg.py:1068 plugins/dbg.py:2368
+#: plugins/dbg.py:1064 plugins/dbg.py:2360
 msgid "End time"
 msgstr "结束时间"
 
-#: plugins/dbg.py:1069 plugins/dbg.py:2370
+#: plugins/dbg.py:1065 plugins/dbg.py:2362
 msgid "Active duration"
 msgstr "实际记录时长"
 
-#: plugins/dbg.py:1070 plugins/dbg.py:2372
+#: plugins/dbg.py:1066 plugins/dbg.py:2364
 msgid "Pause count"
 msgstr "暂停次数"
 
-#: plugins/dbg.py:1071 plugins/dbg.py:2377 plugins/dbg.py:2384
+#: plugins/dbg.py:1067 plugins/dbg.py:2369 plugins/dbg.py:2376
 msgid "Pause time"
 msgstr "暂停时间"
 
-#: plugins/dbg.py:1072 plugins/dbg.py:2386
+#: plugins/dbg.py:1068 plugins/dbg.py:2378
 msgid "Log size"
 msgstr "日志大小"
 
-#: plugins/dbg.py:1073 plugins/dbg.py:1375 plugins/dbg.py:2388
+#: plugins/dbg.py:1069 plugins/dbg.py:1371 plugins/dbg.py:2380
 msgid "Log path"
 msgstr "日志路径"
 
-#: plugins/dbg.py:1075 plugins/dbg.py:2392
+#: plugins/dbg.py:1071 plugins/dbg.py:2384
 msgid "Connection type"
 msgstr "连接类型"
 
-#: plugins/dbg.py:1076 plugins/dbg.py:2394
+#: plugins/dbg.py:1072 plugins/dbg.py:2386
 msgid "Connection status"
 msgstr "连接状态"
 
-#: plugins/dbg.py:1077 plugins/dbg.py:2396
+#: plugins/dbg.py:1073 plugins/dbg.py:2388
 msgid "Connection settings"
 msgstr "连接设置"
 
-#: plugins/dbg.py:1078 plugins/dbg.py:2399
+#: plugins/dbg.py:1074 plugins/dbg.py:2391
 msgid "Port open/close history"
 msgstr "串口开启/关闭记录"
 
-#: plugins/dbg.py:1079 plugins/dbg.py:2404
+#: plugins/dbg.py:1075 plugins/dbg.py:2396
 msgid "Port disconnect/reconnect history"
 msgstr "串口掉连/重连记录"
 
-#: plugins/dbg.py:1112
+#: plugins/dbg.py:1108
 msgid "Clear RX"
 msgstr "清除RX"
 
-#: plugins/dbg.py:1113
+#: plugins/dbg.py:1109
 msgid "Clear receive area"
 msgstr "清除接收区"
 
-#: plugins/dbg.py:1115
+#: plugins/dbg.py:1111
 msgid "Clear TX"
 msgstr "清除TX"
 
-#: plugins/dbg.py:1116
+#: plugins/dbg.py:1112
 msgid "Clear TX input"
 msgstr "清除TX输入"
 
-#: plugins/dbg.py:1124
+#: plugins/dbg.py:1120
 msgid "Received RX/TX log output"
 msgstr "接收区RX/TX日志输出"
 
-#: plugins/dbg.py:1135
+#: plugins/dbg.py:1131
 msgid "Input data to send"
 msgstr "输入要发送的数据"
 
-#: plugins/dbg.py:1139
+#: plugins/dbg.py:1135
 msgid "Find and highlight receive text"
 msgstr "查找并高亮接收文本"
 
-#: plugins/dbg.py:1142
+#: plugins/dbg.py:1138
 msgid "Send input data"
 msgstr "发送输入框数据"
 
-#: plugins/dbg.py:1145
+#: plugins/dbg.py:1141
 msgid "Send history"
 msgstr "发送历史"
 
-#: plugins/dbg.py:1188
+#: plugins/dbg.py:1184
 msgid "Receive Settings"
 msgstr "接收设置"
 
-#: plugins/dbg.py:1189 plugins/dbg.py:1233 plugins/protocol.py:269
+#: plugins/dbg.py:1185 plugins/dbg.py:1229 plugins/protocol.py:269
 msgid "ASCII"
 msgstr "ASCII"
 
-#: plugins/dbg.py:1190
+#: plugins/dbg.py:1186
 msgid ""
 "Show recived data as visible format, select decode method at top right "
 "corner"
 msgstr "使用可见字符显示收到的数据，在右上角选择解码的方法"
 
-#: plugins/dbg.py:1191 plugins/dbg.py:1234 plugins/protocol.py:270
+#: plugins/dbg.py:1187 plugins/dbg.py:1230 plugins/protocol.py:270
 msgid "HEX"
 msgstr "HEX"
 
-#: plugins/dbg.py:1192
+#: plugins/dbg.py:1188
 msgid "Show recived data as hex format"
 msgstr "使用十六进制表示方法显示收到的数据"
 
-#: plugins/dbg.py:1194
+#: plugins/dbg.py:1190
 msgid ""
 "Auto\n"
 "Linefeed\n"
 "ms"
 msgstr "自动换行"
 
-#: plugins/dbg.py:1195 plugins/dbg.py:1198
+#: plugins/dbg.py:1191 plugins/dbg.py:1194
 msgid "Auto linefeed after interval, unit: ms"
 msgstr "超过这个时间自动换行，单位：ms"
 
-#: plugins/dbg.py:1201 plugins/dbg.py:1218
+#: plugins/dbg.py:1197 plugins/dbg.py:1214
 msgid "Timestamp"
 msgstr "时间戳"
 
-#: plugins/dbg.py:1202
+#: plugins/dbg.py:1198
 msgid ""
 "Add timestamp before received data, will automatically enable auto line "
 "feed"
 msgstr "在收到的数据前添加时间戳， 会自动使能自动换行"
 
-#: plugins/dbg.py:1203 plugins/protocol.py:244
+#: plugins/dbg.py:1199 plugins/protocol.py:244
 msgid "Display wrap"
 msgstr "自动换行显示"
 
-#: plugins/dbg.py:1204 plugins/dbg.py:1250 plugins/protocol.py:279
+#: plugins/dbg.py:1200 plugins/dbg.py:1246 plugins/protocol.py:279
 msgid "Escape"
 msgstr "转义符"
 
-#: plugins/dbg.py:1205 plugins/dbg.py:1251 plugins/protocol.py:280
+#: plugins/dbg.py:1201 plugins/dbg.py:1247 plugins/protocol.py:280
 msgid "Enable escape characters support like \\t \\r \\n \\x01 \\001"
 msgstr "使能转义字符支持，比如 \\t \\r \\n \\x01 \\001"
 
-#: plugins/dbg.py:1206 plugins/protocol.py:245
+#: plugins/dbg.py:1202 plugins/protocol.py:245
 msgid ""
 "When content in a line is too long, always auto wrap to show, and no "
 "scroll bar"
 msgstr "当单行内容过长时自动换行显示，不显示横向滚动条"
 
-#: plugins/dbg.py:1219 plugins/dbg.py:1332 plugins/dbg.py:1339
-#: plugins/dbg.py:1447 plugins/devtools.py:408
+#: plugins/dbg.py:1215 plugins/dbg.py:1328 plugins/dbg.py:1335
+#: plugins/dbg.py:1443 plugins/devtools.py:408
 msgid "Color"
 msgstr "颜色"
 
-#: plugins/dbg.py:1220
+#: plugins/dbg.py:1216
 msgid "Timestamp color in receive area"
 msgstr "接收区时间戳颜色"
 
-#: plugins/dbg.py:1221
+#: plugins/dbg.py:1217
 msgid "Newline after timestamp"
 msgstr "时间戳后换行"
 
-#: plugins/dbg.py:1222
+#: plugins/dbg.py:1218
 msgid "Display received data on the next line after timestamp"
 msgstr "在时间戳下一行显示接收数据"
 
-#: plugins/dbg.py:1224
+#: plugins/dbg.py:1220
 msgid "Timestamp color"
 msgstr "时间戳颜色"
 
-#: plugins/dbg.py:1232
+#: plugins/dbg.py:1228
 msgid "Send Settings"
 msgstr "发送设置"
 
-#: plugins/dbg.py:1235 plugins/protocol.py:271
+#: plugins/dbg.py:1231 plugins/protocol.py:271
 msgid ""
 "Get send data as visible format, select encoding method at top right "
 "corner"
 msgstr "以可见字符的方式获取将要发送的数据，在右上角选择编码的方法"
 
-#: plugins/dbg.py:1236 plugins/protocol.py:272
+#: plugins/dbg.py:1232 plugins/protocol.py:272
 msgid "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
 msgstr "以十六进制的格式获取将要发送的数据，比如 十六进制的'31 32 33' 和 ascii编码的 '123' 等效"
 
-#: plugins/dbg.py:1238
+#: plugins/dbg.py:1234
 msgid ""
 "Timed Send\n"
 "ms"
 msgstr "定时发送"
 
-#: plugins/dbg.py:1239 plugins/dbg.py:1242
+#: plugins/dbg.py:1235 plugins/dbg.py:1238
 msgid "Timed send, unit: ms"
 msgstr "定时发送，单位：ms"
 
-#: plugins/dbg.py:1245 plugins/protocol.py:274
+#: plugins/dbg.py:1241 plugins/protocol.py:274
 msgid "<CRLF>"
 msgstr "<CRLF>"
 
-#: plugins/dbg.py:1246 plugins/protocol.py:275
+#: plugins/dbg.py:1242 plugins/protocol.py:275
 msgid "Select to send \\r\\n instead of \\n"
 msgstr "选中发送 \\r\\n 而不是 \\n"
 
-#: plugins/dbg.py:1249 plugins/protocol.py:278
+#: plugins/dbg.py:1245 plugins/protocol.py:278
 msgid "Record send data"
 msgstr "记录发送的数据"
 
-#: plugins/dbg.py:1252
+#: plugins/dbg.py:1248
 msgid "Newline"
 msgstr "换行"
 
-#: plugins/dbg.py:1253
+#: plugins/dbg.py:1249
 msgid "Auto add new line when send"
 msgstr "发送时自动追加换行"
 
-#: plugins/dbg.py:1284
+#: plugins/dbg.py:1280
 msgid "Auto line feed value error, must be integer"
 msgstr "自动换行值错误，必须是整数"
 
-#: plugins/dbg.py:1285
+#: plugins/dbg.py:1281
 msgid "Timed send value error, must be integer"
 msgstr "定时发送值错误，必须是整数"
 
-#: plugins/dbg.py:1324
+#: plugins/dbg.py:1320
 msgid "Default font"
 msgstr "默认字体"
 
-#: plugins/dbg.py:1328
+#: plugins/dbg.py:1324
 msgid "Font family for received RX text"
 msgstr "接收区RX文本字体"
 
-#: plugins/dbg.py:1331
+#: plugins/dbg.py:1327
 msgid "Font size for received RX text"
 msgstr "接收区RX文本字号"
 
-#: plugins/dbg.py:1333
+#: plugins/dbg.py:1329
 msgid "Color for received RX text in the receive area"
 msgstr "接收区RX文本颜色"
 
-#: plugins/dbg.py:1335
+#: plugins/dbg.py:1331
 msgid "Font family for TX input text"
 msgstr "TX输入文本字体"
 
-#: plugins/dbg.py:1338
+#: plugins/dbg.py:1334
 msgid "Font size for TX input text"
 msgstr "TX输入文本字号"
 
-#: plugins/dbg.py:1340
+#: plugins/dbg.py:1336
 msgid "Color for TX input text and recorded TX lines"
 msgstr "TX输入文本和记录的TX行颜色"
 
-#: plugins/dbg.py:1341
+#: plugins/dbg.py:1337
 msgid "RX font"
 msgstr "RX字体"
 
-#: plugins/dbg.py:1343
+#: plugins/dbg.py:1339
 msgid "RX size"
 msgstr "RX字号"
 
-#: plugins/dbg.py:1345
+#: plugins/dbg.py:1341
 msgid "RX color"
 msgstr "RX颜色"
 
-#: plugins/dbg.py:1347
+#: plugins/dbg.py:1343
 msgid "TX font"
 msgstr "TX字体"
 
-#: plugins/dbg.py:1349
+#: plugins/dbg.py:1345
 msgid "TX size"
 msgstr "TX字号"
 
-#: plugins/dbg.py:1351
+#: plugins/dbg.py:1347
 msgid "TX color"
 msgstr "TX颜色"
 
-#: plugins/dbg.py:1356
+#: plugins/dbg.py:1352
 msgid "Path of the file to send"
 msgstr "要发送的文件路径"
 
-#: plugins/dbg.py:1357
+#: plugins/dbg.py:1353
 msgid "Open File"
 msgstr "打开文件"
 
-#: plugins/dbg.py:1358
+#: plugins/dbg.py:1354
 msgid "Select a file to send"
 msgstr "选择要发送的文件"
 
-#: plugins/dbg.py:1359 plugins/dbg.py:1363
+#: plugins/dbg.py:1355 plugins/dbg.py:1359
 msgid "Send File"
 msgstr "发送文件"
 
-#: plugins/dbg.py:1360
+#: plugins/dbg.py:1356
 msgid "Send the selected file over the current connection"
 msgstr "通过当前连接发送所选文件"
 
-#: plugins/dbg.py:1361
+#: plugins/dbg.py:1357
 msgid "Clear TX History"
 msgstr "清除TX历史"
 
-#: plugins/dbg.py:1362
+#: plugins/dbg.py:1358
 msgid "Clear TX send history"
 msgstr "清除TX发送历史"
 
-#: plugins/dbg.py:1370 plugins/dbg.py:2284
+#: plugins/dbg.py:1366 plugins/dbg.py:2276
 msgid "Log"
 msgstr "日志"
 
-#: plugins/dbg.py:1374
+#: plugins/dbg.py:1370
 msgid "Log file path"
 msgstr "日志文件路径"
 
-#: plugins/dbg.py:1376
+#: plugins/dbg.py:1372
 msgid "Select log file path"
 msgstr "选择日志文件路径"
 
-#: plugins/dbg.py:1377 plugins/dbg.py:2153
+#: plugins/dbg.py:1373 plugins/dbg.py:2147
 msgid "Start record"
 msgstr "开始记录"
 
-#: plugins/dbg.py:1378
+#: plugins/dbg.py:1374
 msgid "Start or pause log recording"
 msgstr "开始或暂停日志记录"
 
-#: plugins/dbg.py:1379
+#: plugins/dbg.py:1375
 msgid "Stop record"
 msgstr "停止记录"
 
-#: plugins/dbg.py:1380
+#: plugins/dbg.py:1376
 msgid "Stop log recording"
 msgstr "停止日志记录"
 
-#: plugins/dbg.py:1383
+#: plugins/dbg.py:1379
 msgid "Configure auto new file, timed log, and log information summary"
 msgstr "配置自动新建文件、定时日志和日志信息摘要"
 
-#: plugins/dbg.py:1386
+#: plugins/dbg.py:1382
 msgid "Current log settings"
 msgstr "当前日志设置"
 
-#: plugins/dbg.py:1387
+#: plugins/dbg.py:1383
 msgid "Log: 00:00:00 / 0 B"
 msgstr "日志：00:00:00 / 0 B"
 
-#: plugins/dbg.py:1388
+#: plugins/dbg.py:1384
 msgid "Current log recording duration and file size"
 msgstr "当前日志记录时长和文件大小"
 
-#: plugins/dbg.py:1391
+#: plugins/dbg.py:1387
 msgid "RX buffer size"
 msgstr "RX缓冲区大小"
 
-#: plugins/dbg.py:1397
+#: plugins/dbg.py:1393
 msgid "RX buffer size, only editable while the connection is closed"
 msgstr "RX缓冲区大小，仅在连接关闭时可修改"
 
-#: plugins/dbg.py:1434
+#: plugins/dbg.py:1430
 msgid "Import"
 msgstr "导入"
 
-#: plugins/dbg.py:1435
+#: plugins/dbg.py:1431
 msgid "Export"
 msgstr "导出"
 
-#: plugins/dbg.py:1436
+#: plugins/dbg.py:1432
 msgid "Add a custom send item"
 msgstr "添加自定义发送词条"
 
-#: plugins/dbg.py:1437
+#: plugins/dbg.py:1433
 msgid "Import custom send items from JSON"
 msgstr "从JSON导入自定义发送词条"
 
-#: plugins/dbg.py:1438
+#: plugins/dbg.py:1434
 msgid "Export custom send items to JSON"
 msgstr "将自定义发送词条导出为JSON"
 
-#: plugins/dbg.py:1443
+#: plugins/dbg.py:1439
 msgid "Search remark or command"
 msgstr "搜索标记或指令"
 
-#: plugins/dbg.py:1444
+#: plugins/dbg.py:1440
 msgid "Search custom send items by remark or command"
 msgstr "按标记或指令搜索自定义发送词条"
 
-#: plugins/dbg.py:1445
+#: plugins/dbg.py:1441
 msgid "All"
 msgstr "全选"
 
-#: plugins/dbg.py:1446
+#: plugins/dbg.py:1442
 msgid "Select visible custom send items"
 msgstr "选择当前可见的自定义发送词条"
 
-#: plugins/dbg.py:1448
+#: plugins/dbg.py:1444
 msgid "Icon"
 msgstr "图标"
 
-#: plugins/dbg.py:1449 plugins/dbg.py:2606 plugins/dbg.py:2803
+#: plugins/dbg.py:1445 plugins/dbg.py:2585 plugins/dbg.py:2782
 #: plugins/protocol.py:257
 msgid "Delete"
 msgstr "删除"
 
-#: plugins/dbg.py:1450
+#: plugins/dbg.py:1446
 msgid "Set color for selected custom send items"
 msgstr "设置所选自定义发送词条颜色"
 
-#: plugins/dbg.py:1451
+#: plugins/dbg.py:1447
 msgid "Set icon for selected custom send items"
 msgstr "设置所选自定义发送词条图标"
 
-#: plugins/dbg.py:1452
+#: plugins/dbg.py:1448
 msgid "Delete selected custom send items"
 msgstr "删除所选自定义发送词条"
 
-#: plugins/dbg.py:1459
+#: plugins/dbg.py:1455
 msgid "Cutom send"
 msgstr "自定义发送"
 
-#: plugins/dbg.py:1719 plugins/dbg.py:1752
+#: plugins/dbg.py:1715 plugins/dbg.py:1748
 msgid "Find"
 msgstr "查找"
 
-#: plugins/dbg.py:1719
+#: plugins/dbg.py:1715
 msgid "No match found"
 msgstr "未找到匹配"
 
-#: plugins/dbg.py:1752
+#: plugins/dbg.py:1748
 msgid "No more matches"
 msgstr "没有更多匹配"
 
-#: plugins/dbg.py:1967
+#: plugins/dbg.py:1963
 msgid "linefeed always on if timestamp or record send is on"
 msgstr "当时间戳和记录发送时，自动换行需要打开"
 
-#: plugins/dbg.py:2015
+#: plugins/dbg.py:2011
 msgid "History cleared!"
 msgstr "历史已清除"
 
-#: plugins/dbg.py:2018
+#: plugins/dbg.py:2014
 msgid "Confirm clear"
 msgstr "确认清除"
 
-#: plugins/dbg.py:2022
+#: plugins/dbg.py:2018
 msgid "Clear receive area?"
 msgstr "确定清除接收区吗？"
 
-#: plugins/dbg.py:2026
+#: plugins/dbg.py:2022
 msgid "Clear send input?"
 msgstr "确定清除发送输入吗？"
 
-#: plugins/dbg.py:2030
+#: plugins/dbg.py:2026
 msgid "Clear TX history?"
 msgstr "确定清除TX历史记录吗？"
 
-#: plugins/dbg.py:2037 plugins/graph.py:259 plugins/protocol.py:524
+#: plugins/dbg.py:2033 plugins/graph.py:259 plugins/protocol.py:524
 msgid "Send data failed!"
 msgstr "发送数据失败！"
 
-#: plugins/dbg.py:2042
+#: plugins/dbg.py:2038
 msgid "Send file"
 msgstr "发送文件"
 
-#: plugins/dbg.py:2046
+#: plugins/dbg.py:2042
 msgid "Send file failed!"
 msgstr "发送文件失败！"
 
-#: plugins/dbg.py:2107
+#: plugins/dbg.py:2101
 msgid "Confirm stop"
 msgstr "确认停止"
 
-#: plugins/dbg.py:2107
+#: plugins/dbg.py:2101
 msgid "Stop log recording?"
 msgstr "确定停止日志记录吗？"
 
-#: plugins/dbg.py:2133
+#: plugins/dbg.py:2127
 msgid "Timed log stopped"
 msgstr "定时日志已停止"
 
-#: plugins/dbg.py:2154
+#: plugins/dbg.py:2148
 msgid "Start log recording"
 msgstr "开始日志记录"
 
-#: plugins/dbg.py:2158
+#: plugins/dbg.py:2152
 msgid "Resume record"
 msgstr "继续记录"
 
-#: plugins/dbg.py:2159
+#: plugins/dbg.py:2153
 msgid "Resume log recording"
 msgstr "继续日志记录"
 
-#: plugins/dbg.py:2162
+#: plugins/dbg.py:2156
 msgid "Pause record"
 msgstr "暂停记录"
 
-#: plugins/dbg.py:2163
+#: plugins/dbg.py:2157
 msgid "Pause log recording"
 msgstr "暂停日志记录"
 
-#: plugins/dbg.py:2168
+#: plugins/dbg.py:2162
 msgid "Log settings are locked while recording or paused"
 msgstr "正在记录或暂停记录时不能修改日志设置"
 
-#: plugins/dbg.py:2177 plugins/dbg.py:2179
-msgid "On"
-msgstr "开启"
-
-#: plugins/dbg.py:2177 plugins/dbg.py:2178 plugins/dbg.py:2179
+#: plugins/dbg.py:2171 plugins/dbg.py:2172
 msgid "Off"
 msgstr "关闭"
 
-#: plugins/dbg.py:2179
+#: plugins/dbg.py:2172
 msgid "Append info"
 msgstr "追加信息"
 
-#: plugins/dbg.py:2247
+#: plugins/dbg.py:2172
+msgid "On"
+msgstr "开启"
+
+#: plugins/dbg.py:2239
 msgid "Select log file path before starting log"
 msgstr "开始记录前请选择日志文件路径"
 
-#: plugins/dbg.py:2251
+#: plugins/dbg.py:2243
 msgid "Log folder does not exist"
 msgstr "日志目录不存在"
 
-#: plugins/dbg.py:2257
+#: plugins/dbg.py:2249
 msgid "Open log file failed"
 msgstr "打开日志文件失败"
 
-#: plugins/dbg.py:2322
+#: plugins/dbg.py:2314
 msgid "Port opened"
 msgstr "串口已开启"
 
-#: plugins/dbg.py:2323
+#: plugins/dbg.py:2315
 msgid "Port closed"
 msgstr "串口已关闭"
 
-#: plugins/dbg.py:2324
+#: plugins/dbg.py:2316
 msgid "Port disconnected"
 msgstr "串口已掉连"
 
-#: plugins/dbg.py:2325
+#: plugins/dbg.py:2317
 msgid "Port reconnected"
 msgstr "串口已重连"
 
-#: plugins/dbg.py:2336
+#: plugins/dbg.py:2328
 msgid "No events"
 msgstr "无事件"
 
-#: plugins/dbg.py:2363
+#: plugins/dbg.py:2355
 msgid "Log information"
 msgstr "日志信息"
 
-#: plugins/dbg.py:2384
+#: plugins/dbg.py:2376
 msgid "None"
 msgstr "无"
 
-#: plugins/dbg.py:2442
+#: plugins/dbg.py:2434
 msgid "Log file (*.log);;txt file (*.txt);;All Files (*)"
 msgstr "日志文件 (*.log);;文本文件 (*.txt);;所有文件 (*)"
 
-#: plugins/dbg.py:2539
+#: plugins/dbg.py:2518
 msgid "Select for batch edit"
 msgstr "选择后进行批量编辑"
 
-#: plugins/dbg.py:2543
+#: plugins/dbg.py:2522
 msgid "Drag before another item to reorder"
 msgstr "拖拽到另一词条前方以重新排序"
 
-#: plugins/dbg.py:2550
+#: plugins/dbg.py:2529
 msgid "Click to set button color, right click to clear"
 msgstr "点击设置按钮颜色，右键清除颜色"
 
-#: plugins/dbg.py:2556
+#: plugins/dbg.py:2535
 msgid "Edit custom send remark and icon"
 msgstr "编辑自定义发送标记和图标"
 
-#: plugins/dbg.py:2565
+#: plugins/dbg.py:2544
 msgid "Delete this custom send item"
 msgstr "删除此自定义发送词条"
 
-#: plugins/dbg.py:2606
+#: plugins/dbg.py:2585
 msgid "Delete selected custom send item?"
 msgstr "确定删除所选自定义发送词条吗？"
 
-#: plugins/dbg.py:2802
+#: plugins/dbg.py:2781
 msgid "Delete selected custom send items?"
 msgstr "确定删除所选自定义发送词条吗？"
 
-#: plugins/dbg.py:2905
+#: plugins/dbg.py:2884
 msgid "Import custom send"
 msgstr "导入自定义发送"
 
-#: plugins/dbg.py:2907 plugins/dbg.py:2926
+#: plugins/dbg.py:2886 plugins/dbg.py:2905
 msgid "JSON file (*.json);;All Files (*)"
 msgstr "JSON 文件 (*.json);;所有文件 (*)"
 
-#: plugins/dbg.py:2916
+#: plugins/dbg.py:2895
 msgid "Custom send file must be a JSON list"
 msgstr "自定义发送文件必须是JSON数组"
 
-#: plugins/dbg.py:2918
+#: plugins/dbg.py:2897
 msgid "Custom send items imported!"
 msgstr "自定义发送词条已导入！"
 
-#: plugins/dbg.py:2920
+#: plugins/dbg.py:2899
 msgid "Import custom send failed!"
 msgstr "导入自定义发送失败！"
 
-#: plugins/dbg.py:2924
+#: plugins/dbg.py:2903
 msgid "Export custom send"
 msgstr "导出自定义发送"
 
-#: plugins/dbg.py:2932
+#: plugins/dbg.py:2911
 msgid "Custom send items exported!"
 msgstr "自定义发送词条已导出！"
 
-#: plugins/dbg.py:2934
+#: plugins/dbg.py:2913
 msgid "Export custom send failed!"
 msgstr "导出自定义发送失败！"
 
-#: plugins/dbg.py:2944
+#: plugins/dbg.py:2923
 msgid ""
 "File path error\n"
 "path"
@@ -1388,23 +1380,23 @@ msgstr ""
 "文件路径错误\n"
 "路径"
 
-#: plugins/dbg.py:2947
+#: plugins/dbg.py:2926
 msgid "Connect first please"
 msgstr "请先连接"
 
-#: plugins/dbg.py:2950
+#: plugins/dbg.py:2929
 msgid "Sending file"
 msgstr "发送文件中"
 
-#: plugins/dbg.py:2967
+#: plugins/dbg.py:2946
 msgid "Time format error"
 msgstr "时间格式错误"
 
-#: plugins/dbg.py:3034
+#: plugins/dbg.py:3013
 msgid "Send Error"
 msgstr "发送出错"
 
-#: plugins/dbg.py:3042
+#: plugins/dbg.py:3021
 msgid "get data error"
 msgstr "获取数据错误"
 
@@ -2435,182 +2427,3 @@ msgstr "终端"
 #: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:30
 msgid "my plugin2"
 msgstr "我的插件2"
-
-#~ msgid "Donate"
-#~ msgstr "捐献"
-
-#~ msgid "Receive"
-#~ msgstr "接收"
-
-#~ msgid "Functional Send"
-#~ msgstr "其它发送功能"
-
-#~ msgid "Ready"
-#~ msgstr "就绪"
-
-#~ msgid "HELP"
-#~ msgstr "帮助"
-
-#~ msgid "ABOUT"
-#~ msgstr "关于"
-
-#~ msgid "Settings"
-#~ msgstr "设置"
-
-#~ msgid "Need Update"
-#~ msgstr "需要更新"
-
-#~ msgid "update now?"
-#~ msgstr "现在就更新？"
-
-#~ msgid "uninstall app"
-#~ msgstr "卸载应用"
-
-#~ msgid "About"
-#~ msgstr "关于"
-
-#~ msgid "Buy me half a cup of coffee"
-#~ msgstr "感谢大爷赏赐半杯咖啡吧"
-
-#~ msgid "config file format error"
-#~ msgstr "配置文件格式错误"
-
-#~ msgid "Plugin help:"
-#~ msgstr "插件帮助："
-
-#~ msgid "This plugin no help info"
-#~ msgstr "此插件无帮助信息"
-
-#~ msgid "Sendding File"
-#~ msgstr "发送文件中"
-
-#~ msgid "Load plugin error"
-#~ msgstr "加载插件失败"
-
-#~ msgid "Enable unix terminal color support, e.g. \\33[31;43mhello\\33[0m"
-#~ msgstr "使能 unix 终端颜色支持，比如：\\33[31;43mhello\\33[0m"
-
-#~ msgid "Font Size"
-#~ msgstr ""
-
-#~ msgid "Load config"
-#~ msgstr "加载配置"
-
-#~ msgid "Share config"
-#~ msgstr "分享配置"
-
-#~ msgid "Find content"
-#~ msgstr "查找内容"
-
-#~ msgid "One plain-text rule per line, or one lambda expression"
-#~ msgstr "普通文本每行一条，或输入一条 lambda 表达式"
-
-#~ msgid "Add"
-#~ msgstr "添加"
-
-#~ msgid "Update selected"
-#~ msgstr "更新所选"
-
-#~ msgid "Update the selected find rule from the input"
-#~ msgstr "用当前输入更新所选查找规则"
-
-#~ msgid "Select multiple rules to apply or clear highlight color together"
-#~ msgstr "可选择多条规则同时应用或清除高亮颜色"
-
-#~ msgid "no color"
-#~ msgstr "无颜色"
-
-#~ msgid "Enable find rule"
-#~ msgstr "启用查找规则"
-
-#~ msgid ""
-#~ "Plain text searches exact text. Lambda"
-#~ " receives text and may return bool,"
-#~ " string, list, or (start, end) "
-#~ "ranges."
-#~ msgstr "普通文本按原文匹配。Lambda 接收 text，可返回布尔值、字符串、列表或 (start, end) 范围。"
-
-#~ msgid "Use a lambda like: lambda text: re.findall(r'ERR\\d+', text)"
-#~ msgstr "使用类似的 lambda：lambda text: re.findall(r'ERR\\d+', text)"
-
-#~ msgid "Lambda expression error"
-#~ msgstr "Lambda 表达式错误"
-
-#~ msgid "Lambda expression must return a callable"
-#~ msgstr "Lambda 表达式必须返回可调用对象"
-
-#~ msgid "Check result"
-#~ msgstr "校验结果"
-
-#~ msgid "Hex bytes"
-#~ msgstr "十六进制字节"
-
-#~ msgid "UTF-8 text"
-#~ msgstr "UTF-8文本"
-
-#~ msgid "Choose whether the input is hex bytes like 01 02 AF or plain text"
-#~ msgstr "选择输入为 01 02 AF 这样的十六进制字节，或普通文本"
-
-#~ msgid "Append byte"
-#~ msgstr "追加字节"
-
-#~ msgid "Input mode"
-#~ msgstr "输入模式"
-
-#~ msgid "Append bytes"
-#~ msgstr "追加字节"
-
-#~ msgid "Input RGB color"
-#~ msgstr "输入RGB颜色"
-
-#~ msgid "Converted color values"
-#~ msgstr "转换后的颜色值"
-
-#~ msgid "MD5 result"
-#~ msgstr "MD5结果"
-
-#~ msgid "Knowledge"
-#~ msgstr "小知识"
-
-#~ msgid "RGB color"
-#~ msgstr "RGB颜色"
-
-#~ msgid ""
-#~ "Convert common RGB color formats. "
-#~ "Supports #RRGGBB, short #RGB, rgb(r,g,b), "
-#~ "comma separated RGB, and decimal color"
-#~ " values."
-#~ msgstr "转换常见RGB颜色格式，支持#RRGGBB、#RGB简写、rgb(r,g,b)、逗号分隔RGB和十进制颜色值。"
-
-#~ msgid "Screen pick"
-#~ msgstr "屏幕取色"
-
-#~ msgid "Palette"
-#~ msgstr "色盘"
-
-#~ msgid "RGB tuple"
-#~ msgstr "RGB元组"
-
-#~ msgid "Decimal"
-#~ msgstr "十进制"
-
-#~ msgid "Move cursor to color"
-#~ msgstr "移动鼠标到目标颜色"
-
-#~ msgid "Color and bit operations"
-#~ msgstr "颜色与位操作"
-
-#~ msgid "Store current value to memory"
-#~ msgstr "将当前值存入内存"
-
-#~ msgid "Value stored to memory"
-#~ msgstr "数值已存入内存"
-
-#~ msgid "Enable saving received and recorded sent data to a log file"
-#~ msgstr "将接收数据和记录的发送数据保存到日志文件"
-
-#~ msgid "Timed log duration error, format: HH:MM:SS"
-#~ msgstr "定时日志时长错误，格式：HH:MM:SS\"\\"
-
-#~ msgid "Save log"
-#~ msgstr "保存日志"
