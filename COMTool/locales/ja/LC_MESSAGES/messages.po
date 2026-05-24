@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-05-21 16:41+0800\n"
+"POT-Creation-Date: 2026-05-24 11:24+0800\n"
 "PO-Revision-Date: 2021-12-04 15:20+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -18,751 +18,860 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: COMTool/helpAbout.py:40
+#: helpAbout.py:40
 msgid "Config path"
 msgstr "設定ファイルのパス"
 
-#: COMTool/helpAbout.py:42
+#: helpAbout.py:42
 msgid "Old config backup in"
 msgstr "古い設定ファイルのバックアップ"
 
-#: COMTool/helpAbout.py:44
+#: helpAbout.py:44
 msgid "COMTool is a Open source project create by"
 msgstr "COMToolは、によって作成されたオープンソースプロジェクトです。"
 
-#: COMTool/helpAbout.py:46
+#: helpAbout.py:46
 msgid "License"
 msgstr "ライセンス"
 
-#: COMTool/helpAbout.py:47
+#: helpAbout.py:47
 msgid "Welcome to improve it together and add plugins"
 msgstr "一緒に改善することを歓迎します"
 
-#: COMTool/helpAbout.py:48
+#: helpAbout.py:48
 msgid "See more details on"
 msgstr "詳細はこちら"
 
-#: COMTool/helpAbout.py:49
+#: helpAbout.py:49
 msgid "and get latest version at"
 msgstr "最新版はこちら"
 
-#: COMTool/helpAbout.py:50
+#: helpAbout.py:50
 msgid "page"
 msgstr "ページ"
 
-#: COMTool/helpAbout.py:51
+#: helpAbout.py:51
 msgid "Have problem? see"
 msgstr "問題がありますか？こちら"
 
-#: COMTool/helpAbout.py:52
+#: helpAbout.py:52
 msgid "QQ group for plugin development discussion"
 msgstr "プラグイン開発の議論についてのQQグループ"
 
-#: COMTool/helpAbout.py:53
+#: helpAbout.py:53
 msgid "You can buy me half a cup of coffee if this software helpes you"
 msgstr "このソフトウェアを使っていただくと、私に半つのコーヒーを買います"
 
-#: COMTool/main2.py:92
+#: main2.py:92
 msgid "Load plugin from file"
 msgstr "ファイルからプラグインを読み込む"
 
-#: COMTool/main2.py:213
+#: main2.py:213
 msgid ", Double click to detach as a window, right click to rename"
 msgstr "、ダブルクリックでウィンドウ化、右クリックで名前変更"
 
-#: COMTool/main2.py:216 COMTool/main2.py:218
+#: main2.py:216 main2.py:218
 msgid "Page"
 msgstr "ページ"
 
-#: COMTool/main2.py:250 COMTool/plugins/base.py:79
+#: main2.py:250 plugins/base.py:79
 msgid "Connected"
 msgstr "接続済み"
 
-#: COMTool/main2.py:250 COMTool/plugins/base.py:85
+#: main2.py:250 plugins/base.py:85
 msgid "Connection lose"
 msgstr "接続ロスト"
 
-#: COMTool/main2.py:250
+#: main2.py:250
 msgid "Disconnected"
 msgstr "未接続"
 
-#: COMTool/conn/conn_serial.py:338 COMTool/conn/conn_ssh.py:296 COMTool/conn/conn_tcp_udp.py:430
-#: COMTool/main2.py:276 COMTool/main2.py:326 COMTool/main2.py:481 COMTool/main2.py:486
-#: COMTool/main2.py:890 COMTool/pluginItems.py:202 COMTool/pluginItems.py:205
-#: COMTool/pluginItems.py:319 COMTool/pluginItems.py:331 COMTool/plugins/base.py:194
-#: COMTool/plugins/base.py:199 COMTool/plugins/base.py:215 COMTool/plugins/base.py:224
-#: COMTool/plugins/dbg.py:1854 COMTool/plugins/dbg.py:1863 COMTool/plugins/dbg.py:1891
-#: COMTool/plugins/dbg.py:2462 COMTool/plugins/dbg.py:2476 COMTool/plugins/dbg.py:2486
-#: COMTool/plugins/dbg.py:2509 COMTool/plugins/dbg.py:2576 COMTool/plugins/dbg.py:2584
-#: COMTool/plugins/graph.py:259 COMTool/plugins/graph_widget_metasenselite.py:591
-#: COMTool/plugins/graph_widgets.py:167 COMTool/plugins/myplugin.py:62
-#: COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70 COMTool/plugins/protocol.py:488
-#: COMTool/plugins/protocol.py:515 COMTool/plugins/protocol.py:524 COMTool/plugins/protocol.py:587
+#: conn/conn_serial.py:338 conn/conn_ssh.py:296 conn/conn_tcp_udp.py:430
+#: main2.py:276 main2.py:326 main2.py:481 main2.py:486 main2.py:892
+#: pluginItems.py:203 pluginItems.py:206 pluginItems.py:320 pluginItems.py:332
+#: plugins/base.py:200 plugins/base.py:205 plugins/base.py:221
+#: plugins/base.py:230 plugins/dbg.py:239 plugins/dbg.py:2033
+#: plugins/dbg.py:2042 plugins/dbg.py:2243 plugins/dbg.py:2249
+#: plugins/dbg.py:2899 plugins/dbg.py:2913 plugins/dbg.py:2923
+#: plugins/dbg.py:2946 plugins/dbg.py:3013 plugins/dbg.py:3021
+#: plugins/graph.py:259 plugins/graph_widget_metasenselite.py:591
+#: plugins/graph_widgets.py:167 plugins/myplugin.py:62
+#: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
+#: plugins/protocol.py:488 plugins/protocol.py:515 plugins/protocol.py:524
+#: plugins/protocol.py:587
 msgid "Error"
 msgstr "間違い"
 
-#: COMTool/main2.py:276
+#: main2.py:276
 msgid "Load plugin failed"
 msgstr "プラグインの読み込みに失敗しました"
 
-#: COMTool/main2.py:297
+#: main2.py:297
 msgid "Load plugin fail"
 msgstr "プラグインの読み込みに失敗しました"
 
-#: COMTool/conn/conn_ssh.py:239 COMTool/main2.py:320 COMTool/plugins/dbg.py:1976
-#: COMTool/plugins/dbg.py:1990
+#: conn/conn_ssh.py:239 main2.py:320 plugins/dbg.py:2418 plugins/dbg.py:2432
 msgid "Select file"
 msgstr "ファイルを選択"
 
-#: COMTool/main2.py:322
+#: main2.py:322
 msgid "python script (*.py)"
 msgstr "Python スクリプト (*.py)"
 
-#: COMTool/main2.py:358
+#: main2.py:358
 msgid "Show or hide settings panel"
 msgstr "設定パネルを表示または非表示"
 
-#: COMTool/main2.py:359
+#: main2.py:359
 msgid "Switch skin"
 msgstr "スキンを切り替え"
 
-#: COMTool/main2.py:360
+#: main2.py:360
 msgid "Switch language"
 msgstr "言語を切り替え"
 
-#: COMTool/main2.py:361 COMTool/main2.py:777
+#: main2.py:361 main2.py:779
 msgid "About"
 msgstr "このソフトウェアについて"
 
-#: COMTool/main2.py:362
+#: main2.py:362
 msgid "Show or hide custom send panel"
 msgstr "カスタム送信パネルを表示または非表示"
 
-#: COMTool/main2.py:363
+#: main2.py:363
 msgid "Text encoding for send and receive data"
 msgstr "送受信データの文字エンコード"
 
-#: COMTool/main2.py:366
+#: main2.py:366
 msgid "Add plugin page"
 msgstr "プラグインページを追加"
 
-#: COMTool/main2.py:427
+#: main2.py:427
 msgid "New Window"
 msgstr "新しいウィンドウ"
 
-#: COMTool/main2.py:513 COMTool/main2.py:522
+#: main2.py:513 main2.py:522
 msgid "Rename"
 msgstr "名前変更"
 
-#: COMTool/main2.py:522
+#: main2.py:522 plugins/dbg.py:1070 plugins/dbg.py:2382
 msgid "Page name"
 msgstr "ページ名"
 
-#: COMTool/main2.py:529 COMTool/pluginItems.py:208 COMTool/plugins/dbg.py:1784
-#: COMTool/plugins/dbg.py:2489 COMTool/plugins/protocol.py:609 COMTool/plugins/protocol.py:631
+#: main2.py:529 pluginItems.py:209 plugins/dbg.py:1963 plugins/dbg.py:2162
+#: plugins/dbg.py:2239 plugins/dbg.py:2926 plugins/protocol.py:609
+#: plugins/protocol.py:631
 msgid "Warning"
 msgstr "警告"
 
-#: COMTool/main2.py:529
+#: main2.py:529
 msgid "Page name already exists"
 msgstr "ページ名は既に存在します"
 
-#: COMTool/main2.py:544
+#: main2.py:544
 msgid "Save page?"
 msgstr "ページを保存しますか？"
 
-#: COMTool/main2.py:545
+#: main2.py:545
 msgid "Save this page before closing it?"
 msgstr "閉じる前にこのページを保存しますか？"
 
-#: COMTool/main2.py:607 COMTool/main2.py:616
+#: main2.py:607 main2.py:616
 msgid "Restart now?"
 msgstr "今すぐ再起動しますか？"
 
-#: COMTool/main2.py:608
+#: main2.py:608
 msgid "language changed to: "
 msgstr "言語が次のように変更されました："
 
-#: COMTool/main2.py:608
+#: main2.py:608
 msgid "Restart software to take effect now?"
 msgstr "ソフトウェアを再起動して今すぐ有効にしますか？"
 
-#: COMTool/main2.py:663 COMTool/main2.py:664
+#: main2.py:663 main2.py:664
 msgid "Closing ..."
 msgstr "閉じています..."
 
-#: COMTool/main2.py:799
+#: main2.py:801
 msgid "New versioin detected, please click learn more to download"
 msgstr "新しいバージョンが検出されました。詳しくは「もっと詳しく」をクリックしてダウンロードしてください"
 
-#: COMTool/main2.py:800
+#: main2.py:802
 msgid "Learn More"
 msgstr "もっと詳しく知る"
 
-#: COMTool/main2.py:801
+#: main2.py:803
 msgid "Skip this version"
 msgstr "このバージョンをスキップ"
 
-#: COMTool/main2.py:802
+#: main2.py:804
 msgid "Remind me next time"
 msgstr "次回リマインダー"
 
-#: COMTool/main2.py:803
+#: main2.py:805
 msgid "Need update"
 msgstr "更新が必要"
 
-#: COMTool/pluginItems.py:59
+#: pluginItems.py:59
 msgid "version not found in config of plugin:"
 msgstr "プラグインの設定ファイルにバージョンがありません："
 
-#: COMTool/conn/conn_tcp_udp.py:569 COMTool/pluginItems.py:118
+#: conn/conn_tcp_udp.py:569 pluginItems.py:118
 msgid "Connection"
 msgstr "接続"
 
-#: COMTool/pluginItems.py:142 COMTool/pluginItems.py:195
+#: pluginItems.py:143 pluginItems.py:196
 msgid "Import page"
 msgstr "ページをインポート"
 
-#: COMTool/pluginItems.py:143 COMTool/pluginItems.py:180
+#: pluginItems.py:144 pluginItems.py:181
 msgid "Save page"
 msgstr "ページを保存"
 
-#: COMTool/pluginItems.py:144
-msgid "Import this page name, connection settings, and plugin settings from a page file"
+#: pluginItems.py:145
+msgid ""
+"Import this page name, connection settings, and plugin settings from a "
+"page file"
 msgstr "ページファイルからページ名、接続設定、プラグイン設定を読み込みます"
 
-#: COMTool/pluginItems.py:145
-msgid "Save this page name, connection settings, and plugin settings to a page file"
+#: pluginItems.py:146
+msgid ""
+"Save this page name, connection settings, and plugin settings to a page "
+"file"
 msgstr "ページ名、接続設定、プラグイン設定をページファイルに保存します"
 
-#: COMTool/pluginItems.py:182 COMTool/pluginItems.py:197
+#: pluginItems.py:183 pluginItems.py:198
 msgid "json file (*.json);;config file (*.conf);;All Files (*)"
 msgstr "jsonファイル (*.json);;設定ファイル (*.conf);;すべてのファイル (*)"
 
-#: COMTool/pluginItems.py:202
-msgid "Not support load global config file, you can copy config file mannually to "
-msgstr "Not support load global config file, you can copy config file mannually to "
+#: pluginItems.py:203
+msgid ""
+"Not support load global config file, you can copy config file mannually "
+"to "
+msgstr ""
+"Not support load global config file, you can copy config file mannually "
+"to "
 
-#: COMTool/pluginItems.py:205
+#: pluginItems.py:206
 msgid "Config is not for this plugin, config is for plugin:"
 msgstr "Config is not for this plugin, config is for plugin:"
 
-#: COMTool/pluginItems.py:209
+#: pluginItems.py:210
 msgid "Config version not same, plugin config version:"
 msgstr "Config version not same, plugin config version:"
 
-#: COMTool/pluginItems.py:210
+#: pluginItems.py:211
 msgid "now"
 msgstr "now"
 
-#: COMTool/pluginItems.py:211
-msgid "this maybe lead to some problem, if happened, please remove it manually from config file"
-msgstr "this maybe lead to some problem, if happened, please remove it manually from config file"
+#: pluginItems.py:212
+msgid ""
+"this maybe lead to some problem, if happened, please remove it manually "
+"from config file"
+msgstr ""
+"this maybe lead to some problem, if happened, please remove it manually "
+"from config file"
 
-#: COMTool/pluginItems.py:234
+#: pluginItems.py:235
 msgid "Restart to load config?"
 msgstr "Restart to load config?"
 
-#: COMTool/pluginItems.py:270
+#: pluginItems.py:271
 msgid "Change connection, auto close old connection"
 msgstr "Change connection, auto close old connection"
 
-#: COMTool/pluginItems.py:319
+#: pluginItems.py:320
 msgid "Open file failed!"
 msgstr "ファイルを開くことができませんでした！"
 
-#: COMTool/widgets.py:576 COMTool/widgets.py:597
+#: widgets.py:576 widgets.py:597
 msgid "Received"
 msgstr "受信"
 
-#: COMTool/widgets.py:576 COMTool/widgets.py:577 COMTool/widgets.py:597 COMTool/widgets.py:604
+#: widgets.py:576 widgets.py:577 widgets.py:597 widgets.py:604
 msgid "bytes"
 msgstr "バイト"
 
-#: COMTool/widgets.py:577 COMTool/widgets.py:604
+#: widgets.py:577 widgets.py:604
 msgid "Sent"
 msgstr "Sent"
 
-#: COMTool/widgets.py:629
+#: widgets.py:629
 msgid "Help"
 msgstr "Help"
 
-#: COMTool/widgets.py:678
+#: widgets.py:678
 msgid "Input remark"
 msgstr "Input remark"
 
-#: COMTool/widgets.py:688
+#: widgets.py:688
 msgid "Input value"
 msgstr "Input value"
 
-#: COMTool/plugins/dbg.py:2328 COMTool/widgets.py:691 COMTool/widgets.py:727
+#: plugins/dbg.py:2765 widgets.py:691 widgets.py:727
 msgid "Select icon"
 msgstr "Select icon"
 
-#: COMTool/plugins/dbg.py:1075 COMTool/plugins/protocol.py:277 COMTool/widgets.py:698
-#: COMTool/widgets.py:768
+#: plugins/dbg.py:1244 plugins/protocol.py:277 widgets.py:698 widgets.py:768
 msgid "Record"
 msgstr "記録"
 
-#: COMTool/plugins/graph_widgets.py:392 COMTool/widgets.py:701
+#: plugins/graph_widgets.py:392 widgets.py:701
 msgid "Shortcut"
 msgstr "Shortcut"
 
-#: COMTool/widgets.py:704
+#: widgets.py:704
 msgid "Press key to record, or click Cancel"
 msgstr "Press key to record, or click Cancel"
 
-#: COMTool/plugins/dbg.py:1832 COMTool/plugins/dbg.py:1919 COMTool/plugins/dbg.py:2328
-#: COMTool/plugins/dbg.py:2460 COMTool/plugins/dbg.py:2474 COMTool/widgets.py:708
-#: COMTool/widgets.py:727
+#: plugins/dbg.py:2011 plugins/dbg.py:2127 plugins/dbg.py:2765
+#: plugins/dbg.py:2897 plugins/dbg.py:2911 widgets.py:708 widgets.py:727
 msgid "OK"
 msgstr "OK"
 
-#: COMTool/widgets.py:709 COMTool/widgets.py:754
+#: widgets.py:709 widgets.py:754
 msgid "Cancel"
 msgstr "Cancel"
 
-#: COMTool/conn/conn_serial.py:48
+#: conn/conn_serial.py:48
 msgid "Serial"
 msgstr "シリアル"
 
-#: COMTool/conn/conn_serial.py:82
+#: conn/conn_serial.py:82
 msgid "Custom, input baudrate"
 msgstr "カスタム、ボーレートを入力"
 
-#: COMTool/conn/conn_serial.py:114 COMTool/conn/conn_ssh.py:151 COMTool/conn/conn_tcp_udp.py:115
+#: conn/conn_serial.py:114 conn/conn_ssh.py:151 conn/conn_tcp_udp.py:115
 msgid "Port"
 msgstr "ポート"
 
-#: COMTool/conn/conn_serial.py:115
+#: conn/conn_serial.py:115
 msgid "Baudrate"
 msgstr "ボーレート"
 
-#: COMTool/conn/conn_serial.py:116
+#: conn/conn_serial.py:116
 msgid "DataBytes"
 msgstr "データ文字节"
 
-#: COMTool/conn/conn_serial.py:117
+#: conn/conn_serial.py:117
 msgid "Parity"
 msgstr "パリティ"
 
-#: COMTool/conn/conn_serial.py:118
+#: conn/conn_serial.py:118
 msgid "Stopbits"
 msgstr "ストップビット"
 
-#: COMTool/conn/conn_serial.py:119
+#: conn/conn_serial.py:119
 msgid "Flow control"
 msgstr "フロー制御"
 
-#: COMTool/conn/conn_serial.py:153 COMTool/conn/conn_serial.py:154
+#: conn/conn_serial.py:153 conn/conn_serial.py:154
 msgid "Check to enable(usually output low level)"
 msgstr "チェックして有効にします（通常は低レベルを出力します）"
 
-#: COMTool/conn/conn_serial.py:155 COMTool/conn/conn_serial.py:302 COMTool/conn/conn_serial.py:394
-#: COMTool/conn/conn_ssh.py:165 COMTool/conn/conn_ssh.py:251 COMTool/conn/conn_ssh.py:339
-#: COMTool/conn/conn_tcp_udp.py:140 COMTool/conn/conn_tcp_udp.py:343 COMTool/conn/conn_tcp_udp.py:462
+#: conn/conn_serial.py:155 conn/conn_serial.py:302 conn/conn_serial.py:394
+#: conn/conn_ssh.py:165 conn/conn_ssh.py:251 conn/conn_ssh.py:339
+#: conn/conn_tcp_udp.py:140 conn/conn_tcp_udp.py:343 conn/conn_tcp_udp.py:462
 msgid "OPEN"
 msgstr "打込み"
 
-#: COMTool/conn/conn_serial.py:208 COMTool/conn/conn_serial.py:337
+#: conn/conn_serial.py:208 conn/conn_serial.py:337
 msgid "Open Failed"
 msgstr "開くことができませんでした"
 
-#: COMTool/conn/conn_serial.py:397 COMTool/conn/conn_serial.py:400 COMTool/conn/conn_ssh.py:342
-#: COMTool/conn/conn_ssh.py:345 COMTool/conn/conn_tcp_udp.py:465 COMTool/conn/conn_tcp_udp.py:468
+#: conn/conn_serial.py:397 conn/conn_serial.py:400 conn/conn_ssh.py:342
+#: conn/conn_ssh.py:345 conn/conn_tcp_udp.py:465 conn/conn_tcp_udp.py:468
 msgid "CLOSE"
 msgstr "関闭"
 
-#: COMTool/conn/conn_serial.py:474 COMTool/conn/conn_ssh.py:368 COMTool/conn/conn_tcp_udp.py:525
+#: conn/conn_serial.py:474 conn/conn_ssh.py:368 conn/conn_tcp_udp.py:525
 msgid "Reconnected"
 msgstr "Reconnected"
 
-#: COMTool/conn/conn_serial.py:505 COMTool/conn/conn_ssh.py:413 COMTool/conn/conn_tcp_udp.py:588
+#: conn/conn_serial.py:505 conn/conn_ssh.py:413 conn/conn_tcp_udp.py:588
 msgid "Connection lose!"
 msgstr "接続が失われます！"
 
-#: COMTool/conn/conn_ssh.py:150
+#: conn/conn_ssh.py:150
 msgid "Host"
 msgstr "Host"
 
-#: COMTool/conn/conn_ssh.py:152
+#: conn/conn_ssh.py:152
 msgid "User"
 msgstr "User"
 
-#: COMTool/conn/conn_ssh.py:153
+#: conn/conn_ssh.py:153
 msgid "Password"
 msgstr "Password"
 
-#: COMTool/conn/conn_ssh.py:154
+#: conn/conn_ssh.py:154
 msgid "SSH key"
 msgstr "SSH key"
 
-#: COMTool/conn/conn_ssh.py:155
+#: conn/conn_ssh.py:155
 msgid "Saved"
 msgstr "Saved"
 
-#: COMTool/conn/conn_ssh.py:163
+#: conn/conn_ssh.py:163
 msgid "File"
 msgstr "File"
 
-#: COMTool/conn/conn_ssh.py:222
+#: conn/conn_ssh.py:222
 msgid "Input error"
 msgstr "入力エラー"
 
-#: COMTool/conn/conn_ssh.py:222
+#: conn/conn_ssh.py:222
 msgid "Input"
 msgstr "入力"
 
-#: COMTool/conn/conn_ssh.py:222
+#: conn/conn_ssh.py:222
 msgid "error"
 msgstr "エラー"
 
-#: COMTool/conn/conn_ssh.py:241 COMTool/plugins/dbg.py:1978
+#: conn/conn_ssh.py:241 plugins/dbg.py:2420
 msgid "All Files (*)"
 msgstr "すべてのファイル (*)"
 
-#: COMTool/conn/conn_ssh.py:295 COMTool/conn/conn_tcp_udp.py:429
+#: conn/conn_ssh.py:295 conn/conn_tcp_udp.py:429
 msgid "Connect Failed"
 msgstr "Connect Failed"
 
-#: COMTool/conn/conn_ssh.py:306
+#: conn/conn_ssh.py:306
 msgid "Config error"
 msgstr "Config error"
 
-#: COMTool/conn/conn_ssh.py:333
+#: conn/conn_ssh.py:333
 msgid "SSH pub key file path error"
 msgstr "SSH pub key file path error"
 
-#: COMTool/conn/conn_ssh.py:395 COMTool/conn/conn_tcp_udp.py:546
+#: conn/conn_ssh.py:395 conn/conn_tcp_udp.py:546
 msgid "Closed by peer"
 msgstr "Closed by peer"
 
-#: COMTool/conn/conn_ssh.py:400 COMTool/conn/conn_tcp_udp.py:573
+#: conn/conn_ssh.py:400 conn/conn_tcp_udp.py:573
 msgid "Connection closed!"
 msgstr "Connection closed!"
 
-#: COMTool/conn/conn_tcp_udp.py:108
+#: conn/conn_tcp_udp.py:108
 msgid "Protocol"
 msgstr "プロトコル"
 
-#: COMTool/conn/conn_tcp_udp.py:109
+#: conn/conn_tcp_udp.py:109 plugins/devtools.py:1984
 msgid "Mode"
 msgstr "モード"
 
-#: COMTool/conn/conn_tcp_udp.py:110
+#: conn/conn_tcp_udp.py:110
 msgid "Target"
 msgstr "Target"
 
-#: COMTool/conn/conn_tcp_udp.py:112
+#: conn/conn_tcp_udp.py:112
 msgid "Local"
 msgstr "ローカル"
 
-#: COMTool/conn/conn_tcp_udp.py:135 COMTool/conn/conn_tcp_udp.py:263
+#: conn/conn_tcp_udp.py:135 conn/conn_tcp_udp.py:263
 msgid "All clients"
 msgstr "All clients"
 
-#: COMTool/conn/conn_tcp_udp.py:136
+#: conn/conn_tcp_udp.py:136
 msgid "Disconnect"
 msgstr "Disconnect"
 
-#: COMTool/conn/conn_tcp_udp.py:137
+#: conn/conn_tcp_udp.py:137
 msgid "Auto reconnect"
 msgstr "Auto reconnect"
 
-#: COMTool/conn/conn_tcp_udp.py:386 COMTool/conn/conn_tcp_udp.py:517 COMTool/conn/conn_tcp_udp.py:616
+#: conn/conn_tcp_udp.py:386 conn/conn_tcp_udp.py:517 conn/conn_tcp_udp.py:616
 msgid "Target error"
 msgstr "Target error"
 
-#: COMTool/conn/conn_tcp_udp.py:493
+#: conn/conn_tcp_udp.py:493
 msgid "Client connected:"
 msgstr "Client connected:"
 
-#: COMTool/conn/conn_tcp_udp.py:569
+#: conn/conn_tcp_udp.py:569
 msgid "closed!"
 msgstr "closed!"
 
-#: COMTool/plugins/base.py:81
+#: plugins/base.py:81
 msgid "Closed"
 msgstr "クローズ"
 
-#: COMTool/plugins/base.py:83
+#: plugins/base.py:83
 msgid "Connecting"
 msgstr "Connecting"
 
-#: COMTool/plugins/base.py:215
+#: plugins/base.py:221 plugins/devtools.py:562
 msgid "Format error, should be like 00 01 02 03"
 msgstr "フォーマットエラー、00 01 02 03 のようになります"
 
-#: COMTool/plugins/base.py:224
+#: plugins/base.py:230
 msgid "Escape is on, but escape error:"
 msgstr "エスケープはオンですが、エスケープエラー："
 
-#: COMTool/plugins/dbg.py:310 COMTool/plugins/dbg.py:591
+#: plugins/dbg.py:158 plugins/dbg.py:1378
+msgid "More log settings"
+msgstr "ログ詳細設定"
+
+#: plugins/dbg.py:166 plugins/dbg.py:2171
+msgid "Timed log"
+msgstr "時間指定ログ"
+
+#: plugins/dbg.py:167
+msgid "Stop saving log automatically after the configured duration"
+msgstr "設定時間に達したらログ保存を自動停止します"
+
+#: plugins/dbg.py:168
+msgid "Append log information at stop"
+msgstr "停止時にログ情報を追加"
+
+#: plugins/dbg.py:169
+msgid ""
+"Append start time, pause history, log size, and connection settings to "
+"the end of the log"
+msgstr "開始時刻、一時停止履歴、ログサイズ、接続設定をログ末尾に追加します"
+
+#: plugins/dbg.py:184
+msgid "Only numbers are allowed"
+msgstr "数字のみ入力できます"
+
+#: plugins/dbg.py:192
+msgid "Hours"
+msgstr "時"
+
+#: plugins/dbg.py:194
+msgid "Minutes"
+msgstr "分"
+
+#: plugins/dbg.py:196
+msgid "Seconds"
+msgstr "秒"
+
+#: plugins/dbg.py:199
+msgid "Append information items"
+msgstr "追加情報項目"
+
+#: plugins/dbg.py:239
+msgid "Timed log duration must be greater than zero"
+msgstr "タイマー記録時間は 0 より大きくしてください"
+
+#: plugins/dbg.py:407 plugins/dbg.py:698
 msgid "Advanced find settings"
 msgstr "詳細検索設定"
 
-#: COMTool/plugins/dbg.py:321
+#: plugins/dbg.py:418
 msgid "Find next"
 msgstr "次を検索"
 
-#: COMTool/plugins/dbg.py:322
+#: plugins/dbg.py:419
 msgid "Jump to the next match for this rule"
 msgstr "このルールの次の一致へ移動"
 
-#: COMTool/plugins/dbg.py:323
+#: plugins/dbg.py:420 plugins/devtools.py:1629
 msgid "Count"
 msgstr "カウント"
 
-#: COMTool/plugins/dbg.py:324
+#: plugins/dbg.py:421
 msgid "Count matches for this rule in the receive buffer"
 msgstr "受信バッファ内のこのルールの一致数を数える"
 
-#: COMTool/plugins/dbg.py:331
+#: plugins/dbg.py:428
 msgid "Find options"
 msgstr "検索オプション"
 
-#: COMTool/plugins/dbg.py:334
+#: plugins/dbg.py:431
 msgid "Reverse find"
 msgstr "逆方向検索"
 
-#: COMTool/plugins/dbg.py:335
+#: plugins/dbg.py:432
 msgid "Search upward when jumping to the next match"
 msgstr "次の一致へ移動するとき上方向に検索"
 
-#: COMTool/plugins/dbg.py:336
+#: plugins/dbg.py:433
 msgid "Whole word"
 msgstr "単語全体"
 
-#: COMTool/plugins/dbg.py:337
+#: plugins/dbg.py:434
 msgid "Match only whole words"
 msgstr "単語全体のみ一致"
 
-#: COMTool/plugins/dbg.py:338
+#: plugins/dbg.py:435
 msgid "Case sensitive"
 msgstr "大文字小文字を区別"
 
-#: COMTool/plugins/dbg.py:339
+#: plugins/dbg.py:436
 msgid "Match uppercase and lowercase exactly"
 msgstr "大文字と小文字を厳密に一致"
 
-#: COMTool/plugins/dbg.py:340
+#: plugins/dbg.py:437
 msgid "Wrap around"
 msgstr "循環検索"
 
-#: COMTool/plugins/dbg.py:341
+#: plugins/dbg.py:438
 msgid "Continue from the other end when no match is found"
 msgstr "一致がない場合は反対側から続行"
 
-#: COMTool/plugins/dbg.py:342
+#: plugins/dbg.py:439
 msgid "Regular expression"
 msgstr "正規表現"
 
-#: COMTool/plugins/dbg.py:343
+#: plugins/dbg.py:440
 msgid "Treat the find text as a Python regular expression"
 msgstr "検索テキストを Python 正規表現として扱う"
 
-#: COMTool/plugins/dbg.py:344
+#: plugins/dbg.py:441
 msgid "Dot matches newline"
 msgstr "ドットで改行に一致"
 
-#: COMTool/plugins/dbg.py:345
+#: plugins/dbg.py:442
 msgid "Let '.' in regular expressions match line breaks"
 msgstr "正規表現の '.' が改行に一致するようにする"
 
-#: COMTool/plugins/dbg.py:356 COMTool/plugins/dbg.py:495
+#: plugins/dbg.py:453 plugins/dbg.py:602
 msgid "Close"
 msgstr "閉じる"
 
-#: COMTool/plugins/dbg.py:379
+#: plugins/dbg.py:476
 msgid "No find rule selected"
 msgstr "検索ルールが選択されていません"
 
-#: COMTool/plugins/dbg.py:404 COMTool/plugins/dbg.py:585
+#: plugins/dbg.py:501 plugins/dbg.py:692
 msgid "Find text"
 msgstr "検索テキスト"
 
-#: COMTool/plugins/dbg.py:404
+#: plugins/dbg.py:501
 msgid "Empty"
 msgstr "空"
 
-#: COMTool/plugins/dbg.py:440
+#: plugins/dbg.py:543
 msgid "Matches"
 msgstr "一致数"
 
-#: COMTool/plugins/dbg.py:451
+#: plugins/dbg.py:558
 msgid "Find in receive area"
 msgstr "受信エリアで検索"
 
-#: COMTool/plugins/dbg.py:457
+#: plugins/dbg.py:564
 msgid "Find rules (top rules have higher priority)"
 msgstr "検索ルール（上ほど優先度が高い）"
 
-#: COMTool/plugins/dbg.py:460
+#: plugins/dbg.py:567
 msgid "Select all"
 msgstr "すべて選択"
 
-#: COMTool/plugins/dbg.py:461
+#: plugins/dbg.py:568
 msgid "Select all find rules for batch actions"
 msgstr "一括操作用にすべての検索ルールを選択"
 
-#: COMTool/plugins/dbg.py:462
+#: plugins/dbg.py:569
 msgid "Highlight color"
 msgstr "ハイライト色"
 
-#: COMTool/plugins/dbg.py:463
+#: plugins/dbg.py:570
 msgid "Choose highlight color for new rules or selected rules"
 msgstr "新規ルールまたは選択ルールのハイライト色を選択"
 
-#: COMTool/plugins/dbg.py:465
+#: plugins/dbg.py:572
 msgid "Apply color"
 msgstr "色を適用"
 
-#: COMTool/plugins/dbg.py:466
+#: plugins/dbg.py:573
 msgid "Clear color"
 msgstr "色をクリア"
 
-#: COMTool/plugins/dbg.py:467
+#: plugins/dbg.py:574
 msgid "Delete selected"
 msgstr "選択を削除"
 
-#: COMTool/plugins/dbg.py:468
+#: plugins/dbg.py:575
 msgid "Apply the current highlight color to all selected rules"
 msgstr "現在のハイライト色を選択ルールすべてに適用"
 
-#: COMTool/plugins/dbg.py:469
+#: plugins/dbg.py:576
 msgid "Remove highlight color from all selected rules"
 msgstr "選択ルールすべてからハイライト色を削除"
 
-#: COMTool/plugins/dbg.py:470
+#: plugins/dbg.py:577
 msgid "Delete all selected find rules"
 msgstr "選択した検索ルールをすべて削除"
 
-#: COMTool/plugins/dbg.py:493
+#: plugins/dbg.py:600
 msgid "Add find rule"
 msgstr "検索ルールを追加"
 
-#: COMTool/plugins/dbg.py:496
+#: plugins/dbg.py:603
 msgid "Close find window"
 msgstr "検索ウィンドウを閉じる"
 
-#: COMTool/plugins/dbg.py:520 COMTool/plugins/dbg.py:703 COMTool/plugins/dbg.py:1648
-#: COMTool/plugins/dbg.py:1662 COMTool/plugins/dbg.py:2259 COMTool/plugins/dbg.py:2315
+#: plugins/dbg.py:627 plugins/dbg.py:811 plugins/dbg.py:1827
+#: plugins/dbg.py:1841 plugins/dbg.py:2696 plugins/dbg.py:2752
 msgid "Select color"
 msgstr "色を選択"
 
-#: COMTool/plugins/dbg.py:575
+#: plugins/dbg.py:682
 msgid "Select"
 msgstr "選択"
 
-#: COMTool/plugins/dbg.py:576
+#: plugins/dbg.py:683
 msgid "Select this rule for batch edit actions"
 msgstr "一括編集用にこのルールを選択"
 
-#: COMTool/plugins/dbg.py:579
+#: plugins/dbg.py:686
 msgid "Drag before another find rule to change priority"
 msgstr "別の検索ルールの前にドラッグして優先度を変更"
 
-#: COMTool/plugins/dbg.py:581 COMTool/plugins/graph_widgets.py:55
+#: plugins/dbg.py:688 plugins/graph_widgets.py:55
 msgid "Enable"
 msgstr "Enable"
 
-#: COMTool/plugins/dbg.py:582
+#: plugins/dbg.py:689
 msgid "Enable this rule for highlighting, navigation, and scrollbar markers"
 msgstr "ハイライト、移動、スクロールバーマーカーにこのルールを有効化"
 
-#: COMTool/plugins/dbg.py:586
-msgid "Plain text searches exact text. Use advanced settings for regular expressions."
+#: plugins/dbg.py:693
+msgid ""
+"Plain text searches exact text. Use advanced settings for regular "
+"expressions."
 msgstr "通常テキストは完全一致で検索します。正規表現は詳細設定で有効にしてください。"
 
-#: COMTool/plugins/dbg.py:588
+#: plugins/dbg.py:695
 msgid "Set highlight color, right click to clear"
 msgstr "ハイライト色を設定、右クリックでクリア"
 
-#: COMTool/plugins/dbg.py:594
+#: plugins/dbg.py:701
 msgid "Delete this find rule"
 msgstr "この検索ルールを削除"
 
-#: COMTool/plugins/dbg.py:846
+#: plugins/dbg.py:954
 msgid "Send Receive"
 msgstr "Send Receive"
 
-#: COMTool/plugins/dbg.py:862
+#: plugins/dbg.py:970
 msgid "Shortcut:"
 msgstr "ホットキー："
 
-#: COMTool/plugins/dbg.py:863
+#: plugins/dbg.py:971
 msgid "Full screen"
 msgstr "フルスクリーン"
 
-#: COMTool/plugins/dbg.py:864
+#: plugins/dbg.py:972
 msgid "Send data"
 msgstr "データを送る"
 
-#: COMTool/plugins/dbg.py:865
+#: plugins/dbg.py:973
 msgid "Clear Send Area"
 msgstr "送信エリアをクリアする"
 
-#: COMTool/plugins/dbg.py:866
+#: plugins/dbg.py:974
 msgid "Clear Receive Area"
 msgstr "清除接収区"
 
-#: COMTool/plugins/dbg.py:940
+#: plugins/dbg.py:1063 plugins/dbg.py:2358
+msgid "Start time"
+msgstr "開始時刻"
+
+#: plugins/dbg.py:1064 plugins/dbg.py:2360
+msgid "End time"
+msgstr "終了時刻"
+
+#: plugins/dbg.py:1065 plugins/dbg.py:2362
+msgid "Active duration"
+msgstr "実記録時間"
+
+#: plugins/dbg.py:1066 plugins/dbg.py:2364
+msgid "Pause count"
+msgstr "一時停止回数"
+
+#: plugins/dbg.py:1067 plugins/dbg.py:2369 plugins/dbg.py:2376
+msgid "Pause time"
+msgstr "一時停止時間"
+
+#: plugins/dbg.py:1068 plugins/dbg.py:2378
+msgid "Log size"
+msgstr "ログサイズ"
+
+#: plugins/dbg.py:1069 plugins/dbg.py:1371 plugins/dbg.py:2380
+msgid "Log path"
+msgstr "ログパス"
+
+#: plugins/dbg.py:1071 plugins/dbg.py:2384
+msgid "Connection type"
+msgstr "接続タイプ"
+
+#: plugins/dbg.py:1072 plugins/dbg.py:2386
+msgid "Connection status"
+msgstr "接続状態"
+
+#: plugins/dbg.py:1073 plugins/dbg.py:2388
+msgid "Connection settings"
+msgstr "接続設定"
+
+#: plugins/dbg.py:1074 plugins/dbg.py:2391
+msgid "Port open/close history"
+msgstr "ポート開閉履歴"
+
+#: plugins/dbg.py:1075 plugins/dbg.py:2396
+msgid "Port disconnect/reconnect history"
+msgstr "ポート切断/再接続履歴"
+
+#: plugins/dbg.py:1108
 msgid "Clear RX"
 msgstr "RXをクリア"
 
-#: COMTool/plugins/dbg.py:941
+#: plugins/dbg.py:1109
 msgid "Clear receive area"
 msgstr "受信エリアをクリア"
 
-#: COMTool/plugins/dbg.py:943
+#: plugins/dbg.py:1111
 msgid "Clear TX"
 msgstr "TXをクリア"
 
-#: COMTool/plugins/dbg.py:944
+#: plugins/dbg.py:1112
 msgid "Clear TX input"
 msgstr "TX入力をクリア"
 
-#: COMTool/plugins/dbg.py:952
+#: plugins/dbg.py:1120
 msgid "Received RX/TX log output"
 msgstr "RX/TXログ出力"
 
-#: COMTool/plugins/dbg.py:962
+#: plugins/dbg.py:1131
 msgid "Input data to send"
 msgstr "送信するデータを入力"
 
-#: COMTool/plugins/dbg.py:966
+#: plugins/dbg.py:1135
 msgid "Find and highlight receive text"
 msgstr "受信テキストを検索してハイライト"
 
-#: COMTool/plugins/dbg.py:969
+#: plugins/dbg.py:1138
 msgid "Send input data"
 msgstr "入力データを送信"
 
-#: COMTool/plugins/dbg.py:972
+#: plugins/dbg.py:1141
 msgid "Send history"
 msgstr "送信履歴"
 
-#: COMTool/plugins/dbg.py:1015
+#: plugins/dbg.py:1184
 msgid "Receive Settings"
 msgstr "受信設定"
 
-#: COMTool/plugins/dbg.py:1016 COMTool/plugins/dbg.py:1060 COMTool/plugins/protocol.py:269
+#: plugins/dbg.py:1185 plugins/dbg.py:1229 plugins/protocol.py:269
 msgid "ASCII"
 msgstr "ASCII"
 
-#: COMTool/plugins/dbg.py:1017
-msgid "Show recived data as visible format, select decode method at top right corner"
+#: plugins/dbg.py:1186
+msgid ""
+"Show recived data as visible format, select decode method at top right "
+"corner"
 msgstr "表示されている文字を使用して受信データを表示し、右上隅でデコード方法を選択します"
 
-#: COMTool/plugins/dbg.py:1018 COMTool/plugins/dbg.py:1061 COMTool/plugins/protocol.py:270
+#: plugins/dbg.py:1187 plugins/dbg.py:1230 plugins/protocol.py:270
 msgid "HEX"
 msgstr "HEX"
 
-#: COMTool/plugins/dbg.py:1019
+#: plugins/dbg.py:1188
 msgid "Show recived data as hex format"
 msgstr "16進表記を使用して受信データを表示します"
 
-#: COMTool/plugins/dbg.py:1021
+#: plugins/dbg.py:1190
 msgid ""
 "Auto\n"
 "Linefeed\n"
@@ -772,68 +881,76 @@ msgstr ""
 "ラインフィード\n"
 "ms"
 
-#: COMTool/plugins/dbg.py:1022 COMTool/plugins/dbg.py:1025
+#: plugins/dbg.py:1191 plugins/dbg.py:1194
 msgid "Auto linefeed after interval, unit: ms"
 msgstr "超オーバー・トタイム時自PP换行、単位：ms"
 
-#: COMTool/plugins/dbg.py:1028 COMTool/plugins/dbg.py:1045
+#: plugins/dbg.py:1197 plugins/dbg.py:1214
 msgid "Timestamp"
 msgstr "タイムスタンプ"
 
-#: COMTool/plugins/dbg.py:1029
-msgid "Add timestamp before received data, will automatically enable auto line feed"
+#: plugins/dbg.py:1198
+msgid ""
+"Add timestamp before received data, will automatically enable auto line "
+"feed"
 msgstr "受信データの前にタイムスタンプを追加すると、自動改行が自動的に有効になります"
 
-#: COMTool/plugins/dbg.py:1030 COMTool/plugins/protocol.py:244
+#: plugins/dbg.py:1199 plugins/protocol.py:244
 msgid "Display wrap"
 msgstr "Display wrap"
 
-#: COMTool/plugins/dbg.py:1031 COMTool/plugins/dbg.py:1077 COMTool/plugins/protocol.py:279
+#: plugins/dbg.py:1200 plugins/dbg.py:1246 plugins/protocol.py:279
 msgid "Escape"
 msgstr "エスケープ"
 
-#: COMTool/plugins/dbg.py:1032 COMTool/plugins/dbg.py:1078 COMTool/plugins/protocol.py:280
+#: plugins/dbg.py:1201 plugins/dbg.py:1247 plugins/protocol.py:280
 msgid "Enable escape characters support like \\t \\r \\n \\x01 \\001"
 msgstr "\\t \\r \\n \\x01 \\001 のようなエスケープ文字のサポートを有効にする"
 
-#: COMTool/plugins/dbg.py:1033 COMTool/plugins/protocol.py:245
-msgid "When content in a line is too long, always auto wrap to show, and no scroll bar"
-msgstr "When content in a line is too long, always auto wrap to show, and no scroll bar"
+#: plugins/dbg.py:1202 plugins/protocol.py:245
+msgid ""
+"When content in a line is too long, always auto wrap to show, and no "
+"scroll bar"
+msgstr ""
+"When content in a line is too long, always auto wrap to show, and no "
+"scroll bar"
 
-#: COMTool/plugins/dbg.py:1046 COMTool/plugins/dbg.py:1159 COMTool/plugins/dbg.py:1166
-#: COMTool/plugins/dbg.py:1273
+#: plugins/dbg.py:1215 plugins/dbg.py:1328 plugins/dbg.py:1335
+#: plugins/dbg.py:1443 plugins/devtools.py:408
 msgid "Color"
-msgstr "顔色"
+msgstr "色"
 
-#: COMTool/plugins/dbg.py:1047
+#: plugins/dbg.py:1216
 msgid "Timestamp color in receive area"
 msgstr "受信エリアのタイムスタンプ色"
 
-#: COMTool/plugins/dbg.py:1048
+#: plugins/dbg.py:1217
 msgid "Newline after timestamp"
 msgstr "タイムスタンプ後に改行"
 
-#: COMTool/plugins/dbg.py:1049
+#: plugins/dbg.py:1218
 msgid "Display received data on the next line after timestamp"
 msgstr "タイムスタンプの次の行に受信データを表示します"
 
-#: COMTool/plugins/dbg.py:1051
+#: plugins/dbg.py:1220
 msgid "Timestamp color"
 msgstr "タイムスタンプ色"
 
-#: COMTool/plugins/dbg.py:1059
+#: plugins/dbg.py:1228
 msgid "Send Settings"
 msgstr "送信設定"
 
-#: COMTool/plugins/dbg.py:1062 COMTool/plugins/protocol.py:271
-msgid "Get send data as visible format, select encoding method at top right corner"
+#: plugins/dbg.py:1231 plugins/protocol.py:271
+msgid ""
+"Get send data as visible format, select encoding method at top right "
+"corner"
 msgstr "表示文字形式で送信するデータを取得し、右上隅でエンコード方法を選択します"
 
-#: COMTool/plugins/dbg.py:1063 COMTool/plugins/protocol.py:272
+#: plugins/dbg.py:1232 plugins/protocol.py:272
 msgid "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
 msgstr "16進数の「313233」などの16進数形式で送信するデータを取得し、ASCIIコードの「123」は同等です。"
 
-#: COMTool/plugins/dbg.py:1065
+#: plugins/dbg.py:1234
 msgid ""
 "Timed Send\n"
 "ms"
@@ -841,360 +958,432 @@ msgstr ""
 "時限送信\n"
 "ms"
 
-#: COMTool/plugins/dbg.py:1066 COMTool/plugins/dbg.py:1069
+#: plugins/dbg.py:1235 plugins/dbg.py:1238
 msgid "Timed send, unit: ms"
 msgstr "定時間P送、単位：ms"
 
-#: COMTool/plugins/dbg.py:1072 COMTool/plugins/protocol.py:274
+#: plugins/dbg.py:1241 plugins/protocol.py:274
 msgid "<CRLF>"
 msgstr "<CRLF>"
 
-#: COMTool/plugins/dbg.py:1073 COMTool/plugins/protocol.py:275
+#: plugins/dbg.py:1242 plugins/protocol.py:275
 msgid "Select to send \\r\\n instead of \\n"
 msgstr "選択中ρ送信\\ r \\ n圧電不是\\ n"
 
-#: COMTool/plugins/dbg.py:1076 COMTool/plugins/protocol.py:278
+#: plugins/dbg.py:1245 plugins/protocol.py:278
 msgid "Record send data"
 msgstr "送信データを記録する"
 
-#: COMTool/plugins/dbg.py:1079
+#: plugins/dbg.py:1248
 msgid "Newline"
 msgstr "Newline"
 
-#: COMTool/plugins/dbg.py:1080
+#: plugins/dbg.py:1249
 msgid "Auto add new line when send"
 msgstr "Auto add new line when send"
 
-#: COMTool/plugins/dbg.py:1111
+#: plugins/dbg.py:1280
 msgid "Auto line feed value error, must be integer"
 msgstr "自動改行値エラー、整数である必要があります"
 
-#: COMTool/plugins/dbg.py:1112
+#: plugins/dbg.py:1281
 msgid "Timed send value error, must be integer"
 msgstr "時限送信値エラー。整数である必要があります"
 
-#: COMTool/plugins/dbg.py:1151
+#: plugins/dbg.py:1320
 msgid "Default font"
 msgstr "既定フォント"
 
-#: COMTool/plugins/dbg.py:1155
+#: plugins/dbg.py:1324
 msgid "Font family for received RX text"
 msgstr "受信RXテキストのフォント"
 
-#: COMTool/plugins/dbg.py:1158
+#: plugins/dbg.py:1327
 msgid "Font size for received RX text"
 msgstr "受信RXテキストのサイズ"
 
-#: COMTool/plugins/dbg.py:1160
+#: plugins/dbg.py:1329
 msgid "Color for received RX text in the receive area"
 msgstr "受信エリアのRXテキスト色"
 
-#: COMTool/plugins/dbg.py:1162
+#: plugins/dbg.py:1331
 msgid "Font family for TX input text"
 msgstr "TX入力テキストのフォント"
 
-#: COMTool/plugins/dbg.py:1165
+#: plugins/dbg.py:1334
 msgid "Font size for TX input text"
 msgstr "TX入力テキストのサイズ"
 
-#: COMTool/plugins/dbg.py:1167
+#: plugins/dbg.py:1336
 msgid "Color for TX input text and recorded TX lines"
 msgstr "TX入力テキストと記録TX行の色"
 
-#: COMTool/plugins/dbg.py:1168
+#: plugins/dbg.py:1337
 msgid "RX font"
 msgstr "RXフォント"
 
-#: COMTool/plugins/dbg.py:1170
+#: plugins/dbg.py:1339
 msgid "RX size"
 msgstr "RXサイズ"
 
-#: COMTool/plugins/dbg.py:1172
+#: plugins/dbg.py:1341
 msgid "RX color"
 msgstr "RX色"
 
-#: COMTool/plugins/dbg.py:1174
+#: plugins/dbg.py:1343
 msgid "TX font"
 msgstr "TXフォント"
 
-#: COMTool/plugins/dbg.py:1176
+#: plugins/dbg.py:1345
 msgid "TX size"
 msgstr "TXサイズ"
 
-#: COMTool/plugins/dbg.py:1178
+#: plugins/dbg.py:1347
 msgid "TX color"
 msgstr "TX色"
 
-#: COMTool/plugins/dbg.py:1183
+#: plugins/dbg.py:1352
 msgid "Path of the file to send"
 msgstr "送信するファイルのパス"
 
-#: COMTool/plugins/dbg.py:1184
+#: plugins/dbg.py:1353
 msgid "Open File"
 msgstr "打開き文件"
 
-#: COMTool/plugins/dbg.py:1185
+#: plugins/dbg.py:1354
 msgid "Select a file to send"
 msgstr "送信するファイルを選択"
 
-#: COMTool/plugins/dbg.py:1186 COMTool/plugins/dbg.py:1190
+#: plugins/dbg.py:1355 plugins/dbg.py:1359
 msgid "Send File"
 msgstr "ファイルを送信"
 
-#: COMTool/plugins/dbg.py:1187
+#: plugins/dbg.py:1356
 msgid "Send the selected file over the current connection"
 msgstr "現在の接続で選択したファイルを送信します"
 
-#: COMTool/plugins/dbg.py:1188
+#: plugins/dbg.py:1357
 msgid "Clear TX History"
 msgstr "TX履歴をクリア"
 
-#: COMTool/plugins/dbg.py:1189
+#: plugins/dbg.py:1358
 msgid "Clear TX send history"
 msgstr "TX送信履歴をクリア"
 
-#: COMTool/plugins/dbg.py:1197
-msgid "Save log"
-msgstr "ログを保存"
-
-#: COMTool/plugins/dbg.py:1201
-msgid "Enable saving received and recorded sent data to a log file"
-msgstr "受信データと記録した送信データをログファイルに保存します"
-
-#: COMTool/plugins/dbg.py:1203
-msgid "Log file path"
-msgstr "ログファイルパス"
-
-#: COMTool/plugins/dbg.py:1204
-msgid "Log path"
-msgstr "ログパス"
-
-#: COMTool/plugins/dbg.py:1205
-msgid "Select log file path"
-msgstr "ログファイルパスを選択"
-
-#: COMTool/plugins/dbg.py:1206
-msgid "Auto new file"
-msgstr "自動新規ファイル"
-
-#: COMTool/plugins/dbg.py:1207
-msgid "When start a new connection, will automatically create a new log file"
-msgstr "新しい接続を開始すると、自動的に新しいログファイルが作成されます"
-
-#: COMTool/plugins/dbg.py:1208
-msgid "Timed log"
-msgstr "時間指定ログ"
-
-#: COMTool/plugins/dbg.py:1209
-msgid "Stop saving log automatically after the configured duration"
-msgstr "設定時間に達したらログ保存を自動停止します"
-
-#: COMTool/plugins/dbg.py:1214
-msgid "Timed log duration, format: HH:MM:SS"
-msgstr "ログ時間、形式: HH:MM:SS"
-
-#: COMTool/plugins/dbg.py:1215
-msgid "Log: 00:00:00 / 0 B"
-msgstr "Log: 00:00:00 / 0 B"
-
-#: COMTool/plugins/dbg.py:1216
-msgid "Current log recording duration and file size"
-msgstr "現在のログ記録時間とファイルサイズ"
-
-#: COMTool/plugins/dbg.py:1221
-msgid "RX buffer size, only editable while the connection is closed"
-msgstr "RXバッファサイズ。接続が閉じているときのみ変更可能"
-
-#: COMTool/plugins/dbg.py:1234
-msgid "RX buffer size"
-msgstr "RXバッファサイズ"
-
-#: COMTool/plugins/dbg.py:1260
-msgid "Import"
-msgstr "インポート"
-
-#: COMTool/plugins/dbg.py:1261
-msgid "Export"
-msgstr "エクスポート"
-
-#: COMTool/plugins/dbg.py:1262
-msgid "Add a custom send item"
-msgstr "カスタム送信項目を追加"
-
-#: COMTool/plugins/dbg.py:1263
-msgid "Import custom send items from JSON"
-msgstr "JSONからカスタム送信項目をインポート"
-
-#: COMTool/plugins/dbg.py:1264
-msgid "Export custom send items to JSON"
-msgstr "カスタム送信項目をJSONへエクスポート"
-
-#: COMTool/plugins/dbg.py:1269
-msgid "Search remark or command"
-msgstr "ラベルまたはコマンドを検索"
-
-#: COMTool/plugins/dbg.py:1270
-msgid "Search custom send items by remark or command"
-msgstr "ラベルまたはコマンドでカスタム送信項目を検索"
-
-#: COMTool/plugins/dbg.py:1271
-msgid "All"
-msgstr "すべて"
-
-#: COMTool/plugins/dbg.py:1272
-msgid "Select visible custom send items"
-msgstr "表示中のカスタム送信項目を選択"
-
-#: COMTool/plugins/dbg.py:1274
-msgid "Icon"
-msgstr "アイコン"
-
-#: COMTool/plugins/dbg.py:1275 COMTool/plugins/dbg.py:2148 COMTool/plugins/dbg.py:2345
-#: COMTool/plugins/protocol.py:257
-msgid "Delete"
-msgstr "Delete"
-
-#: COMTool/plugins/dbg.py:1276
-msgid "Set color for selected custom send items"
-msgstr "選択したカスタム送信項目の色を設定"
-
-#: COMTool/plugins/dbg.py:1277
-msgid "Set icon for selected custom send items"
-msgstr "選択したカスタム送信項目のアイコンを設定"
-
-#: COMTool/plugins/dbg.py:1278
-msgid "Delete selected custom send items"
-msgstr "選択したカスタム送信項目を削除"
-
-#: COMTool/plugins/dbg.py:1285
-msgid "Cutom send"
-msgstr "カスタム送信"
-
-#: COMTool/plugins/dbg.py:1549 COMTool/plugins/dbg.py:1569
-msgid "Find"
-msgstr "検索"
-
-#: COMTool/plugins/dbg.py:1549
-msgid "No match found"
-msgstr "一致が見つかりません"
-
-#: COMTool/plugins/dbg.py:1569
-msgid "No more matches"
-msgstr "これ以上の一致はありません"
-
-#: COMTool/plugins/dbg.py:1784
-msgid "linefeed always on if timestamp or record send is on"
-msgstr "タイムスタンプまたはレコード送信がオンの場合、改行は常にオンになります"
-
-#: COMTool/plugins/dbg.py:1832
-msgid "History cleared!"
-msgstr "履歴がクリアされました！"
-
-#: COMTool/plugins/dbg.py:1835
-msgid "Confirm clear"
-msgstr "クリア確認"
-
-#: COMTool/plugins/dbg.py:1839
-msgid "Clear receive area?"
-msgstr "受信エリアをクリアしますか？"
-
-#: COMTool/plugins/dbg.py:1843
-msgid "Clear send input?"
-msgstr "送信入力をクリアしますか？"
-
-#: COMTool/plugins/dbg.py:1847
-msgid "Clear TX history?"
-msgstr "TX履歴をクリアしますか？"
-
-#: COMTool/plugins/dbg.py:1854 COMTool/plugins/graph.py:259 COMTool/plugins/protocol.py:524
-msgid "Send data failed!"
-msgstr "Send data failed!"
-
-#: COMTool/plugins/dbg.py:1859
-msgid "Send file"
-msgstr "Send file"
-
-#: COMTool/plugins/dbg.py:1863
-msgid "Send file failed!"
-msgstr "Send file failed!"
-
-#: COMTool/plugins/dbg.py:1891
-msgid "Timed log duration error, format: HH:MM:SS"
-msgstr "Timed log duration error, format: HH:MM:SS"
-
-#: COMTool/plugins/dbg.py:1919
-msgid "Timed log stopped"
-msgstr "Timed log stopped"
-
-#: COMTool/plugins/dbg.py:1969
+#: plugins/dbg.py:1366 plugins/dbg.py:2276
 msgid "Log"
 msgstr "Log"
 
-#: COMTool/plugins/dbg.py:1992
+#: plugins/dbg.py:1370
+msgid "Log file path"
+msgstr "ログファイルパス"
+
+#: plugins/dbg.py:1372
+msgid "Select log file path"
+msgstr "ログファイルパスを選択"
+
+#: plugins/dbg.py:1373 plugins/dbg.py:2147
+msgid "Start record"
+msgstr "記録開始"
+
+#: plugins/dbg.py:1374
+msgid "Start or pause log recording"
+msgstr "ログ記録を開始または一時停止します"
+
+#: plugins/dbg.py:1375
+msgid "Stop record"
+msgstr "記録停止"
+
+#: plugins/dbg.py:1376
+msgid "Stop log recording"
+msgstr "ログ記録を停止します"
+
+#: plugins/dbg.py:1379
+msgid "Configure auto new file, timed log, and log information summary"
+msgstr "自動新規ファイル、タイマー記録、ログ情報概要を設定します"
+
+#: plugins/dbg.py:1382
+msgid "Current log settings"
+msgstr "現在のログ設定"
+
+#: plugins/dbg.py:1383
+msgid "Log: 00:00:00 / 0 B"
+msgstr "Log: 00:00:00 / 0 B"
+
+#: plugins/dbg.py:1384
+msgid "Current log recording duration and file size"
+msgstr "現在のログ記録時間とファイルサイズ"
+
+#: plugins/dbg.py:1387
+msgid "RX buffer size"
+msgstr "RXバッファサイズ"
+
+#: plugins/dbg.py:1393
+msgid "RX buffer size, only editable while the connection is closed"
+msgstr "RXバッファサイズ。接続が閉じているときのみ変更可能"
+
+#: plugins/dbg.py:1430
+msgid "Import"
+msgstr "インポート"
+
+#: plugins/dbg.py:1431
+msgid "Export"
+msgstr "エクスポート"
+
+#: plugins/dbg.py:1432
+msgid "Add a custom send item"
+msgstr "カスタム送信項目を追加"
+
+#: plugins/dbg.py:1433
+msgid "Import custom send items from JSON"
+msgstr "JSONからカスタム送信項目をインポート"
+
+#: plugins/dbg.py:1434
+msgid "Export custom send items to JSON"
+msgstr "カスタム送信項目をJSONへエクスポート"
+
+#: plugins/dbg.py:1439
+msgid "Search remark or command"
+msgstr "ラベルまたはコマンドを検索"
+
+#: plugins/dbg.py:1440
+msgid "Search custom send items by remark or command"
+msgstr "ラベルまたはコマンドでカスタム送信項目を検索"
+
+#: plugins/dbg.py:1441
+msgid "All"
+msgstr "すべて"
+
+#: plugins/dbg.py:1442
+msgid "Select visible custom send items"
+msgstr "表示中のカスタム送信項目を選択"
+
+#: plugins/dbg.py:1444
+msgid "Icon"
+msgstr "アイコン"
+
+#: plugins/dbg.py:1445 plugins/dbg.py:2585 plugins/dbg.py:2782
+#: plugins/protocol.py:257
+msgid "Delete"
+msgstr "Delete"
+
+#: plugins/dbg.py:1446
+msgid "Set color for selected custom send items"
+msgstr "選択したカスタム送信項目の色を設定"
+
+#: plugins/dbg.py:1447
+msgid "Set icon for selected custom send items"
+msgstr "選択したカスタム送信項目のアイコンを設定"
+
+#: plugins/dbg.py:1448
+msgid "Delete selected custom send items"
+msgstr "選択したカスタム送信項目を削除"
+
+#: plugins/dbg.py:1455
+msgid "Cutom send"
+msgstr "カスタム送信"
+
+#: plugins/dbg.py:1715 plugins/dbg.py:1748
+msgid "Find"
+msgstr "検索"
+
+#: plugins/dbg.py:1715
+msgid "No match found"
+msgstr "一致が見つかりません"
+
+#: plugins/dbg.py:1748
+msgid "No more matches"
+msgstr "これ以上の一致はありません"
+
+#: plugins/dbg.py:1963
+msgid "linefeed always on if timestamp or record send is on"
+msgstr "タイムスタンプまたはレコード送信がオンの場合、改行は常にオンになります"
+
+#: plugins/dbg.py:2011
+msgid "History cleared!"
+msgstr "履歴がクリアされました！"
+
+#: plugins/dbg.py:2014
+msgid "Confirm clear"
+msgstr "クリア確認"
+
+#: plugins/dbg.py:2018
+msgid "Clear receive area?"
+msgstr "受信エリアをクリアしますか？"
+
+#: plugins/dbg.py:2022
+msgid "Clear send input?"
+msgstr "送信入力をクリアしますか？"
+
+#: plugins/dbg.py:2026
+msgid "Clear TX history?"
+msgstr "TX履歴をクリアしますか？"
+
+#: plugins/dbg.py:2033 plugins/graph.py:259 plugins/protocol.py:524
+msgid "Send data failed!"
+msgstr "Send data failed!"
+
+#: plugins/dbg.py:2038
+msgid "Send file"
+msgstr "Send file"
+
+#: plugins/dbg.py:2042
+msgid "Send file failed!"
+msgstr "Send file failed!"
+
+#: plugins/dbg.py:2101
+msgid "Confirm stop"
+msgstr "停止確認"
+
+#: plugins/dbg.py:2101
+msgid "Stop log recording?"
+msgstr "ログ記録を停止しますか？"
+
+#: plugins/dbg.py:2127
+msgid "Timed log stopped"
+msgstr "Timed log stopped"
+
+#: plugins/dbg.py:2148
+msgid "Start log recording"
+msgstr "ログ記録を開始"
+
+#: plugins/dbg.py:2152
+msgid "Resume record"
+msgstr "記録再開"
+
+#: plugins/dbg.py:2153
+msgid "Resume log recording"
+msgstr "ログ記録を再開"
+
+#: plugins/dbg.py:2156
+msgid "Pause record"
+msgstr "記録一時停止"
+
+#: plugins/dbg.py:2157
+msgid "Pause log recording"
+msgstr "ログ記録を一時停止"
+
+#: plugins/dbg.py:2162
+msgid "Log settings are locked while recording or paused"
+msgstr "記録中または一時停止中はログ設定を変更できません"
+
+#: plugins/dbg.py:2171 plugins/dbg.py:2172
+msgid "Off"
+msgstr "オフ"
+
+#: plugins/dbg.py:2172
+msgid "Append info"
+msgstr "情報追加"
+
+#: plugins/dbg.py:2172
+msgid "On"
+msgstr "オン"
+
+#: plugins/dbg.py:2239
+msgid "Select log file path before starting log"
+msgstr "記録開始前にログファイルのパスを選択してください"
+
+#: plugins/dbg.py:2243
+msgid "Log folder does not exist"
+msgstr "ログフォルダーが存在しません"
+
+#: plugins/dbg.py:2249
+msgid "Open log file failed"
+msgstr "ログファイルを開けませんでした"
+
+#: plugins/dbg.py:2314
+msgid "Port opened"
+msgstr "ポートを開きました"
+
+#: plugins/dbg.py:2315
+msgid "Port closed"
+msgstr "ポートを閉じました"
+
+#: plugins/dbg.py:2316
+msgid "Port disconnected"
+msgstr "ポートが切断されました"
+
+#: plugins/dbg.py:2317
+msgid "Port reconnected"
+msgstr "ポートが再接続されました"
+
+#: plugins/dbg.py:2328
+msgid "No events"
+msgstr "イベントなし"
+
+#: plugins/dbg.py:2355
+msgid "Log information"
+msgstr "ログ情報"
+
+#: plugins/dbg.py:2376
+msgid "None"
+msgstr "なし"
+
+#: plugins/dbg.py:2434
 msgid "Log file (*.log);;txt file (*.txt);;All Files (*)"
 msgstr "Log file (*.log);;txt file (*.txt);;All Files (*)"
 
-#: COMTool/plugins/dbg.py:2081
+#: plugins/dbg.py:2518
 msgid "Select for batch edit"
 msgstr "Select for batch edit"
 
-#: COMTool/plugins/dbg.py:2085
+#: plugins/dbg.py:2522
 msgid "Drag before another item to reorder"
 msgstr "Drag before another item to reorder"
 
-#: COMTool/plugins/dbg.py:2092
+#: plugins/dbg.py:2529
 msgid "Click to set button color, right click to clear"
 msgstr "Click to set button color, right click to clear"
 
-#: COMTool/plugins/dbg.py:2098
+#: plugins/dbg.py:2535
 msgid "Edit custom send remark and icon"
 msgstr "カスタム送信のラベルとアイコンを編集"
 
-#: COMTool/plugins/dbg.py:2107
+#: plugins/dbg.py:2544
 msgid "Delete this custom send item"
 msgstr "このカスタム送信項目を削除"
 
-#: COMTool/plugins/dbg.py:2148
+#: plugins/dbg.py:2585
 msgid "Delete selected custom send item?"
 msgstr "選択したカスタム送信項目を削除しますか？"
 
-#: COMTool/plugins/dbg.py:2344
+#: plugins/dbg.py:2781
 msgid "Delete selected custom send items?"
 msgstr "選択したカスタム送信項目を削除しますか？"
 
-#: COMTool/plugins/dbg.py:2447
+#: plugins/dbg.py:2884
 msgid "Import custom send"
 msgstr "カスタム送信をインポート"
 
-#: COMTool/plugins/dbg.py:2449 COMTool/plugins/dbg.py:2468
+#: plugins/dbg.py:2886 plugins/dbg.py:2905
 msgid "JSON file (*.json);;All Files (*)"
 msgstr "JSON file (*.json);;All Files (*)"
 
-#: COMTool/plugins/dbg.py:2458
+#: plugins/dbg.py:2895
 msgid "Custom send file must be a JSON list"
 msgstr "カスタム送信ファイルはJSON配列である必要があります"
 
-#: COMTool/plugins/dbg.py:2460
+#: plugins/dbg.py:2897
 msgid "Custom send items imported!"
 msgstr "カスタム送信項目をインポートしました！"
 
-#: COMTool/plugins/dbg.py:2462
+#: plugins/dbg.py:2899
 msgid "Import custom send failed!"
 msgstr "カスタム送信のインポートに失敗しました！"
 
-#: COMTool/plugins/dbg.py:2466
+#: plugins/dbg.py:2903
 msgid "Export custom send"
 msgstr "カスタム送信をエクスポート"
 
-#: COMTool/plugins/dbg.py:2474
+#: plugins/dbg.py:2911
 msgid "Custom send items exported!"
 msgstr "カスタム送信項目をエクスポートしました！"
 
-#: COMTool/plugins/dbg.py:2476
+#: plugins/dbg.py:2913
 msgid "Export custom send failed!"
 msgstr "カスタム送信のエクスポートに失敗しました！"
 
-#: COMTool/plugins/dbg.py:2486
+#: plugins/dbg.py:2923
 msgid ""
 "File path error\n"
 "path"
@@ -1202,438 +1391,1074 @@ msgstr ""
 "ファイルパスエラー\n"
 "ファイルパス"
 
-#: COMTool/plugins/dbg.py:2489
+#: plugins/dbg.py:2926
 msgid "Connect first please"
 msgstr "最初に接続してください"
 
-#: COMTool/plugins/dbg.py:2492
+#: plugins/dbg.py:2929
 msgid "Sending file"
 msgstr "Sending file"
 
-#: COMTool/plugins/dbg.py:2509
+#: plugins/dbg.py:2946
 msgid "Time format error"
 msgstr "タイムフォーマットエラー"
 
-#: COMTool/plugins/dbg.py:2576
+#: plugins/dbg.py:3013
 msgid "Send Error"
 msgstr "エラーの送信"
 
-#: COMTool/plugins/dbg.py:2584
+#: plugins/dbg.py:3021
 msgid "get data error"
 msgstr "get data error"
 
-#: COMTool/plugins/graph.py:48
-msgid "Graph"
-msgstr "Graph"
+#: plugins/devtools.py:123 plugins/devtools.py:1939
+msgid "Original text"
+msgstr "元の文字列"
 
-#: COMTool/plugins/graph.py:54
-msgid "Double click graph item to add a graph widget"
-msgstr "Double click graph item to add a graph widget"
+#: plugins/devtools.py:123 plugins/devtools.py:1939
+msgid "Input text"
+msgstr "入力テキスト"
 
-#: COMTool/plugins/graph.py:54
-msgid "line chart plot protocol:"
-msgstr "line chart plot protocol:"
+#: plugins/devtools.py:126 plugins/devtools.py:1680 plugins/devtools.py:1856
+#: plugins/devtools.py:1904
+msgid "Conversion result"
+msgstr "変換結果"
 
-#: COMTool/plugins/graph.py:64
-msgid "Full demo see:"
-msgstr "Full demo see:"
+#: plugins/devtools.py:126 plugins/devtools.py:1680 plugins/devtools.py:1856
+#: plugins/devtools.py:1896
+msgid "Result"
+msgstr "結果"
 
-#: COMTool/plugins/graph.py:66
-msgid "Install comtool by <code>pip install comtool</code> first"
-msgstr "Install comtool by <code>pip install comtool</code> first"
+#: plugins/devtools.py:165
+msgid "Copy"
+msgstr "コピー"
 
-#: COMTool/plugins/graph.py:69
-msgid "For ASCII protocol(\"binary protocol\" not checked)"
-msgstr "For ASCII protocol(\"binary protocol\" not checked)"
+#: plugins/devtools.py:167
+msgid "Copy result"
+msgstr "結果をコピー"
 
-#: COMTool/plugins/graph.py:72
-msgid "\"$\" means start of frame, end with \"\\n\" \",\" means separator"
-msgstr "\"$\" means start of frame, end with \"\\n\" \",\" means separator"
+#: plugins/devtools.py:192
+msgid "Drag to choose saturation and value"
+msgstr "ドラッグして彩度と明度を選択"
 
-#: COMTool/plugins/graph.py:73
-msgid "checksum is optional, checksum is sum of all bytes in frame except \",checksum\"."
-msgstr "checksum is optional, checksum is sum of all bytes in frame except \",checksum\"."
+#: plugins/devtools.py:268
+msgid "Drag to choose hue"
+msgstr "ドラッグして色相を選択"
 
-#: COMTool/plugins/graph.py:74
-msgid "[x] is optional"
-msgstr "[x] is optional"
+#: plugins/devtools.py:316
+msgid "Programming Tools"
+msgstr "プログラミングツール"
 
-#: COMTool/plugins/graph.py:75
-msgid "e.g."
-msgstr "e.g."
+#: plugins/devtools.py:370
+msgid "Select a programming tool"
+msgstr "プログラミングツールを選択"
 
-#: COMTool/plugins/graph.py:102
-msgid "For binary protocol(\"binary protocol\" checked)"
-msgstr "For binary protocol(\"binary protocol\" checked)"
+#: plugins/devtools.py:385
+msgid "Open tool"
+msgstr "ツールを開く"
 
-#: COMTool/plugins/graph.py:199
-msgid "Double click to add a graph widget"
-msgstr "Double click to add a graph widget"
+#: plugins/devtools.py:403
+msgid "Check"
+msgstr "チェック"
 
-#: COMTool/plugins/graph.py:229
-msgid "Clear count"
-msgstr "Clear count"
+#: plugins/devtools.py:404 plugins/devtools.py:583
+msgid "LRC check"
+msgstr "LRCチェック"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:297 COMTool/plugins/graph_widgets.py:51
-msgid "Remove"
-msgstr "Remove"
+#: plugins/devtools.py:405 plugins/devtools.py:599
+msgid "BCC check"
+msgstr "BCCチェック"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:299
-msgid "Capture"
-msgstr "Capture"
+#: plugins/devtools.py:406 plugins/devtools.py:635
+msgid "CRC check"
+msgstr "CRCチェック"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:304 COMTool/plugins/graph_widgets.py:58
-msgid "Header:"
-msgstr "Header:"
+#: plugins/devtools.py:409 plugins/devtools.py:811
+msgid "Color format convert"
+msgstr "色形式変換"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:306 COMTool/plugins/graph_widget_metasenselite.py:578
-#: COMTool/plugins/graph_widget_metasenselite.py:580 COMTool/plugins/graph_widget_metasenselite.py:589
-#: COMTool/plugins/graph_widgets.py:60 COMTool/plugins/graph_widgets.py:154
-#: COMTool/plugins/graph_widgets.py:156 COMTool/plugins/graph_widgets.py:165
-msgid "Set"
-msgstr "Set"
+#: plugins/devtools.py:411
+msgid "Bit operations"
+msgstr "ビット操作"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:308
-msgid "RawCMD:"
-msgstr "RawCMD:"
+#: plugins/devtools.py:412 plugins/devtools.py:1051
+msgid "Bit calculator"
+msgstr "ビット計算機"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:309
-msgid "AT+ISP=0\\r"
-msgstr "AT+ISP=0\\r"
+#: plugins/devtools.py:413 plugins/devtools.py:1529
+msgid "Multi-bit operations"
+msgstr "複数バイトビット演算"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:310 COMTool/plugins/myplugin.py:44
-#: COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:52
-msgid "Send"
-msgstr "Send"
+#: plugins/devtools.py:415
+msgid "String processing"
+msgstr "文字列処理"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:315
-msgid "ISP"
-msgstr "ISP"
+#: plugins/devtools.py:416 plugins/devtools.py:1574
+msgid "English case convert"
+msgstr "英字大小文字変換"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:316
-msgid "LCD"
-msgstr "LCD"
+#: plugins/devtools.py:417 plugins/devtools.py:1601
+msgid "String reverse"
+msgstr "文字列反転"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:317
-msgid "USB"
-msgstr "USB"
+#: plugins/devtools.py:418 plugins/devtools.py:1616
+msgid "Character count"
+msgstr "文字数カウント"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:318
-msgid "UART"
-msgstr "UART"
+#: plugins/devtools.py:420
+msgid "Encoding"
+msgstr "エンコード"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:319
-msgid "ANTIMMI"
-msgstr "ANTIMMI"
+#: plugins/devtools.py:421 plugins/devtools.py:1794
+msgid "Unicode"
+msgstr "Unicode"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:341
-msgid "Unit:auto "
-msgstr "Unit:auto "
+#: plugins/devtools.py:422 plugins/devtools.py:1808
+msgid "URLEncode"
+msgstr "URLエンコード"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:348
-msgid " Fps:15   "
-msgstr " FPS:15   "
+#: plugins/devtools.py:423 plugins/devtools.py:1816
+msgid "Base64"
+msgstr "Base64"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:354
-msgid "  Ev:AE   "
-msgstr "  EV:AE   "
+#: plugins/devtools.py:424 plugins/devtools.py:1830
+msgid "Punycode"
+msgstr "Punycode"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:357
-msgid ""
-"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode + 1Byte Sensor Temp + "
-"1Byte Driver Temp\n"
-" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res rows + 1Byte res cols\n"
-" 2Byte Frame ID + 1 Byte ISP version + 1 Byte reserved3\n"
-" frame data\n"
-" 1Byte checksum + 1Byte tail\n"
-" length count from Byte4 to the Byte before Checksum\n"
-"Protocol example code see help"
-msgstr ""
-"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode + 1Byte Sensor Temp + "
-"1Byte Driver Temp\n"
-" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res rows + 1Byte res cols\n"
-" 2Byte Frame ID + 1 Byte ISP version + 1 Byte reserved3\n"
-" frame data\n"
-" 1Byte checksum + 1Byte tail\n"
-" length count from Byte4 to the Byte before Checksum\n"
-"Protocol example code see help"
+#: plugins/devtools.py:425 plugins/devtools.py:1930
+msgid "Chinese domain encoding"
+msgstr "中国語ドメインエンコード"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:394
-msgid "Binn:"
-msgstr "Binn:"
+#: plugins/devtools.py:426 plugins/devtools.py:1886
+msgid "Image to Base64"
+msgstr "画像をBase64へ変換"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:396
-msgid "Baud:"
-msgstr "Baud:"
+#: plugins/devtools.py:428
+msgid "Time"
+msgstr "時間"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:399
-msgid "D:"
-msgstr "D:"
+#: plugins/devtools.py:429 plugins/devtools.py:1850
+msgid "Unix timestamp"
+msgstr "Unixタイムスタンプ変換"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:401
-msgid "X:"
-msgstr "X:"
+#: plugins/devtools.py:431
+msgid "Crypto"
+msgstr "暗号"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:403
-msgid "Y:"
-msgstr "Y:"
+#: plugins/devtools.py:432 plugins/devtools.py:1938
+msgid "MD5 encrypt/decrypt"
+msgstr "MD5暗号化/復号"
 
-#: COMTool/plugins/graph_widget_metasenselite.py:591 COMTool/plugins/graph_widgets.py:167
-msgid "Format error"
-msgstr "Format error"
+#: plugins/devtools.py:433 plugins/devtools.py:1971
+msgid "AES encrypt/decrypt"
+msgstr "AES暗号化/復号"
 
-#: COMTool/plugins/graph_widgets.py:52
+#: plugins/devtools.py:434 plugins/devtools.py:1671
+msgid "ECC encrypt/decrypt"
+msgstr "ECC暗号化/復号"
+
+#: plugins/devtools.py:435 plugins/devtools.py:2019
+msgid "Encode/decode collection"
+msgstr "エンコード/デコード集"
+
+#: plugins/devtools.py:436 plugins/devtools.py:2043
+msgid "Hash collection"
+msgstr "ハッシュ集"
+
+#: plugins/devtools.py:500
+msgid "Info"
+msgstr "情報"
+
+#: plugins/devtools.py:513
+msgid "Copied"
+msgstr "コピーしました"
+
+#: plugins/devtools.py:519
+msgid "Hex"
+msgstr "Hex"
+
+#: plugins/devtools.py:520
+msgid "Text"
+msgstr "テキスト"
+
+#: plugins/devtools.py:526
+msgid "Data format"
+msgstr "データ形式"
+
+#: plugins/devtools.py:528
+msgid "Hex mode accepts values like 01 02 AF; text mode uses UTF-8 bytes."
+msgstr "Hexモードは 01 02 AF のような入力に対応し、テキストモードはUTF-8バイトとして扱います。"
+
+#: plugins/devtools.py:535 plugins/devtools.py:671
+msgid "Data to check"
+msgstr "チェックするデータ"
+
+#: plugins/devtools.py:535 plugins/devtools.py:671
+msgid "Input hex bytes or text"
+msgstr "16進バイトまたはテキストを入力"
+
+#: plugins/devtools.py:541 plugins/devtools.py:679
+msgid "Input HEX + check"
+msgstr "入力HEX+チェック値"
+
+#: plugins/devtools.py:544 plugins/devtools.py:689 plugins/devtools.py:1544
+#: plugins/devtools.py:1582 plugins/devtools.py:1606 plugins/devtools.py:1630
+#: plugins/devtools.py:1684 plugins/devtools.py:1960
+#: plugins/graph_widgets.py:52
 msgid "Clear"
 msgstr "Clear"
 
-#: COMTool/plugins/graph_widgets.py:53
+#: plugins/devtools.py:566
+msgid "Input bytes"
+msgstr "入力バイト"
+
+#: plugins/devtools.py:584
+msgid ""
+"Calculate the longitudinal redundancy check byte. The result is the two's"
+" complement of the byte sum, often used by serial text protocols."
+msgstr ""
+"Calculate the longitudinal redundancy check byte. The result is the two's"
+" complement of the byte sum, often used by serial text protocols."
+
+#: plugins/devtools.py:585
+msgid "Calculate LRC"
+msgstr "LRCを計算"
+
+#: plugins/devtools.py:600
+msgid ""
+"Calculate the block check character by XORing every input byte. It is "
+"useful for simple serial protocol frame checks."
+msgstr ""
+"Calculate the block check character by XORing every input byte. It is "
+"useful for simple serial protocol frame checks."
+
+#: plugins/devtools.py:601
+msgid "Calculate BCC"
+msgstr "BCCを計算"
+
+#: plugins/devtools.py:636
+msgid ""
+"Calculate common cyclic redundancy checks for byte data. Hex input "
+"accepts spaces, commas, 0x prefixes, and line breaks."
+msgstr ""
+"Calculate common cyclic redundancy checks for byte data. Hex input "
+"accepts spaces, commas, 0x prefixes, and line breaks."
+
+#: plugins/devtools.py:642
+msgid "Choose CRC algorithm"
+msgstr "CRCアルゴリズムを選択"
+
+#: plugins/devtools.py:643 plugins/devtools.py:2022
+msgid "Algorithm"
+msgstr "アルゴリズム"
+
+#: plugins/devtools.py:677
+msgid "Low byte first"
+msgstr "下位バイト先頭"
+
+#: plugins/devtools.py:678
+msgid "High byte first"
+msgstr "上位バイト先頭"
+
+#: plugins/devtools.py:680
+msgid "Input HEX + low byte first"
+msgstr "入力HEX+下位バイト先頭"
+
+#: plugins/devtools.py:683
+msgid "Calculate CRC"
+msgstr "CRCを計算"
+
+#: plugins/devtools.py:762
+msgid "CRC width must be 1-32"
+msgstr "CRC幅は1-32である必要があります"
+
+#: plugins/devtools.py:812
+msgid "Convert between RGB, HSV, and HTML HEX colors."
+msgstr "RGB、HSV、HTML HEXカラーを相互変換します。"
+
+#: plugins/devtools.py:854
+msgid "Selected color preview"
+msgstr "選択色のプレビュー"
+
+#: plugins/devtools.py:860
+msgid "Hue value"
+msgstr "色相値"
+
+#: plugins/devtools.py:861
+msgid "Saturation value"
+msgstr "彩度値"
+
+#: plugins/devtools.py:862
+msgid "Brightness value"
+msgstr "明度値"
+
+#: plugins/devtools.py:863
+msgid "Red value"
+msgstr "赤の値"
+
+#: plugins/devtools.py:864
+msgid "Green value"
+msgstr "緑の値"
+
+#: plugins/devtools.py:865
+msgid "Blue value"
+msgstr "青の値"
+
+#: plugins/devtools.py:868
+msgid "HTML HEX color, for example #FFBB00"
+msgstr "HTML HEXカラー、例 #FFBB00"
+
+#: plugins/devtools.py:871
+msgid "Hue"
+msgstr "色相"
+
+#: plugins/devtools.py:873
+msgid "Red"
+msgstr "赤"
+
+#: plugins/devtools.py:875
+msgid "Sat"
+msgstr "彩度"
+
+#: plugins/devtools.py:877
+msgid "Green"
+msgstr "緑"
+
+#: plugins/devtools.py:879
+msgid "Val"
+msgstr "明度"
+
+#: plugins/devtools.py:881
+msgid "Blue"
+msgstr "青"
+
+#: plugins/devtools.py:948 plugins/devtools.py:1020
+msgid "Input is empty"
+msgstr "入力が空です"
+
+#: plugins/devtools.py:959 plugins/devtools.py:1040 plugins/devtools.py:1525
+#: plugins/graph_widget_metasenselite.py:591 plugins/graph_widgets.py:167
+msgid "Format error"
+msgstr "Format error"
+
+#: plugins/devtools.py:1045
+msgid "RGB value must be 0-255"
+msgstr "RGB値は0-255である必要があります"
+
+#: plugins/devtools.py:1052
+msgid ""
+"Programmer calculator for integer base conversion, bit toggling, bitwise "
+"operations, and shift operations."
+msgstr "整数の基数変換、ビット切り替え、ビット演算、シフト演算を行うプログラマ向け計算機です。"
+
+#: plugins/devtools.py:1099
+msgid "Switch input base"
+msgstr "入力基数を切り替え"
+
+#: plugins/devtools.py:1115
+msgid "Keypad"
+msgstr "キーパッド"
+
+#: plugins/devtools.py:1116
+msgid "Bit grid"
+msgstr "ビットグリッド"
+
+#: plugins/devtools.py:1127
+msgid "Word size"
+msgstr "ワードサイズ"
+
+#: plugins/devtools.py:1139 plugins/devtools.py:1140
+msgid "Apply"
+msgstr "適用"
+
+#: plugins/devtools.py:1143
+msgid "Bitwise"
+msgstr "ビット演算"
+
+#: plugins/devtools.py:1147
+msgid "Shift"
+msgstr "シフト"
+
+#: plugins/devtools.py:1329
+msgid "Toggle bit"
+msgstr "ビットを切り替え"
+
+#: plugins/devtools.py:1509 plugins/devtools.py:1513
+msgid "Divide by zero"
+msgstr "0で除算できません"
+
+#: plugins/devtools.py:1530
+msgid ""
+"Run byte-level AND, OR, XNOR, XOR, and NOT operations on two text or HEX "
+"inputs."
+msgstr "2つのテキストまたはHEX入力に対してバイト単位のAND、OR、XNOR、XOR、NOT演算を行います。"
+
+#: plugins/devtools.py:1533
+msgid "Input A"
+msgstr "入力A"
+
+#: plugins/devtools.py:1533 plugins/devtools.py:1534
+msgid "Input string or HEX"
+msgstr "文字列またはHEXを入力"
+
+#: plugins/devtools.py:1534
+msgid "Input B"
+msgstr "入力B"
+
+#: plugins/devtools.py:1543
+msgid "Calculate"
+msgstr "計算"
+
+#: plugins/devtools.py:1562
+msgid ""
+"Inputs have different lengths; shorter input is padded with 00 for two-"
+"input operations."
+msgstr "入力長が異なります。2入力演算では短い側を00で埋めます。"
+
+#: plugins/devtools.py:1575
+msgid ""
+"Convert English text between uppercase, lowercase, title case, and "
+"swapped case."
+msgstr "英字テキストを大文字、小文字、タイトルケース、大小文字反転に変換します。"
+
+#: plugins/devtools.py:1577
+msgid "Input English text"
+msgstr "英字テキストを入力"
+
+#: plugins/devtools.py:1577
+msgid "Converted text"
+msgstr "変換後のテキスト"
+
+#: plugins/devtools.py:1578
+msgid "Uppercase"
+msgstr "大文字へ"
+
+#: plugins/devtools.py:1579
+msgid "Lowercase"
+msgstr "小文字へ"
+
+#: plugins/devtools.py:1580
+msgid "Title case"
+msgstr "タイトルケース"
+
+#: plugins/devtools.py:1581
+msgid "Swap case"
+msgstr "大小文字を反転"
+
+#: plugins/devtools.py:1597 plugins/devtools.py:1612
+msgid "Conversion complete"
+msgstr "変換完了"
+
+#: plugins/devtools.py:1602
+msgid "Reverse the input string by character order."
+msgstr "入力文字列を文字順で反転します。"
+
+#: plugins/devtools.py:1604 plugins/devtools.py:1619
+msgid "Input string"
+msgstr "文字列を入力"
+
+#: plugins/devtools.py:1604
+msgid "Reversed string"
+msgstr "反転後の文字列"
+
+#: plugins/devtools.py:1605
+msgid "Reverse"
+msgstr "反転"
+
+#: plugins/devtools.py:1617
+msgid ""
+"Count characters, non-space characters, words, lines, and UTF-8 bytes in "
+"the input string."
+msgstr "入力文字列の文字数、空白を除いた文字数、単語数、行数、UTF-8バイト数を数えます。"
+
+#: plugins/devtools.py:1621
+msgid "Characters"
+msgstr "文字数"
+
+#: plugins/devtools.py:1622
+msgid "Characters without spaces"
+msgstr "空白を除いた文字数"
+
+#: plugins/devtools.py:1623
+msgid "Words"
+msgstr "単語数"
+
+#: plugins/devtools.py:1624
+msgid "Lines"
+msgstr "行数"
+
+#: plugins/devtools.py:1625
+msgid "UTF-8 bytes"
+msgstr "UTF-8バイト数"
+
+#: plugins/devtools.py:1627
+msgid "Character frequency"
+msgstr "文字出現回数"
+
+#: plugins/devtools.py:1649
+msgid "Count complete"
+msgstr "カウント完了"
+
+#: plugins/devtools.py:1657
+msgid "Space"
+msgstr "空白"
+
+#: plugins/devtools.py:1672
+msgid ""
+"Generate ECC key pairs and encrypt/decrypt text with ECIES style ECDH + "
+"AES-GCM."
+msgstr "ECC鍵ペアを生成し、ECIES形式のECDH + AES-GCMでテキストを暗号化/復号します。"
+
+#: plugins/devtools.py:1676
+msgid "Curve"
+msgstr "曲線"
+
+#: plugins/devtools.py:1677
+msgid "Private key"
+msgstr "秘密鍵"
+
+#: plugins/devtools.py:1677
+msgid "PEM private key"
+msgstr "PEM秘密鍵"
+
+#: plugins/devtools.py:1678
+msgid "Public key"
+msgstr "公開鍵"
+
+#: plugins/devtools.py:1678
+msgid "PEM public key"
+msgstr "PEM公開鍵"
+
+#: plugins/devtools.py:1679
+msgid "Plain text or cipher JSON"
+msgstr "平文または暗号JSON"
+
+#: plugins/devtools.py:1679
+msgid "Input text or ECC cipher JSON"
+msgstr "テキストまたはECC暗号JSONを入力"
+
+#: plugins/devtools.py:1681
+msgid "Generate key pair"
+msgstr "鍵ペア生成"
+
+#: plugins/devtools.py:1682 plugins/devtools.py:1989
+msgid "Encrypt"
+msgstr "暗号化"
+
+#: plugins/devtools.py:1683 plugins/devtools.py:1990
+msgid "Decrypt"
+msgstr "復号"
+
+#: plugins/devtools.py:1690
+msgid "ECC backend not available"
+msgstr "ECCバックエンドが利用できません"
+
+#: plugins/devtools.py:1720
+msgid "ECC key pair generated"
+msgstr "ECC鍵ペアを生成しました"
+
+#: plugins/devtools.py:1746
+msgid "Public key is empty"
+msgstr "公開鍵が空です"
+
+#: plugins/devtools.py:1749
+msgid "Public key is not an ECC public key"
+msgstr "公開鍵がECC公開鍵ではありません"
+
+#: plugins/devtools.py:1767
+msgid "ECC encrypt complete"
+msgstr "ECC暗号化が完了しました"
+
+#: plugins/devtools.py:1777
+msgid "Private key is empty"
+msgstr "秘密鍵が空です"
+
+#: plugins/devtools.py:1780
+msgid "Private key is not an ECC private key"
+msgstr "秘密鍵がECC秘密鍵ではありません"
+
+#: plugins/devtools.py:1789
+msgid "ECC decrypt complete"
+msgstr "ECC復号が完了しました"
+
+#: plugins/devtools.py:1794
+msgid ""
+"Convert text to Unicode escape sequences, or restore Unicode escapes to "
+"readable text."
+msgstr ""
+"Convert text to Unicode escape sequences, or restore Unicode escapes to "
+"readable text."
+
+#: plugins/devtools.py:1796 plugins/devtools.py:1810 plugins/devtools.py:1818
+#: plugins/devtools.py:1832 plugins/devtools.py:1932 plugins/devtools.py:2024
+msgid "Encode"
+msgstr "エンコード"
+
+#: plugins/devtools.py:1797 plugins/devtools.py:1811 plugins/devtools.py:1819
+#: plugins/devtools.py:1833 plugins/devtools.py:1933 plugins/devtools.py:2025
+msgid "Decode"
+msgstr "デコード"
+
+#: plugins/devtools.py:1808
+msgid "Encode text for use in URLs, or decode percent-escaped URL text."
+msgstr "Encode text for use in URLs, or decode percent-escaped URL text."
+
+#: plugins/devtools.py:1816
+msgid ""
+"Encode text as Base64, or decode Base64 back to text with the current "
+"UTF-8 text encoding."
+msgstr ""
+"Encode text as Base64, or decode Base64 back to text with the current "
+"UTF-8 text encoding."
+
+#: plugins/devtools.py:1830
+msgid ""
+"Convert internationalized domain names between Unicode text and ASCII "
+"Punycode form."
+msgstr ""
+"Convert internationalized domain names between Unicode text and ASCII "
+"Punycode form."
+
+#: plugins/devtools.py:1831
+msgid "Input domain or text"
+msgstr "ドメインまたはテキストを入力"
+
+#: plugins/devtools.py:1831
+msgid "Converted value"
+msgstr "変換結果"
+
+#: plugins/devtools.py:1850
+msgid ""
+"Convert Unix timestamps and local date-time strings. Date input format: "
+"YYYY-MM-DD HH:MM:SS."
+msgstr ""
+"Convert Unix timestamps and local date-time strings. Date input format: "
+"YYYY-MM-DD HH:MM:SS."
+
+#: plugins/devtools.py:1852 plugins/devtools.py:1855
+msgid "Timestamp or date-time"
+msgstr "タイムスタンプまたは日時"
+
+#: plugins/devtools.py:1853
+msgid "Enter seconds, milliseconds, or YYYY-MM-DD HH:MM:SS"
+msgstr "秒、ミリ秒、またはYYYY-MM-DD HH:MM:SSを入力"
+
+#: plugins/devtools.py:1857
+msgid "Now"
+msgstr "現在時刻"
+
+#: plugins/devtools.py:1858
+msgid "To date-time"
+msgstr "日時へ変換"
+
+#: plugins/devtools.py:1859
+msgid "To timestamp"
+msgstr "タイムスタンプへ変換"
+
+#: plugins/devtools.py:1886
+msgid ""
+"Choose an image file and convert it to Base64 text or a data URL for "
+"embedding."
+msgstr ""
+"Choose an image file and convert it to Base64 text or a data URL for "
+"embedding."
+
+#: plugins/devtools.py:1888 plugins/devtools.py:1898
+msgid "Image file path"
+msgstr "画像ファイルパス"
+
+#: plugins/devtools.py:1890 plugins/devtools.py:1911
+msgid "Choose file"
+msgstr "ファイルを選択"
+
+#: plugins/devtools.py:1892
+msgid "Convert"
+msgstr "変換"
+
+#: plugins/devtools.py:1894
+msgid "Output data URL"
+msgstr "Data URLを出力"
+
+#: plugins/devtools.py:1911
+msgid "Image files (*.png *.jpg *.jpeg *.gif *.bmp *.webp);;All Files (*)"
+msgstr "画像ファイル (*.png *.jpg *.jpeg *.gif *.bmp *.webp);;すべてのファイル (*)"
+
+#: plugins/devtools.py:1930
+msgid ""
+"Encode Chinese or other internationalized domain names to IDNA, or decode"
+" xn-- domains back to readable text."
+msgstr ""
+"Encode Chinese or other internationalized domain names to IDNA, or decode"
+" xn-- domains back to readable text."
+
+#: plugins/devtools.py:1931
+msgid "Input domain"
+msgstr "ドメインを入力"
+
+#: plugins/devtools.py:1931
+msgid "Converted domain"
+msgstr "変換後のドメイン"
+
+#: plugins/devtools.py:1938
+msgid ""
+"Generate MD5 digests. MD5 is one-way and cannot be truly decrypted; use "
+"the compare field to verify candidate text."
+msgstr ""
+"Generate MD5 digests. MD5 is one-way and cannot be truly decrypted; use "
+"the compare field to verify candidate text."
+
+#: plugins/devtools.py:1941
+msgid "Optional MD5 hash to compare"
+msgstr "比較するMD5ハッシュ（任意）"
+
+#: plugins/devtools.py:1943
+msgid "Compare hash"
+msgstr "比較ハッシュ"
+
+#: plugins/devtools.py:1945
+msgid "Lowercase 32-bit"
+msgstr "小文字32桁"
+
+#: plugins/devtools.py:1946
+msgid "Uppercase 32-bit"
+msgstr "大文字32桁"
+
+#: plugins/devtools.py:1947
+msgid "Lowercase 16-bit"
+msgstr "小文字16桁"
+
+#: plugins/devtools.py:1948
+msgid "Uppercase 16-bit"
+msgstr "大文字16桁"
+
+#: plugins/devtools.py:1949
+msgid "Compare"
+msgstr "比較"
+
+#: plugins/devtools.py:1958
+msgid "Not match"
+msgstr "一致しません"
+
+#: plugins/devtools.py:1959 plugins/devtools.py:2045
+msgid "Generate"
+msgstr "生成"
+
+#: plugins/devtools.py:1971
+msgid ""
+"AES text encryption and decryption. Supports ECB and CBC with PKCS7 "
+"padding. Key lengths: 16, 24, or 32 bytes."
+msgstr ""
+"AES text encryption and decryption. Supports ECB and CBC with PKCS7 "
+"padding. Key lengths: 16, 24, or 32 bytes."
+
+#: plugins/devtools.py:1972
+msgid "Input text or Base64 cipher text"
+msgstr "テキストまたはBase64暗号文を入力"
+
+#: plugins/devtools.py:1972
+msgid "AES result"
+msgstr "AES結果"
+
+#: plugins/devtools.py:1975
+msgid "AES key"
+msgstr "AESキー"
+
+#: plugins/devtools.py:1978
+msgid "CBC IV, 16 bytes"
+msgstr "CBC IV、16バイト"
+
+#: plugins/devtools.py:1982
+msgid "Key"
+msgstr "キー"
+
+#: plugins/devtools.py:1986
+msgid "IV"
+msgstr "IV"
+
+#: plugins/devtools.py:1996
+msgid "AES backend not available"
+msgstr "AESバックエンドが利用できません"
+
+#: plugins/devtools.py:2001
+msgid "AES key must be 16, 24, or 32 bytes"
+msgstr "AESキーは16、24、32バイトである必要があります"
+
+#: plugins/devtools.py:2019
+msgid "Common reversible text transforms for quick programming work."
+msgstr "Common reversible text transforms for quick programming work."
+
+#: plugins/devtools.py:2043
+msgid "Generate common hashes for the input text."
+msgstr "Generate common hashes for the input text."
+
+#: plugins/graph.py:48
+msgid "Graph"
+msgstr "Graph"
+
+#: plugins/graph.py:54
+msgid "Double click graph item to add a graph widget"
+msgstr "Double click graph item to add a graph widget"
+
+#: plugins/graph.py:54
+msgid "line chart plot protocol:"
+msgstr "line chart plot protocol:"
+
+#: plugins/graph.py:64
+msgid "Full demo see:"
+msgstr "Full demo see:"
+
+#: plugins/graph.py:66
+msgid "Install comtool by <code>pip install comtool</code> first"
+msgstr "Install comtool by <code>pip install comtool</code> first"
+
+#: plugins/graph.py:69
+msgid "For ASCII protocol(\"binary protocol\" not checked)"
+msgstr "For ASCII protocol(\"binary protocol\" not checked)"
+
+#: plugins/graph.py:72
+msgid "\"$\" means start of frame, end with \"\\n\" \",\" means separator"
+msgstr "\"$\" means start of frame, end with \"\\n\" \",\" means separator"
+
+#: plugins/graph.py:73
+msgid ""
+"checksum is optional, checksum is sum of all bytes in frame except "
+"\",checksum\"."
+msgstr ""
+"checksum is optional, checksum is sum of all bytes in frame except "
+"\",checksum\"."
+
+#: plugins/graph.py:74
+msgid "[x] is optional"
+msgstr "[x] is optional"
+
+#: plugins/graph.py:75
+msgid "e.g."
+msgstr "e.g."
+
+#: plugins/graph.py:102
+msgid "For binary protocol(\"binary protocol\" checked)"
+msgstr "For binary protocol(\"binary protocol\" checked)"
+
+#: plugins/graph.py:199
+msgid "Double click to add a graph widget"
+msgstr "Double click to add a graph widget"
+
+#: plugins/graph.py:229
+msgid "Clear count"
+msgstr "Clear count"
+
+#: plugins/graph_widget_metasenselite.py:297 plugins/graph_widgets.py:51
+msgid "Remove"
+msgstr "Remove"
+
+#: plugins/graph_widget_metasenselite.py:299
+msgid "Capture"
+msgstr "Capture"
+
+#: plugins/graph_widget_metasenselite.py:304 plugins/graph_widgets.py:58
+msgid "Header:"
+msgstr "Header:"
+
+#: plugins/graph_widget_metasenselite.py:306
+#: plugins/graph_widget_metasenselite.py:578
+#: plugins/graph_widget_metasenselite.py:580
+#: plugins/graph_widget_metasenselite.py:589 plugins/graph_widgets.py:60
+#: plugins/graph_widgets.py:154 plugins/graph_widgets.py:156
+#: plugins/graph_widgets.py:165
+msgid "Set"
+msgstr "Set"
+
+#: plugins/graph_widget_metasenselite.py:308
+msgid "RawCMD:"
+msgstr "RawCMD:"
+
+#: plugins/graph_widget_metasenselite.py:309
+msgid "AT+ISP=0\\r"
+msgstr "AT+ISP=0\\r"
+
+#: plugins/graph_widget_metasenselite.py:310 plugins/myplugin.py:44
+#: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:52
+msgid "Send"
+msgstr "Send"
+
+#: plugins/graph_widget_metasenselite.py:315
+msgid "ISP"
+msgstr "ISP"
+
+#: plugins/graph_widget_metasenselite.py:316
+msgid "LCD"
+msgstr "LCD"
+
+#: plugins/graph_widget_metasenselite.py:317
+msgid "USB"
+msgstr "USB"
+
+#: plugins/graph_widget_metasenselite.py:318
+msgid "UART"
+msgstr "UART"
+
+#: plugins/graph_widget_metasenselite.py:319
+msgid "ANTIMMI"
+msgstr "ANTIMMI"
+
+#: plugins/graph_widget_metasenselite.py:341
+msgid "Unit:auto "
+msgstr "Unit:auto "
+
+#: plugins/graph_widget_metasenselite.py:348
+msgid " Fps:15   "
+msgstr " FPS:15   "
+
+#: plugins/graph_widget_metasenselite.py:354
+msgid "  Ev:AE   "
+msgstr "  EV:AE   "
+
+#: plugins/graph_widget_metasenselite.py:357
+msgid ""
+"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode"
+" + 1Byte Sensor Temp + 1Byte Driver Temp\n"
+" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res "
+"rows + 1Byte res cols\n"
+" 2Byte Frame ID + 1 Byte ISP version + 1 Byte reserved3\n"
+" frame data\n"
+" 1Byte checksum + 1Byte tail\n"
+" length count from Byte4 to the Byte before Checksum\n"
+"Protocol example code see help"
+msgstr ""
+"Protocol: 2Byte header + 2Byte length + 1Byte command + 1Byte output_mode"
+" + 1Byte Sensor Temp + 1Byte Driver Temp\n"
+" 4Bytes exposure time + 1Byte error code + 1Byte reserved1 + 1Byte res "
+"rows + 1Byte res cols\n"
+" 2Byte Frame ID + 1 Byte ISP version + 1 Byte reserved3\n"
+" frame data\n"
+" 1Byte checksum + 1Byte tail\n"
+" length count from Byte4 to the Byte before Checksum\n"
+"Protocol example code see help"
+
+#: plugins/graph_widget_metasenselite.py:394
+msgid "Binn:"
+msgstr "Binn:"
+
+#: plugins/graph_widget_metasenselite.py:396
+msgid "Baud:"
+msgstr "Baud:"
+
+#: plugins/graph_widget_metasenselite.py:399
+msgid "D:"
+msgstr "D:"
+
+#: plugins/graph_widget_metasenselite.py:401
+msgid "X:"
+msgstr "X:"
+
+#: plugins/graph_widget_metasenselite.py:403
+msgid "Y:"
+msgstr "Y:"
+
+#: plugins/graph_widgets.py:53
 msgid "Range:"
 msgstr "Range:"
 
-#: COMTool/plugins/graph_widgets.py:57
+#: plugins/graph_widgets.py:57
 msgid "Binary Protocol"
 msgstr "Binary Protocol"
 
-#: COMTool/plugins/graph_widgets.py:61
+#: plugins/graph_widgets.py:61
 msgid ""
-"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
+"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes "
+"y(double) + 1Byte sum\n"
 "Protocol example code see help"
 msgstr ""
-"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
+"Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes "
+"y(double) + 1Byte sum\n"
 "Protocol example code see help"
 
-#: COMTool/plugins/graph_widgets.py:65
+#: plugins/graph_widgets.py:65
 msgid ""
-"Check this if you want to use binary protocol, or use ASCII protocol(e.g. "
-"\"$data1,10.0,200.0\\n\"), more see help button on the top of window"
+"Check this if you want to use binary protocol, or use ASCII protocol(e.g."
+" \"$data1,10.0,200.0\\n\"), more see help button on the top of window"
 msgstr ""
-"Check this if you want to use binary protocol, or use ASCII protocol(e.g. "
-"\"$data1,10.0,200.0\\n\"), more see help button on the top of window"
+"Check this if you want to use binary protocol, or use ASCII protocol(e.g."
+" \"$data1,10.0,200.0\\n\"), more see help button on the top of window"
 
-#: COMTool/plugins/myplugin.py:22
+#: plugins/myplugin.py:22
 msgid "my plugin"
 msgstr "my plugin"
 
-#: COMTool/plugins/myplugin.py:62 COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
+#: plugins/myplugin.py:62
+#: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:70
 msgid "Input data first please"
 msgstr "Input data first please"
 
-#: COMTool/plugins/protocol.py:58
+#: plugins/protocol.py:58
 msgid "protocol"
 msgstr "protocol"
 
-#: COMTool/plugins/protocol.py:155
+#: plugins/protocol.py:155
 msgid "Key mode"
 msgstr "Key mode"
 
-#: COMTool/plugins/protocol.py:241
+#: plugins/protocol.py:241
 msgid "Receive settings"
 msgstr "受信設定"
 
-#: COMTool/plugins/protocol.py:247
+#: plugins/protocol.py:247
 msgid "En-decoding settings"
 msgstr "En-decoding settings"
 
-#: COMTool/plugins/protocol.py:251
+#: plugins/protocol.py:251
 msgid "Custom, input name"
 msgstr "Custom, input name"
 
-#: COMTool/plugins/protocol.py:252
+#: plugins/protocol.py:252
 msgid "Load defaults"
 msgstr "Load defaults"
 
-#: COMTool/plugins/protocol.py:255 COMTool/plugins/protocol.py:575 COMTool/plugins/protocol.py:599
-#: COMTool/plugins/protocol.py:602 COMTool/plugins/protocol.py:622
+#: plugins/protocol.py:255 plugins/protocol.py:575 plugins/protocol.py:599
+#: plugins/protocol.py:602 plugins/protocol.py:622
 msgid "Save"
 msgstr "Save"
 
-#: COMTool/plugins/protocol.py:261
+#: plugins/protocol.py:261
 msgid "Defaults"
 msgstr "Defaults"
 
-#: COMTool/plugins/protocol.py:263
+#: plugins/protocol.py:263
 msgid "Code"
 msgstr "Code"
 
-#: COMTool/plugins/protocol.py:267
+#: plugins/protocol.py:267
 msgid "Send settings"
 msgstr "Send settings"
 
-#: COMTool/plugins/protocol.py:488
+#: plugins/protocol.py:488
 msgid "Run decode error"
 msgstr "デコード実行エラー"
 
-#: COMTool/plugins/protocol.py:515
+#: plugins/protocol.py:515
 msgid "Run encode error"
 msgstr "エンコード実行エラー"
 
-#: COMTool/plugins/protocol.py:583
+#: plugins/protocol.py:583
 msgid "decode and encode method should be in code"
 msgstr "decode and encode method should be in code"
 
-#: COMTool/plugins/protocol.py:586
+#: plugins/protocol.py:586
 msgid "Method error"
 msgstr "メソッドエラー"
 
-#: COMTool/plugins/protocol.py:609
+#: plugins/protocol.py:609
 msgid "Please input code profile name first"
 msgstr "Please input code profile name first"
 
-#: COMTool/plugins/protocol.py:631
+#: plugins/protocol.py:631
 msgid "Please select a code profile name first to delete"
 msgstr "Please select a code profile name first to delete"
 
-#: COMTool/plugins/terminal.py:674
+#: plugins/terminal.py:674
 msgid "terminal"
 msgstr "terminal"
 
-#: COMTool/plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:30
+#: plugins/myplugin2/comtool_plugin_myplugin2/myplugin2.py:30
 msgid "my plugin2"
 msgstr "my plugin2"
-
-#~ msgid "Send"
-#~ msgstr "送信"
-
-#~ msgid "Serial Settings"
-#~ msgstr "シリアル設定"
-
-#~ msgid "+"
-#~ msgstr "+"
-
-#~ msgid "Please select a code profile name first to delte"
-#~ msgstr ""
-
-#~ msgid "Donate"
-#~ msgstr ""
-
-#~ msgid "Receive"
-#~ msgstr "受信"
-
-#~ msgid "Functional Send"
-#~ msgstr "機能送信"
-
-#~ msgid "Ready"
-#~ msgstr "準備完了"
-
-#~ msgid "HELP"
-#~ msgstr "ヘルプ"
-
-#~ msgid "ABOUT"
-#~ msgstr "関連する"
-
-#~ msgid "Settings"
-#~ msgstr "設定"
-
-#~ msgid "Need Update"
-#~ msgstr "更新が必要"
-
-#~ msgid "update now?"
-#~ msgstr "今すぐ更新しますか？"
-
-#~ msgid "uninstall app"
-#~ msgstr "アプリのアンインストール"
-
-#~ msgid "Old config can be found in"
-#~ msgstr ""
-
-#~ msgid "About"
-#~ msgstr "だいたい"
-
-#~ msgid "Buy me half a cup of coffee"
-#~ msgstr "コーヒーを買ってください"
-
-#~ msgid "config file format error"
-#~ msgstr "タイムフォーマットエラー"
-
-#~ msgid "Config is not for this plugin, config is for plugin: pluginId"
-#~ msgstr ""
-
-#~ msgid "Plugin help:"
-#~ msgstr ""
-
-#~ msgid "This plugin no help info"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
-#~ "If you use python, can pack frame by:\n"
-#~ "from COMTool.plugin import gragh_protocol\n"
-#~ "frame = gragh_protocol.plot_pack(name, x, y)"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Protocol: header + 1Byte name length + name + 8Bytes x(double) + 8Bytes y(double) + 1Byte sum\n"
-#~ "If you use python, can pack frame by:\n"
-#~ msgstr ""
-
-#~ msgid "Gragh"
-#~ msgstr ""
-
-#~ msgid "Double click gragh item to add a gragh widget"
-#~ msgstr ""
-
-#~ msgid "Double click to add a gragh widget"
-#~ msgstr ""
-
-#~ msgid "\"$\" means start of frame, \",\" means separator"
-#~ msgstr ""
-
-#~ msgid "Sendding File"
-#~ msgstr "ファイルの送信"
-
-#~ msgid ", Double click to detach as a window"
-#~ msgstr ""
-
-#~ msgid "Load plugin error"
-#~ msgstr "プラグインの読み込みに失敗しました"
-
-#~ msgid "Enable unix terminal color support, e.g. \\33[31;43mhello\\33[0m"
-#~ msgstr "UNIX端末の色のサポートを有効にする, 例えば \\33[31;43mhello\\33[0m"
-
-#~ msgid "Font Size"
-#~ msgstr ""
-
-#~ msgid "Load config"
-#~ msgstr "設定を読み込む"
-
-#~ msgid "Share config"
-#~ msgstr "設定を共有"
-
-#~ msgid "Find content"
-#~ msgstr "検索内容"
-
-#~ msgid "One plain-text rule per line, or one lambda expression"
-#~ msgstr "通常テキストは1行に1ルール、または lambda 式を1つ入力"
-
-#~ msgid "Add"
-#~ msgstr "追加"
-
-#~ msgid "Update selected"
-#~ msgstr "選択を更新"
-
-#~ msgid "Update the selected find rule from the input"
-#~ msgstr "入力内容で選択した検索ルールを更新"
-
-#~ msgid "Select multiple rules to apply or clear highlight color together"
-#~ msgstr "複数ルールを選択してハイライト色を一括適用またはクリア"
-
-#~ msgid "no color"
-#~ msgstr "色なし"
-
-#~ msgid "Enable find rule"
-#~ msgstr "検索ルールを有効化"
-
-#~ msgid ""
-#~ "Plain text searches exact text. Lambda receives text"
-#~ " and may return bool, string, list, or (start,"
-#~ " end) ranges."
-#~ msgstr "通常テキストは完全一致で検索します。Lambda は text を受け取り、bool、文字列、リスト、または (start, end) 範囲を返せます。"
-
-#~ msgid "Use a lambda like: lambda text: re.findall(r'ERR\\d+', text)"
-#~ msgstr "例：lambda text: re.findall(r'ERR\\d+', text)"
-
-#~ msgid "Lambda expression error"
-#~ msgstr "Lambda 式エラー"
-
-#~ msgid "Lambda expression must return a callable"
-#~ msgstr "Lambda 式は呼び出し可能なオブジェクトを返す必要があります"

@@ -130,6 +130,12 @@ class Plugin_Base(QObject):
         '''
         return False
 
+    def onSkinChanged(self, skin):
+        '''
+            Called in UI thread after the global skin changes.
+        '''
+        pass
+
     def onWidgetStatusBar(self, parent):
         self.statusBar = statusBar(rxTxCount=False)
         return self.statusBar

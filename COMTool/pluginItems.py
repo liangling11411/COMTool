@@ -132,7 +132,8 @@ class PluginItem:
         #    get settings widgets
         subSettingWidget = self.plugin.onWidgetSettings(widget)
         if not subSettingWidget is None:
-            settingLayout.addWidget(subSettingWidget)
+            settingsWidgetStretch = getattr(self.plugin, "onSettingsWidgetStretch", lambda: 0)
+            settingLayout.addWidget(subSettingWidget, settingsWidgetStretch())
         # widgets main
         self.mainWidget = self.plugin.onWidgetMain(widget)
         # widgets functional
