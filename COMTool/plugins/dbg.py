@@ -2164,6 +2164,10 @@ class Plugin(Plugin_Base):
         if not hasattr(self, "saveLogStartButton"):
             return
         self.saveLogStopButton.setEnabled(self.logSessionActive)
+        self.saveLogStopButton.setStyleSheet(
+            "QPushButton {background:#d32f2f;color:#ffffff;}"
+            "QPushButton:disabled {background:#8a2a2a;color:#dddddd;}"
+        )
         self.logMoreSettingsButton.setEnabled(not self.logSessionActive)
         if not self.logSessionActive:
             self.saveLogStartButton.setText(_("Start record"))

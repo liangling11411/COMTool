@@ -2669,3 +2669,9 @@ msgstr "Receive area cleared"
 
 msgid "Close all connections before importing a page"
 msgstr "Close all connections before importing a page"
+
+msgid "Close the current connection before importing this page"
+msgstr "Close the current connection before importing this page"
+
+msgid "Clear Line Charts"
+msgstr "Clear Line Charts"

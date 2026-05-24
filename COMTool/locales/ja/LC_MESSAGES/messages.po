@@ -2664,3 +2664,9 @@ msgstr "受信エリアをクリアしました"
 
 msgid "Close all connections before importing a page"
 msgstr "ページをインポートする前にすべての接続を閉じてください"
+
+msgid "Close the current connection before importing this page"
+msgstr "このページをインポートする前に現在の接続を閉じてください"
+
+msgid "Clear Line Charts"
+msgstr "折れ線グラフをクリア"

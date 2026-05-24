@@ -248,6 +248,9 @@ def parse(line, ctx):
         self.receiveScrollBottomButton = QPushButton("")
         self.receiveScrollBottomButton.setToolTip(_("Scroll receive area to bottom"))
         utils_ui.setButtonIcon(self.receiveScrollBottomButton, "fa.arrow-down")
+        for button in [self.receiveFindButton, self.receiveScrollBottomButton, self.clearBtn]:
+            button.setMinimumWidth(260)
+            button.setMaximumWidth(260)
         receiveWidget = QWidget()
         receiveLayout = QHBoxLayout()
         receiveLayout.setContentsMargins(0,0,0,0)
@@ -873,7 +876,6 @@ def parse(line, ctx):
             "receiveSettingsWrap",
             "receiveEscape",
             "receiveSettingsTimestamp",
-            "timestampColorButton",
             "timestampNewlineCheckbox",
             "sendSettingsAscii",
             "sendSettingsHex",
@@ -888,16 +890,31 @@ def parse(line, ctx):
             "clearSendButton",
             "receiveFontFamilyInput",
             "receiveFontSizeInput",
-            "receiveFontColorButton",
             "sendFontFamilyInput",
             "sendFontSizeInput",
             "sendFontColorButton",
+            "customSendSearch",
+            "customSendSelectAll",
+            "batchCustomSendColorButton",
+            "batchCustomSendIconButton",
+            "batchCustomSendDeleteButton",
+            "importCustomSendButton",
+            "exportCustomSendButton",
+            "addButton",
         ]
         for name in controls:
             obj = getattr(self, name, None)
             if obj is not None:
                 obj.setEnabled(not self.captureLocked)
+        self.setCustomSendLocked(self.captureLocked)
         self.updateClosedOnlyControls()
+
+    def setCustomSendLocked(self, locked):
+        if not hasattr(self, "customSendScroll"):
+            return
+        for widgetClass in (QLineEdit, QPushButton, QCheckBox):
+            for widget in self.customSendScroll.findChildren(widgetClass):
+                widget.setEnabled(not locked)
 
     def updateClosedOnlyControls(self):
         closed = self.isConnectionClosed() and not self.captureLocked
@@ -1360,6 +1377,12 @@ def parse(line, ctx):
             ("pauseTime", _("Pause time")),
             ("logSize", _("Log size")),
             ("logPath", _("Log path")),
+            ("pageName", _("Page name")),
+            ("connectionType", _("Connection type")),
+            ("connectionStatus", _("Connection status")),
+            ("connectionSettings", _("Connection settings")),
+            ("portOpenCloseHistory", _("Port open/close history")),
+            ("portDropReconnectHistory", _("Port disconnect/reconnect history")),
             ("receiveClearHistory", _("Receive clear history")),
         ]
 
@@ -1377,6 +1400,15 @@ def parse(line, ctx):
         for clearDt in self.receiveClearRecords:
             lines.append("  - {}: {}".format(self.formatLogDateTime(clearDt), _("Receive area cleared")))
         return lines
+
+    def globalConfigValue(self, key, default=None):
+        config = self.configGlobal
+        if hasattr(config, "get"):
+            return config.get(key, default)
+        try:
+            return config[key]
+        except Exception:
+            return default
 
     def updateLogSettingsSummary(self):
         if not hasattr(self, "logSettingsSummaryLabel"):
@@ -1431,6 +1463,7 @@ def parse(line, ctx):
         self.logPauseStartTime = None
         self.logPauseStartDt = None
         self.logPausePeriods = []
+        self.logConnectionEvents = []
         self.receiveClearRecords = []
         self.logTimedRemaining = int(self.config.get("saveLogDuration", 60))
         self.config["saveLog"] = True
@@ -1508,6 +1541,10 @@ def parse(line, ctx):
         if not hasattr(self, "saveLogStartButton"):
             return
         self.saveLogStopButton.setEnabled(self.logSessionActive)
+        self.saveLogStopButton.setStyleSheet(
+            "QPushButton {background:#d32f2f;color:#ffffff;}"
+            "QPushButton:disabled {background:#8a2a2a;color:#dddddd;}"
+        )
         self.logMoreSettingsButton.setEnabled(not self.logSessionActive)
         if not self.logSessionActive:
             self.saveLogStartButton.setText(_("Start record"))
@@ -1627,31 +1664,135 @@ def parse(line, ctx):
     def formatLogDateTime(self, value):
         return value.strftime("%Y-%m-%d %H:%M:%S") if value else "-"
 
+    def currentPageLogInfo(self):
+        for item in self.globalConfigValue("items", []):
+            config = item.get("config", {})
+            if config.get("plugin") is self.config:
+                conns = config.get("conns", {})
+                connId = conns.get("currConn", "")
+                return item.get("name", ""), connId, conns.get(connId, {})
+        return getattr(self, "pageName", self.name), "", {}
+
+    def recordLogConnectionEvent(self, previousStatus, status, msg):
+        if not self.logSessionActive:
+            return
+        eventType = None
+        if status == ConnectionStatus.CONNECTED and previousStatus == ConnectionStatus.LOSE:
+            eventType = "reconnect"
+        elif status == ConnectionStatus.CONNECTED and previousStatus != ConnectionStatus.CONNECTED:
+            eventType = "open"
+        elif status == ConnectionStatus.CLOSED and previousStatus != ConnectionStatus.CLOSED:
+            eventType = "close"
+        elif status == ConnectionStatus.LOSE and previousStatus != ConnectionStatus.LOSE:
+            eventType = "drop"
+        if eventType is None:
+            return
+        self.logConnectionEvents.append({
+            "time": datetime.now(),
+            "type": eventType,
+            "message": msg or "",
+            "from": previousStatus.name if previousStatus is not None else "",
+            "to": status.name
+        })
+
+    def logConnectionEventLabel(self, eventType):
+        labels = {
+            "open": _("Port opened"),
+            "close": _("Port closed"),
+            "drop": _("Port disconnected"),
+            "reconnect": _("Port reconnected"),
+        }
+        return labels.get(eventType, eventType)
+
+    def formatLogConnectionEventLines(self, title, eventTypes):
+        lines = ["{}:".format(title)]
+        events = [
+            event for event in self.logConnectionEvents
+            if event.get("type") in eventTypes
+        ]
+        if not events:
+            lines.append("  - {}".format(_("No events")))
+            return lines
+        for event in events:
+            msg = event.get("message", "")
+            msgPart = " - {}".format(msg) if msg else ""
+            lines.append("  - {}: {}{}".format(
+                self.formatLogDateTime(event.get("time")),
+                self.logConnectionEventLabel(event.get("type")),
+                msgPart
+            ))
+        return lines
+
     def appendLogInformation(self, endDt):
         path = self.currentLogPath()
         if not path:
             return
+        pageName, connId, connSettings = self.currentPageLogInfo()
+        try:
+            connSettingsText = json.dumps(connSettings, ensure_ascii=False, sort_keys=True)
+        except Exception:
+            connSettingsText = str(connSettings)
         baseSize = os.path.getsize(path) if os.path.exists(path) else 0
-        lines = ["", "", "========== {} ==========".format(_("Log information"))]
-        if self.logAppendInfoEnabled("startTime"):
-            lines.append("{}: {}".format(_("Start time"), self.formatLogDateTime(self.logSessionStartDt)))
-        if self.logAppendInfoEnabled("endTime"):
-            lines.append("{}: {}".format(_("End time"), self.formatLogDateTime(endDt)))
-        if self.logAppendInfoEnabled("activeDuration"):
-            lines.append("{}: {}".format(_("Active duration"), self.secondsToHms(self.currentLogElapsed())))
-        if self.logAppendInfoEnabled("pauseCount"):
-            lines.append("{}: {}".format(_("Pause count"), len(self.logPausePeriods)))
-        if self.logAppendInfoEnabled("pauseTime"):
-            lines.append("{}: {}".format(_("Pause time"), sum(period[2] for period in self.logPausePeriods)))
-        if self.logAppendInfoEnabled("logSize"):
-            lines.append("{}: {}".format(_("Log size"), self.formatFileSize(baseSize)))
-        if self.logAppendInfoEnabled("logPath"):
-            lines.append("{}: {}".format(_("Log path"), path))
-        if self.logAppendInfoEnabled("receiveClearHistory"):
-            lines.extend(self.formatReceiveClearRecordLines(_("Receive clear history")))
-        lines.extend(["====================================", ""])
+
+        def buildSummary(sizeText):
+            lines = ["", "", "========== {} ==========".format(_("Log information"))]
+            if self.logAppendInfoEnabled("startTime"):
+                lines.append("{}: {}".format(_("Start time"), self.formatLogDateTime(self.logSessionStartDt)))
+            if self.logAppendInfoEnabled("endTime"):
+                lines.append("{}: {}".format(_("End time"), self.formatLogDateTime(endDt)))
+            if self.logAppendInfoEnabled("activeDuration"):
+                lines.append("{}: {}".format(_("Active duration"), self.secondsToHms(self.currentLogElapsed())))
+            if self.logAppendInfoEnabled("pauseCount"):
+                lines.append("{}: {}".format(_("Pause count"), len(self.logPausePeriods)))
+            if self.logAppendInfoEnabled("pauseTime"):
+                if self.logPausePeriods:
+                    for idx, (startDt, endPauseDt, duration) in enumerate(self.logPausePeriods, start=1):
+                        lines.append("{} {}: {} - {} ({})".format(
+                            _("Pause time"),
+                            idx,
+                            self.formatLogDateTime(startDt),
+                            self.formatLogDateTime(endPauseDt),
+                            self.secondsToHms(duration)
+                        ))
+                else:
+                    lines.append("{}: {}".format(_("Pause time"), _("None")))
+            if self.logAppendInfoEnabled("logSize"):
+                lines.append("{}: {}".format(_("Log size"), sizeText))
+            if self.logAppendInfoEnabled("logPath"):
+                lines.append("{}: {}".format(_("Log path"), path))
+            if self.logAppendInfoEnabled("pageName"):
+                lines.append("{}: {}".format(_("Page name"), pageName or "-"))
+            if self.logAppendInfoEnabled("connectionType"):
+                lines.append("{}: {}".format(_("Connection type"), connId or "-"))
+            if self.logAppendInfoEnabled("connectionStatus"):
+                lines.append("{}: {}".format(_("Connection status"), self.currentConnStatus.name))
+            if self.logAppendInfoEnabled("connectionSettings"):
+                lines.append("{}: {}".format(_("Connection settings"), connSettingsText or "-"))
+            if self.logAppendInfoEnabled("portOpenCloseHistory"):
+                lines.extend(self.formatLogConnectionEventLines(
+                    _("Port open/close history"),
+                    {"open", "close"}
+                ))
+            if self.logAppendInfoEnabled("portDropReconnectHistory"):
+                lines.extend(self.formatLogConnectionEventLines(
+                    _("Port disconnect/reconnect history"),
+                    {"drop", "reconnect"}
+                ))
+            if self.logAppendInfoEnabled("receiveClearHistory"):
+                lines.extend(self.formatReceiveClearRecordLines(_("Receive clear history")))
+            lines.extend(["====================================", ""])
+            return "\n".join(lines)
+
+        encoding = self.configGlobal["encoding"]
+        summary = buildSummary(self.formatFileSize(baseSize))
+        for _i in range(3):
+            finalSize = baseSize + len(summary.encode(encoding, errors="ignore"))
+            nextSummary = buildSummary(self.formatFileSize(finalSize))
+            if nextSummary == summary:
+                break
+            summary = nextSummary
         with open(path, "a+", encoding=self.configGlobal["encoding"], newline="\n") as f:
-            f.write("\n".join(lines))
+            f.write(summary)
 
     def onLog(self, text):
         path = self.currentLogPath()
@@ -2015,7 +2156,9 @@ def parse(line, ctx):
             self.receiveFindScrollBar.setMarkers(markers)
 
     def onConnChanged(self, status:ConnectionStatus, msg:str):
+        previousStatus = self.currentConnStatus
         self.currentConnStatus = status
+        self.recordLogConnectionEvent(previousStatus, status, msg)
         super().onConnChanged(status, msg)
         self.updateClosedOnlyControls()
         if hasattr(self, "receiveFindDialog") and self.receiveFindDialog is not None:
@@ -2104,6 +2247,8 @@ def parse(line, ctx):
         self.isScheduledSending = False
 
     def sendData(self, data_bytes=None):
+        if self.captureLocked:
+            return
         try:
             rawBytes = data_bytes or b""
             if self.config["sendAutoNewline"]:
@@ -2142,6 +2287,8 @@ def parse(line, ctx):
         self.stopSaveLogStatus()
 
     def sendCustomItem(self, item):
+        if self.captureLocked:
+            return
         text = item.get("text", "") if isinstance(item, dict) else item
         dateBytes = self.parseSendData(text, self.configGlobal["encoding"], self.config["useCRLF"], not self.config["sendAscii"], self.config["sendEscape"])
         if dateBytes:

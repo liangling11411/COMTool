@@ -2639,3 +2639,9 @@ msgstr ""
 
 msgid "Close all connections before importing a page"
 msgstr ""
+
+msgid "Close the current connection before importing this page"
+msgstr ""
+
+msgid "Clear Line Charts"
+msgstr ""

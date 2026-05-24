@@ -2642,3 +2642,9 @@ msgstr "接收区已清空"
 
 msgid "Close all connections before importing a page"
 msgstr "导入页面前请关闭所有连接"
+
+msgid "Close the current connection before importing this page"
+msgstr "导入此页面前请关闭当前连接"
+
+msgid "Clear Line Charts"
+msgstr "清空折线图"

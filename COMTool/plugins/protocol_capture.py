@@ -564,10 +564,11 @@ class CaptureViewerDialog(QDialog):
     def __init__(self, title, tableTabs, plotTabs, parent=None):
         super().__init__(parent)
         self.setWindowTitle(title or _("protocol"))
-        self.resize(1100, 720)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
+        self.resize(1280, 720)
         layout = QVBoxLayout()
         self.setLayout(layout)
-        splitter = QSplitter(Qt.Vertical)
+        splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(tableTabs)
         splitter.addWidget(plotTabs)
         splitter.setStretchFactor(0, 1)
@@ -624,7 +625,7 @@ class DataCaptureWidget(QWidget):
         self.testScriptBtn = QPushButton(_("Test Script"))
         self.viewChartsBtn = QPushButton(_("View Charts"))
         self.clearTablesBtn = QPushButton(_("Clear Tables"))
-        self.clearPlotsBtn = QPushButton(_("Clear Plots"))
+        self.clearPlotsBtn = QPushButton(_("Clear Line Charts"))
         self.exportCurrentBtn = QPushButton(_("Export Current Table CSV"))
         self.exportAllBtn = QPushButton(_("Export All Tables CSV"))
 
@@ -884,13 +885,20 @@ class DataCaptureWidget(QWidget):
         if running:
             self.enableBtn.setText(_("Pause Capture"))
             self.statusLabel.setText(_("Enabled"))
+            self.enableBtn.setStyleSheet("background:#2e7d32;color:#ffffff;")
         elif paused:
             self.enableBtn.setText(_("Resume Capture"))
             self.statusLabel.setText(_("Paused"))
+            self.enableBtn.setStyleSheet("background:#f9a825;color:#212121;")
         else:
             self.enableBtn.setText(_("Enable Capture"))
             self.statusLabel.setText(_("Disabled"))
+            self.enableBtn.setStyleSheet("")
         self.stopCaptureBtn.setEnabled(active)
+        self.stopCaptureBtn.setStyleSheet(
+            "QPushButton {background:#d32f2f;color:#ffffff;}"
+            "QPushButton:disabled {background:#8a2a2a;color:#dddddd;}"
+        )
         for obj in [
             self.scriptEdit,
             self.saveScriptBtn,
@@ -900,7 +908,8 @@ class DataCaptureWidget(QWidget):
             self.timeFormatCombo,
             self.xAxisCombo,
             self.maxRowsInput,
-            self.maxPointsInput
+            self.maxPointsInput,
+            self.flushIntervalInput
         ]:
             obj.setEnabled(not active)
 

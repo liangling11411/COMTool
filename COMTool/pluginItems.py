@@ -34,7 +34,6 @@ class PluginItem:
         self.reloadWindowSignal = reloadWindowSignal
         self.hintSignal = hintSignal
         self.name = name
-        self.canImportPage = lambda: True
         self.itemNameChanged = itemNameChanged
         self.connClasses = connClasses
         self.connsConfigs = connsConfigs
@@ -181,6 +180,12 @@ class PluginItem:
         if hasattr(self, "loadConfigBtn"):
             self.loadConfigBtn.setEnabled(enabled)
 
+    def canImportPage(self):
+        try:
+            return self.plugin.getConnStatus() == ConnectionStatus.CLOSED
+        except Exception:
+            return True
+
     # event
     def selectSharefile(self):
         oldPath = os.getcwd()
@@ -199,7 +204,7 @@ class PluginItem:
 
     def selectLoadfile(self):
         if not self.canImportPage():
-            self.hintSignal.emit("warning", _("Warning"), _("Close all connections before importing a page"))
+            self.hintSignal.emit("warning", _("Warning"), _("Close the current connection before importing this page"))
             return
         oldPath = os.getcwd()
         fileName_choose, filetype = QFileDialog.getOpenFileName(self.functionalWidget,
