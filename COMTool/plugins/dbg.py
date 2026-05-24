@@ -39,8 +39,9 @@ DEFAULT_TEXT_FONT = "Consolas"
 
 
 class AsyncTextFileWriter:
-    def __init__(self, encoding):
+    def __init__(self, encoding, maxQueueChunks=20000):
         self.encoding = encoding
+        self.maxQueueChunks = maxQueueChunks
         self.path = ""
         self.queue = None
         self.thread = None
@@ -51,7 +52,7 @@ class AsyncTextFileWriter:
         self.path = path
         if encoding:
             self.encoding = encoding
-        self.queue = queue.Queue()
+        self.queue = queue.Queue(maxsize=self.maxQueueChunks)
         self.active = True
         self.thread = threading.Thread(target=self.writeProcess)
         self.thread.setDaemon(True)
@@ -59,6 +60,8 @@ class AsyncTextFileWriter:
 
     def write(self, text):
         if not text or not self.active or self.queue is None:
+            return False
+        if self.thread is not None and not self.thread.is_alive():
             return False
         self.queue.put(text)
         return True
@@ -106,6 +109,17 @@ class AsyncTextFileWriter:
                         self.queue.task_done()
                 f.flush()
         except Exception as e:
+            self.active = False
+            if self.queue is not None:
+                while True:
+                    try:
+                        self.queue.get_nowait()
+                    except queue.Empty:
+                        break
+                    try:
+                        self.queue.task_done()
+                    except Exception:
+                        break
             log.e("async log writer failed: {}".format(e))
 
 
