@@ -32,7 +32,7 @@ try:
     import crc
     from protocols import defaultProtocols
     from protocol_capture import DataCaptureWidget, defaultCaptureConfig
-    from dbg import (CustomSendColorButton, CustomSendDragHandle, CustomSendItemWidget,
+    from dbg import (AsyncTextFileWriter, CustomSendColorButton, CustomSendDragHandle, CustomSendItemWidget,
                      FindMarkerScrollBar, LogSettingsDialog, NoWheelFontComboBox,
                      NoWheelSpinBox, ReceiveFindDialog, WrapRemarkButton, DEFAULT_TEXT_FONT)
 except Exception:
@@ -40,7 +40,7 @@ except Exception:
     from . import crc
     from .protocols import defaultProtocols
     from .protocol_capture import DataCaptureWidget, defaultCaptureConfig
-    from .dbg import (CustomSendColorButton, CustomSendDragHandle, CustomSendItemWidget,
+    from .dbg import (AsyncTextFileWriter, CustomSendColorButton, CustomSendDragHandle, CustomSendItemWidget,
                       FindMarkerScrollBar, LogSettingsDialog, NoWheelFontComboBox,
                       NoWheelSpinBox, ReceiveFindDialog, WrapRemarkButton, DEFAULT_TEXT_FONT)
 
@@ -200,6 +200,7 @@ def parse(line, ctx):
         self.logTimedDeadline = None
         self.logTimedRemaining = None
         self.logLastSize = 0
+        self.logWriter = AsyncTextFileWriter(self.configGlobal["encoding"])
         self.saveLogStopTimer = None
         self.saveLogStatusTimer = None
         self.sendRecord = []
@@ -1018,7 +1019,7 @@ def parse(line, ctx):
         dragHandle = CustomSendDragHandle(item)
         utils_ui.setButtonIcon(dragHandle, "fa.bars")
         dragHandle.setProperty("class", "remark")
-        dragHandle.setToolTip(_("Drag before another item to reorder"))
+        dragHandle.setToolTip(_("Drag before another item to reorder; double click to move this item to top"))
         cmd = QLineEdit(customItem["text"])
         send = WrapRemarkButton(customItem["remark"])
         utils_ui.setButtonIcon(send, customItem["icon"])
@@ -1466,6 +1467,7 @@ def parse(line, ctx):
         self.logConnectionEvents = []
         self.receiveClearRecords = []
         self.logTimedRemaining = int(self.config.get("saveLogDuration", 60))
+        self.logWriter.start(path, self.configGlobal["encoding"])
         self.config["saveLog"] = True
         self.updateSaveLogButtons()
         self.startSaveLogStatus()
@@ -1508,9 +1510,11 @@ def parse(line, ctx):
         endDt = datetime.now()
         if self.logPaused:
             self.closeCurrentLogPause(endDt=endDt, endTime=time.time())
+        self.config["saveLog"] = False
+        self.logWriter.flush()
         if self.config.get("saveLogAppendInfo", False):
             self.appendLogInformation(endDt)
-        self.config["saveLog"] = False
+        self.logWriter.stop()
         self.logSessionActive = False
         self.logPaused = False
         self.logStartTime = None
@@ -1797,9 +1801,9 @@ def parse(line, ctx):
     def onLog(self, text):
         path = self.currentLogPath()
         if self.logSessionActive and (not self.logPaused) and self.config["saveLog"] and path:
-            with open(path, "a+", encoding=self.configGlobal["encoding"], newline="\n") as f:
-                f.write(text)
-            self.updateSaveLogStatus()
+            if not self.logWriter.write(text):
+                with open(path, "a+", encoding=self.configGlobal["encoding"], newline="\n") as f:
+                    f.write(text)
 
     def logTextWithTimestamps(self, text):
         if not text:
@@ -2283,6 +2287,7 @@ def parse(line, ctx):
             self.dataCaptureWidget.stopCapture()
         if self.logSessionActive:
             self.finishSaveLogRecording()
+        self.logWriter.stop()
         self.stopSaveLogTimer()
         self.stopSaveLogStatus()
 

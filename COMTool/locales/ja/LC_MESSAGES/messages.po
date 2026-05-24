@@ -2670,3 +2670,72 @@ msgstr "このページをインポートする前に現在の接続を閉じて
 
 msgid "Clear Line Charts"
 msgstr "折れ線グラフをクリア"
+
+msgid "Drag before another item to reorder; double click to move this item to top"
+msgstr "ほかの項目の前へドラッグして並べ替え、ダブルクリックで先頭へ移動"
+
+msgid "Captured rows for this table"
+msgstr "この表のキャプチャ行"
+
+msgid "Realtime line chart for captured numeric fields"
+msgstr "キャプチャした数値フィールドのリアルタイム折れ線グラフ"
+
+msgid "Visible curves"
+msgstr "表示する曲線"
+
+msgid "Select which captured curves are visible in this chart"
+msgstr "このグラフに表示するキャプチャ曲線を選択"
+
+msgid "Show or hide this curve"
+msgstr "この曲線を表示または非表示"
+
+msgid "Write Python capture script here"
+msgstr "ここに Python キャプチャスクリプトを入力"
+
+msgid "Start, pause, or resume data capture"
+msgstr "データキャプチャの開始、一時停止、再開"
+
+msgid "Stop the current capture session"
+msgstr "現在のキャプチャセッションを停止"
+
+msgid "Apply the script and rebuild table and chart definitions"
+msgstr "スクリプトを適用し、表とグラフ定義を再構築"
+
+msgid "Run the script against a sample received line"
+msgstr "サンプル受信行でスクリプトをテスト"
+
+msgid "Open captured tables and line charts in a separate window"
+msgstr "キャプチャ表と折れ線グラフを別ウィンドウで開く"
+
+msgid "Clear captured table data after confirmation"
+msgstr "確認後にキャプチャ表データをクリア"
+
+msgid "Clear line chart data after confirmation"
+msgstr "確認後に折れ線グラフデータをクリア"
+
+msgid "Export the currently selected table to CSV"
+msgstr "現在選択中の表を CSV にエクスポート"
+
+msgid "Export all captured tables to CSV files"
+msgstr "すべてのキャプチャ表を CSV ファイルにエクスポート"
+
+msgid "Select the displayed time format for captured rows"
+msgstr "キャプチャ行に表示する時刻形式を選択"
+
+msgid "Select the X axis field for line charts"
+msgstr "折れ線グラフの X 軸フィールドを選択"
+
+msgid "Maximum visible rows kept in each table"
+msgstr "各表に保持する最大表示行数"
+
+msgid "Maximum visible points kept for each curve"
+msgstr "各曲線に保持する最大表示点数"
+
+msgid "Batch UI refresh interval in milliseconds"
+msgstr "UI の一括更新間隔、ミリ秒単位"
+
+msgid "Current capture status"
+msgstr "現在のキャプチャ状態"
+
+msgid "Capture input queue is full; capture stopped to protect memory"
+msgstr "キャプチャ入力キューがいっぱいのため、メモリ保護のためキャプチャを停止しました"

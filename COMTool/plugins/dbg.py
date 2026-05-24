@@ -32,10 +32,81 @@ from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesk
                              QColorDialog, QFontComboBox, QDialog, QScrollBar, QDialogButtonBox)
 from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QDrag, QTextOption, QPalette, QKeySequence, QPainter
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
-import os, threading, time, re, json
+import os, threading, time, re, json, queue
 from datetime import datetime
 
 DEFAULT_TEXT_FONT = "Consolas"
+
+
+class AsyncTextFileWriter:
+    def __init__(self, encoding):
+        self.encoding = encoding
+        self.path = ""
+        self.queue = None
+        self.thread = None
+        self.active = False
+
+    def start(self, path, encoding=None):
+        self.stop()
+        self.path = path
+        if encoding:
+            self.encoding = encoding
+        self.queue = queue.Queue()
+        self.active = True
+        self.thread = threading.Thread(target=self.writeProcess)
+        self.thread.setDaemon(True)
+        self.thread.start()
+
+    def write(self, text):
+        if not text or not self.active or self.queue is None:
+            return False
+        self.queue.put(text)
+        return True
+
+    def flush(self):
+        if self.queue is not None:
+            self.queue.join()
+
+    def stop(self):
+        if self.queue is not None and self.active:
+            self.active = False
+            self.queue.put(None)
+            if self.thread is not None and self.thread is not threading.current_thread():
+                self.thread.join(timeout=5)
+        self.queue = None
+        self.thread = None
+        self.active = False
+
+    def writeProcess(self):
+        try:
+            with open(self.path, "a+", encoding=self.encoding, newline="\n") as f:
+                lastFlush = time.time()
+                while True:
+                    item = self.queue.get()
+                    try:
+                        if item is None:
+                            break
+                        f.write(item)
+                        while True:
+                            try:
+                                nextItem = self.queue.get_nowait()
+                            except queue.Empty:
+                                break
+                            try:
+                                if nextItem is None:
+                                    f.flush()
+                                    return
+                                f.write(nextItem)
+                            finally:
+                                self.queue.task_done()
+                        if time.time() - lastFlush >= 1:
+                            f.flush()
+                            lastFlush = time.time()
+                    finally:
+                        self.queue.task_done()
+                f.flush()
+        except Exception as e:
+            log.e("async log writer failed: {}".format(e))
 
 
 class CustomSendItemWidget(QWidget):
@@ -111,6 +182,17 @@ class CustomSendDragHandle(QPushButton):
     def mouseReleaseEvent(self, event):
         self.setCursor(Qt.OpenHandCursor)
         super().mouseReleaseEvent(event)
+
+    def mouseDoubleClickEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            plugin = getattr(self.itemWidget, "plugin", None)
+            if plugin is not None:
+                idx = plugin.customSendItemsLayout.indexOf(self.itemWidget)
+                if idx > 0:
+                    plugin.moveCustomSendItemBefore(idx, 0)
+            event.accept()
+            return
+        super().mouseDoubleClickEvent(event)
 
 
 class CustomSendColorButton(QPushButton):
@@ -1054,6 +1136,7 @@ class Plugin(Plugin_Base):
         self.logTimedDeadline = None
         self.logTimedRemaining = None
         self.logLastSize = 0
+        self.logWriter = AsyncTextFileWriter(self.configGlobal["encoding"])
         self.receiveFindDialog = None
         self.receiveFindRuleErrors = set()
         self.receiveFindMarkerTimer = None
@@ -2089,6 +2172,7 @@ class Plugin(Plugin_Base):
         self.logConnectionEvents = []
         self.receiveClearRecords = []
         self.logTimedRemaining = int(self.config.get("saveLogDuration", 60))
+        self.logWriter.start(path, self.configGlobal["encoding"])
         self.config["saveLog"] = True
         self.updateSaveLogButtons()
         self.startSaveLogStatus()
@@ -2131,9 +2215,11 @@ class Plugin(Plugin_Base):
         endDt = datetime.now()
         if self.logPaused:
             self.closeCurrentLogPause(endDt=endDt, endTime=time.time())
+        self.config["saveLog"] = False
+        self.logWriter.flush()
         if self.config.get("saveLogAppendInfo", False):
             self.appendLogInformation(endDt)
-        self.config["saveLog"] = False
+        self.logWriter.stop()
         self.logSessionActive = False
         self.logPaused = False
         self.logStartTime = None
@@ -2483,9 +2569,9 @@ class Plugin(Plugin_Base):
     def onLog(self, text):
         path = self.currentLogPath()
         if self.logSessionActive and (not self.logPaused) and self.config["saveLog"] and path:
-            with open(path, "a+", encoding=self.configGlobal["encoding"], newline="\n") as f:
-                f.write(text)
-            self.updateSaveLogStatus()
+            if not self.logWriter.write(text):
+                with open(path, "a+", encoding=self.configGlobal["encoding"], newline="\n") as f:
+                    f.write(text)
 
     def onConnChanged(self, status:ConnectionStatus, msg:str):
         previousStatus = self.currentConnStatus
@@ -2559,7 +2645,7 @@ class Plugin(Plugin_Base):
         dragHandle = CustomSendDragHandle(item)
         utils_ui.setButtonIcon(dragHandle, "fa.bars")
         dragHandle.setProperty("class", "remark")
-        dragHandle.setToolTip(_("Drag before another item to reorder"))
+        dragHandle.setToolTip(_("Drag before another item to reorder; double click to move this item to top"))
         cmd = QLineEdit(customItem["text"])
         send = WrapRemarkButton(customItem["remark"])
         utils_ui.setButtonIcon(send, customItem["icon"])
@@ -3504,6 +3590,7 @@ class Plugin(Plugin_Base):
     def onDel(self):
         if self.logSessionActive:
             self.finishSaveLogRecording()
+        self.logWriter.stop()
         self.receiveProgressStop = True
         self.stopSaveLogTimer()
         self.stopSaveLogStatus()

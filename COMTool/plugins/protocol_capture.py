@@ -10,11 +10,11 @@ from datetime import datetime
 from numbers import Number
 
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
-from PyQt5.QtGui import QFont, QIntValidator
+from PyQt5.QtGui import QFont, QIntValidator, QPalette
 from PyQt5.QtWidgets import (QAbstractItemView, QComboBox, QFileDialog, QGridLayout,
-                             QGroupBox, QInputDialog, QLabel, QLineEdit,
+                             QGroupBox, QInputDialog, QLabel, QLineEdit, QCheckBox,
                              QMessageBox, QPushButton, QDialog, QSplitter, QTableWidget, QTableWidgetItem,
-                             QTabWidget, QVBoxLayout, QWidget, QSizePolicy)
+                             QTabWidget, QVBoxLayout, QHBoxLayout, QWidget, QSizePolicy)
 
 try:
     import pyqtgraph as pg
@@ -65,6 +65,7 @@ def defaultCaptureConfig():
         "flushInterval": 200,
         "includeRawLine": False,
         "maxErrors": 3,
+        "maxQueueChunks": 20000,
     }
 
 
@@ -236,7 +237,9 @@ class CaptureTableManager:
             return self.tables[tableId]
         table = QTableWidget()
         table.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        table.setAlternatingRowColors(True)
+        table.setAlternatingRowColors(False)
+        table.setToolTip(_("Captured rows for this table"))
+        self.applyTablePalette(table)
         columns = list(baseColumns or DEFAULT_COLUMNS)
         columns = [col for col in columns if col != "table"]
         self.tables[tableId] = table
@@ -244,6 +247,26 @@ class CaptureTableManager:
         self.tabWidget.addTab(table, title or tableId)
         self.ensureColumns(tableId, columns)
         return table
+
+    def applyTablePalette(self, table):
+        windowColor = table.palette().color(QPalette.Window)
+        dark = windowColor.lightness() < 128
+        bg = "#303030" if dark else "#ffffff"
+        text = "#f5f5f5" if dark else "#202124"
+        grid = "#5f6368" if dark else "#d0d0d0"
+        headerBg = "#3a3a3a" if dark else "#f1f3f4"
+        selectedBg = "#1565c0" if dark else "#bbdefb"
+        selectedText = "#ffffff" if dark else "#102027"
+        table.setStyleSheet(
+            "QTableWidget {{background-color:{bg};alternate-background-color:{bg};"
+            "color:{text};gridline-color:{grid};selection-background-color:{selectedBg};"
+            "selection-color:{selectedText};}}"
+            "QTableWidget::item {{background-color:{bg};color:{text};}}"
+            "QHeaderView::section {{background-color:{headerBg};color:{text};"
+            "border:1px solid {grid};padding:4px;}}"
+            .format(bg=bg, text=text, grid=grid, headerBg=headerBg,
+                    selectedBg=selectedBg, selectedText=selectedText)
+        )
 
     def ensureColumns(self, tableId, keys):
         table = self.tables[tableId]
@@ -327,6 +350,8 @@ class CapturePlotManager:
     def __init__(self, tabWidget):
         self.tabWidget = tabWidget
         self.plotItems = {}
+        self.controlLayouts = {}
+        self.curveChecks = {}
         self.curves = {}
         self.data = {}
         self.colors = [
@@ -338,6 +363,8 @@ class CapturePlotManager:
     def setup(self, plots):
         self.tabWidget.clear()
         self.plotItems = {}
+        self.controlLayouts = {}
+        self.curveChecks = {}
         self.curves = {}
         self.data = {}
         if not pg:
@@ -346,12 +373,28 @@ class CapturePlotManager:
         pg.setConfigOptions(antialias=True)
         for plot in plots:
             title = plot.get("title", _("Plot"))
+            wrapper = QWidget()
+            wrapperLayout = QVBoxLayout()
+            wrapperLayout.setContentsMargins(0, 0, 0, 0)
+            wrapper.setLayout(wrapperLayout)
             widget = pg.PlotWidget()
+            widget.setToolTip(_("Realtime line chart for captured numeric fields"))
             item = widget.getPlotItem()
             item.addLegend()
             item.showGrid(x=True, y=True, alpha=0.3)
-            self.tabWidget.addTab(widget, title)
+            controls = QWidget()
+            controlsLayout = QHBoxLayout()
+            controlsLayout.setContentsMargins(0, 0, 0, 0)
+            controls.setLayout(controlsLayout)
+            controlsLayout.addWidget(QLabel(_("Visible curves")))
+            controlsLayout.addStretch(1)
+            controls.setToolTip(_("Select which captured curves are visible in this chart"))
+            wrapperLayout.addWidget(controls)
+            wrapperLayout.addWidget(widget, 1)
+            self.tabWidget.addTab(wrapper, title)
             self.plotItems[title] = item
+            self.controlLayouts[title] = controlsLayout
+            self.curveChecks[title] = {}
             self.curves[title] = {}
             self.data[title] = {}
 
@@ -359,8 +402,34 @@ class CapturePlotManager:
         for title, item in self.plotItems.items():
             item.clear()
             item.addLegend()
+            self.clearCurveControls(title)
             self.curves[title] = {}
             self.data[title] = {}
+
+    def clearCurveControls(self, title):
+        layout = self.controlLayouts.get(title)
+        if layout is None:
+            return
+        for name, checkbox in list(self.curveChecks.get(title, {}).items()):
+            layout.removeWidget(checkbox)
+            checkbox.deleteLater()
+        self.curveChecks[title] = {}
+
+    def ensureCurveCheck(self, title, name, curve):
+        checks = self.curveChecks.setdefault(title, {})
+        if name in checks:
+            curve.setVisible(checks[name].isChecked())
+            return
+        layout = self.controlLayouts.get(title)
+        if layout is None:
+            return
+        checkbox = QCheckBox(name)
+        checkbox.setChecked(True)
+        checkbox.setToolTip(_("Show or hide this curve"))
+        checkbox.toggled.connect(curve.setVisible)
+        insertAt = max(0, layout.count() - 1)
+        layout.insertWidget(insertAt, checkbox)
+        checks[name] = checkbox
 
     def appendRows(self, rows, plots, xAxis, maxPoints):
         if not pg:
@@ -398,7 +467,9 @@ class CapturePlotManager:
                 if name not in curves:
                     color = self.colors[idx % len(self.colors)]
                     curves[name] = item.plot(pen=pg.mkPen(color=color, width=2), name=name)
+                    self.ensureCurveCheck(title, name, curves[name])
                 curves[name].setData(x=values["x"], y=values["y"])
+                self.ensureCurveCheck(title, name, curves[name])
 
     def isNumber(self, value):
         return isinstance(value, Number) and not isinstance(value, bool)
@@ -594,6 +665,9 @@ class DataCaptureWidget(QWidget):
         self.engineLock = threading.Lock()
         self.pendingRows = deque()
         self.pendingRowsLock = threading.Lock()
+        self.textQueue = None
+        self.parserThread = None
+        self.parserStop = False
         self.enabled = False
         self.captureState = "stopped"
         self.dataStore = CaptureDataStore(encoding=encoding)
@@ -617,6 +691,7 @@ class DataCaptureWidget(QWidget):
         font = QFont('Menlo,Consolas,Bitstream Vera Sans Mono,Courier New,monospace, Microsoft YaHei', 10)
         self.scriptEdit.setFont(font)
         self.scriptEdit.setMinimumHeight(100)
+        self.scriptEdit.setToolTip(_("Write Python capture script here"))
         self.scriptEdit.insertPlainText(self.config["script"])
 
         self.enableBtn = QPushButton(_("Enable Capture"))
@@ -628,19 +703,34 @@ class DataCaptureWidget(QWidget):
         self.clearPlotsBtn = QPushButton(_("Clear Line Charts"))
         self.exportCurrentBtn = QPushButton(_("Export Current Table CSV"))
         self.exportAllBtn = QPushButton(_("Export All Tables CSV"))
+        self.enableBtn.setToolTip(_("Start, pause, or resume data capture"))
+        self.stopCaptureBtn.setToolTip(_("Stop the current capture session"))
+        self.saveScriptBtn.setToolTip(_("Apply the script and rebuild table and chart definitions"))
+        self.testScriptBtn.setToolTip(_("Run the script against a sample received line"))
+        self.viewChartsBtn.setToolTip(_("Open captured tables and line charts in a separate window"))
+        self.clearTablesBtn.setToolTip(_("Clear captured table data after confirmation"))
+        self.clearPlotsBtn.setToolTip(_("Clear line chart data after confirmation"))
+        self.exportCurrentBtn.setToolTip(_("Export the currently selected table to CSV"))
+        self.exportAllBtn.setToolTip(_("Export all captured tables to CSV files"))
 
         self.timeFormatCombo = QComboBox()
+        self.timeFormatCombo.setToolTip(_("Select the displayed time format for captured rows"))
         for key, label in TIME_FORMATS:
             self.timeFormatCombo.addItem(_(label), key)
         self.xAxisCombo = QComboBox()
+        self.xAxisCombo.setToolTip(_("Select the X axis field for line charts"))
         for field in X_AXIS_FIELDS:
             self.xAxisCombo.addItem(field)
         self.maxRowsInput = QLineEdit(str(self.config["maxRows"]))
+        self.maxRowsInput.setToolTip(_("Maximum visible rows kept in each table"))
         self.maxPointsInput = QLineEdit(str(self.config["maxPoints"]))
+        self.maxPointsInput.setToolTip(_("Maximum visible points kept for each curve"))
         self.flushIntervalInput = QLineEdit(str(self.config["flushInterval"]))
+        self.flushIntervalInput.setToolTip(_("Batch UI refresh interval in milliseconds"))
         for edit in [self.maxRowsInput, self.maxPointsInput, self.flushIntervalInput]:
             edit.setValidator(QIntValidator(1, 1000000))
         self.statusLabel = QLabel(_("Disabled"))
+        self.statusLabel.setToolTip(_("Current capture status"))
 
         controlLayout = QVBoxLayout()
         controlLayout.setContentsMargins(0, 0, 0, 0)
@@ -846,6 +936,7 @@ class DataCaptureWidget(QWidget):
             self.updateEnabledUi()
             self.emitHint("error", _("Error"), _("Open capture storage failed") + " " + str(e))
             return
+        self.startParserThread()
         self.captureState = "running"
         self.saveScriptBtn.setText(_("Apply Script"))
         self.captureActiveChanged.emit(True)
@@ -873,10 +964,46 @@ class DataCaptureWidget(QWidget):
             self.enabled = False
             self.captureState = "stopped"
             self.config["enabled"] = False
+        self.stopParserThread()
         self.dataStore.stop()
         if wasActive:
             self.captureActiveChanged.emit(False)
         self.updateEnabledUi()
+
+    def startParserThread(self):
+        self.stopParserThread()
+        maxChunks = self.safeInt(self.config.get("maxQueueChunks"), 20000, 100)
+        self.textQueue = queue.Queue(maxsize=maxChunks)
+        self.parserStop = False
+        self.parserThread = threading.Thread(target=self.parseTextProcess)
+        self.parserThread.setDaemon(True)
+        self.parserThread.start()
+
+    def stopParserThread(self):
+        self.parserStop = True
+        if self.textQueue is not None:
+            try:
+                self.textQueue.put_nowait(None)
+            except Exception:
+                pass
+        if self.parserThread is not None and self.parserThread is not threading.current_thread():
+            self.parserThread.join(timeout=5)
+        self.textQueue = None
+        self.parserThread = None
+
+    def parseTextProcess(self):
+        textQueue = self.textQueue
+        while not self.parserStop:
+            try:
+                text = textQueue.get(timeout=0.2)
+            except queue.Empty:
+                continue
+            try:
+                if text is None:
+                    break
+                self.processText(text)
+            finally:
+                textQueue.task_done()
 
     def updateEnabledUi(self):
         active = self.isSessionActive()
@@ -921,6 +1048,22 @@ class DataCaptureWidget(QWidget):
     def onData(self, text):
         if self.captureState != "running":
             return
+        if self.textQueue is None:
+            return
+        try:
+            self.textQueue.put_nowait(text)
+        except queue.Full:
+            with self.engineLock:
+                self.enabled = False
+                self.captureState = "stopped"
+                self.config["enabled"] = False
+            self.captureActiveChanged.emit(False)
+            self.captureErrorSignal.emit(_("Capture input queue is full; capture stopped to protect memory"))
+            return
+
+    def processText(self, text):
+        if self.captureState != "running":
+            return
         try:
             with self.engineLock:
                 if self.captureState != "running":
@@ -939,6 +1082,7 @@ class DataCaptureWidget(QWidget):
                     self.captureState = "stopped"
                     self.config["enabled"] = False
             if tooMany:
+                self.stopParserThread()
                 self.dataStore.stop()
                 self.captureActiveChanged.emit(False)
                 self.captureErrorSignal.emit(str(e))

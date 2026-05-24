@@ -2675,3 +2675,72 @@ msgstr "Close the current connection before importing this page"
 
 msgid "Clear Line Charts"
 msgstr "Clear Line Charts"
+
+msgid "Drag before another item to reorder; double click to move this item to top"
+msgstr "Drag before another item to reorder; double click to move this item to top"
+
+msgid "Captured rows for this table"
+msgstr "Captured rows for this table"
+
+msgid "Realtime line chart for captured numeric fields"
+msgstr "Realtime line chart for captured numeric fields"
+
+msgid "Visible curves"
+msgstr "Visible curves"
+
+msgid "Select which captured curves are visible in this chart"
+msgstr "Select which captured curves are visible in this chart"
+
+msgid "Show or hide this curve"
+msgstr "Show or hide this curve"
+
+msgid "Write Python capture script here"
+msgstr "Write Python capture script here"
+
+msgid "Start, pause, or resume data capture"
+msgstr "Start, pause, or resume data capture"
+
+msgid "Stop the current capture session"
+msgstr "Stop the current capture session"
+
+msgid "Apply the script and rebuild table and chart definitions"
+msgstr "Apply the script and rebuild table and chart definitions"
+
+msgid "Run the script against a sample received line"
+msgstr "Run the script against a sample received line"
+
+msgid "Open captured tables and line charts in a separate window"
+msgstr "Open captured tables and line charts in a separate window"
+
+msgid "Clear captured table data after confirmation"
+msgstr "Clear captured table data after confirmation"
+
+msgid "Clear line chart data after confirmation"
+msgstr "Clear line chart data after confirmation"
+
+msgid "Export the currently selected table to CSV"
+msgstr "Export the currently selected table to CSV"
+
+msgid "Export all captured tables to CSV files"
+msgstr "Export all captured tables to CSV files"
+
+msgid "Select the displayed time format for captured rows"
+msgstr "Select the displayed time format for captured rows"
+
+msgid "Select the X axis field for line charts"
+msgstr "Select the X axis field for line charts"
+
+msgid "Maximum visible rows kept in each table"
+msgstr "Maximum visible rows kept in each table"
+
+msgid "Maximum visible points kept for each curve"
+msgstr "Maximum visible points kept for each curve"
+
+msgid "Batch UI refresh interval in milliseconds"
+msgstr "Batch UI refresh interval in milliseconds"
+
+msgid "Current capture status"
+msgstr "Current capture status"
+
+msgid "Capture input queue is full; capture stopped to protect memory"
+msgstr "Capture input queue is full; capture stopped to protect memory"

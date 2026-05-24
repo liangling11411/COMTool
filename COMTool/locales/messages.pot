@@ -2645,3 +2645,72 @@ msgstr ""
 
 msgid "Clear Line Charts"
 msgstr ""
+
+msgid "Drag before another item to reorder; double click to move this item to top"
+msgstr ""
+
+msgid "Captured rows for this table"
+msgstr ""
+
+msgid "Realtime line chart for captured numeric fields"
+msgstr ""
+
+msgid "Visible curves"
+msgstr ""
+
+msgid "Select which captured curves are visible in this chart"
+msgstr ""
+
+msgid "Show or hide this curve"
+msgstr ""
+
+msgid "Write Python capture script here"
+msgstr ""
+
+msgid "Start, pause, or resume data capture"
+msgstr ""
+
+msgid "Stop the current capture session"
+msgstr ""
+
+msgid "Apply the script and rebuild table and chart definitions"
+msgstr ""
+
+msgid "Run the script against a sample received line"
+msgstr ""
+
+msgid "Open captured tables and line charts in a separate window"
+msgstr ""
+
+msgid "Clear captured table data after confirmation"
+msgstr ""
+
+msgid "Clear line chart data after confirmation"
+msgstr ""
+
+msgid "Export the currently selected table to CSV"
+msgstr ""
+
+msgid "Export all captured tables to CSV files"
+msgstr ""
+
+msgid "Select the displayed time format for captured rows"
+msgstr ""
+
+msgid "Select the X axis field for line charts"
+msgstr ""
+
+msgid "Maximum visible rows kept in each table"
+msgstr ""
+
+msgid "Maximum visible points kept for each curve"
+msgstr ""
+
+msgid "Batch UI refresh interval in milliseconds"
+msgstr ""
+
+msgid "Current capture status"
+msgstr ""
+
+msgid "Capture input queue is full; capture stopped to protect memory"
+msgstr ""

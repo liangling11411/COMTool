@@ -2649,3 +2649,72 @@ msgstr "匯入此頁面前請關閉目前連線"
 
 msgid "Clear Line Charts"
 msgstr "清空折線圖"
+
+msgid "Drag before another item to reorder; double click to move this item to top"
+msgstr "拖曳到其他詞條前可調整順序；雙擊可將此詞條置頂"
+
+msgid "Captured rows for this table"
+msgstr "此表格的擷取資料列"
+
+msgid "Realtime line chart for captured numeric fields"
+msgstr "擷取數值欄位的即時折線圖"
+
+msgid "Visible curves"
+msgstr "顯示曲線"
+
+msgid "Select which captured curves are visible in this chart"
+msgstr "選擇此圖表中要顯示的擷取曲線"
+
+msgid "Show or hide this curve"
+msgstr "顯示或隱藏此曲線"
+
+msgid "Write Python capture script here"
+msgstr "在這裡編寫 Python 擷取腳本"
+
+msgid "Start, pause, or resume data capture"
+msgstr "開始、暫停或繼續資料擷取"
+
+msgid "Stop the current capture session"
+msgstr "停止目前擷取工作階段"
+
+msgid "Apply the script and rebuild table and chart definitions"
+msgstr "套用腳本並重建表格和圖表定義"
+
+msgid "Run the script against a sample received line"
+msgstr "使用範例接收行測試腳本"
+
+msgid "Open captured tables and line charts in a separate window"
+msgstr "在獨立視窗中開啟擷取表格和折線圖"
+
+msgid "Clear captured table data after confirmation"
+msgstr "確認後清空擷取表格資料"
+
+msgid "Clear line chart data after confirmation"
+msgstr "確認後清空折線圖資料"
+
+msgid "Export the currently selected table to CSV"
+msgstr "將目前選取的表格匯出為 CSV"
+
+msgid "Export all captured tables to CSV files"
+msgstr "將全部擷取表格匯出為 CSV 檔案"
+
+msgid "Select the displayed time format for captured rows"
+msgstr "選擇擷取列顯示的時間格式"
+
+msgid "Select the X axis field for line charts"
+msgstr "選擇折線圖的 X 軸欄位"
+
+msgid "Maximum visible rows kept in each table"
+msgstr "每個表格保留的最大可見列數"
+
+msgid "Maximum visible points kept for each curve"
+msgstr "每條曲線保留的最大可見點數"
+
+msgid "Batch UI refresh interval in milliseconds"
+msgstr "UI 批次刷新間隔，單位毫秒"
+
+msgid "Current capture status"
+msgstr "目前擷取狀態"
+
+msgid "Capture input queue is full; capture stopped to protect memory"
+msgstr "擷取輸入佇列已滿，已停止擷取以保護記憶體"
