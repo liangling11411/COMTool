@@ -2804,3 +2804,72 @@ msgstr "组合命令中没有命令"
 
 msgid "Combo command is sending"
 msgstr "组合命令正在发送"
+
+msgid "Available serial ports"
+msgstr "可用串口"
+
+msgid "Line numbers"
+msgstr "行号"
+
+msgid "Receive line numbers"
+msgstr "接收区行号"
+
+msgid "Show line numbers in the receive area, only editable while the connection is closed"
+msgstr "在接收区显示行号，仅在连接关闭时可修改"
+
+msgid "Receive area background image path"
+msgstr "接收区背景图路径"
+
+msgid "Background"
+msgstr "背景图"
+
+msgid "Select a background image for the receive area"
+msgstr "选择接收区背景图片"
+
+msgid "Clear BG"
+msgstr "清除背景"
+
+msgid "Remove receive area background image"
+msgstr "移除接收区背景图"
+
+msgid "Select background image"
+msgstr "选择背景图片"
+
+msgid "Images (*.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)"
+msgstr "图片 (*.png *.jpg *.jpeg *.bmp *.gif);;所有文件 (*)"
+
+msgid "Copy all"
+msgstr "复制全部"
+
+msgid "Find"
+msgstr "查找"
+
+msgid "Scroll to bottom"
+msgstr "滚动到底部"
+
+msgid "Combo command name"
+msgstr "组合命令名称"
+
+msgid "Loop send"
+msgstr "循环发送"
+
+msgid "Repeat this combo command until stopped"
+msgstr "重复发送该组合命令，直到手动停止"
+
+msgid "Name"
+msgstr "名称"
+
+msgid "Select combo command"
+msgstr "选择组合命令"
+
+msgid "Stop combo"
+msgstr "停止组合"
+
+msgid "Stop combo command sending"
+msgstr "停止组合命令发送"
+
+msgid "Loop"
+msgstr "循环"
+
+msgid "Once"
+msgstr "单次"

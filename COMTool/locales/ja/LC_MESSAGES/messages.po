@@ -2739,3 +2739,72 @@ msgstr "現在のキャプチャ状態"
 
 msgid "Capture input queue is full; capture stopped to protect memory"
 msgstr "キャプチャ入力キューがいっぱいのため、メモリ保護のためキャプチャを停止しました"
+
+msgid "Available serial ports"
+msgstr "使用可能なシリアルポート"
+
+msgid "Line numbers"
+msgstr "行番号"
+
+msgid "Receive line numbers"
+msgstr "受信エリアの行番号"
+
+msgid "Show line numbers in the receive area, only editable while the connection is closed"
+msgstr "受信エリアに行番号を表示します。接続を閉じている時のみ変更できます"
+
+msgid "Receive area background image path"
+msgstr "受信エリア背景画像のパス"
+
+msgid "Background"
+msgstr "背景"
+
+msgid "Select a background image for the receive area"
+msgstr "受信エリアの背景画像を選択"
+
+msgid "Clear BG"
+msgstr "背景をクリア"
+
+msgid "Remove receive area background image"
+msgstr "受信エリアの背景画像を削除"
+
+msgid "Select background image"
+msgstr "背景画像を選択"
+
+msgid "Images (*.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)"
+msgstr "画像 (*.png *.jpg *.jpeg *.bmp *.gif);;すべてのファイル (*)"
+
+msgid "Copy all"
+msgstr "すべてコピー"
+
+msgid "Find"
+msgstr "検索"
+
+msgid "Scroll to bottom"
+msgstr "末尾へスクロール"
+
+msgid "Combo command name"
+msgstr "組み合わせコマンド名"
+
+msgid "Loop send"
+msgstr "ループ送信"
+
+msgid "Repeat this combo command until stopped"
+msgstr "停止するまでこの組み合わせコマンドを繰り返し送信します"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "Select combo command"
+msgstr "組み合わせコマンドを選択"
+
+msgid "Stop combo"
+msgstr "組み合わせ停止"
+
+msgid "Stop combo command sending"
+msgstr "組み合わせコマンド送信を停止"
+
+msgid "Loop"
+msgstr "ループ"
+
+msgid "Once"
+msgstr "一回"

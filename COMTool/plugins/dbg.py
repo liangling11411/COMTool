@@ -333,7 +333,7 @@ class LogSettingsDialog(QDialog):
 
 
 class CommandSequenceDialog(QDialog):
-    def __init__(self, plugin, sequence, parent=None):
+    def __init__(self, plugin, sequence, parent=None, name="", loop=False):
         super().__init__(parent)
         self.plugin = plugin
         self.setWindowTitle(_("Combo command"))
@@ -346,6 +346,17 @@ class CommandSequenceDialog(QDialog):
         hint = QLabel(_("Drag commands to change send order, then set delay after each command."))
         hint.setWordWrap(True)
         layout.addWidget(hint)
+
+        headerLayout = QHBoxLayout()
+        self.nameInput = QLineEdit(name or plugin.nextCommandSequenceName())
+        self.nameInput.setToolTip(_("Combo command name"))
+        self.loopCheckBox = QCheckBox(_("Loop send"))
+        self.loopCheckBox.setToolTip(_("Repeat this combo command until stopped"))
+        self.loopCheckBox.setChecked(bool(loop))
+        headerLayout.addWidget(QLabel(_("Name")))
+        headerLayout.addWidget(self.nameInput, 1)
+        headerLayout.addWidget(self.loopCheckBox)
+        layout.addLayout(headerLayout)
 
         self.listWidget = QListWidget()
         self.listWidget.setDragDropMode(QAbstractItemView.InternalMove)
@@ -425,6 +436,10 @@ class CommandSequenceDialog(QDialog):
             sequence.append(self.plugin.normalizeCommandSequenceItem(data))
         return sequence
 
+    def comboName(self):
+        name = self.nameInput.text().strip()
+        return name or self.plugin.nextCommandSequenceName()
+
     def reloadSelected(self):
         sequence = self.plugin.commandSequenceFromSelectedItems()
         if not sequence:
@@ -437,7 +452,7 @@ class CommandSequenceDialog(QDialog):
         if not sequence:
             self.plugin.hintSignal.emit("warning", _("Warning"), _("No command in combo"))
             return
-        self.plugin.setCommandSequence(sequence)
+        self.plugin.setCommandSequence(sequence, self.comboName(), self.loopCheckBox.isChecked())
         self.accept()
 
     def sendCombo(self):
@@ -445,7 +460,7 @@ class CommandSequenceDialog(QDialog):
         if not sequence:
             self.plugin.hintSignal.emit("warning", _("Warning"), _("No command in combo"))
             return
-        self.plugin.setCommandSequence(sequence)
+        self.plugin.setCommandSequence(sequence, self.comboName(), self.loopCheckBox.isChecked())
         self.plugin.startCommandSequence()
         self.accept()
 
@@ -1155,6 +1170,7 @@ class Plugin(Plugin_Base):
     name = _("Send Receive")
     #
     receiveUpdateSignal = pyqtSignal(str, list, str, bool) # head, content, encoding, isSend
+    commandSequenceFinishedSignal = pyqtSignal()
     receiveProgressStop = False
     receivedData = []
     sendRecord = []
@@ -1223,7 +1239,12 @@ class Plugin(Plugin_Base):
             "timestampNewline": False,
             "receiveFindRules": [],
             "receiveBufferSizeKB": 4096,
-            "commandSequenceItems": []
+            "receiveLineNumbers": False,
+            "receiveBackgroundImage": "",
+            "commandSequenceItems": [],
+            "commandSequenceLoop": False,
+            "commandSequences": [],
+            "commandSequenceCurrent": ""
         }
         for k in default:
             if not k in self.config:
@@ -1328,14 +1349,26 @@ class Plugin(Plugin_Base):
         self.receiveArea.setToolTip(_("Received RX/TX log output"))
         self.receiveArea.setReadOnly(True)
         self.receiveArea.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.TextSelectableByKeyboard)
-        self.receiveArea.setStyleSheet(
-            "QTextEdit#receiveArea QScrollBar::handle:vertical { min-height: 48px; }"
-            "QTextEdit#receiveArea QScrollBar::handle:horizontal { min-width: 48px; }"
-        )
+        self.receiveArea.setContextMenuPolicy(Qt.CustomContextMenu)
         self.receiveFindScrollBar = FindMarkerScrollBar(Qt.Vertical, self.receiveArea)
         self.receiveArea.setVerticalScrollBar(self.receiveFindScrollBar)
         font = QFont(self.config.get("receiveFontFamily", DEFAULT_TEXT_FONT), self.config["receiveFontSize"])
         self.receiveArea.setFont(font)
+        self.applyReceiveAreaStyle()
+        self.receiveLineNumberArea = QTextEdit()
+        self.receiveLineNumberArea.setObjectName("receiveLineNumberArea")
+        self.receiveLineNumberArea.setToolTip(_("Receive line numbers"))
+        self.receiveLineNumberArea.setReadOnly(True)
+        self.receiveLineNumberArea.setFocusPolicy(Qt.NoFocus)
+        self.receiveLineNumberArea.setLineWrapMode(QTextEdit.NoWrap)
+        self.receiveLineNumberArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.receiveLineNumberArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.receiveLineNumberArea.setTextInteractionFlags(Qt.NoTextInteraction)
+        self.receiveLineNumberArea.setFixedWidth(54)
+        self.receiveLineNumberArea.setFont(font)
+        self.receiveLineNumberArea.setStyleSheet(
+            "QTextEdit#receiveLineNumberArea {background:rgba(127,127,127,28); color:#888; border:0; padding-right:4px;}"
+        )
         self.sendArea = FontSizeTextEdit(self.adjustSendFontSize)
         self.sendArea.setToolTip(_("Input data to send"))
         self.sendArea.setAcceptRichText(False)
@@ -1355,6 +1388,7 @@ class Plugin(Plugin_Base):
         receiveAreaWidgetsLayout = QHBoxLayout()
         receiveAreaWidgetsLayout.setContentsMargins(0,0,0,0)
         receiveWidget.setLayout(receiveAreaWidgetsLayout)
+        receiveAreaWidgetsLayout.addWidget(self.receiveLineNumberArea)
         receiveAreaWidgetsLayout.addWidget(self.receiveArea)
         sendWidget = QWidget()
         sendAreaWidgetsLayout = QHBoxLayout()
@@ -1387,6 +1421,9 @@ class Plugin(Plugin_Base):
         self.sendButton.clicked.connect(self.onSendData)
         self.clearReceiveButtion.clicked.connect(self.clearReceiveBuffer)
         self.clearSendButtion.clicked.connect(self.sendArea.clear)
+        self.receiveArea.customContextMenuRequested.connect(self.showReceiveAreaContextMenu)
+        self.receiveArea.document().blockCountChanged.connect(lambda _count: self.updateReceiveLineNumbers())
+        self.receiveArea.verticalScrollBar().valueChanged.connect(self.syncReceiveLineNumberScroll)
         self.receiveUpdateSignal.connect(self.updateReceivedDataDisplay)
         self.sendHistory.activated.connect(self.onSendHistoryIndexChanged)
         if self.receiveFindMarkerTimer is None:
@@ -1420,6 +1457,15 @@ class Plugin(Plugin_Base):
         self.receiveEscape.setToolTip(_("Enable escape characters support like \\t \\r \\n \\x01 \\001"))
         self.receiveShowNonPrintableHex = QCheckBox(_("HEX for non-ASCII"))
         self.receiveShowNonPrintableHex.setToolTip(_("In ASCII receive mode, show bytes without printable ASCII characters as \\xNN"))
+        self.receiveLineNumbers = QCheckBox(_("Line numbers"))
+        self.receiveLineNumbers.setToolTip(_("Show line numbers in the receive area, only editable while the connection is closed"))
+        self.receiveBackgroundPath = QLineEdit()
+        self.receiveBackgroundPath.setReadOnly(True)
+        self.receiveBackgroundPath.setToolTip(_("Receive area background image path"))
+        self.receiveBackgroundButton = QPushButton(_("Background"))
+        self.receiveBackgroundButton.setToolTip(_("Select a background image for the receive area"))
+        self.receiveBackgroundClearButton = QPushButton(_("Clear BG"))
+        self.receiveBackgroundClearButton.setToolTip(_("Remove receive area background image"))
         self.receiveSettingsWrap.setToolTip(_("When content in a line is too long, always auto wrap to show, and no scroll bar"))
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsAscii,1,0,1,1)
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsHex,1,1,1,1)
@@ -1428,6 +1474,10 @@ class Plugin(Plugin_Base):
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsWrap, 3, 0, 1, 1)
         serialReceiveSettingsLayout.addWidget(self.receiveEscape, 3, 1, 1, 1)
         serialReceiveSettingsLayout.addWidget(self.receiveShowNonPrintableHex, 4, 0, 1, 2)
+        serialReceiveSettingsLayout.addWidget(self.receiveLineNumbers, 5, 0, 1, 2)
+        serialReceiveSettingsLayout.addWidget(self.receiveBackgroundPath, 6, 0, 1, 2)
+        serialReceiveSettingsLayout.addWidget(self.receiveBackgroundButton, 7, 0, 1, 1)
+        serialReceiveSettingsLayout.addWidget(self.receiveBackgroundClearButton, 7, 1, 1, 1)
         serialReceiveSettingsGroupBox.setLayout(serialReceiveSettingsLayout)
         serialReceiveSettingsGroupBox.setAlignment(Qt.AlignHCenter)
         layout.addWidget(serialReceiveSettingsGroupBox)
@@ -1494,6 +1544,9 @@ class Plugin(Plugin_Base):
         self.receiveSettingsAscii.clicked.connect(lambda : self.switchRxMode(True))
         self.receiveSettingsHex.clicked.connect(lambda : self.switchRxMode(False))
         self.receiveShowNonPrintableHex.clicked.connect(lambda: self.bindVar(self.receiveShowNonPrintableHex, self.config, "receiveShowNonPrintableHex"))
+        self.receiveLineNumbers.clicked.connect(self.onReceiveLineNumbersClicked)
+        self.receiveBackgroundButton.clicked.connect(self.selectReceiveBackgroundImage)
+        self.receiveBackgroundClearButton.clicked.connect(self.clearReceiveBackgroundImage)
         self.sendSettingsHex.clicked.connect(self.onSendSettingsHexClicked)
         self.sendSettingsAscii.clicked.connect(self.onSendSettingsAsciiClicked)
         self.sendSettingsRecord.clicked.connect(self.onRecordSendClicked)
@@ -1651,6 +1704,8 @@ class Plugin(Plugin_Base):
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 4)
         bar.setLayout(layout)
+        self.commandSequenceSelector = ComboBox()
+        self.commandSequenceSelector.setToolTip(_("Select combo command"))
         self.commandSequenceLabel = QLabel("")
         self.commandSequenceLabel.setToolTip(_("Current combo command"))
         self.commandSequenceEditButton = QPushButton(_("Edit combo"))
@@ -1663,13 +1718,16 @@ class Plugin(Plugin_Base):
         utils_ui.setButtonIcon(self.commandSequenceSendButton, "fa.play")
         utils_ui.setButtonIcon(self.commandSequenceClearButton, "fa.close")
         layout.addWidget(QLabel(_("Combo command")))
+        layout.addWidget(self.commandSequenceSelector)
         layout.addWidget(self.commandSequenceLabel, 1)
         layout.addWidget(self.commandSequenceEditButton)
         layout.addWidget(self.commandSequenceSendButton)
         layout.addWidget(self.commandSequenceClearButton)
+        self.commandSequenceSelector.currentIndexChanged.connect(self.onCommandSequenceSelected)
         self.commandSequenceEditButton.clicked.connect(self.openCommandSequenceDialog)
         self.commandSequenceSendButton.clicked.connect(self.startCommandSequence)
         self.commandSequenceClearButton.clicked.connect(self.clearCommandSequence)
+        self.commandSequenceFinishedSignal.connect(self.updateCommandSequenceBar)
         bar.hide()
         return bar
 
@@ -1707,33 +1765,160 @@ class Plugin(Plugin_Base):
             }))
         return sequence
 
-    def setCommandSequence(self, sequence):
+    def nextCommandSequenceName(self):
+        sequences = self.config.get("commandSequences", [])
+        base = _("Combo command")
+        names = set()
+        if isinstance(sequences, list):
+            for sequence in sequences:
+                if isinstance(sequence, dict):
+                    names.add(str(sequence.get("name", "")))
+        if base not in names:
+            return base
+        idx = 2
+        while "{} {}".format(base, idx) in names:
+            idx += 1
+        return "{} {}".format(base, idx)
+
+    def normalizeCommandSequences(self):
+        normalizedSequences = []
+        rawSequences = self.config.get("commandSequences", [])
+        if isinstance(rawSequences, list):
+            for sequence in rawSequences:
+                if not isinstance(sequence, dict):
+                    continue
+                items = []
+                for item in sequence.get("items", []):
+                    normalizedItem = self.normalizeCommandSequenceItem(item)
+                    if normalizedItem.get("text"):
+                        items.append(normalizedItem)
+                if not items:
+                    continue
+                name = str(sequence.get("name", "")).strip() or "{} {}".format(_("Combo command"), len(normalizedSequences) + 1)
+                normalizedSequences.append({
+                    "name": name,
+                    "items": items,
+                    "loop": bool(sequence.get("loop", False))
+                })
+        legacy = self.config.get("commandSequenceItems", [])
+        if legacy and not normalizedSequences:
+            items = []
+            for item in legacy:
+                normalizedItem = self.normalizeCommandSequenceItem(item)
+                if normalizedItem.get("text"):
+                    items.append(normalizedItem)
+            if items:
+                normalizedSequences.append({
+                    "name": self.config.get("commandSequenceCurrent") or _("Combo command"),
+                    "items": items,
+                    "loop": bool(self.config.get("commandSequenceLoop", False))
+                })
+        self.config["commandSequences"] = normalizedSequences
+        current = self.config.get("commandSequenceCurrent", "")
+        names = [sequence["name"] for sequence in normalizedSequences]
+        if names and current not in names:
+            self.config["commandSequenceCurrent"] = names[0]
+        elif not names:
+            self.config["commandSequenceCurrent"] = ""
+        currentSequence = self.currentCommandSequence()
+        self.config["commandSequenceItems"] = currentSequence.get("items", []) if currentSequence else []
+        self.config["commandSequenceLoop"] = currentSequence.get("loop", False) if currentSequence else False
+
+    def currentCommandSequence(self):
+        self.normalizeCommandSequencesNoLegacy()
+        sequences = self.config.get("commandSequences", [])
+        current = self.config.get("commandSequenceCurrent", "")
+        for sequence in sequences:
+            if sequence.get("name") == current:
+                return sequence
+        return sequences[0] if sequences else None
+
+    def normalizeCommandSequencesNoLegacy(self):
+        if not isinstance(self.config.get("commandSequences", []), list):
+            self.config["commandSequences"] = []
+
+    def updateCommandSequenceSelector(self):
+        if not hasattr(self, "commandSequenceSelector"):
+            return
+        self.normalizeCommandSequencesNoLegacy()
+        current = self.config.get("commandSequenceCurrent", "")
+        self.commandSequenceSelector.blockSignals(True)
+        self.commandSequenceSelector.clear()
+        currentIndex = -1
+        for idx, sequence in enumerate(self.config.get("commandSequences", [])):
+            self.commandSequenceSelector.addItem(sequence.get("name", _("Combo command")))
+            if sequence.get("name") == current:
+                currentIndex = idx
+        if currentIndex >= 0:
+            self.commandSequenceSelector.setCurrentIndex(currentIndex)
+        self.commandSequenceSelector.blockSignals(False)
+
+    def onCommandSequenceSelected(self, idx):
+        sequences = self.config.get("commandSequences", [])
+        if idx < 0 or idx >= len(sequences):
+            return
+        self.config["commandSequenceCurrent"] = sequences[idx].get("name", "")
+        self.config["commandSequenceItems"] = sequences[idx].get("items", [])
+        self.config["commandSequenceLoop"] = bool(sequences[idx].get("loop", False))
+        self.updateCommandSequenceBar()
+
+    def setCommandSequence(self, sequence, name=None, loop=False):
         normalized = []
         for item in sequence:
             normalizedItem = self.normalizeCommandSequenceItem(item)
             if normalizedItem.get("text"):
                 normalized.append(normalizedItem)
+        if not normalized:
+            return
+        self.normalizeCommandSequences()
+        name = (name or self.config.get("commandSequenceCurrent") or self.nextCommandSequenceName()).strip()
+        updated = False
+        for sequenceObj in self.config["commandSequences"]:
+            if sequenceObj.get("name") == name:
+                sequenceObj["items"] = normalized
+                sequenceObj["loop"] = bool(loop)
+                updated = True
+                break
+        if not updated:
+            self.config["commandSequences"].append({
+                "name": name,
+                "items": normalized,
+                "loop": bool(loop)
+            })
+        self.config["commandSequenceCurrent"] = name
         self.config["commandSequenceItems"] = normalized
+        self.config["commandSequenceLoop"] = bool(loop)
         self.updateCommandSequenceBar()
 
     def commandSequenceSummary(self):
-        sequence = self.config.get("commandSequenceItems", [])
-        if not sequence:
+        sequenceObj = self.currentCommandSequence()
+        if not sequenceObj:
             return ""
+        sequence = sequenceObj.get("items", [])
         names = []
         for item in sequence[:3]:
             names.append(item.get("remark") or item.get("text") or _("Command"))
         if len(sequence) > 3:
             names.append("...")
-        return "{} ({})".format(" -> ".join(names), len(sequence))
+        loopText = _("Loop") if sequenceObj.get("loop", False) else _("Once")
+        return "{} [{}]: {} ({})".format(sequenceObj.get("name", _("Combo command")), loopText, " -> ".join(names), len(sequence))
 
     def updateCommandSequenceBar(self):
         if not hasattr(self, "commandSequenceBar"):
             return
+        self.updateCommandSequenceSelector()
         summary = self.commandSequenceSummary()
         if summary:
             self.commandSequenceLabel.setText(summary)
             self.commandSequenceLabel.setToolTip(summary)
+            if self.commandSequenceSending:
+                self.commandSequenceSendButton.setText(_("Stop combo"))
+                self.commandSequenceSendButton.setToolTip(_("Stop combo command sending"))
+                utils_ui.setButtonIcon(self.commandSequenceSendButton, "fa.stop")
+            else:
+                self.commandSequenceSendButton.setText(_("Send combo"))
+                self.commandSequenceSendButton.setToolTip(_("Send combo command in order"))
+                utils_ui.setButtonIcon(self.commandSequenceSendButton, "fa.play")
             self.commandSequenceBar.show()
         else:
             self.commandSequenceLabel.setText("")
@@ -1741,46 +1926,79 @@ class Plugin(Plugin_Base):
 
     def openCommandSequenceDialog(self):
         selected = self.commandSequenceFromSelectedItems()
-        sequence = selected or self.config.get("commandSequenceItems", [])
+        currentSequence = self.currentCommandSequence()
+        sequence = selected or (currentSequence.get("items", []) if currentSequence else [])
         if not sequence:
             self.hintSignal.emit("warning", _("Warning"), _("Select custom send items first"))
             return
-        dialog = CommandSequenceDialog(self, sequence, self.mainWidget)
+        dialog = CommandSequenceDialog(
+            self,
+            sequence,
+            self.mainWidget,
+            currentSequence.get("name", "") if currentSequence else self.nextCommandSequenceName(),
+            currentSequence.get("loop", False) if currentSequence else False
+        )
         dialog.exec()
 
     def clearCommandSequence(self):
+        current = self.config.get("commandSequenceCurrent", "")
+        self.config["commandSequences"] = [
+            sequence for sequence in self.config.get("commandSequences", [])
+            if sequence.get("name") != current
+        ]
         self.config["commandSequenceItems"] = []
+        self.config["commandSequenceLoop"] = False
+        self.normalizeCommandSequences()
+        self.updateCommandSequenceBar()
+
+    def stopCommandSequence(self):
+        self.commandSequenceStop = True
         self.updateCommandSequenceBar()
 
     def startCommandSequence(self):
+        if self.commandSequenceSending:
+            self.stopCommandSequence()
+            return
+        sequenceObj = self.currentCommandSequence()
+        if sequenceObj is None:
+            self.normalizeCommandSequences()
+            sequenceObj = self.currentCommandSequence()
         sequence = []
-        for item in self.config.get("commandSequenceItems", []):
+        for item in sequenceObj.get("items", []) if sequenceObj else []:
             normalizedItem = self.normalizeCommandSequenceItem(item)
             if normalizedItem.get("text"):
                 sequence.append(normalizedItem)
         if not sequence:
             self.hintSignal.emit("warning", _("Warning"), _("No command in combo"))
             return
-        if self.commandSequenceSending:
-            self.hintSignal.emit("warning", _("Warning"), _("Combo command is sending"))
-            return
         self.commandSequenceSending = True
         self.commandSequenceStop = False
-        t = threading.Thread(target=self.commandSequenceSendProcess, args=(sequence,))
+        self.updateCommandSequenceBar()
+        t = threading.Thread(target=self.commandSequenceSendProcess, args=(sequence, bool(sequenceObj.get("loop", False))))
         t.setDaemon(True)
         t.start()
 
-    def commandSequenceSendProcess(self, sequence):
+    def commandSequenceDelay(self, delayMs):
+        endAt = time.time() + max(0, int(delayMs)) / 1000
+        while not self.commandSequenceStop and time.time() < endAt:
+            time.sleep(min(0.05, max(0, endAt - time.time())))
+
+    def commandSequenceSendProcess(self, sequence, loop=False):
         try:
-            for item in sequence:
-                if self.commandSequenceStop:
+            while not self.commandSequenceStop:
+                for item in sequence:
+                    if self.commandSequenceStop:
+                        break
+                    self.onSendData(data=item.get("text", ""))
+                    delay = int(item.get("delay", 0))
+                    if delay > 0:
+                        self.commandSequenceDelay(delay)
+                if not loop:
                     break
-                self.onSendData(data=item.get("text", ""))
-                delay = int(item.get("delay", 0))
-                if delay > 0:
-                    time.sleep(delay / 1000)
         finally:
             self.commandSequenceSending = False
+            self.commandSequenceStop = False
+            self.commandSequenceFinishedSignal.emit()
 
 
     def onWidgetFunctional(self, parent):
@@ -1901,6 +2119,9 @@ class Plugin(Plugin_Base):
         self.timestampNewlineCheckbox.setChecked(paramObj["timestampNewline"])
         self.updateDefaultFontColorButton(self.timestampColorButton, paramObj["timestampColor"])
         self.receiveSettingsWrap.setChecked(paramObj["wrap"])
+        self.receiveLineNumbers.setChecked(bool(paramObj.get("receiveLineNumbers", False)))
+        self.receiveBackgroundPath.setText(paramObj.get("receiveBackgroundImage", ""))
+        self.receiveBackgroundPath.setToolTip(paramObj.get("receiveBackgroundImage", ""))
         self.sendSettingsHex.setChecked(not paramObj["sendAscii"])
         self.sendSettingsScheduledCheckBox.setChecked(paramObj["sendScheduled"])
         try:
@@ -1930,13 +2151,16 @@ class Plugin(Plugin_Base):
         self.updateSaveLogStatus()
         # wrap
         self.applyWrapMode()
+        self.applyReceiveLineNumbers()
+        self.applyReceiveAreaStyle()
         # send items
         customSendItems = []
         for item in paramObj["customSendItems"]:
             customSendItems.append(self.insertSendItem(item, load=True))
         paramObj["customSendItems"] = customSendItems
         self.filterCustomSendItems()
-        self.setCommandSequence(paramObj.get("commandSequenceItems", []))
+        self.normalizeCommandSequences()
+        self.updateCommandSequenceBar()
         self.receiveFontFamilyInput.setCurrentFont(QFont(paramObj["receiveFontFamily"]))
         self.sendFontFamilyInput.setCurrentFont(QFont(paramObj["sendFontFamily"]))
         self.receiveFontSizeInput.setValue(paramObj["receiveFontSize"])
@@ -2234,7 +2458,8 @@ class Plugin(Plugin_Base):
         for obj in [
             getattr(self, "receiveFontSizeInput", None),
             getattr(self, "sendFontSizeInput", None),
-            getattr(self, "receiveBufferSizeInput", None)
+            getattr(self, "receiveBufferSizeInput", None),
+            getattr(self, "receiveLineNumbers", None)
         ]:
             if obj is not None:
                 obj.setEnabled(closed)
@@ -2249,9 +2474,12 @@ class Plugin(Plugin_Base):
         font.setFamily(self.config.get("receiveFontFamily", DEFAULT_TEXT_FONT))
         font.setPointSize(self.config["receiveFontSize"])
         self.receiveArea.setFont(font)
+        if hasattr(self, "receiveLineNumberArea"):
+            self.receiveLineNumberArea.setFont(font)
         self.defaultColor = None
         self.defaultBg = None
         self.setTextEditPaletteColor(self.receiveArea, self.config["receiveFontColor"], updateDocument=True)
+        self.updateReceiveLineNumbers()
 
     def applySendFont(self):
         font = self.sendArea.currentFont()
@@ -2377,6 +2605,88 @@ class Plugin(Plugin_Base):
         self.sendArea.setLineWrapColumnOrWidth(0)
         self.sendArea.setWordWrapMode(wrapMode)
         self.sendArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff if wrap else Qt.ScrollBarAsNeeded)
+
+    def applyReceiveAreaStyle(self):
+        if not hasattr(self, "receiveArea"):
+            return
+        rules = [
+            "QTextEdit#receiveArea QScrollBar::handle:vertical { min-height: 48px; }",
+            "QTextEdit#receiveArea QScrollBar::handle:horizontal { min-width: 48px; }"
+        ]
+        path = self.config.get("receiveBackgroundImage", "")
+        if path and os.path.exists(path):
+            url = path.replace("\\", "/").replace('"', '\\"')
+            rules.append(
+                'QTextEdit#receiveArea {{ background-image: url("{}"); background-repeat: no-repeat; background-position: center; }}'.format(url)
+            )
+        self.receiveArea.setStyleSheet("".join(rules))
+
+    def onReceiveLineNumbersClicked(self):
+        self.config["receiveLineNumbers"] = self.receiveLineNumbers.isChecked()
+        self.applyReceiveLineNumbers()
+
+    def applyReceiveLineNumbers(self):
+        if not hasattr(self, "receiveLineNumberArea"):
+            return
+        enabled = bool(self.config.get("receiveLineNumbers", False))
+        self.receiveLineNumberArea.setVisible(enabled)
+        if enabled:
+            self.updateReceiveLineNumbers()
+
+    def updateReceiveLineNumbers(self):
+        if not hasattr(self, "receiveLineNumberArea") or not self.config.get("receiveLineNumbers", False):
+            return
+        count = max(1, self.receiveArea.document().blockCount())
+        text = "\n".join(str(i) for i in range(1, count + 1))
+        if self.receiveLineNumberArea.toPlainText() != text:
+            self.receiveLineNumberArea.setPlainText(text)
+        self.syncReceiveLineNumberScroll(self.receiveArea.verticalScrollBar().value())
+
+    def syncReceiveLineNumberScroll(self, value):
+        if hasattr(self, "receiveLineNumberArea") and self.config.get("receiveLineNumbers", False):
+            self.receiveLineNumberArea.verticalScrollBar().setValue(value)
+
+    def selectReceiveBackgroundImage(self):
+        oldPath = self.config.get("receiveBackgroundImage", "") or os.getcwd()
+        fileName_choose, filetype = QFileDialog.getOpenFileName(
+            self.mainWidget,
+            _("Select background image"),
+            oldPath,
+            _("Images (*.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)")
+        )
+        if not fileName_choose:
+            return
+        self.config["receiveBackgroundImage"] = fileName_choose
+        self.receiveBackgroundPath.setText(fileName_choose)
+        self.receiveBackgroundPath.setToolTip(fileName_choose)
+        self.applyReceiveAreaStyle()
+
+    def clearReceiveBackgroundImage(self):
+        self.config["receiveBackgroundImage"] = ""
+        if hasattr(self, "receiveBackgroundPath"):
+            self.receiveBackgroundPath.clear()
+            self.receiveBackgroundPath.setToolTip("")
+        self.applyReceiveAreaStyle()
+
+    def copyAllReceiveText(self):
+        QApplication.clipboard().setText(self.receiveArea.toPlainText())
+
+    def showReceiveAreaContextMenu(self, pos):
+        menu = self.receiveArea.createStandardContextMenu()
+        menu.addSeparator()
+        copyAllAction = menu.addAction(_("Copy all"))
+        findAction = menu.addAction(_("Find"))
+        scrollBottomAction = menu.addAction(_("Scroll to bottom"))
+        clearAction = menu.addAction(_("Clear RX"))
+        action = menu.exec_(self.receiveArea.mapToGlobal(pos))
+        if action == copyAllAction:
+            self.copyAllReceiveText()
+        elif action == findAction:
+            self.openReceiveFindDialog()
+        elif action == scrollBottomAction:
+            self.scrollReceiveToBottom()
+        elif action == clearAction:
+            self.clearReceiveBuffer()
 
     def onEscapeSendClicked(self):
         self.config["sendEscape"] = self.sendSettingsEscape.isChecked()
@@ -3618,6 +3928,7 @@ class Plugin(Plugin_Base):
             self.receiveArea.ensureCursorVisible()
         self.receiveArea.horizontalScrollBar().setValue(curHorizontalValue)
         self.receiveArea.viewport().update()
+        self.updateReceiveLineNumbers()
 
     def updateReceivedDataDisplay(self, head : str, datas : list, encoding : str, isSend : bool):
         if not datas:
@@ -3658,6 +3969,7 @@ class Plugin(Plugin_Base):
         finally:
             self.rerenderingReceiveArea = False
             self.scheduleReceiveFindMarkersUpdate()
+            self.updateReceiveLineNumbers()
 
     def sendHistoryFindDelete(self,str):
         self.sendHistory.removeItem(self.sendHistory.findText(str))
@@ -3784,6 +4096,7 @@ class Plugin(Plugin_Base):
             self.receiveFindScrollBar.setMarkers([])
         if hasattr(self, "statusBar"):
             self.statusBar.clear()
+        self.updateReceiveLineNumbers()
 
     def onReceived(self, data : bytes):
         self.lock_op_rx_buff.acquire()

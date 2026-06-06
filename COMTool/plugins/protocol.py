@@ -75,6 +75,7 @@ class Plugin(Plugin_Base):
     active  = False          # using this plugin
 
     showReceiveDataSignal = pyqtSignal(str)
+    commandSequenceFinishedSignal = pyqtSignal()
 
     help = '''<h2>{}</h2><p>{}</p><h3>{}</h3><p>{}</p><pre>{}</pre>'''.format(
         _("Protocol page"),
@@ -151,7 +152,10 @@ def parse(line, ctx):
             "dataCapture": defaultCaptureConfig(),
             "receiveFindRules": [],
             "customSendItems": [],
-            "commandSequenceItems": []
+            "commandSequenceItems": [],
+            "commandSequenceLoop": False,
+            "commandSequences": [],
+            "commandSequenceCurrent": ""
         }
         self.config = config
         for k in default:
@@ -674,7 +678,8 @@ def parse(line, ctx):
             newItems.append(item)
         self.config["customSendItems"] = newItems
         self.filterCustomSendItems()
-        self.setCommandSequence(paramObj.get("commandSequenceItems", []))
+        self.normalizeCommandSequences()
+        self.updateCommandSequenceBar()
         self.receiveFontFamilyInput.setCurrentFont(QFont(paramObj["receiveFontFamily"]))
         self.sendFontFamilyInput.setCurrentFont(QFont(paramObj["sendFontFamily"]))
         self.receiveFontSizeInput.setValue(paramObj["receiveFontSize"])
@@ -777,6 +782,8 @@ def parse(line, ctx):
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 4)
         bar.setLayout(layout)
+        self.commandSequenceSelector = ComboBox()
+        self.commandSequenceSelector.setToolTip(_("Select combo command"))
         self.commandSequenceLabel = QLabel("")
         self.commandSequenceLabel.setToolTip(_("Current combo command"))
         self.commandSequenceEditButton = QPushButton(_("Edit combo"))
@@ -789,13 +796,16 @@ def parse(line, ctx):
         utils_ui.setButtonIcon(self.commandSequenceSendButton, "fa.play")
         utils_ui.setButtonIcon(self.commandSequenceClearButton, "fa.close")
         layout.addWidget(QLabel(_("Combo command")))
+        layout.addWidget(self.commandSequenceSelector)
         layout.addWidget(self.commandSequenceLabel, 1)
         layout.addWidget(self.commandSequenceEditButton)
         layout.addWidget(self.commandSequenceSendButton)
         layout.addWidget(self.commandSequenceClearButton)
+        self.commandSequenceSelector.currentIndexChanged.connect(self.onCommandSequenceSelected)
         self.commandSequenceEditButton.clicked.connect(self.openCommandSequenceDialog)
         self.commandSequenceSendButton.clicked.connect(self.startCommandSequence)
         self.commandSequenceClearButton.clicked.connect(self.clearCommandSequence)
+        self.commandSequenceFinishedSignal.connect(self.updateCommandSequenceBar)
         bar.hide()
         return bar
 
@@ -833,33 +843,160 @@ def parse(line, ctx):
             }))
         return sequence
 
-    def setCommandSequence(self, sequence):
+    def nextCommandSequenceName(self):
+        sequences = self.config.get("commandSequences", [])
+        base = _("Combo command")
+        names = set()
+        if isinstance(sequences, list):
+            for sequence in sequences:
+                if isinstance(sequence, dict):
+                    names.add(str(sequence.get("name", "")))
+        if base not in names:
+            return base
+        idx = 2
+        while "{} {}".format(base, idx) in names:
+            idx += 1
+        return "{} {}".format(base, idx)
+
+    def normalizeCommandSequences(self):
+        normalizedSequences = []
+        rawSequences = self.config.get("commandSequences", [])
+        if isinstance(rawSequences, list):
+            for sequence in rawSequences:
+                if not isinstance(sequence, dict):
+                    continue
+                items = []
+                for item in sequence.get("items", []):
+                    normalizedItem = self.normalizeCommandSequenceItem(item)
+                    if normalizedItem.get("text"):
+                        items.append(normalizedItem)
+                if not items:
+                    continue
+                name = str(sequence.get("name", "")).strip() or "{} {}".format(_("Combo command"), len(normalizedSequences) + 1)
+                normalizedSequences.append({
+                    "name": name,
+                    "items": items,
+                    "loop": bool(sequence.get("loop", False))
+                })
+        legacy = self.config.get("commandSequenceItems", [])
+        if legacy and not normalizedSequences:
+            items = []
+            for item in legacy:
+                normalizedItem = self.normalizeCommandSequenceItem(item)
+                if normalizedItem.get("text"):
+                    items.append(normalizedItem)
+            if items:
+                normalizedSequences.append({
+                    "name": self.config.get("commandSequenceCurrent") or _("Combo command"),
+                    "items": items,
+                    "loop": bool(self.config.get("commandSequenceLoop", False))
+                })
+        self.config["commandSequences"] = normalizedSequences
+        current = self.config.get("commandSequenceCurrent", "")
+        names = [sequence["name"] for sequence in normalizedSequences]
+        if names and current not in names:
+            self.config["commandSequenceCurrent"] = names[0]
+        elif not names:
+            self.config["commandSequenceCurrent"] = ""
+        currentSequence = self.currentCommandSequence()
+        self.config["commandSequenceItems"] = currentSequence.get("items", []) if currentSequence else []
+        self.config["commandSequenceLoop"] = currentSequence.get("loop", False) if currentSequence else False
+
+    def normalizeCommandSequencesNoLegacy(self):
+        if not isinstance(self.config.get("commandSequences", []), list):
+            self.config["commandSequences"] = []
+
+    def currentCommandSequence(self):
+        self.normalizeCommandSequencesNoLegacy()
+        sequences = self.config.get("commandSequences", [])
+        current = self.config.get("commandSequenceCurrent", "")
+        for sequence in sequences:
+            if sequence.get("name") == current:
+                return sequence
+        return sequences[0] if sequences else None
+
+    def updateCommandSequenceSelector(self):
+        if not hasattr(self, "commandSequenceSelector"):
+            return
+        self.normalizeCommandSequencesNoLegacy()
+        current = self.config.get("commandSequenceCurrent", "")
+        self.commandSequenceSelector.blockSignals(True)
+        self.commandSequenceSelector.clear()
+        currentIndex = -1
+        for idx, sequence in enumerate(self.config.get("commandSequences", [])):
+            self.commandSequenceSelector.addItem(sequence.get("name", _("Combo command")))
+            if sequence.get("name") == current:
+                currentIndex = idx
+        if currentIndex >= 0:
+            self.commandSequenceSelector.setCurrentIndex(currentIndex)
+        self.commandSequenceSelector.blockSignals(False)
+
+    def onCommandSequenceSelected(self, idx):
+        sequences = self.config.get("commandSequences", [])
+        if idx < 0 or idx >= len(sequences):
+            return
+        self.config["commandSequenceCurrent"] = sequences[idx].get("name", "")
+        self.config["commandSequenceItems"] = sequences[idx].get("items", [])
+        self.config["commandSequenceLoop"] = bool(sequences[idx].get("loop", False))
+        self.updateCommandSequenceBar()
+
+    def setCommandSequence(self, sequence, name=None, loop=False):
         normalized = []
         for item in sequence:
             normalizedItem = self.normalizeCommandSequenceItem(item)
             if normalizedItem.get("text"):
                 normalized.append(normalizedItem)
+        if not normalized:
+            return
+        self.normalizeCommandSequences()
+        name = (name or self.config.get("commandSequenceCurrent") or self.nextCommandSequenceName()).strip()
+        updated = False
+        for sequenceObj in self.config["commandSequences"]:
+            if sequenceObj.get("name") == name:
+                sequenceObj["items"] = normalized
+                sequenceObj["loop"] = bool(loop)
+                updated = True
+                break
+        if not updated:
+            self.config["commandSequences"].append({
+                "name": name,
+                "items": normalized,
+                "loop": bool(loop)
+            })
+        self.config["commandSequenceCurrent"] = name
         self.config["commandSequenceItems"] = normalized
+        self.config["commandSequenceLoop"] = bool(loop)
         self.updateCommandSequenceBar()
 
     def commandSequenceSummary(self):
-        sequence = self.config.get("commandSequenceItems", [])
-        if not sequence:
+        sequenceObj = self.currentCommandSequence()
+        if not sequenceObj:
             return ""
+        sequence = sequenceObj.get("items", [])
         names = []
         for item in sequence[:3]:
             names.append(item.get("remark") or item.get("text") or _("Command"))
         if len(sequence) > 3:
             names.append("...")
-        return "{} ({})".format(" -> ".join(names), len(sequence))
+        loopText = _("Loop") if sequenceObj.get("loop", False) else _("Once")
+        return "{} [{}]: {} ({})".format(sequenceObj.get("name", _("Combo command")), loopText, " -> ".join(names), len(sequence))
 
     def updateCommandSequenceBar(self):
         if not hasattr(self, "commandSequenceBar"):
             return
+        self.updateCommandSequenceSelector()
         summary = self.commandSequenceSummary()
         if summary:
             self.commandSequenceLabel.setText(summary)
             self.commandSequenceLabel.setToolTip(summary)
+            if self.commandSequenceSending:
+                self.commandSequenceSendButton.setText(_("Stop combo"))
+                self.commandSequenceSendButton.setToolTip(_("Stop combo command sending"))
+                utils_ui.setButtonIcon(self.commandSequenceSendButton, "fa.stop")
+            else:
+                self.commandSequenceSendButton.setText(_("Send combo"))
+                self.commandSequenceSendButton.setToolTip(_("Send combo command in order"))
+                utils_ui.setButtonIcon(self.commandSequenceSendButton, "fa.play")
             self.commandSequenceBar.show()
         else:
             self.commandSequenceLabel.setText("")
@@ -867,46 +1004,79 @@ def parse(line, ctx):
 
     def openCommandSequenceDialog(self):
         selected = self.commandSequenceFromSelectedItems()
-        sequence = selected or self.config.get("commandSequenceItems", [])
+        currentSequence = self.currentCommandSequence()
+        sequence = selected or (currentSequence.get("items", []) if currentSequence else [])
         if not sequence:
             self.hintSignal.emit("warning", _("Warning"), _("Select custom send items first"))
             return
-        dialog = CommandSequenceDialog(self, sequence, self.mainWidget)
+        dialog = CommandSequenceDialog(
+            self,
+            sequence,
+            self.mainWidget,
+            currentSequence.get("name", "") if currentSequence else self.nextCommandSequenceName(),
+            currentSequence.get("loop", False) if currentSequence else False
+        )
         dialog.exec()
 
     def clearCommandSequence(self):
+        current = self.config.get("commandSequenceCurrent", "")
+        self.config["commandSequences"] = [
+            sequence for sequence in self.config.get("commandSequences", [])
+            if sequence.get("name") != current
+        ]
         self.config["commandSequenceItems"] = []
+        self.config["commandSequenceLoop"] = False
+        self.normalizeCommandSequences()
+        self.updateCommandSequenceBar()
+
+    def stopCommandSequence(self):
+        self.commandSequenceStop = True
         self.updateCommandSequenceBar()
 
     def startCommandSequence(self):
+        if self.commandSequenceSending:
+            self.stopCommandSequence()
+            return
+        sequenceObj = self.currentCommandSequence()
+        if sequenceObj is None:
+            self.normalizeCommandSequences()
+            sequenceObj = self.currentCommandSequence()
         sequence = []
-        for item in self.config.get("commandSequenceItems", []):
+        for item in sequenceObj.get("items", []) if sequenceObj else []:
             normalizedItem = self.normalizeCommandSequenceItem(item)
             if normalizedItem.get("text"):
                 sequence.append(normalizedItem)
         if not sequence:
             self.hintSignal.emit("warning", _("Warning"), _("No command in combo"))
             return
-        if self.commandSequenceSending:
-            self.hintSignal.emit("warning", _("Warning"), _("Combo command is sending"))
-            return
         self.commandSequenceSending = True
         self.commandSequenceStop = False
-        t = threading.Thread(target=self.commandSequenceSendProcess, args=(sequence,))
+        self.updateCommandSequenceBar()
+        t = threading.Thread(target=self.commandSequenceSendProcess, args=(sequence, bool(sequenceObj.get("loop", False))))
         t.setDaemon(True)
         t.start()
 
-    def commandSequenceSendProcess(self, sequence):
+    def commandSequenceDelay(self, delayMs):
+        endAt = time.time() + max(0, int(delayMs)) / 1000
+        while not self.commandSequenceStop and time.time() < endAt:
+            time.sleep(min(0.05, max(0, endAt - time.time())))
+
+    def commandSequenceSendProcess(self, sequence, loop=False):
         try:
-            for item in sequence:
-                if self.commandSequenceStop:
+            while not self.commandSequenceStop:
+                for item in sequence:
+                    if self.commandSequenceStop:
+                        break
+                    self.onSendData(data=item.get("text", ""))
+                    delay = int(item.get("delay", 0))
+                    if delay > 0:
+                        self.commandSequenceDelay(delay)
+                if not loop:
                     break
-                self.onSendData(data=item.get("text", ""))
-                delay = int(item.get("delay", 0))
-                if delay > 0:
-                    time.sleep(delay / 1000)
         finally:
             self.commandSequenceSending = False
+            self.commandSequenceStop = False
+            self.commandSequenceFinishedSignal.emit()
 
     def onSendSettingsHexClicked(self):
         if not self.config.get("sendAscii", True):

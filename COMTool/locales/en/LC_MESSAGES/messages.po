@@ -2744,3 +2744,72 @@ msgstr "Current capture status"
 
 msgid "Capture input queue is full; capture stopped to protect memory"
 msgstr "Capture input queue is full; capture stopped to protect memory"
+
+msgid "Available serial ports"
+msgstr "Available serial ports"
+
+msgid "Line numbers"
+msgstr "Line numbers"
+
+msgid "Receive line numbers"
+msgstr "Receive line numbers"
+
+msgid "Show line numbers in the receive area, only editable while the connection is closed"
+msgstr "Show line numbers in the receive area, only editable while the connection is closed"
+
+msgid "Receive area background image path"
+msgstr "Receive area background image path"
+
+msgid "Background"
+msgstr "Background"
+
+msgid "Select a background image for the receive area"
+msgstr "Select a background image for the receive area"
+
+msgid "Clear BG"
+msgstr "Clear BG"
+
+msgid "Remove receive area background image"
+msgstr "Remove receive area background image"
+
+msgid "Select background image"
+msgstr "Select background image"
+
+msgid "Images (*.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)"
+msgstr "Images (*.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)"
+
+msgid "Copy all"
+msgstr "Copy all"
+
+msgid "Find"
+msgstr "Find"
+
+msgid "Scroll to bottom"
+msgstr "Scroll to bottom"
+
+msgid "Combo command name"
+msgstr "Combo command name"
+
+msgid "Loop send"
+msgstr "Loop send"
+
+msgid "Repeat this combo command until stopped"
+msgstr "Repeat this combo command until stopped"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Select combo command"
+msgstr "Select combo command"
+
+msgid "Stop combo"
+msgstr "Stop combo"
+
+msgid "Stop combo command sending"
+msgstr "Stop combo command sending"
+
+msgid "Loop"
+msgstr "Loop"
+
+msgid "Once"
+msgstr "Once"

@@ -2718,3 +2718,72 @@ msgstr "目前擷取狀態"
 
 msgid "Capture input queue is full; capture stopped to protect memory"
 msgstr "擷取輸入佇列已滿，已停止擷取以保護記憶體"
+
+msgid "Available serial ports"
+msgstr "可用串口"
+
+msgid "Line numbers"
+msgstr "行號"
+
+msgid "Receive line numbers"
+msgstr "接收區行號"
+
+msgid "Show line numbers in the receive area, only editable while the connection is closed"
+msgstr "在接收區顯示行號，僅在連線關閉時可修改"
+
+msgid "Receive area background image path"
+msgstr "接收區背景圖路徑"
+
+msgid "Background"
+msgstr "背景圖"
+
+msgid "Select a background image for the receive area"
+msgstr "選擇接收區背景圖片"
+
+msgid "Clear BG"
+msgstr "清除背景"
+
+msgid "Remove receive area background image"
+msgstr "移除接收區背景圖"
+
+msgid "Select background image"
+msgstr "選擇背景圖片"
+
+msgid "Images (*.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)"
+msgstr "圖片 (*.png *.jpg *.jpeg *.bmp *.gif);;所有檔案 (*)"
+
+msgid "Copy all"
+msgstr "複製全部"
+
+msgid "Find"
+msgstr "尋找"
+
+msgid "Scroll to bottom"
+msgstr "捲動到底部"
+
+msgid "Combo command name"
+msgstr "組合命令名稱"
+
+msgid "Loop send"
+msgstr "循環發送"
+
+msgid "Repeat this combo command until stopped"
+msgstr "重複發送該組合命令，直到手動停止"
+
+msgid "Name"
+msgstr "名稱"
+
+msgid "Select combo command"
+msgstr "選擇組合命令"
+
+msgid "Stop combo"
+msgstr "停止組合"
+
+msgid "Stop combo command sending"
+msgstr "停止組合命令發送"
+
+msgid "Loop"
+msgstr "循環"
+
+msgid "Once"
+msgstr "單次"
