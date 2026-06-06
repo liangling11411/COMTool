@@ -107,6 +107,7 @@ class PluginItem:
         # widgets settings
         self.settingWidget = QWidget()
         self.settingWidget.setProperty("class","settingWidget")
+        self.settingWidget.setMinimumWidth(0)
         settingWrapperLayout = QVBoxLayout()
         settingWrapperLayout.setContentsMargins(0, 0, 0, 0)
         self.settingWidget.setLayout(settingWrapperLayout)
@@ -176,6 +177,7 @@ class PluginItem:
         widget.setStretchFactor(0, 1)
         widget.setStretchFactor(1, 2)
         widget.setStretchFactor(2, 1)
+        widget.splitterMoved.connect(self.onContentSplitterMoved)
         defaultFunctionalVisible = getattr(self.plugin, "onFunctionalWidgetDefaultVisible", lambda: False)
         if defaultFunctionalVisible():
             self.functionalWidget.show()
@@ -184,6 +186,13 @@ class PluginItem:
         # UI init done
         self.plugin.onUiInitDone()
         return wrapper
+
+    def onContentSplitterMoved(self, pos, index):
+        if index != 1 or not self.settingWidget or not self.settingWidget.isVisible():
+            return
+        sizes = self.panelSizes()
+        if sizes and sizes[0] <= 36:
+            self.settingWidget.hide()
 
     def panelSizes(self):
         if hasattr(self, "contentSplitter") and self.contentSplitter:

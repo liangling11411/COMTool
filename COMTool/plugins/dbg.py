@@ -1285,6 +1285,9 @@ class Plugin(Plugin_Base):
         self.commandSequenceSending = False
         self.commandSequenceStop = False
         self.currentConnStatus = ConnectionStatus.CLOSED
+        self.sendAreaCollapseState = "full"
+        self.sendAreaFullHeight = 0
+        self.adjustingSendSplitter = False
 
     def logAppendInfoOptions(self):
         return [
@@ -1388,16 +1391,18 @@ class Plugin(Plugin_Base):
         self.sendHistory = ComboBox()
         self.sendHistory.setToolTip(_("Send history"))
         receiveWidget = QWidget()
+        self.receiveWidget = receiveWidget
         receiveAreaWidgetsLayout = QHBoxLayout()
         receiveAreaWidgetsLayout.setContentsMargins(0,0,0,0)
         receiveWidget.setLayout(receiveAreaWidgetsLayout)
         receiveAreaWidgetsLayout.addWidget(self.receiveLineNumberArea)
         receiveAreaWidgetsLayout.addWidget(self.receiveArea)
         sendWidget = QWidget()
+        self.sendWidget = sendWidget
         sendAreaWidgetsLayout = QHBoxLayout()
         sendAreaWidgetsLayout.setContentsMargins(0,4,0,0)
         sendWidget.setLayout(sendAreaWidgetsLayout)
-        sendWidget.setMinimumHeight(38)  # Keep at least one input row visible
+        sendWidget.setMinimumHeight(0)
         buttonLayout = QVBoxLayout()
         buttonLayout.addWidget(self.receiveFindButton)
         buttonLayout.addWidget(self.receiveScrollBottomButton)
@@ -1419,6 +1424,16 @@ class Plugin(Plugin_Base):
         self.mainWidget.setStretchFactor(0, 7)
         self.mainWidget.setStretchFactor(1, 2)
         self.mainWidget.setStretchFactor(2, 1)
+        self.mainWidget.setChildrenCollapsible(True)
+        self.mainWidget.setCollapsible(1, True)
+        self.sendCompactHiddenWidgets = [
+            self.receiveFindButton,
+            self.receiveScrollBottomButton,
+            self.clearReceiveButtion,
+            self.clearSendButtion,
+            self.clearHistoryButton,
+            self.commandSequenceBar,
+        ]
         # event
         self.receiveFindButton.clicked.connect(self.openReceiveFindDialog)
         self.receiveScrollBottomButton.clicked.connect(self.scrollReceiveToBottom)
@@ -1430,12 +1445,80 @@ class Plugin(Plugin_Base):
         self.receiveArea.verticalScrollBar().valueChanged.connect(self.syncReceiveLineNumberScroll)
         self.receiveUpdateSignal.connect(self.updateReceivedDataDisplay)
         self.sendHistory.activated.connect(self.onSendHistoryIndexChanged)
+        self.mainWidget.splitterMoved.connect(self.onSendSplitterMoved)
+        QTimer.singleShot(0, self.rememberSendAreaFullHeight)
         if self.receiveFindMarkerTimer is None:
             self.receiveFindMarkerTimer = QTimer(self)
             self.receiveFindMarkerTimer.setSingleShot(True)
             self.receiveFindMarkerTimer.timeout.connect(self.updateReceiveFindMarkers)
 
         return self.mainWidget
+
+    def rememberSendAreaFullHeight(self):
+        if not hasattr(self, "mainWidget"):
+            return
+        sizes = self.mainWidget.sizes()
+        if len(sizes) >= 2 and sizes[1] > self.sendCompactHeight() + 48:
+            self.sendAreaFullHeight = sizes[1]
+
+    def sendCompactHeight(self):
+        if not hasattr(self, "sendArea") or not hasattr(self, "sendButton"):
+            return 38
+        lineHeight = self.sendArea.fontMetrics().lineSpacing() + 14
+        buttonHeight = self.sendButton.sizeHint().height() + 8
+        return max(38, lineHeight, buttonHeight)
+
+    def onSendSplitterMoved(self, pos, index):
+        if self.adjustingSendSplitter or index not in (1, 2):
+            return
+        QTimer.singleShot(0, self.snapSendAreaCollapse)
+
+    def snapSendAreaCollapse(self):
+        if self.adjustingSendSplitter or not hasattr(self, "mainWidget"):
+            return
+        sizes = self.mainWidget.sizes()
+        if len(sizes) < 2:
+            return
+        height = sizes[1]
+        compactHeight = self.sendCompactHeight()
+        if height <= max(14, compactHeight // 2):
+            self.applySendAreaCollapseState("hidden")
+        elif height <= compactHeight + 48:
+            self.applySendAreaCollapseState("compact")
+        else:
+            self.sendAreaFullHeight = height
+            self.applySendAreaCollapseState("full", adjustSize=False)
+
+    def setSendAreaSplitterHeight(self, height):
+        sizes = self.mainWidget.sizes()
+        if len(sizes) < 2:
+            return
+        delta = sizes[1] - height
+        sizes[1] = height
+        sizes[0] = max(0, sizes[0] + delta)
+        self.adjustingSendSplitter = True
+        self.mainWidget.setSizes(sizes)
+        self.adjustingSendSplitter = False
+
+    def applySendAreaCollapseState(self, state, adjustSize=True):
+        if not hasattr(self, "sendArea"):
+            return
+        state = state if state in ("full", "compact", "hidden") else "full"
+        self.sendAreaCollapseState = state
+        compact = self.sendCompactHeight()
+        showFullControls = state == "full"
+        for widget in getattr(self, "sendCompactHiddenWidgets", []):
+            widget.setVisible(showFullControls)
+        self.sendArea.setVisible(state != "hidden")
+        self.sendButton.setVisible(state != "hidden")
+        self.sendArea.setMaximumHeight(compact if state == "compact" else 16777215)
+        if adjustSize:
+            if state == "compact":
+                self.setSendAreaSplitterHeight(compact)
+                QTimer.singleShot(0, lambda height=compact: self.setSendAreaSplitterHeight(height))
+            elif state == "hidden":
+                self.setSendAreaSplitterHeight(0)
+                QTimer.singleShot(0, lambda: self.setSendAreaSplitterHeight(0))
 
     def onWidgetSettings(self, parent):
         # serial receive settings
@@ -2036,6 +2119,14 @@ class Plugin(Plugin_Base):
         customSendItemsLayout0.addWidget(self.customSendSearch)
         customSendBatchLayout = QHBoxLayout()
         customSendBatchLayout.setContentsMargins(0,0,0,0)
+        customSendBatchLayout.setSpacing(4)
+        for button in [
+            self.batchCustomSendColorButton,
+            self.batchCustomSendIconButton,
+            self.batchCustomSendDeleteButton,
+            self.customSendComboButton,
+        ]:
+            button.setMinimumWidth(56)
         customSendBatchLayout.addWidget(self.customSendSelectAll)
         customSendBatchLayout.addWidget(self.batchCustomSendColorButton)
         customSendBatchLayout.addWidget(self.batchCustomSendIconButton)
@@ -2057,6 +2148,7 @@ class Plugin(Plugin_Base):
         customItems.setLayout(self.customSendItemsLayout)
         customSendButtonsLayout = QHBoxLayout()
         customSendButtonsLayout.setContentsMargins(0,0,0,0)
+        customSendButtonsLayout.setSpacing(4)
         customSendButtonsLayout.addWidget(self.importCustomSendButton)
         customSendButtonsLayout.addWidget(self.exportCustomSendButton)
         customSendButtonsLayout.addWidget(self.addButton)
@@ -2068,7 +2160,7 @@ class Plugin(Plugin_Base):
         self.customSendScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         sendFunctionalLayout.addWidget(customSendGroupBox, 1)
         self.funcWidget = QWidget()
-        self.funcWidget.setMinimumWidth(360)
+        self.funcWidget.setMinimumWidth(286)
         self.funcWidget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.funcWidget.setLayout(sendFunctionalLayout)
         # event
@@ -2441,13 +2533,18 @@ class Plugin(Plugin_Base):
     def updateClosedOnlyControls(self):
         closed = self.isConnectionClosed()
         for obj in [
-            getattr(self, "receiveFontSizeInput", None),
-            getattr(self, "sendFontSizeInput", None),
             getattr(self, "receiveBufferSizeInput", None),
             getattr(self, "receiveLineNumbers", None)
         ]:
             if obj is not None:
                 obj.setEnabled(closed)
+
+    def warnFontSizeRequiresClosedConnection(self):
+        QMessageBox.warning(
+            self.mainWidget if hasattr(self, "mainWidget") else None,
+            _("Warning"),
+            _("Close the connection before changing RX/TX font size.")
+        )
 
     def resetSpinBoxValue(self, spinBox, value):
         spinBox.blockSignals(True)
@@ -2492,10 +2589,13 @@ class Plugin(Plugin_Base):
         font.setPointSize(self.config["sendFontSize"])
         self.sendArea.setFont(font)
         self.setTextEditPaletteColor(self.sendArea, self.config["sendFontColor"], updateDocument=True)
+        if getattr(self, "sendAreaCollapseState", "full") in ("compact", "hidden"):
+            self.applySendAreaCollapseState(self.sendAreaCollapseState)
 
     def changeReceiveFontSize(self, size):
         if not self.isConnectionClosed():
             self.resetSpinBoxValue(self.receiveFontSizeInput, self.config["receiveFontSize"])
+            self.warnFontSizeRequiresClosedConnection()
             return
         self.config["receiveFontSize"] = size
         self.applyReceiveFont()
@@ -2504,6 +2604,7 @@ class Plugin(Plugin_Base):
     def changeSendFontSize(self, size):
         if not self.isConnectionClosed():
             self.resetSpinBoxValue(self.sendFontSizeInput, self.config["sendFontSize"])
+            self.warnFontSizeRequiresClosedConnection()
             return
         self.config["sendFontSize"] = size
         self.config["fontSize"] = size
@@ -2528,6 +2629,7 @@ class Plugin(Plugin_Base):
 
     def adjustReceiveFontSize(self, delta):
         if not self.isConnectionClosed():
+            self.warnFontSizeRequiresClosedConnection()
             return
         size = max(1, min(100, int(self.config.get("receiveFontSize", 10)) + delta))
         if hasattr(self, "receiveFontSizeInput"):
@@ -2539,6 +2641,7 @@ class Plugin(Plugin_Base):
 
     def adjustSendFontSize(self, delta):
         if not self.isConnectionClosed():
+            self.warnFontSizeRequiresClosedConnection()
             return
         size = max(1, min(100, int(self.config.get("sendFontSize", 10)) + delta))
         if hasattr(self, "sendFontSizeInput"):
@@ -3224,25 +3327,33 @@ class Plugin(Plugin_Base):
         item = CustomSendItemWidget(self)
         layout = QHBoxLayout()
         layout.setContentsMargins(2,2,2,2)
+        layout.setSpacing(4)
         item.setLayout(layout)
+        item.setMinimumWidth(260)
         select = QCheckBox()
+        select.setFixedWidth(22)
         select.setToolTip(_("Select for batch edit"))
         dragHandle = CustomSendDragHandle(item)
         utils_ui.setButtonIcon(dragHandle, "fa.bars")
         dragHandle.setProperty("class", "remark")
+        dragHandle.setFixedSize(28, 24)
         dragHandle.setToolTip(_("Drag before another item to reorder; double click to move this item to top"))
         cmd = QLineEdit(customItem["text"])
+        cmd.setMinimumWidth(44)
         send = WrapRemarkButton(customItem["remark"])
+        send.setMinimumWidth(58)
         utils_ui.setButtonIcon(send, customItem["icon"])
         send.updateWrappedText()
         colorButton = CustomSendColorButton(self, item, send)
         colorButton.setProperty("class", "remark")
+        colorButton.setFixedSize(28, 24)
         colorButton.setToolTip(_("Click to set button color, right click to clear"))
         self.updateColorButton(colorButton, customItem["color"])
         editRemark = QPushButton("")
         editRemark.setObjectName("editRemark")
         utils_ui.setButtonIcon(editRemark, "ei.pencil")
         editRemark.setProperty("class", "remark")
+        editRemark.setFixedSize(28, 24)
         editRemark.setToolTip(_("Edit custom send remark and icon"))
         cmd.setToolTip(customItem["text"])
         send.setToolTip(customItem["text"])
@@ -3252,6 +3363,7 @@ class Plugin(Plugin_Base):
         delete = QPushButton("")
         utils_ui.setButtonIcon(delete, "fa.close")
         delete.setProperty("class", "deleteBtn")
+        delete.setFixedSize(24, 24)
         delete.setToolTip(_("Delete this custom send item"))
         layout.addWidget(select)
         layout.addWidget(dragHandle)
@@ -3285,6 +3397,16 @@ class Plugin(Plugin_Base):
         item.colorButton = colorButton
         item.selectCheckBox = select
         self.applyCustomItemColor(item, send, customItem["color"])
+        send.setMinimumSize(58, send.minimumSizeHint().height())
+        send.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
+        for button, width in [
+            (dragHandle, 28),
+            (colorButton, 28),
+            (editRemark, 28),
+            (delete, 24),
+        ]:
+            button.setFixedSize(width, 24)
+            button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         if not load:
             self.filterCustomSendItems()
             QTimer.singleShot(0, self.scrollCustomSendToBottom)

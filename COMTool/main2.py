@@ -126,15 +126,26 @@ class BackgroundFrameWidget(QWidget):
     def drawGlobalBackground(self, painter, targetWidget=None):
         if self.backgroundPixmap.isNull():
             return
-        source = self.croppedBackground()
-        if source.isNull():
-            return
-        drawX = 0
-        drawY = 0
-        if targetWidget is not None and targetWidget is not self:
-            origin = targetWidget.mapTo(self, QPoint(0, 0))
+        if targetWidget is not None and targetWidget.window() is not self.window():
+            window = targetWidget.window()
+            targetSize = window.size()
+            scaled = self.backgroundPixmap.scaled(targetSize, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+            x = max(0, int((scaled.width() - targetSize.width()) / 2))
+            y = max(0, int((scaled.height() - targetSize.height()) / 2))
+            source = scaled.copy(x, y, targetSize.width(), targetSize.height())
+            origin = targetWidget.mapTo(window, QPoint(0, 0))
             drawX = -origin.x()
             drawY = -origin.y()
+        else:
+            source = self.croppedBackground()
+            drawX = 0
+            drawY = 0
+            if targetWidget is not None and targetWidget is not self:
+                origin = targetWidget.mapTo(self, QPoint(0, 0))
+                drawX = -origin.x()
+                drawY = -origin.y()
+        if source.isNull():
+            return
         painter.save()
         painter.setOpacity(self.backgroundOpacity)
         painter.drawPixmap(drawX, drawY, source)
@@ -1023,6 +1034,8 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         item.widget.setWindowTitle(item.name)
         item.widget.closeEvent = lambda event: self.onPluginWindowClose(item, parent)
         item.widget.show()
+        self.applyGlobalBackgroundWidgetAttributes(self.globalBackgroundEnabled(), polish=True)
+        self.updateGlobalBackgroundContainers()
 
     def onPluginWindowClose(self, item, parent):
         self.recoverTab(item, parent)
@@ -1036,6 +1049,8 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             # item.widget.setParent(parent)
             status = item.plugin.getConnStatus()
             self.setTabIcon(status, i)
+            self.applyGlobalBackgroundWidgetAttributes(self.globalBackgroundEnabled(), polish=True)
+            self.updateGlobalBackgroundContainers()
         # prevent close and add this widget to tab
         insertIdx = self.tabWidget.count()
         idx = self.items.index(item)
@@ -1333,6 +1348,28 @@ QTabBar::tab:!selected {
         path = self.configGet("backgroundImage", "")
         return bool(path and os.path.exists(path))
 
+    def globalBackgroundRoots(self):
+        roots = []
+        if hasattr(self, "frameWidget"):
+            roots.append(self.frameWidget)
+        if hasattr(self, "items"):
+            for item in self.items:
+                widget = getattr(item, "widget", None)
+                if widget is not None:
+                    roots.append(widget)
+        unique = []
+        seen = set()
+        for widget in roots:
+            try:
+                key = id(widget)
+            except RuntimeError:
+                continue
+            if key in seen:
+                continue
+            seen.add(key)
+            unique.append(widget)
+        return unique
+
     def applyGlobalBackgroundWidgetAttributes(self, enabled, polish=False):
         if not hasattr(self, "frameWidget"):
             return
@@ -1342,8 +1379,16 @@ QTabBar::tab:!selected {
             QPushButton, QLineEdit, QTextEdit, QPlainTextEdit, QCheckBox, QRadioButton,
             QComboBox, ComboBox, QSpinBox, QDoubleSpinBox, QFontComboBox, QScrollBar
         )
-        widgets = [self.frameWidget]
-        widgets.extend(self.frameWidget.findChildren(QWidget))
+        widgets = []
+        seen = set()
+        for root in self.globalBackgroundRoots():
+            candidates = [root]
+            candidates.extend(root.findChildren(QWidget))
+            for widget in candidates:
+                if id(widget) in seen:
+                    continue
+                seen.add(id(widget))
+                widgets.append(widget)
         for widget in widgets:
             isContainer = not isinstance(widget, controls)
             widget.setProperty("globalBackgroundContainer", "true" if enabled and isContainer else "")
@@ -1365,10 +1410,16 @@ QTabBar::tab:!selected {
     def updateGlobalBackgroundContainers(self):
         if not hasattr(self, "frameWidget"):
             return
-        widgets = [self.frameWidget]
-        widgets.extend(self.frameWidget.findChildren(QWidget))
-        for widget in widgets:
-            if widget.property("globalBackgroundContainer") == "true" or widget.property("globalBackgroundPaintFilterInstalled"):
+        seen = set()
+        for root in self.globalBackgroundRoots():
+            widgets = [root]
+            widgets.extend(root.findChildren(QWidget))
+            for widget in widgets:
+                if id(widget) in seen:
+                    continue
+                seen.add(id(widget))
+                if widget.property("globalBackgroundContainer") != "true" and not widget.property("globalBackgroundPaintFilterInstalled"):
+                    continue
                 widget.update()
 
     def applyAppStyle(self):
