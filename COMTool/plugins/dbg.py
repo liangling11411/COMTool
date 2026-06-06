@@ -25,7 +25,7 @@ try:
 except Exception:
     from .base import Plugin_Base
 
-from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QMimeData, QTimer
+from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QMimeData, QTimer, QSize
 from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSpinBox, QSizePolicy,
@@ -233,6 +233,24 @@ class FontSizeTextEdit(QTextEdit):
                 event.accept()
                 return
         super().wheelEvent(event)
+
+
+class ReceiveLineNumberArea(QWidget):
+    def __init__(self, plugin, parent=None):
+        super().__init__(parent)
+        self.plugin = plugin
+        self.setObjectName("receiveLineNumberArea")
+        self.setToolTip(_("Receive line numbers"))
+        self.setFocusPolicy(Qt.NoFocus)
+        self.setMinimumWidth(28)
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+
+    def sizeHint(self):
+        return QSize(self.plugin.receiveLineNumberAreaWidth(), 0)
+
+    def paintEvent(self, event):
+        self.plugin.paintReceiveLineNumbers(event)
+
 
 class LogSettingsDialog(QDialog):
     def __init__(self, plugin, parent=None):
@@ -1358,20 +1376,11 @@ class Plugin(Plugin_Base):
         font = QFont(self.config.get("receiveFontFamily", DEFAULT_TEXT_FONT), self.config["receiveFontSize"])
         self.receiveArea.setFont(font)
         self.applyReceiveAreaStyle()
-        self.receiveLineNumberArea = QTextEdit()
-        self.receiveLineNumberArea.setObjectName("receiveLineNumberArea")
-        self.receiveLineNumberArea.setToolTip(_("Receive line numbers"))
-        self.receiveLineNumberArea.setReadOnly(True)
-        self.receiveLineNumberArea.setFocusPolicy(Qt.NoFocus)
-        self.receiveLineNumberArea.setLineWrapMode(QTextEdit.NoWrap)
-        self.receiveLineNumberArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.receiveLineNumberArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.receiveLineNumberArea.setTextInteractionFlags(Qt.NoTextInteraction)
-        self.receiveLineNumberArea.setMinimumWidth(28)
-        self.receiveLineNumberArea.setFixedWidth(54)  # will be updated by updateReceiveLineNumbers
+        self.receiveLineNumberArea = ReceiveLineNumberArea(self)
+        self.receiveLineNumberArea.setFixedWidth(self.receiveLineNumberAreaWidth())
         self.receiveLineNumberArea.setFont(font)
         self.receiveLineNumberArea.setStyleSheet(
-            "QTextEdit#receiveLineNumberArea {background:rgba(127,127,127,28); color:#888; border:0; padding-right:4px;}"
+            "QWidget#receiveLineNumberArea {background:rgba(127,127,127,28); color:#888; border:0;}"
         )
         self.sendArea = FontSizeTextEdit(self.adjustSendFontSize)
         self.sendArea.setObjectName("sendArea")
@@ -1667,6 +1676,12 @@ class Plugin(Plugin_Base):
     def onSettingsWidgetScrollTogether(self):
         return True
 
+    def onSettingsPanelAutoCollapseWidth(self):
+        return 96
+
+    def onFunctionalPanelAutoCollapseWidth(self):
+        return 328
+
     def createFunctionalSettings(self, parentLayout):
         self.fontSettingsGroupBox = QGroupBox(_("Default font"))
         fontSettingsLayout = QGridLayout()
@@ -1803,7 +1818,7 @@ class Plugin(Plugin_Base):
         self.commandSequenceSendButton.clicked.connect(self.startCommandSequence)
         self.commandSequenceClearButton.clicked.connect(self.clearCommandSequence)
         self.commandSequenceFinishedSignal.connect(self.updateCommandSequenceBar)
-        bar.hide()
+        bar.show()
         return bar
 
     def normalizeCommandSequenceItem(self, item=None):
@@ -1989,10 +2004,17 @@ class Plugin(Plugin_Base):
                 self.commandSequenceSendButton.setText(_("Send combo"))
                 self.commandSequenceSendButton.setToolTip(_("Send combo command in order"))
                 utils_ui.setButtonIcon(self.commandSequenceSendButton, "fa.play")
-            self.commandSequenceBar.show()
+            self.commandSequenceSendButton.setEnabled(True)
+            self.commandSequenceClearButton.setEnabled(True)
         else:
-            self.commandSequenceLabel.setText("")
-            self.commandSequenceBar.hide()
+            self.commandSequenceLabel.setText(_("No combo command"))
+            self.commandSequenceLabel.setToolTip(_("No combo command"))
+            self.commandSequenceSendButton.setText(_("Send combo"))
+            self.commandSequenceSendButton.setToolTip(_("Create or select a combo command before sending"))
+            utils_ui.setButtonIcon(self.commandSequenceSendButton, "fa.play")
+            self.commandSequenceSendButton.setEnabled(False)
+            self.commandSequenceClearButton.setEnabled(False)
+        self.commandSequenceBar.show()
 
     def openCommandSequenceDialog(self):
         selected = self.commandSequenceFromSelectedItems()
@@ -2089,6 +2111,8 @@ class Plugin(Plugin_Base):
         self.customSendSearch.setToolTip(_("Search custom send items by remark or command"))
         self.customSendSelectAll = QCheckBox(_("All"))
         self.customSendSelectAll.setToolTip(_("Select visible custom send items"))
+        self.customSendSelectAll.setMinimumWidth(44)
+        self.customSendSelectAll.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.batchCustomSendColorButton = QPushButton(_("Color"))
         self.batchCustomSendIconButton = QPushButton(_("Icon"))
         self.batchCustomSendDeleteButton = QPushButton(_("Delete"))
@@ -2104,7 +2128,7 @@ class Plugin(Plugin_Base):
         self.batchCustomSendDeleteButton.setProperty("class", "dangerBtn")
         # cumtom send zone
         #   groupbox
-        customSendGroupBox = QGroupBox(_("Cutom send"))
+        customSendGroupBox = QGroupBox(_("Custom send"))
         customSendItemsLayout0 = QVBoxLayout()
         customSendItemsLayout0.setContentsMargins(0,8,0,0)
         customSendGroupBox.setLayout(customSendItemsLayout0)
@@ -2126,7 +2150,8 @@ class Plugin(Plugin_Base):
             self.batchCustomSendDeleteButton,
             self.customSendComboButton,
         ]:
-            button.setMinimumWidth(56)
+            button.setMinimumWidth(64)
+            button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         customSendBatchLayout.addWidget(self.customSendSelectAll)
         customSendBatchLayout.addWidget(self.batchCustomSendColorButton)
         customSendBatchLayout.addWidget(self.batchCustomSendIconButton)
@@ -2160,7 +2185,7 @@ class Plugin(Plugin_Base):
         self.customSendScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         sendFunctionalLayout.addWidget(customSendGroupBox, 1)
         self.funcWidget = QWidget()
-        self.funcWidget.setMinimumWidth(286)
+        self.funcWidget.setMinimumWidth(328)
         self.funcWidget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.funcWidget.setLayout(sendFunctionalLayout)
         # event
@@ -2546,6 +2571,82 @@ class Plugin(Plugin_Base):
             _("Close the connection before changing RX/TX font size.")
         )
 
+    def textEditLineCount(self, edit):
+        return max(1, edit.document().blockCount())
+
+    def textTailByLines(self, text, keepLines):
+        lines = text.splitlines()
+        if not lines:
+            return ""
+        return "\n".join(lines[-keepLines:])
+
+    def trimTextEditToRecentLines(self, edit, keepLines):
+        if self.textEditLineCount(edit) <= keepLines:
+            return False
+        tail = self.textTailByLines(edit.toPlainText(), keepLines)
+        edit.setPlainText(tail)
+        edit.moveCursor(QTextCursor.End)
+        return True
+
+    def recordLineCount(self, record):
+        text = self.receiveRecordText(record)
+        if not text:
+            return 0
+        return max(1, text.count("\n") + 1)
+
+    def trimReceiveDisplayRecordsByLines(self, keepLines):
+        records = self.receiveDisplayRecords
+        if not records:
+            return False
+        total = 0
+        kept = []
+        for record in reversed(records):
+            count = self.recordLineCount(record)
+            if kept and total + count > keepLines:
+                break
+            kept.append(record)
+            total += count
+            if total >= keepLines:
+                break
+        kept.reverse()
+        if len(kept) == len(records):
+            return False
+        self.receiveDisplayRecords = kept
+        return True
+
+    def trimReceiveAreaToRecentLines(self, keepLines):
+        if self.textEditLineCount(self.receiveArea) <= keepLines:
+            return False
+        changed = self.trimReceiveDisplayRecordsByLines(keepLines)
+        if changed:
+            self.rerenderReceiveArea()
+        if self.textEditLineCount(self.receiveArea) > keepLines:
+            tail = self.textTailByLines(self.receiveArea.toPlainText(), keepLines)
+            self.receiveDisplayRecords = [{
+                "head": "",
+                "datas": [tail],
+                "encoding": self.configGlobal["encoding"],
+                "isSend": False
+            }]
+            self.rerenderReceiveArea()
+            changed = True
+        return changed
+
+    def confirmTrimLargeAreaBeforeFontSize(self, edit, areaName, trimCallback):
+        keepLines = 500
+        if self.textEditLineCount(edit) <= keepLines:
+            return
+        message = _(
+            "{} has more than 500 lines. Keep only the latest 500 lines before changing font size to reduce lag?"
+        ).format(areaName)
+        if QMessageBox.question(
+                self.mainWidget if hasattr(self, "mainWidget") else None,
+                _("Keep latest 500 lines?"),
+                message,
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.Yes) == QMessageBox.Yes:
+            trimCallback(keepLines)
+
     def resetSpinBoxValue(self, spinBox, value):
         spinBox.blockSignals(True)
         spinBox.setValue(value)
@@ -2597,6 +2698,11 @@ class Plugin(Plugin_Base):
             self.resetSpinBoxValue(self.receiveFontSizeInput, self.config["receiveFontSize"])
             self.warnFontSizeRequiresClosedConnection()
             return
+        self.confirmTrimLargeAreaBeforeFontSize(
+            self.receiveArea,
+            _("RX receive area"),
+            self.trimReceiveAreaToRecentLines
+        )
         self.config["receiveFontSize"] = size
         self.applyReceiveFont()
         self.rerenderReceiveArea()
@@ -2606,6 +2712,11 @@ class Plugin(Plugin_Base):
             self.resetSpinBoxValue(self.sendFontSizeInput, self.config["sendFontSize"])
             self.warnFontSizeRequiresClosedConnection()
             return
+        self.confirmTrimLargeAreaBeforeFontSize(
+            self.sendArea,
+            _("TX input area"),
+            lambda keepLines: self.trimTextEditToRecentLines(self.sendArea, keepLines)
+        )
         self.config["sendFontSize"] = size
         self.config["fontSize"] = size
         self.applySendFont()
@@ -2635,6 +2746,11 @@ class Plugin(Plugin_Base):
         if hasattr(self, "receiveFontSizeInput"):
             self.receiveFontSizeInput.setValue(size)
         else:
+            self.confirmTrimLargeAreaBeforeFontSize(
+                self.receiveArea,
+                _("RX receive area"),
+                self.trimReceiveAreaToRecentLines
+            )
             self.config["receiveFontSize"] = size
             self.applyReceiveFont()
             self.rerenderReceiveArea()
@@ -2647,6 +2763,11 @@ class Plugin(Plugin_Base):
         if hasattr(self, "sendFontSizeInput"):
             self.sendFontSizeInput.setValue(size)
         else:
+            self.confirmTrimLargeAreaBeforeFontSize(
+                self.sendArea,
+                _("TX input area"),
+                lambda keepLines: self.trimTextEditToRecentLines(self.sendArea, keepLines)
+            )
             self.config["sendFontSize"] = size
             self.config["fontSize"] = size
             self.applySendFont()
@@ -2748,25 +2869,52 @@ class Plugin(Plugin_Base):
         if enabled:
             self.updateReceiveLineNumbers()
 
+    def receiveLineNumberAreaWidth(self):
+        if not hasattr(self, "receiveArea"):
+            return 28
+        count = max(1, self.receiveArea.document().blockCount())
+        digits = len(str(count))
+        fm = self.receiveArea.fontMetrics()
+        charWidth = fm.horizontalAdvance("0") if hasattr(fm, "horizontalAdvance") else fm.width("0")
+        return max(28, charWidth * digits + 14)
+
     def updateReceiveLineNumbers(self):
         if not hasattr(self, "receiveLineNumberArea") or not self.config.get("receiveLineNumbers", False):
             return
-        count = max(1, self.receiveArea.document().blockCount())
-        text = "\n".join(str(i) for i in range(1, count + 1))
-        if self.receiveLineNumberArea.toPlainText() != text:
-            self.receiveLineNumberArea.setPlainText(text)
-        # Dynamic width based on digit count
-        digits = len(str(count))
-        fm = self.receiveLineNumberArea.fontMetrics()
-        charWidth = fm.horizontalAdvance("0") if hasattr(fm, "horizontalAdvance") else fm.width("0")
-        width = max(28, charWidth * digits + 14)
+        width = self.receiveLineNumberAreaWidth()
         if self.receiveLineNumberArea.width() != width:
             self.receiveLineNumberArea.setFixedWidth(width)
-        self.syncReceiveLineNumberScroll(self.receiveArea.verticalScrollBar().value())
+        self.receiveLineNumberArea.update()
 
     def syncReceiveLineNumberScroll(self, value):
         if hasattr(self, "receiveLineNumberArea") and self.config.get("receiveLineNumbers", False):
-            self.receiveLineNumberArea.verticalScrollBar().setValue(value)
+            self.receiveLineNumberArea.update()
+
+    def paintReceiveLineNumbers(self, event):
+        if not hasattr(self, "receiveArea") or not self.config.get("receiveLineNumbers", False):
+            return
+        painter = QPainter(self.receiveLineNumberArea)
+        painter.fillRect(event.rect(), QColor(127, 127, 127, 28))
+        painter.setFont(self.receiveArea.font())
+        painter.setPen(QColor("#888888"))
+        document = self.receiveArea.document()
+        layout = document.documentLayout()
+        viewportTop = self.receiveArea.viewport().geometry().top()
+        scrollValue = self.receiveArea.verticalScrollBar().value()
+        right = self.receiveLineNumberArea.width() - 4
+        fontHeight = self.receiveArea.fontMetrics().height()
+        block = document.begin()
+        number = 1
+        while block.isValid():
+            rect = layout.blockBoundingRect(block)
+            top = int(rect.top() - scrollValue + viewportTop)
+            height = max(fontHeight, int(rect.height()))
+            if top > event.rect().bottom():
+                break
+            if top + height >= event.rect().top():
+                painter.drawText(0, top, right, height, Qt.AlignRight | Qt.AlignTop, str(number))
+            block = block.next()
+            number += 1
 
     def copyAllReceiveText(self):
         QApplication.clipboard().setText(self.receiveArea.toPlainText())
