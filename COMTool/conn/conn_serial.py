@@ -87,9 +87,9 @@ class PortInfoButton(QPushButton):
         detailLines = self._wrapDetail(self.width())
         if detailLines:
             detailText = "<br>".join(detailLines)
-            text = "<span style='font-size:14px;font-weight:bold;'>" + self.port + "</span><br><span style='font-size:10px;'>" + detailText + "</span>"
+            text = self.port + "\n" + "\n".join(detailLines)
         else:
-            text = "<span style='font-size:14px;font-weight:bold;'>" + self.port + "</span>"
+            text = self.port
         if text != self._lastText:
             self._lastText = text
             self.setText(text)
@@ -199,7 +199,7 @@ class SerialPortRowWidget(QWidget):
             self.nameButton.setStyleSheet(
                 "QPushButton{"
                 "text-align:left;background-color:#555555;color:#888888;border:2px solid #555555;border-radius:5px;"
-                "padding:4px 8px;min-height:54px;"
+                "padding:4px 8px;font-weight:bold;min-height:54px;"
                 "}"
             )
             self.actionButton.setText(_("Locked"))
@@ -355,6 +355,7 @@ class Serial(COMM):
             self.serialPortCombobox.hide()
             self.serialOpenCloseButton.hide()
             self.serialPortListScroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            self.serialPortListScroll.setFixedHeight(84)
             serialSettingsLayout.addWidget(self.serialPortListScroll, 1, 0, 1, 2)
             serialSettingsLayout.addWidget(serailBaudrateLabel, 2, 0)
             serialSettingsLayout.addWidget(self.serailBaudrateCombobox, 2, 1)
@@ -483,6 +484,8 @@ class Serial(COMM):
             self.serialPortListLayout.addWidget(row)
             self.serialPortRowWidgets[port] = row
         rowHeight = 72
+        visibleHeight = max(84, len(self.serialPortRowWidgets) * rowHeight + 8)
+        self.serialPortListScroll.setFixedHeight(visibleHeight)
         self.refreshSerialPortRows()
         self.highlightSelectedSerialPort()
 
