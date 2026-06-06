@@ -1412,6 +1412,18 @@ msgstr "ループ"
 msgid "Once"
 msgstr "一回"
 
+#: plugins/dbg.py:54
+msgid "Timed send notice"
+msgstr "定時送信の通知"
+
+#: plugins/dbg.py:55
+msgid "After timed send is enabled, TX input content cannot be edited, and loop combo command sending cannot be started."
+msgstr "定時送信を有効にすると、TX 送信欄の内容は編集できず、ループ組み合わせコマンド送信も開始できません。"
+
+#: plugins/dbg.py:59
+msgid "Do not show again"
+msgstr "次回から表示しない"
+
 #: plugins/dbg.py:2004 plugins/dbg.py:3045
 msgid "Timed send is enabled; TX input is locked"
 msgstr "定時送信が有効です。TX 入力欄はロックされています"

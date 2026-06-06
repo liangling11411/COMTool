@@ -1401,6 +1401,18 @@ msgstr "循環"
 msgid "Once"
 msgstr "單次"
 
+#: plugins/dbg.py:54
+msgid "Timed send notice"
+msgstr "定時傳送提示"
+
+#: plugins/dbg.py:55
+msgid "After timed send is enabled, TX input content cannot be edited, and loop combo command sending cannot be started."
+msgstr "開啟定時傳送後，TX 傳送區內容將無法編輯，並且無法啟動循環組合命令傳送。"
+
+#: plugins/dbg.py:59
+msgid "Do not show again"
+msgstr "下次不再顯示"
+
 #: plugins/dbg.py:2004 plugins/dbg.py:3045
 msgid "Timed send is enabled; TX input is locked"
 msgstr "定時傳送已開啟，TX 輸入區已鎖定"

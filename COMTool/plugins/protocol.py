@@ -32,17 +32,17 @@ try:
     import crc
     from protocols import defaultProtocols
     from protocol_capture import DataCaptureWidget, defaultCaptureConfig
-    from dbg import (AsyncTextFileWriter, CommandSequenceDialog, CustomSendColorButton, CustomSendDragHandle, CustomSendItemWidget,
-                     FindMarkerScrollBar, LogSettingsDialog, NoWheelFontComboBox,
-                     NoWheelSpinBox, ReceiveFindDialog, WrapRemarkButton, DEFAULT_TEXT_FONT)
+    from dbg import (AsyncTextFileWriter, CommandSequenceDialog, CustomSendColorButton, CustomSendDragHandle,
+                     CustomSendItemWidget, FindMarkerScrollBar, LogSettingsDialog, NoWheelFontComboBox,
+                     NoWheelSpinBox, ReceiveFindDialog, WrapRemarkButton, DEFAULT_TEXT_FONT, showTimedSendNotice)
 except Exception:
     from .base import Plugin_Base
     from . import crc
     from .protocols import defaultProtocols
     from .protocol_capture import DataCaptureWidget, defaultCaptureConfig
-    from .dbg import (AsyncTextFileWriter, CommandSequenceDialog, CustomSendColorButton, CustomSendDragHandle, CustomSendItemWidget,
-                      FindMarkerScrollBar, LogSettingsDialog, NoWheelFontComboBox,
-                      NoWheelSpinBox, ReceiveFindDialog, WrapRemarkButton, DEFAULT_TEXT_FONT)
+    from .dbg import (AsyncTextFileWriter, CommandSequenceDialog, CustomSendColorButton, CustomSendDragHandle,
+                      CustomSendItemWidget, FindMarkerScrollBar, LogSettingsDialog, NoWheelFontComboBox,
+                      NoWheelSpinBox, ReceiveFindDialog, WrapRemarkButton, DEFAULT_TEXT_FONT, showTimedSendNotice)
 
 import os, json, time, re, threading
 from datetime import datetime
@@ -211,6 +211,7 @@ def parse(line, ctx):
         self.saveLogStatusTimer = None
         self.sendRecord = []
         self.commandSequenceSending = False
+        self.commandSequenceLoopSending = False
         self.commandSequenceStop = False
 
     def print(self, *args, **kw_args):
@@ -419,7 +420,7 @@ def parse(line, ctx):
         self.sendSettingsCRLF.clicked.connect(lambda: self.bindVar(self.sendSettingsCRLF, self.config, "useCRLF"))
         self.receiveSettingsAutoLinefeedTime.textChanged.connect(lambda: self.bindVar(self.receiveSettingsAutoLinefeedTime, self.config, "receiveAutoLindefeedTime", vtype=int, vErrorMsg=_("Auto line feed value error, must be integer"), emptyDefault = "200"))
         self.sendSettingsScheduled.textChanged.connect(lambda: self.bindVar(self.sendSettingsScheduled, self.config, "sendScheduledTime", vtype=int, vErrorMsg=_("Timed send value error, must be integer"), emptyDefault = "300"))
-        self.sendSettingsScheduledCheckBox.clicked.connect(lambda: self.bindVar(self.sendSettingsScheduledCheckBox, self.config, "sendScheduled"))
+        self.sendSettingsScheduledCheckBox.clicked.connect(self.onTimedSendClicked)
         self.receiveSettingsWrap.clicked.connect(self.onSettingWrap)
         self.receiveEscape.clicked.connect(lambda: self.bindVar(self.receiveEscape, self.config, "receiveEscape"))
         self.sendButton.clicked.connect(self.onSendData)
@@ -709,6 +710,8 @@ def parse(line, ctx):
             self.encodeMethod = encode
             self.decodeMethod = decode
         self.setCaptureLocked(getattr(self, "captureLocked", False) or self.dataCaptureWidget.isSessionActive())
+        self.updateSendInputLockState()
+        self.updateTimedSendAvailability()
 
     class ModeButtonEventFilter(QObject):
         def __init__(self, keyPressCb, keyReleaseCb) -> None:
@@ -976,6 +979,53 @@ def parse(line, ctx):
         loopText = _("Loop") if sequenceObj.get("loop", False) else _("Once")
         return "{} [{}] ({})".format(sequenceObj.get("name", _("Combo command")), loopText, len(sequence))
 
+    def isTimedSendEnabled(self):
+        return bool(self.config.get("sendScheduled", False))
+
+    def isLoopComboSending(self):
+        return bool(self.commandSequenceSending and self.commandSequenceLoopSending)
+
+    def updateSendInputLockState(self):
+        if not hasattr(self, "sendArea"):
+            return
+        locked = self.isTimedSendEnabled()
+        captureLocked = getattr(self, "captureLocked", False)
+        self.sendArea.setReadOnly(locked)
+        self.sendArea.setToolTip(
+            _("Timed send is enabled; TX input is locked")
+            if locked else _("Input data to send")
+        )
+        for obj in [
+            getattr(self, "clearSendButton", None),
+            getattr(self, "sendSettingsAscii", None),
+            getattr(self, "sendSettingsHex", None),
+        ]:
+            if obj is not None:
+                obj.setEnabled((not locked) and (not captureLocked))
+
+    def updateTimedSendAvailability(self):
+        if not hasattr(self, "sendSettingsScheduledCheckBox"):
+            return
+        enabled = (not self.isLoopComboSending()) and (not getattr(self, "captureLocked", False))
+        self.sendSettingsScheduledCheckBox.setEnabled(enabled)
+        self.sendSettingsScheduled.setEnabled(enabled)
+        if self.isLoopComboSending():
+            self.sendSettingsScheduledCheckBox.setToolTip(_("Loop combo is sending; timed send is disabled"))
+        else:
+            self.sendSettingsScheduledCheckBox.setToolTip(_("Timed send, unit: ms"))
+
+    def onTimedSendClicked(self):
+        if self.sendSettingsScheduledCheckBox.isChecked() and self.isLoopComboSending():
+            self.sendSettingsScheduledCheckBox.setChecked(False)
+            self.config["sendScheduled"] = False
+            self.hintSignal.emit("warning", _("Warning"), _("Loop combo is sending; timed send is disabled"))
+            return
+        if self.sendSettingsScheduledCheckBox.isChecked():
+            showTimedSendNotice(self.mainWidget if hasattr(self, "mainWidget") else None, self.configGlobal)
+        self.bindVar(self.sendSettingsScheduledCheckBox, self.config, "sendScheduled")
+        self.updateSendInputLockState()
+        self.updateTimedSendAvailability()
+
     def updateCommandSequenceBar(self):
         if not hasattr(self, "commandSequenceBar"):
             return
@@ -996,6 +1046,7 @@ def parse(line, ctx):
         else:
             self.commandSequenceLabel.setText("")
             self.commandSequenceBar.hide()
+        self.updateTimedSendAvailability()
 
     def openCommandSequenceDialog(self):
         selected = self.commandSequenceFromSelectedItems()
@@ -1044,10 +1095,15 @@ def parse(line, ctx):
         if not sequence:
             self.hintSignal.emit("warning", _("Warning"), _("No command in combo"))
             return
+        loop = bool(sequenceObj.get("loop", False))
+        if loop and self.isTimedSendEnabled():
+            self.hintSignal.emit("warning", _("Warning"), _("Timed send is enabled; loop combo commands are disabled"))
+            return
         self.commandSequenceSending = True
+        self.commandSequenceLoopSending = loop
         self.commandSequenceStop = False
         self.updateCommandSequenceBar()
-        t = threading.Thread(target=self.commandSequenceSendProcess, args=(sequence, bool(sequenceObj.get("loop", False))))
+        t = threading.Thread(target=self.commandSequenceSendProcess, args=(sequence, loop))
         t.setDaemon(True)
         t.start()
 
@@ -1070,6 +1126,7 @@ def parse(line, ctx):
                     break
         finally:
             self.commandSequenceSending = False
+            self.commandSequenceLoopSending = False
             self.commandSequenceStop = False
             self.commandSequenceFinishedSignal.emit()
 
@@ -1232,6 +1289,8 @@ def parse(line, ctx):
                 obj.setEnabled(not self.captureLocked)
         self.setCustomSendLocked(self.captureLocked)
         self.updateClosedOnlyControls()
+        self.updateSendInputLockState()
+        self.updateTimedSendAvailability()
 
     def setCustomSendLocked(self, locked):
         if not hasattr(self, "customSendScroll"):

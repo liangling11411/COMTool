@@ -28,7 +28,8 @@ class PluginItem:
                     globalConfig, itemConfig,
                     hintSignal, reloadWindowSignal,
                     connCallback, itemNameChanged=None,
-                    serialPageCallback=None):
+                    serialPageCallback=None,
+                    panelVisibilityChanged=None):
         '''
             item show name, e.g. dbg-1
         '''
@@ -37,6 +38,7 @@ class PluginItem:
         self.name = name
         self.itemNameChanged = itemNameChanged
         self.serialPageCallback = serialPageCallback
+        self.panelVisibilityChanged = panelVisibilityChanged
         self.connClasses = connClasses
         self.connsConfigs = connsConfigs
         self.currConnWidget = None
@@ -210,10 +212,18 @@ class PluginItem:
         hook = getattr(self.plugin, hookName, None)
         if callable(hook):
             try:
-                return max(self.panelCollapsedWidth + 1, int(hook()))
+                threshold = int(hook())
+            except Exception:
+                threshold = 96 if side == "left" else 320
+        else:
+            threshold = 96 if side == "left" else 320
+        widget = self.panelWidget(side)
+        if widget is not None:
+            try:
+                threshold = max(threshold, widget.minimumSizeHint().width(), widget.minimumWidth())
             except Exception:
                 pass
-        return 96 if side == "left" else 320
+        return max(self.panelCollapsedWidth + 1, threshold)
 
     def handlePanelAutoCollapse(self, side, width):
         widget = self.settingWidget if side == "left" else self.functionalWidget
@@ -242,15 +252,57 @@ class PluginItem:
         threshold = self.panelAutoCollapseThreshold(side)
         if width <= self.panelCollapsedWidth or width > threshold:
             return
-        delta = width - self.panelCollapsedWidth
-        sizes[idx] = self.panelCollapsedWidth
-        sizes[1] = max(0, sizes[1] + delta)
-        self._adjustingPanelSizes = True
-        try:
-            self.setPanelSizes(sizes)
-        finally:
-            self._adjustingPanelSizes = False
+        self.hidePanel(side)
+
+    def panelWidget(self, side):
+        return self.settingWidget if side == "left" else self.functionalWidget
+
+    def panelIndex(self, side):
+        return 0 if side == "left" else 2
+
+    def notifyPanelVisibilityChanged(self, side, visible):
+        if callable(self.panelVisibilityChanged):
+            self.panelVisibilityChanged(self, side, visible)
+
+    def showPanel(self, side):
+        widget = self.panelWidget(side)
+        if widget is None:
+            return
+        widget.show()
+        sizes = self.panelSizes()
+        idx = self.panelIndex(side)
+        if len(sizes) == 3 and sizes[idx] <= self.panelCollapsedWidth:
+            width = self.panelAutoCollapseThreshold(side)
+            available = max(0, sizes[1] - 120)
+            width = max(1, min(width, available if available > 0 else width))
+            sizes[idx] = width
+            sizes[1] = max(0, sizes[1] - width)
+            self._adjustingPanelSizes = True
+            try:
+                self.setPanelSizes(sizes)
+            finally:
+                self._adjustingPanelSizes = False
+        self._lastPanelWidths[side] = None
+        self.notifyPanelVisibilityChanged(side, True)
+
+    def hidePanel(self, side):
+        widget = self.panelWidget(side)
+        if widget is None:
+            return
+        sizes = self.panelSizes()
+        idx = self.panelIndex(side)
+        width = sizes[idx] if len(sizes) == 3 else 0
+        widget.hide()
+        if len(sizes) == 3 and width > 0:
+            sizes[idx] = 0
+            sizes[1] = max(0, sizes[1] + width)
+            self._adjustingPanelSizes = True
+            try:
+                self.setPanelSizes(sizes)
+            finally:
+                self._adjustingPanelSizes = False
         self._lastPanelWidths[side] = self.panelCollapsedWidth
+        self.notifyPanelVisibilityChanged(side, False)
 
     def panelSizes(self):
         if hasattr(self, "contentSplitter") and self.contentSplitter:

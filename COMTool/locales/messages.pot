@@ -1400,6 +1400,18 @@ msgstr ""
 msgid "Once"
 msgstr ""
 
+#: plugins/dbg.py:54
+msgid "Timed send notice"
+msgstr ""
+
+#: plugins/dbg.py:55
+msgid "After timed send is enabled, TX input content cannot be edited, and loop combo command sending cannot be started."
+msgstr ""
+
+#: plugins/dbg.py:59
+msgid "Do not show again"
+msgstr ""
+
 #: plugins/dbg.py:2004 plugins/dbg.py:3045
 msgid "Timed send is enabled; TX input is locked"
 msgstr ""

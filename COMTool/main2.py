@@ -196,6 +196,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         self.loadPluginsInfoList()
         self.loadPluginItems()
         log.i("load plugin items complete")
+        self.updateSettingsButton()
         self.updateFunctionalButton()
         self.initEvent()
 
@@ -208,6 +209,8 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         self.configDefaults()
 
     def configDefaults(self):
+        if "hideTimedSendNotice" not in self.config:
+            self.config["hideTimedSendNotice"] = False
         if "backgroundImage" not in self.config:
             self.config["backgroundImage"] = ""
         if "backgroundOpacity" not in self.config:
@@ -311,7 +314,8 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
                         self.config, pluginConfig,
                         self.hintSignal, self.reloadWindowSignal,
                         self.onConnChnaged, self.onItemNameChanged,
-                        self.onSerialPortPageRequest)
+                        self.onSerialPortPageRequest,
+                        self.onPanelVisibilityChanged)
         self.tabAddItem(item)
         self.items.append(item)
         self.updateImportPageButtons()
@@ -911,6 +915,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         if item:
             self.config["currItem"] = item.name
             item.plugin.onActive()
+        self.updateSettingsButton()
         self.updateFunctionalButton()
 
     def itemByTabIndex(self, idx):
@@ -1194,16 +1199,14 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             self.showSettings()
 
     def showSettings(self):
-        widget = self.getCurrentItem().settingWidget
-        widget.show()
-        self.settingsButton.setStyleSheet(
-            parameters.strStyleShowHideButtonLeft.replace("$DataPath",self.DataPath))
+        item = self.getCurrentItem()
+        item.showPanel("left")
+        self.updateSettingsButton()
 
     def hideSettings(self):
-        widget = self.getCurrentItem().settingWidget
-        widget.hide()
-        self.settingsButton.setStyleSheet(
-            parameters.strStyleShowHideButtonRight.replace("$DataPath", self.DataPath))
+        item = self.getCurrentItem()
+        item.hidePanel("left")
+        self.updateSettingsButton()
 
     def toggleFunctional(self):
         widget = self.getCurrentItem().functionalWidget
@@ -1215,16 +1218,33 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             self.showFunctional()
 
     def showFunctional(self):
-        widget = self.getCurrentItem().functionalWidget
-        if not widget is None:
-            widget.show()
+        item = self.getCurrentItem()
+        if item and item.functionalWidget is not None:
+            item.showPanel("right")
         self.updateFunctionalButton()
 
     def hideFunctional(self):
-        widget = self.getCurrentItem().functionalWidget
-        if not widget is None:
-            widget.hide()
+        item = self.getCurrentItem()
+        if item and item.functionalWidget is not None:
+            item.hidePanel("right")
         self.updateFunctionalButton()
+
+    def onPanelVisibilityChanged(self, item, side, visible):
+        if item != self.getCurrentItem():
+            return
+        if side == "left":
+            self.updateSettingsButton()
+        else:
+            self.updateFunctionalButton()
+
+    def updateSettingsButton(self):
+        item = self.getCurrentItem()
+        if item and item.settingWidget and item.settingWidget.isVisible():
+            self.settingsButton.setStyleSheet(
+                parameters.strStyleShowHideButtonLeft.replace("$DataPath", self.DataPath))
+        else:
+            self.settingsButton.setStyleSheet(
+                parameters.strStyleShowHideButtonRight.replace("$DataPath", self.DataPath))
 
     def updateFunctionalButton(self):
         item = self.getCurrentItem()

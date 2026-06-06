@@ -63,6 +63,7 @@ class Parameters:
         "locale": "en",
         "encoding": "UTF-8",
         "skipVersion": None,
+        "hideTimedSendNotice": False,
         "backgroundImage": "",
         "backgroundOpacity": 35,
         "windowSize": {

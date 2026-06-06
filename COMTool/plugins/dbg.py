@@ -37,6 +37,42 @@ import os, threading, time, re, json, queue
 from datetime import datetime
 
 DEFAULT_TEXT_FONT = "Consolas"
+TIMED_SEND_NOTICE_SKIP_KEY = "hideTimedSendNotice"
+
+
+def configValue(config, key, default=None):
+    if hasattr(config, "get"):
+        return config.get(key, default)
+    try:
+        return config[key]
+    except Exception:
+        return default
+
+
+def setConfigValue(config, key, value):
+    try:
+        config[key] = value
+    except Exception:
+        try:
+            setattr(config, key, value)
+        except Exception:
+            pass
+
+
+def showTimedSendNotice(parent, configGlobal):
+    if configValue(configGlobal, TIMED_SEND_NOTICE_SKIP_KEY, False):
+        return
+    msgBox = QMessageBox(parent)
+    msgBox.setIcon(QMessageBox.Information)
+    msgBox.setWindowTitle(_("Timed send notice"))
+    msgBox.setText(_("After timed send is enabled, TX input content cannot be edited, and loop combo command sending cannot be started."))
+    msgBox.setStandardButtons(QMessageBox.Ok)
+    msgBox.setDefaultButton(QMessageBox.Ok)
+    dontShowAgain = QCheckBox(_("Do not show again"), msgBox)
+    msgBox.setCheckBox(dontShowAgain)
+    msgBox.exec_()
+    if dontShowAgain.isChecked():
+        setConfigValue(configGlobal, TIMED_SEND_NOTICE_SKIP_KEY, True)
 
 
 class AsyncTextFileWriter:
@@ -2030,6 +2066,8 @@ class Plugin(Plugin_Base):
             self.config["sendScheduled"] = False
             self.hintSignal.emit("warning", _("Warning"), _("Loop combo is sending; timed send is disabled"))
             return
+        if self.sendSettingsScheduledCheckBox.isChecked():
+            showTimedSendNotice(self.mainWidget if hasattr(self, "mainWidget") else None, self.configGlobal)
         self.bindVar(self.sendSettingsScheduledCheckBox, self.config, "sendScheduled")
         self.updateSendInputLockState()
         self.updateTimedSendAvailability()
