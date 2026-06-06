@@ -541,6 +541,8 @@ def parse(line, ctx):
         self.customSendSearch.setToolTip(_("Search custom send items by remark or command"))
         self.customSendSelectAll = QCheckBox(_("All"))
         self.customSendSelectAll.setToolTip(_("Select visible custom send items"))
+        self.customSendSelectAll.setMinimumWidth(52)
+        self.customSendSelectAll.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.batchCustomSendColorButton = QPushButton(_("Color"))
         self.batchCustomSendIconButton = QPushButton(_("Icon"))
         self.batchCustomSendDeleteButton = QPushButton(_("Delete"))
@@ -566,6 +568,15 @@ def parse(line, ctx):
         customSendItemsLayout0.addWidget(self.customSendSearch)
         customSendBatchLayout = QHBoxLayout()
         customSendBatchLayout.setContentsMargins(0,0,0,0)
+        customSendBatchLayout.setSpacing(8)
+        for button in [
+            self.batchCustomSendColorButton,
+            self.batchCustomSendIconButton,
+            self.batchCustomSendDeleteButton,
+            self.customSendComboButton,
+        ]:
+            button.setMinimumWidth(76)
+            button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         customSendBatchLayout.addWidget(self.customSendSelectAll)
         customSendBatchLayout.addWidget(self.batchCustomSendColorButton)
         customSendBatchLayout.addWidget(self.batchCustomSendIconButton)
@@ -586,6 +597,7 @@ def parse(line, ctx):
         customItems.setLayout(self.customSendItemsLayout)
         customSendButtonsLayout = QHBoxLayout()
         customSendButtonsLayout.setContentsMargins(0,0,0,0)
+        customSendButtonsLayout.setSpacing(4)
         customSendButtonsLayout.addWidget(self.importCustomSendButton)
         customSendButtonsLayout.addWidget(self.exportCustomSendButton)
         customSendButtonsLayout.addWidget(self.addButton)

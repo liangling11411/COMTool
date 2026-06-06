@@ -107,15 +107,16 @@ class PluginItem:
         # widgets settings
         self.settingWidget = QWidget()
         self.settingWidget.setProperty("class","settingWidget")
-        self.settingWidget.setMinimumWidth(0)
         settingWrapperLayout = QVBoxLayout()
         settingWrapperLayout.setContentsMargins(0, 0, 0, 0)
         self.settingWidget.setLayout(settingWrapperLayout)
         settingsScrollTogether = getattr(self.plugin, "onSettingsWidgetScrollTogether", lambda: False)
+        settingMinWidthSource = self.settingWidget
         if settingsScrollTogether():
             settingContentWidget = QWidget()
             settingLayout = QVBoxLayout()
             settingContentWidget.setLayout(settingLayout)
+            settingMinWidthSource = settingContentWidget
             settingScroll = QScrollArea()
             settingScroll.setWidgetResizable(True)
             settingScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -164,6 +165,7 @@ class PluginItem:
             layout3.addWidget(loadConfigBtn)
             layout3.addWidget(shareConfigBtn)
         settingLayout.addStretch()
+        self.applySettingsPanelMinimumWidth(settingMinWidthSource)
         loadConfigBtn.clicked.connect(lambda : self.selectLoadfile())
         shareConfigBtn.clicked.connect(lambda : self.selectSharefile())
         pluginFuncWidget = self.plugin.onWidgetFunctional(widget)
@@ -185,6 +187,25 @@ class PluginItem:
         # UI init done
         self.plugin.onUiInitDone()
         return wrapper
+
+    def applySettingsPanelMinimumWidth(self, contentWidget):
+        minWidth = 0
+        hook = getattr(self.plugin, "onSettingsPanelAutoCollapseWidth", None)
+        if callable(hook):
+            try:
+                minWidth = max(minWidth, int(hook()))
+            except Exception:
+                pass
+        try:
+            minWidth = max(minWidth, contentWidget.minimumSizeHint().width())
+        except Exception:
+            pass
+        try:
+            minWidth = max(minWidth, self.settingWidget.minimumSizeHint().width())
+        except Exception:
+            pass
+        if minWidth > 0:
+            self.settingWidget.setMinimumWidth(minWidth)
 
     def panelSizes(self):
         if hasattr(self, "contentSplitter") and self.contentSplitter:
