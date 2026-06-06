@@ -1677,10 +1677,10 @@ class Plugin(Plugin_Base):
         return True
 
     def onSettingsPanelAutoCollapseWidth(self):
-        return 96
+        return 260
 
     def onFunctionalPanelAutoCollapseWidth(self):
-        return 328
+        return 404
 
     def createFunctionalSettings(self, parentLayout):
         self.fontSettingsGroupBox = QGroupBox(_("Default font"))
@@ -2111,7 +2111,7 @@ class Plugin(Plugin_Base):
         self.customSendSearch.setToolTip(_("Search custom send items by remark or command"))
         self.customSendSelectAll = QCheckBox(_("All"))
         self.customSendSelectAll.setToolTip(_("Select visible custom send items"))
-        self.customSendSelectAll.setMinimumWidth(44)
+        self.customSendSelectAll.setMinimumWidth(52)
         self.customSendSelectAll.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.batchCustomSendColorButton = QPushButton(_("Color"))
         self.batchCustomSendIconButton = QPushButton(_("Icon"))
@@ -2143,14 +2143,14 @@ class Plugin(Plugin_Base):
         customSendItemsLayout0.addWidget(self.customSendSearch)
         customSendBatchLayout = QHBoxLayout()
         customSendBatchLayout.setContentsMargins(0,0,0,0)
-        customSendBatchLayout.setSpacing(4)
+        customSendBatchLayout.setSpacing(8)
         for button in [
             self.batchCustomSendColorButton,
             self.batchCustomSendIconButton,
             self.batchCustomSendDeleteButton,
             self.customSendComboButton,
         ]:
-            button.setMinimumWidth(64)
+            button.setMinimumWidth(76)
             button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         customSendBatchLayout.addWidget(self.customSendSelectAll)
         customSendBatchLayout.addWidget(self.batchCustomSendColorButton)
@@ -2185,7 +2185,7 @@ class Plugin(Plugin_Base):
         self.customSendScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         sendFunctionalLayout.addWidget(customSendGroupBox, 1)
         self.funcWidget = QWidget()
-        self.funcWidget.setMinimumWidth(328)
+        self.funcWidget.setMinimumWidth(404)
         self.funcWidget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.funcWidget.setLayout(sendFunctionalLayout)
         # event
@@ -2499,6 +2499,30 @@ class Plugin(Plugin_Base):
                     bestOrder = order
             segments.append([originalColor, bg, text[start:end]])
         return segments
+
+    def shouldStyleEscapedHexText(self, isSend):
+        return (
+            not isSend
+            and self.config.get("receiveShowNonPrintableHex", False)
+            and not self.config.get("receiveEscape", False)
+        )
+
+    def insertReceiveTextWithFormat(self, cursor, textFormat, text, directionColor,
+                                    color=None, bg=None, styleEscapedHex=False):
+        if not text:
+            return
+        pattern = re.compile(r"(\\x[0-9A-Fa-f]{2})") if styleEscapedHex else None
+        parts = pattern.split(text) if pattern is not None else [text]
+        for part in parts:
+            if not part:
+                continue
+            isEscapedHex = bool(pattern is not None and pattern.fullmatch(part))
+            textFormat.setForeground(QColor(color) if color else directionColor)
+            textFormat.setBackground(QColor(bg) if bg else self.defaultBg)
+            textFormat.setFontWeight(QFont.Bold if isEscapedHex else QFont.Normal)
+            textFormat.setFontItalic(isEscapedHex)
+            cursor.setCharFormat(textFormat)
+            cursor.insertText(part)
 
     def setTextEditPaletteColor(self, edit, color, updateDocument=False):
         qcolor = QColor(color)
@@ -4158,33 +4182,26 @@ class Plugin(Plugin_Base):
             if head:
                 self.insertHeadText(cursor, format, head, isSend)
             format.setFontWeight(QFont.Normal)
+            format.setFontItalic(False)
+            styleEscapedHex = self.shouldStyleEscapedHexText(isSend)
             for data in datas:
                 if type(data) == str:
                     for color, bg, text in self.splitTextByReceiveFindRules(data):
-                        format.setForeground(QColor(color) if color else directionColor)
-                        format.setBackground(QColor(bg) if bg else self.defaultBg)
-                        cursor.setCharFormat(format)
-                        cursor.insertText(text)
+                        self.insertReceiveTextWithFormat(
+                            cursor, format, text, directionColor, color, bg, styleEscapedHex
+                        )
                 elif type(data) == list:
                     for color, bg, text in data:
                         for segColor, segBg, segText in self.splitTextByReceiveFindRules(text, color, bg):
-                            if segColor:
-                                format.setForeground(QColor(segColor))
-                            else:
-                                format.setForeground(directionColor)
-                            if segBg:
-                                format.setBackground(QColor(segBg))
-                            else:
-                                format.setBackground(self.defaultBg)
-                            cursor.setCharFormat(format)
-                            cursor.insertText(segText)
+                            self.insertReceiveTextWithFormat(
+                                cursor, format, segText, directionColor, segColor, segBg, styleEscapedHex
+                            )
                 else: # bytes
                     text = data.decode(encoding=encoding, errors="ignore")
                     for color, bg, text in self.splitTextByReceiveFindRules(text):
-                        format.setForeground(QColor(color) if color else directionColor)
-                        format.setBackground(QColor(bg) if bg else self.defaultBg)
-                        cursor.setCharFormat(format)
-                        cursor.insertText(text)
+                        self.insertReceiveTextWithFormat(
+                            cursor, format, text, directionColor, color, bg, styleEscapedHex
+                        )
         if preserveSelection:
             self.receiveArea.setTextCursor(userCursor)
             self.receiveArea.verticalScrollBar().setValue(curScrollValue)

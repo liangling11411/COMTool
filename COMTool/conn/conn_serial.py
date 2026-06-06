@@ -484,7 +484,8 @@ class Serial(COMM):
             self.serialPortListLayout.addWidget(row)
             self.serialPortRowWidgets[port] = row
         rowHeight = 72
-        visibleHeight = max(84, len(self.serialPortRowWidgets) * rowHeight + 8)
+        refreshHeight = self.serialRefreshButton.sizeHint().height() + self.serialPortListLayout.spacing()
+        visibleHeight = max(84 + refreshHeight, len(self.serialPortRowWidgets) * rowHeight + refreshHeight + 8)
         self.serialPortListScroll.setFixedHeight(visibleHeight)
         self.refreshSerialPortRows()
         self.highlightSelectedSerialPort()

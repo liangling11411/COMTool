@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSignal, Qt, QRect, QMargins, QTimer
+from PyQt5.QtCore import pyqtSignal, Qt, QRect, QMargins
 from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QTabWidget, QMenu, QSplashScreen)
@@ -49,9 +49,9 @@ class PluginItem:
         self.mainWidget = None
         self.functionalWidget = None
         self.panelCollapsedWidth = 8
-        self.panelAutoCollapseDelay = 180
         self._panelCollapseToken = 0
         self._adjustingPanelSizes = False
+        self._lastPanelWidths = {"left": None, "right": None}
         # init plugin
         self.plugin = pluginClass()
         self.plugin.configGlobal = globalConfig
@@ -201,9 +201,9 @@ class PluginItem:
         if len(sizes) != 3:
             return
         if index == 1:
-            self.schedulePanelAutoCollapse("left", sizes[0])
+            self.handlePanelAutoCollapse("left", sizes[0])
         elif index == 2:
-            self.schedulePanelAutoCollapse("right", sizes[2])
+            self.handlePanelAutoCollapse("right", sizes[2])
 
     def panelAutoCollapseThreshold(self, side):
         hookName = "onSettingsPanelAutoCollapseWidth" if side == "left" else "onFunctionalPanelAutoCollapseWidth"
@@ -215,16 +215,21 @@ class PluginItem:
                 pass
         return 96 if side == "left" else 320
 
-    def schedulePanelAutoCollapse(self, side, width):
+    def handlePanelAutoCollapse(self, side, width):
         widget = self.settingWidget if side == "left" else self.functionalWidget
         if widget is None or not widget.isVisible():
             return
         threshold = self.panelAutoCollapseThreshold(side)
-        self._panelCollapseToken += 1
-        token = self._panelCollapseToken
-        if width <= self.panelCollapsedWidth or width > threshold:
+        previous = self._lastPanelWidths.get(side)
+        if previous is None:
+            previous = threshold + 1
+        self._lastPanelWidths[side] = width
+        movingSmaller = width < previous
+        if not movingSmaller or previous <= self.panelCollapsedWidth + 2:
             return
-        QTimer.singleShot(self.panelAutoCollapseDelay, lambda: self.applyPanelAutoCollapse(side, token))
+        if previous > threshold and self.panelCollapsedWidth < width <= threshold:
+            self._panelCollapseToken += 1
+            self.applyPanelAutoCollapse(side, self._panelCollapseToken)
 
     def applyPanelAutoCollapse(self, side, token):
         if token != self._panelCollapseToken:
@@ -245,6 +250,7 @@ class PluginItem:
             self.setPanelSizes(sizes)
         finally:
             self._adjustingPanelSizes = False
+        self._lastPanelWidths[side] = self.panelCollapsedWidth
 
     def panelSizes(self):
         if hasattr(self, "contentSplitter") and self.contentSplitter:
@@ -254,6 +260,8 @@ class PluginItem:
     def setPanelSizes(self, sizes):
         if hasattr(self, "contentSplitter") and self.contentSplitter and len(sizes) == 3:
             self.contentSplitter.setSizes(sizes)
+            self._lastPanelWidths["left"] = sizes[0]
+            self._lastPanelWidths["right"] = sizes[2]
 
     def copyPanelStateFrom(self, sourceItem, forceVisible=False):
         if not sourceItem:
