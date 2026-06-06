@@ -787,6 +787,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         # tab widgets
         self.tabWidget = QTabWidget()
         self.tabWidget.setTabsClosable(True)
+        self.tabWidget.tabBar().setMovable(True)
         self.tabWidget.tabBar().setContextMenuPolicy(Qt.CustomContextMenu)
         # tab left menu
         tabConerWidget = QWidget()
@@ -918,9 +919,43 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             return
         menu = QMenu(self)
         renameAction = menu.addAction(_("Rename"))
+        saveAction = menu.addAction(_("Save page"))
+        menu.addSeparator()
+        moveLeftAction = menu.addAction(_("Move to leftmost"))
+        moveRightAction = menu.addAction(_("Move to rightmost"))
+        menu.addSeparator()
+        closeOthersAction = menu.addAction(_("Close other pages"))
+        closeAction = menu.addAction(_("Close page"))
+        if self.tabWidget.count() <= 1:
+            closeOthersAction.setEnabled(False)
+            closeAction.setEnabled(False)
         action = menu.exec_(tabBar.mapToGlobal(pos))
         if action == renameAction:
             self.renameTab(idx)
+        elif action == saveAction:
+            item.selectSharefile()
+        elif action == moveLeftAction:
+            self.moveTabTo(idx, 0)
+        elif action == moveRightAction:
+            self.moveTabTo(idx, self.tabWidget.count() - 1)
+        elif action == closeOthersAction:
+            self.closeOtherTabs(idx)
+        elif action == closeAction:
+            self.closeTab(idx)
+
+    def moveTabTo(self, fromIdx, toIdx):
+        if fromIdx == toIdx:
+            return
+        tabBar = self.tabWidget.tabBar()
+        tabBar.moveTab(fromIdx, toIdx)
+        # Sync self.items order
+        item = self.items.pop(fromIdx)
+        self.items.insert(toIdx, item)
+
+    def closeOtherTabs(self, keepIdx):
+        for i in range(self.tabWidget.count() - 1, -1, -1):
+            if i != keepIdx:
+                self.closeTab(i)
 
     def renameTab(self, idx):
         item = self.itemByTabIndex(idx)

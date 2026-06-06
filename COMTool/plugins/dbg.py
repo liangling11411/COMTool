@@ -1397,6 +1397,7 @@ class Plugin(Plugin_Base):
         sendAreaWidgetsLayout = QHBoxLayout()
         sendAreaWidgetsLayout.setContentsMargins(0,4,0,0)
         sendWidget.setLayout(sendAreaWidgetsLayout)
+        sendWidget.setMinimumHeight(38)  # Keep at least one input row visible
         buttonLayout = QVBoxLayout()
         buttonLayout.addWidget(self.receiveFindButton)
         buttonLayout.addWidget(self.receiveScrollBottomButton)
@@ -2452,6 +2453,26 @@ class Plugin(Plugin_Base):
         spinBox.blockSignals(True)
         spinBox.setValue(value)
         spinBox.blockSignals(False)
+
+    def trimReceiveBuffer(self, keepLines):
+        """Keep only the last keepLines lines in the receive area."""
+        doc = self.receiveArea.document()
+        block = doc.begin()
+        total = doc.blockCount()
+        removeCount = total - keepLines
+        if removeCount <= 0:
+            return
+        cursor = QTextCursor(block)
+        for _ in range(removeCount):
+            cursor.moveDown(QTextCursor.KeepAnchor)
+        cursor.removeSelectedText()
+        # Remove trailing newline
+        cursor = QTextCursor(doc.begin())
+        cursor.select(QTextCursor.BlockUnderCursor)
+        text = cursor.selectedText()
+        if text.strip() == "":
+            cursor.removeSelectedText()
+            cursor.deleteChar()
 
     def applyReceiveFont(self):
         font = self.receiveArea.currentFont()
