@@ -231,6 +231,7 @@ class Serial(COMM):
         self.serialPageRequestCallback = None
         self.quickPortStatus = {}
         self.serialPortRowWidgets = {}
+        self.usePortRows = False  # True for dbg page (port rows), False for dropdown
 
     def disconnect(self):
         if self.isConnected():
@@ -312,30 +313,50 @@ class Serial(COMM):
         self.serialPortListScroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.serialPortListScroll.setFixedHeight(84)
         self.serialPortListScroll.setToolTip(_("Available serial ports"))
-        self.serialPortListScroll.hide()
         self.serialPortListWidget = QWidget()
         self.serialPortListLayout = QVBoxLayout()
         self.serialPortListLayout.setContentsMargins(0, 0, 0, 0)
         self.serialPortListLayout.setSpacing(4)
         self.serialPortListWidget.setLayout(self.serialPortListLayout)
         self.serialPortListScroll.setWidget(self.serialPortListWidget)
-        serialSettingsLayout.addWidget(serialPortLabek,0,0)
-        serialSettingsLayout.addWidget(self.serialPortCombobox, 0, 1)
-        serialSettingsLayout.addWidget(self.serialRefreshButton, 0, 2)
-        serialSettingsLayout.addWidget(serailBaudrateLabel, 1, 0)
-        serialSettingsLayout.addWidget(self.serailBaudrateCombobox, 1, 1)
-        serialSettingsLayout.addWidget(serailBytesLabel, 2, 0)
-        serialSettingsLayout.addWidget(self.serailBytesCombobox, 2, 1)
-        serialSettingsLayout.addWidget(serailParityLabel, 3, 0)
-        serialSettingsLayout.addWidget(self.serailParityCombobox, 3, 1)
-        serialSettingsLayout.addWidget(serailStopbitsLabel, 4, 0)
-        serialSettingsLayout.addWidget(self.serailStopbitsCombobox, 4, 1)
-        serialSettingsLayout.addWidget(serialFlowControlLabel, 5, 0)
-        serialSettingsLayout.addWidget(self.serialFlowControlCombobox, 5, 1)
-        serialSettingsLayout.addWidget(self.checkBoxRTS, 6, 0, 1, 1)
-        serialSettingsLayout.addWidget(self.checkBoxDTR, 6, 1, 1, 1)
-        serialSettingsLayout.addWidget(self.serialOpenCloseButton, 7, 0, 1, 2)
-        self.widget.setLayout(serialSettingsLayout)
+        # row 0: refresh button above port selection
+        serialSettingsLayout.addWidget(self.serialRefreshButton, 0, 0, 1, 2)
+        if self.usePortRows:
+            # Port rows mode (dbg page): show port list, hide dropdown and open/close
+            self.serialPortCombobox.hide()
+            self.serialOpenCloseButton.hide()
+            self.serialPortListScroll.setFixedHeight(84)
+            serialSettingsLayout.addWidget(self.serialPortListScroll, 1, 0, 1, 2)
+            serialSettingsLayout.addWidget(serailBaudrateLabel, 2, 0)
+            serialSettingsLayout.addWidget(self.serailBaudrateCombobox, 2, 1)
+            serialSettingsLayout.addWidget(serailBytesLabel, 3, 0)
+            serialSettingsLayout.addWidget(self.serailBytesCombobox, 3, 1)
+            serialSettingsLayout.addWidget(serailParityLabel, 4, 0)
+            serialSettingsLayout.addWidget(self.serailParityCombobox, 4, 1)
+            serialSettingsLayout.addWidget(serailStopbitsLabel, 5, 0)
+            serialSettingsLayout.addWidget(self.serailStopbitsCombobox, 5, 1)
+            serialSettingsLayout.addWidget(serialFlowControlLabel, 6, 0)
+            serialSettingsLayout.addWidget(self.serialFlowControlCombobox, 6, 1)
+            serialSettingsLayout.addWidget(self.checkBoxRTS, 7, 0, 1, 1)
+            serialSettingsLayout.addWidget(self.checkBoxDTR, 7, 1, 1, 1)
+        else:
+            # Dropdown mode (other pages): show dropdown and open/close, hide port rows
+            serialSettingsLayout.addWidget(serialPortLabek, 1, 0)
+            serialSettingsLayout.addWidget(self.serialPortCombobox, 1, 1)
+            self.serialPortListScroll.hide()
+            serialSettingsLayout.addWidget(serailBaudrateLabel, 2, 0)
+            serialSettingsLayout.addWidget(self.serailBaudrateCombobox, 2, 1)
+            serialSettingsLayout.addWidget(serailBytesLabel, 3, 0)
+            serialSettingsLayout.addWidget(self.serailBytesCombobox, 3, 1)
+            serialSettingsLayout.addWidget(serailParityLabel, 4, 0)
+            serialSettingsLayout.addWidget(self.serailParityCombobox, 4, 1)
+            serialSettingsLayout.addWidget(serailStopbitsLabel, 5, 0)
+            serialSettingsLayout.addWidget(self.serailStopbitsCombobox, 5, 1)
+            serialSettingsLayout.addWidget(serialFlowControlLabel, 6, 0)
+            serialSettingsLayout.addWidget(self.serialFlowControlCombobox, 6, 1)
+            serialSettingsLayout.addWidget(self.checkBoxRTS, 7, 0, 1, 1)
+            serialSettingsLayout.addWidget(self.checkBoxDTR, 7, 1, 1, 1)
+            serialSettingsLayout.addWidget(self.serialOpenCloseButton, 8, 0, 1, 2)
         self.widgetConfMap["port"]       = self.serialPortCombobox
         self.widgetConfMap["baudrate"]    = self.serailBaudrateCombobox
         self.widgetConfMap["bytesize"]    = self.serailBytesCombobox
@@ -627,7 +648,10 @@ class Serial(COMM):
                 index = self.serialPortCombobox.findText(self.config["port"], Qt.MatchContains)
                 if index>=0:
                     set = index
-        self.serialPortCombobox.showPopup()
+        if self.usePortRows:
+            self.updateSerialPortRows(items)
+        else:
+            self.serialPortCombobox.showPopup()
         self.isDetectSerialPort = False
         if set >= 0:
             self.serialPortCombobox.setCurrentIndex(set)

@@ -82,6 +82,8 @@ class PluginItem:
                 connConfig = {}
                 self.connsConfigs[conn.id] = connConfig
             conn.onInit(connConfig)
+            if hasattr(conn, "usePortRows") and self.plugin.id == "dbg":
+                conn.usePortRows = True
             widget = conn.onWidget()
             if hasattr(conn, "setSerialPageRequestCallback"):
                 conn.setSerialPageRequestCallback(lambda port, action, owner=self: owner.onSerialPortPageRequest(port, action))
