@@ -1301,6 +1301,7 @@ class Plugin(Plugin_Base):
         self.receiveFindRuleErrors = set()
         self.receiveFindMarkerTimer = None
         self.commandSequenceSending = False
+        self.commandSequenceLoopSending = False
         self.commandSequenceStop = False
         self.currentConnStatus = ConnectionStatus.CLOSED
         self.sendAreaCollapseState = "full"
@@ -1639,7 +1640,7 @@ class Plugin(Plugin_Base):
         self.sendSettingsCRLF.clicked.connect(lambda: self.bindVar(self.sendSettingsCRLF, self.config, "useCRLF"))
         self.receiveSettingsAutoLinefeedTime.textChanged.connect(lambda: self.bindVar(self.receiveSettingsAutoLinefeedTime, self.config, "receiveAutoLindefeedTime", vtype=int, vErrorMsg=_("Auto line feed value error, must be integer"), emptyDefault = "200"))
         self.sendSettingsScheduled.textChanged.connect(lambda: self.bindVar(self.sendSettingsScheduled, self.config, "sendScheduledTime", vtype=int, vErrorMsg=_("Timed send value error, must be integer"), emptyDefault = "300"))
-        self.sendSettingsScheduledCheckBox.clicked.connect(lambda: self.bindVar(self.sendSettingsScheduledCheckBox, self.config, "sendScheduled"))
+        self.sendSettingsScheduledCheckBox.clicked.connect(self.onTimedSendClicked)
         self.receiveSettingsWrap.clicked.connect(self.onSettingWrap)
         self.receiveEscape.clicked.connect(lambda: self.bindVar(self.receiveEscape, self.config, "receiveEscape"))
         self.sendFileButton.clicked.connect(self.sendFile)
@@ -1988,6 +1989,51 @@ class Plugin(Plugin_Base):
         loopText = _("Loop") if sequenceObj.get("loop", False) else _("Once")
         return "{} [{}] ({})".format(sequenceObj.get("name", _("Combo command")), loopText, len(sequence))
 
+    def isTimedSendEnabled(self):
+        return bool(self.config.get("sendScheduled", False))
+
+    def isLoopComboSending(self):
+        return bool(self.commandSequenceSending and self.commandSequenceLoopSending)
+
+    def updateSendInputLockState(self):
+        if not hasattr(self, "sendArea"):
+            return
+        locked = self.isTimedSendEnabled()
+        self.sendArea.setReadOnly(locked)
+        self.sendArea.setToolTip(
+            _("Timed send is enabled; TX input is locked")
+            if locked else _("Input data to send")
+        )
+        for obj in [
+            getattr(self, "clearSendButtion", None),
+            getattr(self, "sendHistory", None),
+            getattr(self, "sendSettingsAscii", None),
+            getattr(self, "sendSettingsHex", None),
+        ]:
+            if obj is not None:
+                obj.setEnabled(not locked)
+
+    def updateTimedSendAvailability(self):
+        if not hasattr(self, "sendSettingsScheduledCheckBox"):
+            return
+        loopSending = self.isLoopComboSending()
+        self.sendSettingsScheduledCheckBox.setEnabled(not loopSending)
+        self.sendSettingsScheduled.setEnabled(not loopSending)
+        if loopSending:
+            self.sendSettingsScheduledCheckBox.setToolTip(_("Loop combo is sending; timed send is disabled"))
+        else:
+            self.sendSettingsScheduledCheckBox.setToolTip(_("Timed send, unit: ms"))
+
+    def onTimedSendClicked(self):
+        if self.sendSettingsScheduledCheckBox.isChecked() and self.isLoopComboSending():
+            self.sendSettingsScheduledCheckBox.setChecked(False)
+            self.config["sendScheduled"] = False
+            self.hintSignal.emit("warning", _("Warning"), _("Loop combo is sending; timed send is disabled"))
+            return
+        self.bindVar(self.sendSettingsScheduledCheckBox, self.config, "sendScheduled")
+        self.updateSendInputLockState()
+        self.updateTimedSendAvailability()
+
     def updateCommandSequenceBar(self):
         if not hasattr(self, "commandSequenceBar"):
             return
@@ -2015,6 +2061,7 @@ class Plugin(Plugin_Base):
             self.commandSequenceSendButton.setEnabled(False)
             self.commandSequenceClearButton.setEnabled(False)
         self.commandSequenceBar.show()
+        self.updateTimedSendAvailability()
 
     def openCommandSequenceDialog(self):
         selected = self.commandSequenceFromSelectedItems()
@@ -2063,10 +2110,15 @@ class Plugin(Plugin_Base):
         if not sequence:
             self.hintSignal.emit("warning", _("Warning"), _("No command in combo"))
             return
+        loop = bool(sequenceObj.get("loop", False))
+        if loop and self.isTimedSendEnabled():
+            self.hintSignal.emit("warning", _("Warning"), _("Timed send is enabled; loop combo commands are disabled"))
+            return
         self.commandSequenceSending = True
+        self.commandSequenceLoopSending = loop
         self.commandSequenceStop = False
         self.updateCommandSequenceBar()
-        t = threading.Thread(target=self.commandSequenceSendProcess, args=(sequence, bool(sequenceObj.get("loop", False))))
+        t = threading.Thread(target=self.commandSequenceSendProcess, args=(sequence, loop))
         t.setDaemon(True)
         t.start()
 
@@ -2089,6 +2141,7 @@ class Plugin(Plugin_Base):
                     break
         finally:
             self.commandSequenceSending = False
+            self.commandSequenceLoopSending = False
             self.commandSequenceStop = False
             self.commandSequenceFinishedSignal.emit()
 
@@ -2281,6 +2334,8 @@ class Plugin(Plugin_Base):
             for rule in paramObj.get("receiveFindRules", [])
         ]
         self.updateClosedOnlyControls()
+        self.updateSendInputLockState()
+        self.updateTimedSendAvailability()
 
         self.receiveProcess = threading.Thread(target=self.receiveDataProcess)
         self.receiveProcess.setDaemon(True)
@@ -2967,6 +3022,8 @@ class Plugin(Plugin_Base):
         self.config["color"] = False
 
     def onSendHistoryIndexChanged(self, idx):
+        if self.isTimedSendEnabled():
+            return
         self.sendArea.clear()
         self.sendArea.insertPlainText(self.sendHistory.currentText())
 
@@ -2984,6 +3041,9 @@ class Plugin(Plugin_Base):
             self.clearReceiveBuffer()
 
     def clearSendInputWithConfirm(self):
+        if self.isTimedSendEnabled():
+            self.hintSignal.emit("warning", _("Warning"), _("Timed send is enabled; TX input is locked"))
+            return
         if self.confirmClearAction(_("Clear send input?")):
             self.sendArea.clear()
 
@@ -3459,7 +3519,7 @@ class Plugin(Plugin_Base):
             if self.keyControlPressed:
                 self.onSendData()
         elif event.key() == Qt.Key_L:
-            if self.keyControlPressed:
+            if self.keyControlPressed and not self.isTimedSendEnabled():
                 self.sendArea.clear()
         elif event.key() == Qt.Key_K:
             if self.keyControlPressed:

@@ -48,7 +48,7 @@ class PluginItem:
         self.settingWidget = None
         self.mainWidget = None
         self.functionalWidget = None
-        self.panelCollapsedWidth = 8
+        self.panelCollapsedWidth = 0
         self._panelCollapseToken = 0
         self._adjustingPanelSizes = False
         self._lastPanelWidths = {"left": None, "right": None}
@@ -227,7 +227,7 @@ class PluginItem:
         movingSmaller = width < previous
         if not movingSmaller or previous <= self.panelCollapsedWidth + 2:
             return
-        if previous > threshold and self.panelCollapsedWidth < width <= threshold:
+        if self.panelCollapsedWidth < width <= threshold:
             self._panelCollapseToken += 1
             self.applyPanelAutoCollapse(side, self._panelCollapseToken)
 
