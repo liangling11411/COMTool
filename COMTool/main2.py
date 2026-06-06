@@ -314,8 +314,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
                         self.config, pluginConfig,
                         self.hintSignal, self.reloadWindowSignal,
                         self.onConnChnaged, self.onItemNameChanged,
-                        self.onSerialPortPageRequest,
-                        self.onPanelVisibilityChanged)
+                        self.onSerialPortPageRequest)
         self.tabAddItem(item)
         self.items.append(item)
         self.updateImportPageButtons()
@@ -1199,14 +1198,16 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             self.showSettings()
 
     def showSettings(self):
-        item = self.getCurrentItem()
-        item.showPanel("left")
-        self.updateSettingsButton()
+        widget = self.getCurrentItem().settingWidget
+        widget.show()
+        self.settingsButton.setStyleSheet(
+            parameters.strStyleShowHideButtonLeft.replace("$DataPath",self.DataPath))
 
     def hideSettings(self):
-        item = self.getCurrentItem()
-        item.hidePanel("left")
-        self.updateSettingsButton()
+        widget = self.getCurrentItem().settingWidget
+        widget.hide()
+        self.settingsButton.setStyleSheet(
+            parameters.strStyleShowHideButtonRight.replace("$DataPath", self.DataPath))
 
     def toggleFunctional(self):
         widget = self.getCurrentItem().functionalWidget
@@ -1218,24 +1219,16 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             self.showFunctional()
 
     def showFunctional(self):
-        item = self.getCurrentItem()
-        if item and item.functionalWidget is not None:
-            item.showPanel("right")
+        widget = self.getCurrentItem().functionalWidget
+        if not widget is None:
+            widget.show()
         self.updateFunctionalButton()
 
     def hideFunctional(self):
-        item = self.getCurrentItem()
-        if item and item.functionalWidget is not None:
-            item.hidePanel("right")
+        widget = self.getCurrentItem().functionalWidget
+        if not widget is None:
+            widget.hide()
         self.updateFunctionalButton()
-
-    def onPanelVisibilityChanged(self, item, side, visible):
-        if item != self.getCurrentItem():
-            return
-        if side == "left":
-            self.updateSettingsButton()
-        else:
-            self.updateFunctionalButton()
 
     def updateSettingsButton(self):
         item = self.getCurrentItem()

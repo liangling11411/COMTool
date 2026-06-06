@@ -28,8 +28,7 @@ class PluginItem:
                     globalConfig, itemConfig,
                     hintSignal, reloadWindowSignal,
                     connCallback, itemNameChanged=None,
-                    serialPageCallback=None,
-                    panelVisibilityChanged=None):
+                    serialPageCallback=None):
         '''
             item show name, e.g. dbg-1
         '''
@@ -38,7 +37,6 @@ class PluginItem:
         self.name = name
         self.itemNameChanged = itemNameChanged
         self.serialPageCallback = serialPageCallback
-        self.panelVisibilityChanged = panelVisibilityChanged
         self.connClasses = connClasses
         self.connsConfigs = connsConfigs
         self.currConnWidget = None
@@ -50,10 +48,6 @@ class PluginItem:
         self.settingWidget = None
         self.mainWidget = None
         self.functionalWidget = None
-        self.panelCollapsedWidth = 0
-        self._panelCollapseToken = 0
-        self._adjustingPanelSizes = False
-        self._lastPanelWidths = {"left": None, "right": None}
         # init plugin
         self.plugin = pluginClass()
         self.plugin.configGlobal = globalConfig
@@ -183,10 +177,6 @@ class PluginItem:
         widget.setStretchFactor(0, 1)
         widget.setStretchFactor(1, 2)
         widget.setStretchFactor(2, 1)
-        widget.setChildrenCollapsible(True)
-        widget.setCollapsible(0, True)
-        widget.setCollapsible(2, True)
-        widget.splitterMoved.connect(self.onContentSplitterMoved)
         defaultFunctionalVisible = getattr(self.plugin, "onFunctionalWidgetDefaultVisible", lambda: False)
         if defaultFunctionalVisible():
             self.functionalWidget.show()
@@ -196,114 +186,6 @@ class PluginItem:
         self.plugin.onUiInitDone()
         return wrapper
 
-    def onContentSplitterMoved(self, pos, index):
-        if self._adjustingPanelSizes:
-            return
-        sizes = self.panelSizes()
-        if len(sizes) != 3:
-            return
-        if index == 1:
-            self.handlePanelAutoCollapse("left", sizes[0])
-        elif index == 2:
-            self.handlePanelAutoCollapse("right", sizes[2])
-
-    def panelAutoCollapseThreshold(self, side):
-        hookName = "onSettingsPanelAutoCollapseWidth" if side == "left" else "onFunctionalPanelAutoCollapseWidth"
-        hook = getattr(self.plugin, hookName, None)
-        if callable(hook):
-            try:
-                threshold = int(hook())
-            except Exception:
-                threshold = 96 if side == "left" else 320
-        else:
-            threshold = 96 if side == "left" else 320
-        widget = self.panelWidget(side)
-        if widget is not None:
-            try:
-                threshold = max(threshold, widget.minimumSizeHint().width(), widget.minimumWidth())
-            except Exception:
-                pass
-        return max(self.panelCollapsedWidth + 1, threshold)
-
-    def handlePanelAutoCollapse(self, side, width):
-        widget = self.settingWidget if side == "left" else self.functionalWidget
-        if widget is None or not widget.isVisible():
-            return
-        threshold = self.panelAutoCollapseThreshold(side)
-        previous = self._lastPanelWidths.get(side)
-        if previous is None:
-            previous = threshold + 1
-        self._lastPanelWidths[side] = width
-        movingSmaller = width < previous
-        if not movingSmaller or previous <= self.panelCollapsedWidth + 2:
-            return
-        if self.panelCollapsedWidth < width <= threshold:
-            self._panelCollapseToken += 1
-            self.applyPanelAutoCollapse(side, self._panelCollapseToken)
-
-    def applyPanelAutoCollapse(self, side, token):
-        if token != self._panelCollapseToken:
-            return
-        sizes = self.panelSizes()
-        if len(sizes) != 3:
-            return
-        idx = 0 if side == "left" else 2
-        width = sizes[idx]
-        threshold = self.panelAutoCollapseThreshold(side)
-        if width <= self.panelCollapsedWidth or width > threshold:
-            return
-        self.hidePanel(side)
-
-    def panelWidget(self, side):
-        return self.settingWidget if side == "left" else self.functionalWidget
-
-    def panelIndex(self, side):
-        return 0 if side == "left" else 2
-
-    def notifyPanelVisibilityChanged(self, side, visible):
-        if callable(self.panelVisibilityChanged):
-            self.panelVisibilityChanged(self, side, visible)
-
-    def showPanel(self, side):
-        widget = self.panelWidget(side)
-        if widget is None:
-            return
-        widget.show()
-        sizes = self.panelSizes()
-        idx = self.panelIndex(side)
-        if len(sizes) == 3 and sizes[idx] <= self.panelCollapsedWidth:
-            width = self.panelAutoCollapseThreshold(side)
-            available = max(0, sizes[1] - 120)
-            width = max(1, min(width, available if available > 0 else width))
-            sizes[idx] = width
-            sizes[1] = max(0, sizes[1] - width)
-            self._adjustingPanelSizes = True
-            try:
-                self.setPanelSizes(sizes)
-            finally:
-                self._adjustingPanelSizes = False
-        self._lastPanelWidths[side] = None
-        self.notifyPanelVisibilityChanged(side, True)
-
-    def hidePanel(self, side):
-        widget = self.panelWidget(side)
-        if widget is None:
-            return
-        sizes = self.panelSizes()
-        idx = self.panelIndex(side)
-        width = sizes[idx] if len(sizes) == 3 else 0
-        widget.hide()
-        if len(sizes) == 3 and width > 0:
-            sizes[idx] = 0
-            sizes[1] = max(0, sizes[1] + width)
-            self._adjustingPanelSizes = True
-            try:
-                self.setPanelSizes(sizes)
-            finally:
-                self._adjustingPanelSizes = False
-        self._lastPanelWidths[side] = self.panelCollapsedWidth
-        self.notifyPanelVisibilityChanged(side, False)
-
     def panelSizes(self):
         if hasattr(self, "contentSplitter") and self.contentSplitter:
             return self.contentSplitter.sizes()
@@ -312,8 +194,6 @@ class PluginItem:
     def setPanelSizes(self, sizes):
         if hasattr(self, "contentSplitter") and self.contentSplitter and len(sizes) == 3:
             self.contentSplitter.setSizes(sizes)
-            self._lastPanelWidths["left"] = sizes[0]
-            self._lastPanelWidths["right"] = sizes[2]
 
     def copyPanelStateFrom(self, sourceItem, forceVisible=False):
         if not sourceItem:
