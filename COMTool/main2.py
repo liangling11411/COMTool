@@ -71,8 +71,16 @@ class BackgroundFrameWidget(QWidget):
         self.backgroundScaleKey = None
         self.backgroundCropKey = None
         self.backgroundOpacity = 0.35
+        self.backgroundBaseColor = QColor("#f5f5f5")
 
-    def setGlobalBackground(self, path, opacity):
+    def setBackgroundBaseColor(self, color):
+        baseColor = QColor(color)
+        if baseColor.isValid():
+            self.backgroundBaseColor = baseColor
+
+    def setGlobalBackground(self, path, opacity, baseColor=None):
+        if baseColor is not None:
+            self.setBackgroundBaseColor(baseColor)
         path = path or ""
         if path and os.path.exists(path):
             if path != self.backgroundPath:
@@ -126,7 +134,8 @@ class BackgroundFrameWidget(QWidget):
     def drawGlobalBackground(self, painter, targetWidget=None):
         if self.backgroundPixmap.isNull():
             return
-        if targetWidget is not None and targetWidget.window() is not self.window():
+        externalWindow = targetWidget is not None and targetWidget.window() is not self.window()
+        if externalWindow:
             window = targetWidget.window()
             targetSize = window.size()
             scaled = self.backgroundPixmap.scaled(targetSize, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
@@ -147,6 +156,8 @@ class BackgroundFrameWidget(QWidget):
         if source.isNull():
             return
         painter.save()
+        if externalWindow and targetWidget is window:
+            painter.fillRect(targetWidget.rect(), self.backgroundBaseColor)
         painter.setOpacity(self.backgroundOpacity)
         painter.drawPixmap(drawX, drawY, source)
         painter.restore()
@@ -199,6 +210,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         self.updateSettingsButton()
         self.updateFunctionalButton()
         self.initEvent()
+        self.updateAllSkinButtonAvailability()
 
     def initVar(self):
         self.loadPluginStr = _("Load plugin from file")
@@ -1030,16 +1042,22 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         self.items.remove(item)
 
     def onTabDoubleClicked(self, idx):
-        item = self.getCurrentItem()
+        if idx < 0:
+            return
+        item = self.itemByTabIndex(idx)
+        if item is None:
+            return
         self.tabWidget.removeTab(idx)
         parent = item.widget.parent()
         item.widget.setWindowFlag(Qt.Window) # this method is not stable in QT, do not use it
         # item.widget.setParent(None)
+        item.widget.setProperty("detachedPluginWindow", "true")
         item.widget.setWindowTitle(item.name)
         item.widget.closeEvent = lambda event: self.onPluginWindowClose(item, parent)
-        item.widget.show()
         self.applyGlobalBackgroundWidgetAttributes(self.globalBackgroundEnabled(), polish=True)
+        item.widget.show()
         self.updateGlobalBackgroundContainers()
+        self.updateAllSkinButtonAvailability()
 
     def onPluginWindowClose(self, item, parent):
         self.recoverTab(item, parent)
@@ -1051,10 +1069,12 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             self.tabWidget.setCurrentIndex(i)
             item.widget.setWindowFlag(Qt.Window, False)
             # item.widget.setParent(parent)
+            item.widget.setProperty("detachedPluginWindow", "")
             status = item.plugin.getConnStatus()
             self.setTabIcon(status, i)
             self.applyGlobalBackgroundWidgetAttributes(self.globalBackgroundEnabled(), polish=True)
             self.updateGlobalBackgroundContainers()
+            self.updateAllSkinButtonAvailability()
         # prevent close and add this widget to tab
         insertIdx = self.tabWidget.count()
         idx = self.items.index(item)
@@ -1251,6 +1271,10 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
     def skinChange(self):
         if self.ignoreSkinChange:
             return
+        if self.anyDetachedPluginWindows():
+            self.restoreSkinButtonIndex()
+            self.updateAllSkinButtonAvailability()
+            return
         idx = self.skinButton.currentIndex()
         if idx == self.skinActionSelectBackground:
             self.selectGlobalBackgroundImage()
@@ -1285,6 +1309,69 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
 
     def configGet(self, key, default=None):
         return self.config[key] if key in self.config else default
+
+    def hasDetachedPluginWindows(self):
+        for item in getattr(self, "items", []):
+            widget = getattr(item, "widget", None)
+            if widget is None:
+                continue
+            try:
+                if hasattr(self, "tabWidget") and self.tabWidget.indexOf(widget) >= 0:
+                    continue
+                if widget.property("detachedPluginWindow") == "true" or widget.isWindow() or bool(widget.windowFlags() & Qt.Window):
+                    return True
+            except RuntimeError:
+                continue
+        return False
+
+    def managedMainWindows(self):
+        windows = list(g_all_windows)
+        if self not in windows:
+            windows.append(self)
+        unique = []
+        seen = set()
+        for window in windows:
+            try:
+                key = id(window)
+            except RuntimeError:
+                continue
+            if key in seen:
+                continue
+            seen.add(key)
+            unique.append(window)
+        return unique
+
+    def anyDetachedPluginWindows(self):
+        for window in self.managedMainWindows():
+            try:
+                checker = getattr(window, "hasDetachedPluginWindows", None)
+                if checker and checker():
+                    return True
+            except RuntimeError:
+                continue
+        return False
+
+    def setSkinButtonAvailable(self, enabled):
+        if not hasattr(self, "skinButton"):
+            return
+        if not enabled:
+            self.restoreSkinButtonIndex()
+            if hasattr(self.skinButton, "_ctrl"):
+                self.skinButton._ctrl("hide")
+        self.skinButton.setEnabled(enabled)
+
+    def updateAllSkinButtonAvailability(self):
+        enabled = not self.anyDetachedPluginWindows()
+        for window in self.managedMainWindows():
+            try:
+                setter = getattr(window, "setSkinButtonAvailable", None)
+                if setter:
+                    setter(enabled)
+            except RuntimeError:
+                continue
+
+    def globalBackgroundBaseColor(self):
+        return "#212121" if self.configGet("skin", "light") == "dark" else "#f5f5f5"
 
     def backgroundPanelQss(self):
         path = self.configGet("backgroundImage", "")
@@ -1443,7 +1530,8 @@ QTabBar::tab:!selected {
         self.app.setStyleSheet(qss)
         if hasattr(self, "frameWidget") and hasattr(self.frameWidget, "setGlobalBackground"):
             self.frameWidget.setGlobalBackground(self.configGet("backgroundImage", ""),
-                                                 self.configGet("backgroundOpacity", 35))
+                                                 self.configGet("backgroundOpacity", 35),
+                                                 self.globalBackgroundBaseColor())
             self.updateGlobalBackgroundContainers()
         if hasattr(self, "items"):
             for item in self.items:
@@ -1464,7 +1552,8 @@ QTabBar::tab:!selected {
         hadBackground = bool(self.configGet("backgroundImage", "") and os.path.exists(self.configGet("backgroundImage", "")))
         self.config["backgroundImage"] = fileName_choose
         if hadBackground and hasattr(self, "frameWidget") and hasattr(self.frameWidget, "setGlobalBackground"):
-            self.frameWidget.setGlobalBackground(fileName_choose, self.configGet("backgroundOpacity", 35))
+            self.frameWidget.setGlobalBackground(fileName_choose, self.configGet("backgroundOpacity", 35),
+                                                 self.globalBackgroundBaseColor())
             self.updateGlobalBackgroundContainers()
         else:
             self.applyAppStyle()
@@ -1478,7 +1567,8 @@ QTabBar::tab:!selected {
             return
         self.config["backgroundOpacity"] = value
         if hasattr(self, "frameWidget") and hasattr(self.frameWidget, "setGlobalBackground"):
-            self.frameWidget.setGlobalBackground(self.configGet("backgroundImage", ""), value)
+            self.frameWidget.setGlobalBackground(self.configGet("backgroundImage", ""), value,
+                                                 self.globalBackgroundBaseColor())
             self.updateGlobalBackgroundContainers()
 
     def clearGlobalBackgroundImage(self):

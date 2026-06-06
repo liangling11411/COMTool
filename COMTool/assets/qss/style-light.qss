@@ -117,11 +117,11 @@ QMessageBox {
     width:27px;
     border-radius: 5px;
     margin-right:10px;
-    background-color: #0b1722;
+    background-color: transparent;
     border-image: url("$DataPath/assets/skin.png")
 }
 #menuItem2:hover {
-    background-color: #0b1722;
+    background-color: transparent;
     border-image: url("$DataPath/assets/skin-white.png")
 }
 #menuItemLang {
@@ -140,11 +140,11 @@ QMessageBox {
     width:27px;
     border-radius: 5px;
     margin-right:10px;
-    background-color: #0b1722;
+    background-color: transparent;
     border-image: url("$DataPath/assets/help.png")
 }
 #menuItem3:hover {
-    background-color: #0b1722;
+    background-color: transparent;
     border-image: url("$DataPath/assets/help-white.png")
 }
 #menuItem4 {
@@ -172,19 +172,24 @@ QComboBox {
     padding: 1px 10px 1px 3px;
     min-height:25px;
     min-width:60px;
+    background-color: #f5f5f5;
+    color: #27313a;
 }
 
 QComboBox:editable {
     background: #f5f5f5;
+    color: #27313a;
 }
 
 QComboBox:!editable, QComboBox::drop-down:editable {
      background: #f5f5f5;
+     color: #27313a;
 }
 
 /* QComboBox gets the "on" state when the popup is open */
 QComboBox:!editable:on, QComboBox::drop-down:editable:on {
     background: #f5f5f5;
+    color: #27313a;
 }
 
 QComboBox:on { /* shift the text when the popup opens */
@@ -216,12 +221,16 @@ QComboBox::hover{
 }
 QComboBox QAbstractItemView {
     border: 2px solid #f5f5f5;
+    background-color: #ffffff;
+    color: #27313a;
     selection-background-color: #eef2f6;
     selection-color:#27313a;
     /* min-width:400px; */
     min-height:4em;
 }
 QComboBox QAbstractItemView::item{
+    background-color: #ffffff;
+    color: #27313a;
     min-height:3em;
 }
 QComboBox QAbstractItemView::item:selected{
@@ -237,6 +246,7 @@ QMenu {
     background-color: #ffffff;
     border: 1px solid #cfd8e3;
     padding: 4px;
+    color: #27313a;
 }
 QMenu::item {
     padding: 6px 28px 6px 22px;
@@ -247,6 +257,9 @@ QMenu::item {
 QMenu::item:selected {
     background-color: #d0e8ff;
     color: #0f88eb;
+}
+QMenu::item:disabled {
+    color: #9aa6b2;
 }
 QMenu::separator {
     height: 1px;

@@ -176,7 +176,7 @@ class SerialPortRowWidget(QWidget):
             else:
                 self.nameButton.setColor("#d32f2f", "#e04a4a", "#9a1d1d")
         else:
-            self.nameButton.setColor("#0865b1", "#0f88eb", "#044174")
+            self.nameButton.setColor("#0f88eb", "#0772ca", "#045292")
         if status in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE):
             self.actionButton.setText(_("Disconnect"))
             self.actionButton.setToolTip(_("Close this port but keep the receive page"))
