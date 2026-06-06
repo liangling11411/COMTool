@@ -91,10 +91,12 @@ class PluginItem:
 
     def newFrame(self, isAddConn):
         wrapper = QWidget()
+        wrapper.setProperty("class", "pageWrapper")
         wrapperLayout = QVBoxLayout()
         wrapperLayout.setContentsMargins(0, 0, 0, 0)
         widget = QSplitter(Qt.Horizontal)
         widget.setProperty("class", "contentWrapper")
+        self.contentSplitter = widget
         statusBar = self.plugin.onWidgetStatusBar(wrapper)
         wrapper.setLayout(wrapperLayout)
         wrapperLayout.addWidget(widget)
@@ -180,6 +182,26 @@ class PluginItem:
         # UI init done
         self.plugin.onUiInitDone()
         return wrapper
+
+    def panelSizes(self):
+        if hasattr(self, "contentSplitter") and self.contentSplitter:
+            return self.contentSplitter.sizes()
+        return []
+
+    def setPanelSizes(self, sizes):
+        if hasattr(self, "contentSplitter") and self.contentSplitter and len(sizes) == 3:
+            self.contentSplitter.setSizes(sizes)
+
+    def copyPanelStateFrom(self, sourceItem):
+        if not sourceItem:
+            return
+        if sourceItem.settingWidget and self.settingWidget:
+            self.settingWidget.setVisible(sourceItem.settingWidget.isVisible())
+        if sourceItem.functionalWidget and self.functionalWidget:
+            self.functionalWidget.setVisible(sourceItem.functionalWidget.isVisible())
+        sizes = sourceItem.panelSizes() if hasattr(sourceItem, "panelSizes") else []
+        if sizes:
+            self.setPanelSizes(sizes)
 
     def setImportPageEnabled(self, enabled):
         if hasattr(self, "loadConfigBtn"):

@@ -9,7 +9,7 @@ from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QObject, pyqtSlot, QEve
 from PyQt5.QtWidgets import (QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea)
-from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor
+from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor,QFontMetrics
 try:
     import parameters,helpAbout,autoUpdate
     from Combobox import ComboBox
@@ -32,6 +32,76 @@ import serial.tools.list_ports
 import serial.tools.list_ports_common
 
 
+class PortInfoButton(QPushButton):
+    def __init__(self, port, detail, tooltip, parent=None):
+        super().__init__(parent)
+        self.port = port
+        self.detail = detail
+        self._lastText = ""
+        self.setToolTip(tooltip)
+        self.setFlat(True)
+        self.setMinimumHeight(54)
+        self.setCursor(Qt.PointingHandCursor)
+        self.updateText()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.updateText()
+
+    def _textWidth(self, metrics, text):
+        if hasattr(metrics, "horizontalAdvance"):
+            return metrics.horizontalAdvance(text)
+        return metrics.width(text)
+
+    def _wrapDetail(self, width):
+        detail = self.detail.strip()
+        if not detail:
+            return []
+        metrics = QFontMetrics(self.font())
+        maxWidth = max(48, width - 18)
+        lines = []
+        line = ""
+        for ch in detail:
+            if ch in "\r\n":
+                if line:
+                    lines.append(line)
+                    line = ""
+                continue
+            candidate = line + ch
+            if line and self._textWidth(metrics, candidate) > maxWidth:
+                lines.append(line)
+                line = ch
+            else:
+                line = candidate
+            if len(lines) >= 3:
+                break
+        if line and len(lines) < 3:
+            lines.append(line)
+        if len(lines) == 3 and self._textWidth(metrics, lines[-1] + "...") > maxWidth:
+            line = lines[-1]
+            while line and self._textWidth(metrics, line + "...") > maxWidth:
+                line = line[:-1]
+            lines[-1] = line + "..."
+        return lines
+
+    def updateText(self):
+        detailLines = self._wrapDetail(self.width())
+        text = self.port if not detailLines else self.port + "\n" + "\n".join(detailLines)
+        if text != self._lastText:
+            self._lastText = text
+            self.setText(text)
+
+    def setColor(self, color):
+        self.setStyleSheet(
+            "QPushButton{"
+            "text-align:left;background:%s;color:#ffffff;border-radius:5px;"
+            "padding:4px 8px;font-weight:bold;"
+            "}"
+            "QPushButton:hover{background:%s;}"
+            % (color, color)
+        )
+
+
 class SerialPortRowWidget(QWidget):
     def __init__(self, owner, port, text, parent=None):
         super().__init__(parent)
@@ -39,36 +109,21 @@ class SerialPortRowWidget(QWidget):
         self.port = port
         self.text = text
         layout = QHBoxLayout()
-        layout.setContentsMargins(6, 4, 6, 4)
+        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setSpacing(6)
         self.setLayout(layout)
         self.setCursor(Qt.PointingHandCursor)
-        self.indicator = QLabel("")
-        self.indicator.setFixedSize(10, 10)
-        self.indicator.setStyleSheet("background:#d32f2f;border-radius:5px;")
-        detail = text[len(port):].strip(" -") if text.startswith(port) else text
+        detail = text[len(port):].strip() if text.startswith(port) else text
+        if detail.startswith(port):
+            detail = detail[len(port):].strip()
+        detail = detail.strip(" -")
         detail = detail or text
-        textWidget = QWidget()
-        textWidget.setStyleSheet("background:transparent;")
-        textLayout = QVBoxLayout()
-        textLayout.setContentsMargins(0, 0, 0, 0)
-        textLayout.setSpacing(0)
-        textWidget.setLayout(textLayout)
-        self.nameButton = QPushButton(port)
-        self.nameButton.setFlat(True)
-        self.nameButton.setToolTip(text)
-        self.nameButton.setStyleSheet("text-align:left;background:#d32f2f;color:#ffffff;border-radius:4px;padding:2px 6px;")
+        self.nameButton = PortInfoButton(port, detail, text)
         self.nameButton.installEventFilter(self)
-        self.detailLabel = QLabel(detail)
-        self.detailLabel.setToolTip(text)
-        self.detailLabel.setWordWrap(True)
-        self.detailLabel.setStyleSheet("font-size:10px;color:#8a8a8a;background:transparent;padding-left:4px;")
         self.actionButton = QPushButton(_("Connect"))
         self.actionButton.setToolTip(_("Open this port in a receive page"))
         self.actionButton.setMinimumWidth(72)
-        textLayout.addWidget(self.nameButton)
-        textLayout.addWidget(self.detailLabel)
-        layout.addWidget(self.indicator)
-        layout.addWidget(textWidget, 1)
+        layout.addWidget(self.nameButton, 1)
         layout.addWidget(self.actionButton)
         self.nameButton.clicked.connect(lambda: self.owner.requestSerialPortPage(self.port, "focus"))
         self.actionButton.clicked.connect(self.onActionClicked)
@@ -99,16 +154,18 @@ class SerialPortRowWidget(QWidget):
             return
         super().mouseDoubleClickEvent(event)
 
-    def setStatus(self, status):
+    def setStatus(self, status, currentPort=None):
+        isCurrentPort = self.port == currentPort
+        isOpened = status in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE)
+        if isCurrentPort:
+            self.nameButton.setColor("#2e7d32" if isOpened else "#d32f2f")
+        else:
+            self.nameButton.setColor("#1976d2")
         if status in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE):
-            self.indicator.setStyleSheet("background:#1aa332;border-radius:5px;")
-            self.nameButton.setStyleSheet("text-align:left;background:#2e7d32;color:#ffffff;border-radius:4px;padding:2px 6px;")
             self.actionButton.setText(_("Disconnect"))
             self.actionButton.setToolTip(_("Close this port but keep the receive page"))
             self.actionButton.setStyleSheet("background:#d32f2f;color:#ffffff;")
         else:
-            self.indicator.setStyleSheet("background:#d32f2f;border-radius:5px;")
-            self.nameButton.setStyleSheet("text-align:left;background:#d32f2f;color:#ffffff;border-radius:4px;padding:2px 6px;")
             self.actionButton.setText(_("Connect"))
             self.actionButton.setToolTip(_("Open this port in a receive page"))
             self.actionButton.setStyleSheet("background:#2e7d32;color:#ffffff;")
@@ -334,7 +391,7 @@ class Serial(COMM):
 
     def refreshSerialPortRows(self):
         for port, row in self.serialPortRowWidgets.items():
-            row.setStatus(self.quickPortStatus.get(port, ConnectionStatus.CLOSED))
+            row.setStatus(self.quickPortStatus.get(port, ConnectionStatus.CLOSED), self.config.get("port"))
 
     def updateSerialPortRows(self, items):
         while self.serialPortListLayout.count():
@@ -351,7 +408,7 @@ class Serial(COMM):
             row = SerialPortRowWidget(self, port, item)
             self.serialPortListLayout.addWidget(row)
             self.serialPortRowWidgets[port] = row
-        self.serialPortListScroll.setMinimumHeight(min(520, max(220, len(self.serialPortRowWidgets) * 64 + 12)))
+        self.serialPortListScroll.setMinimumHeight(min(560, max(240, len(self.serialPortRowWidgets) * 72 + 12)))
         self.serialPortListLayout.addStretch(1)
         self.refreshSerialPortRows()
         self.highlightSelectedSerialPort()
@@ -360,6 +417,7 @@ class Serial(COMM):
         selected = self.config.get("port")
         for port, row in self.serialPortRowWidgets.items():
             row.setSelected(port == selected)
+        self.refreshSerialPortRows()
 
     def onSerialConfigChanged(self, conf_type, obj, value_type, caller=""):
         if conf_type == "port":

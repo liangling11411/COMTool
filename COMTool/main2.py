@@ -43,7 +43,7 @@ except ImportError:
     from COMTool.pluginItems import PluginItem
     from .widgets import TitleBar, CustomTitleBarWindowMixin, EventFilter, ButtonCombbox, HelpWidget
 
-from PyQt5.QtCore import pyqtSignal, Qt, QRect, QMargins, QCoreApplication
+from PyQt5.QtCore import pyqtSignal, Qt, QRect, QMargins, QCoreApplication, QTimer
 from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QTabWidget, QMenu, QSplashScreen,
@@ -357,6 +357,9 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         connsConfigs, pluginConfig = self.cloneSerialPageConfigs(sourceItem, port)
         item = self.addItem(pluginClass, setCurrent=True, connsConfigs=connsConfigs, pluginConfig=pluginConfig)
         self.onItemNameChanged(item, port)
+        if sourceItem is not None and hasattr(item, "copyPanelStateFrom"):
+            item.copyPanelStateFrom(sourceItem)
+            QTimer.singleShot(0, lambda: item.copyPanelStateFrom(sourceItem))
         return item
 
     def setSerialItemOpen(self, item, openNow):
@@ -575,6 +578,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         self.tabWidget.tabBar().setContextMenuPolicy(Qt.CustomContextMenu)
         # tab left menu
         tabConerWidget = QWidget()
+        tabConerWidget.setObjectName("tabConerWidget")
         tabConerLayout = QHBoxLayout()
         tabConerLayout.setSpacing(0)
         tabConerLayout.setContentsMargins(0, 0, 0, 0)
@@ -582,6 +586,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         tabConerLayout.addWidget(self.settingsButton)
         # tab right menu
         tabConerWidgetRight = QWidget()
+        tabConerWidgetRight.setObjectName("tabConerWidgetRight")
         tabConerLayoutRight = QHBoxLayout()
         tabConerLayoutRight.setSpacing(0)
         tabConerLayoutRight.setContentsMargins(0, 0, 0, 0)
@@ -996,22 +1001,51 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         if not path or not os.path.exists(path):
             return ""
         dark = self.configGet("skin", "light") == "dark"
-        panel = "rgba(33,33,33,215)" if dark else "rgba(245,245,245,215)"
-        edit = "rgba(58,58,58,228)" if dark else "rgba(245,245,245,228)"
+        panel = "rgba(33,33,33,150)" if dark else "rgba(245,245,245,155)"
+        groupPanel = "rgba(33,33,33,115)" if dark else "rgba(245,245,245,115)"
+        edit = "rgba(58,58,58,175)" if dark else "rgba(255,255,255,180)"
+        buttonPanel = "rgba(45,45,45,170)" if dark else "rgba(255,255,255,190)"
         return """
-QWidget#backgroundFrame, QWidget#contentWidget {
+QWidget#backgroundFrame,
+QWidget#contentWidget,
+QWidget#tabConerWidget,
+QWidget#tabConerWidgetRight,
+QWidget[class="pageWrapper"] {
     background: transparent;
 }
 .TitleBar {
     background-color: transparent;
 }
-.contentWrapper, .settingWidget, .functionalWidget, QTabWidget::pane {
+QSplitter,
+QTabWidget::pane,
+QScrollArea,
+QScrollArea > QWidget > QWidget,
+QWidget[class="contentWrapper"],
+QWidget[class="settingWidget"],
+QWidget[class="functionalWidget"] {
     background-color: %s;
 }
-QTextEdit, QPlainTextEdit, QListView {
+QGroupBox {
     background-color: %s;
 }
-""" % (panel, edit)
+QTextEdit,
+QPlainTextEdit,
+QLineEdit,
+QListView,
+QTreeWidget,
+QTableWidget,
+QTableView,
+QListWidget,
+QTextBrowser {
+    background-color: %s;
+}
+QPushButton,
+QComboBox,
+QSpinBox,
+QDoubleSpinBox {
+    background-color: %s;
+}
+""" % (panel, groupPanel, edit, buttonPanel)
 
     def applyAppStyle(self):
         skin = self.configGet("skin", "light")
@@ -1032,8 +1066,12 @@ QTextEdit, QPlainTextEdit, QListView {
         )
         if not fileName_choose:
             return
+        hadBackground = bool(self.configGet("backgroundImage", "") and os.path.exists(self.configGet("backgroundImage", "")))
         self.config["backgroundImage"] = fileName_choose
-        self.applyAppStyle()
+        if hadBackground and hasattr(self, "frameWidget") and hasattr(self.frameWidget, "setGlobalBackground"):
+            self.frameWidget.setGlobalBackground(fileName_choose, self.configGet("backgroundOpacity", 35))
+        else:
+            self.applyAppStyle()
 
     def changeGlobalBackgroundOpacity(self):
         value, ok = QInputDialog.getInt(self, _("Background opacity"),
@@ -1043,7 +1081,8 @@ QTextEdit, QPlainTextEdit, QListView {
         if not ok:
             return
         self.config["backgroundOpacity"] = value
-        self.applyAppStyle()
+        if hasattr(self, "frameWidget") and hasattr(self.frameWidget, "setGlobalBackground"):
+            self.frameWidget.setGlobalBackground(self.configGet("backgroundImage", ""), value)
 
     def clearGlobalBackgroundImage(self):
         self.config["backgroundImage"] = ""
