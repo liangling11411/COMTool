@@ -85,7 +85,11 @@ class PortInfoButton(QPushButton):
 
     def updateText(self):
         detailLines = self._wrapDetail(self.width())
-        text = self.port if not detailLines else self.port + "\n" + "\n".join(detailLines)
+        if detailLines:
+            detailText = "<br>".join(detailLines)
+            text = "<span style='font-size:14px;font-weight:bold;'>" + self.port + "</span><br><span style='font-size:10px;'>" + detailText + "</span>"
+        else:
+            text = "<span style='font-size:14px;font-weight:bold;'>" + self.port + "</span>"
         if text != self._lastText:
             self._lastText = text
             self.setText(text)
@@ -195,7 +199,7 @@ class SerialPortRowWidget(QWidget):
             self.nameButton.setStyleSheet(
                 "QPushButton{"
                 "text-align:left;background-color:#555555;color:#888888;border:2px solid #555555;border-radius:5px;"
-                "padding:4px 8px;font-weight:normal;font-size:12px;min-height:54px;"
+                "padding:4px 8px;min-height:54px;"
                 "}"
             )
             self.actionButton.setText(_("Locked"))
@@ -337,7 +341,6 @@ class Serial(COMM):
         self.serialPortListScroll.setWidgetResizable(True)
         self.serialPortListScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.serialPortListScroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.serialPortListScroll.setFixedHeight(84)
         self.serialPortListScroll.setToolTip(_("Available serial ports"))
         self.serialPortListWidget = QWidget()
         self.serialPortListLayout = QVBoxLayout()
@@ -370,6 +373,7 @@ class Serial(COMM):
             serialSettingsLayout.addWidget(serialPortLabek, 1, 0)
             serialSettingsLayout.addWidget(self.serialPortCombobox, 1, 1)
             self.serialPortListScroll.hide()
+            self.serialPortListScroll.setFixedHeight(84)
             serialSettingsLayout.addWidget(serailBaudrateLabel, 2, 0)
             serialSettingsLayout.addWidget(self.serailBaudrateCombobox, 2, 1)
             serialSettingsLayout.addWidget(serailBytesLabel, 3, 0)

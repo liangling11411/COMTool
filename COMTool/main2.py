@@ -486,12 +486,24 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         if not ports:
             QMessageBox.warning(self, _("Warning"), _("No serial ports detected. Please connect a device first."))
             return None
+        # Collect ports already used by existing dbg pages
+        usedPorts = set()
+        for item in self.items:
+            if getattr(item.plugin, "id", "") == "dbg":
+                port = self.serialPortForItem(item)
+                if port:
+                    usedPorts.add(port)
         portItems = []
         for p in ports:
+            if p.device in usedPorts:
+                continue  # Skip ports that already have a dbg page
             showStr = "{} {} - {}".format(p.device, p.name, p.description)
             if p.manufacturer:
                 showStr += " - {}".format(p.manufacturer)
             portItems.append((p.device, showStr))
+        if not portItems:
+            QMessageBox.warning(self, _("Warning"), _("All serial ports already have receive pages."))
+            return None
         dialog = QDialog(self)
         dialog.setWindowTitle(_("New Receive Page"))
         dialog.setMinimumWidth(420)
@@ -1270,6 +1282,15 @@ QFontComboBox {
 }
 QTabBar::tab:!selected {
     background-color: %s;
+}
+*[globalBackgroundContainer="true"] QLabel,
+*[globalBackgroundContainer="true"] QCheckBox,
+*[globalBackgroundContainer="true"] QRadioButton,
+*[globalBackgroundContainer="true"] QGroupBox {
+    background: transparent;
+}
+*[globalBackgroundContainer="true"] QGroupBox::title {
+    background: transparent;
 }
 """ % (groupPanel, edit, inputPanel, tabPanel)
 

@@ -291,6 +291,14 @@ QPushButton:default {
     background: #b61313;
     border: 2px solid #b61313;
 }
+.dangerBtn {
+    background-color: #cf5050;
+    border: 2px solid #cf5050;
+}
+.dangerBtn:hover {
+    background-color: #b61313;
+    border: 2px solid #b61313;
+}
 .smallBtn {
     min-width: 30px;
 }

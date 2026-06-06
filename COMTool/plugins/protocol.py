@@ -552,7 +552,7 @@ def parse(line, ctx):
         utils_ui.setButtonIcon(self.batchCustomSendIconButton, "fa.send")
         utils_ui.setButtonIcon(self.batchCustomSendDeleteButton, "fa.trash")
         utils_ui.setButtonIcon(self.customSendComboButton, "fa.list")
-        self.batchCustomSendDeleteButton.setProperty("class", "deleteBtn")
+        self.batchCustomSendDeleteButton.setProperty("class", "dangerBtn")
         customSendGroupBox = QGroupBox(_("Cutom send"))
         customSendItemsLayout0 = QVBoxLayout()
         customSendItemsLayout0.setContentsMargins(0,8,0,0)

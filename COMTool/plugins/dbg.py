@@ -405,7 +405,7 @@ class CommandSequenceDialog(QDialog):
         remarkLabel.setMinimumWidth(120)
         remarkLabel.setToolTip(remark)
         delayInput = NoWheelSpinBox()
-        delayInput.setRange(0, 24 * 60 * 60 * 1000)
+        delayInput.setRange(1, 24 * 60 * 60 * 1000)
         delayInput.setSuffix(" ms")
         delayInput.setValue(int(item.get("delay", 0)))
         delayInput.setToolTip(_("Delay after this command, unit: ms"))
@@ -2016,7 +2016,7 @@ class Plugin(Plugin_Base):
         utils_ui.setButtonIcon(self.batchCustomSendIconButton, "fa.send")
         utils_ui.setButtonIcon(self.batchCustomSendDeleteButton, "fa.trash")
         utils_ui.setButtonIcon(self.customSendComboButton, "fa.list")
-        self.batchCustomSendDeleteButton.setProperty("class", "deleteBtn")
+        self.batchCustomSendDeleteButton.setProperty("class", "dangerBtn")
         # cumtom send zone
         #   groupbox
         customSendGroupBox = QGroupBox(_("Cutom send"))
