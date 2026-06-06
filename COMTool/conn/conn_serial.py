@@ -357,6 +357,7 @@ class Serial(COMM):
             serialSettingsLayout.addWidget(self.checkBoxRTS, 7, 0, 1, 1)
             serialSettingsLayout.addWidget(self.checkBoxDTR, 7, 1, 1, 1)
             serialSettingsLayout.addWidget(self.serialOpenCloseButton, 8, 0, 1, 2)
+        self.widget.setLayout(serialSettingsLayout)
         self.widgetConfMap["port"]       = self.serialPortCombobox
         self.widgetConfMap["baudrate"]    = self.serailBaudrateCombobox
         self.widgetConfMap["bytesize"]    = self.serailBytesCombobox
@@ -651,7 +652,7 @@ class Serial(COMM):
         if self.usePortRows:
             self.updateSerialPortRows(items)
         else:
-            self.serialPortCombobox.showPopup()
+            self.serialPortCombobox.showItems()
         self.isDetectSerialPort = False
         if set >= 0:
             self.serialPortCombobox.setCurrentIndex(set)
