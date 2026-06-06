@@ -116,12 +116,13 @@ class Terminal_Frontend(QWidget):
         # cache
         self.pens = {}
         self.brushes = {}
-        self.default_brush = QBrush(self.theme["bg"])
+        self.globalBackgroundEnabled = False
+        self.default_brush = QBrush(self.defaultBackgroundColor())
         self.default_pen = QPen(self.theme["color"])
         # pixmap, all operation on this pixmap in receive thread,
         #         then invoke UI thread to paint this pixmap on main widget
         self.pixmap = QPixmap(self.width(), self.height())
-        self.pixmap.fill(self.theme["bg"])
+        self.fillDefaultPixmap()
         # scroll
         self.scrollBar = None
         self.scrollEventSet = False
@@ -144,6 +145,43 @@ class Terminal_Frontend(QWidget):
         font.setFamily(self.font_name)
         font.setPixelSize(self.font_p_size)
         return font
+
+    def defaultBackgroundColor(self):
+        color = QColor(self.theme["bg"])
+        if self.globalBackgroundEnabled:
+            color.setAlpha(96)
+        return color
+
+    def updateDefaultBrush(self):
+        self.default_brush = QBrush(self.defaultBackgroundColor())
+        self.brushes.pop("default", None)
+
+    def fillDefaultPixmap(self):
+        self.pixmap.fill(self.defaultBackgroundColor())
+
+    def fillDefaultRect(self, painter, rect):
+        oldMode = painter.compositionMode()
+        if self.globalBackgroundEnabled:
+            painter.setCompositionMode(QPainter.CompositionMode_Source)
+        painter.fillRect(rect, self.default_brush)
+        if self.globalBackgroundEnabled:
+            painter.setCompositionMode(oldMode)
+
+    def setGlobalBackgroundEnabled(self, enabled):
+        enabled = bool(enabled)
+        if self.globalBackgroundEnabled == enabled:
+            return
+        self.globalBackgroundEnabled = enabled
+        self.setAttribute(Qt.WA_TranslucentBackground, enabled)
+        self.setAutoFillBackground(False)
+        self.updateDefaultBrush()
+        if hasattr(self, "updatePixmapLock"):
+            self.updatePixmapLock.acquire()
+            self.pixmap = QPixmap(self.width(), self.height())
+            self.fillDefaultPixmap()
+            self.paint_full_pixmap()
+            self.updatePixmapLock.release()
+        self.update()
 
     def get_pen(self, color_name="white", keyword = None):
         pen = self.pens.get(color_name)
@@ -211,7 +249,7 @@ class Terminal_Frontend(QWidget):
         start_y = line_num * self._char_height
         if clear:
             clear_rect = QRect(start_x, start_y, self.width(), self._char_height)
-            painter.fillRect(clear_rect, self.default_brush)
+            self.fillDefaultRect(painter, clear_rect)
 
         line = screen.buffer[line_num]
 
@@ -408,7 +446,7 @@ class Terminal_Frontend(QWidget):
             self.backend.resize(self._columns, self._rows)
             self.resizeConn(self._columns, self._rows)
             self.pixmap = QPixmap(self.width(), self.height())
-            self.pixmap.fill(self.theme["bg"])
+            self.fillDefaultPixmap()
             self.paint_full_pixmap()
             self.updatePixmapLock.release()
         except:
@@ -650,6 +688,9 @@ class Scroll_Terminal(QWidget):
     def onReceived(self, data):
         self.terminal.onReceived(data)
 
+    def setGlobalBackgroundEnabled(self, enabled):
+        self.terminal.setGlobalBackgroundEnabled(enabled)
+
 class Plugin(Plugin_Base):
     '''
         call sequence:
@@ -703,7 +744,18 @@ class Plugin(Plugin_Base):
 
     def onWidgetMain(self, parent):
         self.widget = Scroll_Terminal(self.send, self.resizeConnOutput, self.isConnected)
+        self.onGlobalStyleChanged()
         return self.widget
+
+    def globalConfigValue(self, key, default=None):
+        try:
+            return self.configGlobal[key]
+        except Exception:
+            return default
+
+    def onGlobalStyleChanged(self):
+        if hasattr(self, "widget"):
+            self.widget.setGlobalBackgroundEnabled(bool(self.globalConfigValue("backgroundImage", "")))
 
     def resizeConnOutput(self, w, h):
         if self.isConnected:

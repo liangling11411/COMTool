@@ -8,7 +8,7 @@ if __name__ == "__main__":
 from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QObject, pyqtSlot, QEvent
 from PyQt5.QtWidgets import (QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
-                             QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea)
+                             QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSizePolicy)
 from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor,QFontMetrics
 try:
     import parameters,helpAbout,autoUpdate
@@ -39,7 +39,6 @@ class PortInfoButton(QPushButton):
         self.detail = detail
         self._lastText = ""
         self.setToolTip(tooltip)
-        self.setFlat(True)
         self.setMinimumHeight(54)
         self.setCursor(Qt.PointingHandCursor)
         self.updateText()
@@ -91,14 +90,17 @@ class PortInfoButton(QPushButton):
             self._lastText = text
             self.setText(text)
 
-    def setColor(self, color):
+    def setColor(self, color, hoverColor=None, pressedColor=None):
+        hoverColor = hoverColor or color
+        pressedColor = pressedColor or color
         self.setStyleSheet(
             "QPushButton{"
-            "text-align:left;background:%s;color:#ffffff;border-radius:5px;"
-            "padding:4px 8px;font-weight:bold;"
+            "text-align:left;background-color:%s;color:#ffffff;border:2px solid %s;border-radius:5px;"
+            "padding:4px 8px;font-weight:bold;min-height:54px;"
             "}"
-            "QPushButton:hover{background:%s;}"
-            % (color, color)
+            "QPushButton:hover{background-color:%s;border-color:%s;color:#ffffff;}"
+            "QPushButton:pressed{background-color:%s;border-color:%s;color:#ffffff;}"
+            % (color, color, hoverColor, hoverColor, pressedColor, pressedColor)
         )
 
 
@@ -158,9 +160,12 @@ class SerialPortRowWidget(QWidget):
         isCurrentPort = self.port == currentPort
         isOpened = status in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE)
         if isCurrentPort:
-            self.nameButton.setColor("#2e7d32" if isOpened else "#d32f2f")
+            if isOpened:
+                self.nameButton.setColor("#2e7d32", "#36963b", "#1b5e20")
+            else:
+                self.nameButton.setColor("#d32f2f", "#e04a4a", "#9a1d1d")
         else:
-            self.nameButton.setColor("#1976d2")
+            self.nameButton.setColor("#0865b1", "#0f88eb", "#044174")
         if status in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE):
             self.actionButton.setText(_("Disconnect"))
             self.actionButton.setToolTip(_("Close this port but keep the receive page"))
@@ -305,7 +310,8 @@ class Serial(COMM):
         self.serialPortListScroll = QScrollArea()
         self.serialPortListScroll.setWidgetResizable(True)
         self.serialPortListScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.serialPortListScroll.setMinimumHeight(180)
+        self.serialPortListScroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.serialPortListScroll.setFixedHeight(84)
         self.serialPortListScroll.setToolTip(_("Available serial ports"))
         self.serialPortListWidget = QWidget()
         self.serialPortListLayout = QVBoxLayout()
@@ -408,8 +414,9 @@ class Serial(COMM):
             row = SerialPortRowWidget(self, port, item)
             self.serialPortListLayout.addWidget(row)
             self.serialPortRowWidgets[port] = row
-        self.serialPortListScroll.setMinimumHeight(min(560, max(240, len(self.serialPortRowWidgets) * 72 + 12)))
-        self.serialPortListLayout.addStretch(1)
+        rowHeight = 72
+        visibleHeight = min(520, max(84, len(self.serialPortRowWidgets) * rowHeight + 8))
+        self.serialPortListScroll.setFixedHeight(visibleHeight)
         self.refreshSerialPortRows()
         self.highlightSelectedSerialPort()
 

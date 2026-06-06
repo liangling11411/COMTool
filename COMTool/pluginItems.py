@@ -192,16 +192,21 @@ class PluginItem:
         if hasattr(self, "contentSplitter") and self.contentSplitter and len(sizes) == 3:
             self.contentSplitter.setSizes(sizes)
 
-    def copyPanelStateFrom(self, sourceItem):
+    def copyPanelStateFrom(self, sourceItem, forceVisible=False):
         if not sourceItem:
             return
         if sourceItem.settingWidget and self.settingWidget:
-            self.settingWidget.setVisible(sourceItem.settingWidget.isVisible())
+            self.settingWidget.setVisible(True if forceVisible else sourceItem.settingWidget.isVisible())
         if sourceItem.functionalWidget and self.functionalWidget:
-            self.functionalWidget.setVisible(sourceItem.functionalWidget.isVisible())
+            self.functionalWidget.setVisible(True if forceVisible else sourceItem.functionalWidget.isVisible())
         sizes = sourceItem.panelSizes() if hasattr(sourceItem, "panelSizes") else []
         if sizes:
+            if forceVisible:
+                if sizes[0] <= 40 or sizes[2] <= 40:
+                    sizes = [260, max(360, sizes[1]), 360]
             self.setPanelSizes(sizes)
+        elif forceVisible:
+            self.setPanelSizes([260, 640, 360])
 
     def setImportPageEnabled(self, enabled):
         if hasattr(self, "loadConfigBtn"):

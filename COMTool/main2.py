@@ -43,11 +43,12 @@ except ImportError:
     from COMTool.pluginItems import PluginItem
     from .widgets import TitleBar, CustomTitleBarWindowMixin, EventFilter, ButtonCombbox, HelpWidget
 
-from PyQt5.QtCore import pyqtSignal, Qt, QRect, QMargins, QCoreApplication, QTimer
+from PyQt5.QtCore import pyqtSignal, Qt, QRect, QMargins, QCoreApplication, QTimer, QEvent, QObject, QPoint
 from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QTabWidget, QMenu, QSplashScreen,
-                             QInputDialog)
+                             QInputDialog, QPlainTextEdit, QComboBox, QSpinBox, QDoubleSpinBox, QFontComboBox,
+                             QScrollBar)
 from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QCloseEvent, QPainter
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
 import threading
@@ -63,14 +64,29 @@ g_all_windows = []
 class BackgroundFrameWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.backgroundPath = ""
         self.backgroundPixmap = QPixmap()
+        self.backgroundScaled = QPixmap()
+        self.backgroundCropped = QPixmap()
+        self.backgroundScaleKey = None
+        self.backgroundCropKey = None
         self.backgroundOpacity = 0.35
 
     def setGlobalBackground(self, path, opacity):
+        path = path or ""
         if path and os.path.exists(path):
-            self.backgroundPixmap = QPixmap(path)
+            if path != self.backgroundPath:
+                self.backgroundPixmap = QPixmap(path)
+                self.backgroundPath = path
+                self.backgroundScaleKey = None
+                self.backgroundCropKey = None
         else:
+            self.backgroundPath = ""
             self.backgroundPixmap = QPixmap()
+            self.backgroundScaled = QPixmap()
+            self.backgroundCropped = QPixmap()
+            self.backgroundScaleKey = None
+            self.backgroundCropKey = None
         try:
             opacity = int(opacity)
         except Exception:
@@ -78,16 +94,70 @@ class BackgroundFrameWidget(QWidget):
         self.backgroundOpacity = max(0, min(100, opacity)) / 100
         self.update()
 
-    def paintEvent(self, event):
-        super().paintEvent(event)
+    def resizeEvent(self, event):
+        self.backgroundScaleKey = None
+        self.backgroundCropKey = None
+        super().resizeEvent(event)
+
+    def scaledBackground(self):
+        if self.backgroundPixmap.isNull():
+            return QPixmap()
+        key = (self.backgroundPath, self.width(), self.height())
+        if key != self.backgroundScaleKey or self.backgroundScaled.isNull():
+            self.backgroundScaled = self.backgroundPixmap.scaled(
+                self.size(), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation
+            )
+            self.backgroundScaleKey = key
+            self.backgroundCropKey = None
+        return self.backgroundScaled
+
+    def croppedBackground(self):
+        scaled = self.scaledBackground()
+        if scaled.isNull():
+            return QPixmap()
+        key = (self.backgroundScaleKey, self.width(), self.height())
+        if key != self.backgroundCropKey or self.backgroundCropped.isNull():
+            x = max(0, int((scaled.width() - self.width()) / 2))
+            y = max(0, int((scaled.height() - self.height()) / 2))
+            self.backgroundCropped = scaled.copy(x, y, self.width(), self.height())
+            self.backgroundCropKey = key
+        return self.backgroundCropped
+
+    def drawGlobalBackground(self, painter, targetWidget=None):
         if self.backgroundPixmap.isNull():
             return
-        painter = QPainter(self)
+        source = self.croppedBackground()
+        if source.isNull():
+            return
+        drawX = 0
+        drawY = 0
+        if targetWidget is not None and targetWidget is not self:
+            origin = targetWidget.mapTo(self, QPoint(0, 0))
+            drawX = -origin.x()
+            drawY = -origin.y()
+        painter.save()
         painter.setOpacity(self.backgroundOpacity)
-        scaled = self.backgroundPixmap.scaled(self.size(), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
-        x = max(0, int((scaled.width() - self.width()) / 2))
-        y = max(0, int((scaled.height() - self.height()) / 2))
-        painter.drawPixmap(0, 0, scaled.copy(x, y, self.width(), self.height()))
+        painter.drawPixmap(drawX, drawY, source)
+        painter.restore()
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        painter = QPainter(self)
+        self.drawGlobalBackground(painter)
+
+
+class BackgroundPaintFilter(QObject):
+    def __init__(self, window):
+        super().__init__(window)
+        self.window = window
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.Paint and self.window.globalBackgroundEnabled():
+            frame = getattr(self.window, "frameWidget", None)
+            if frame is not None and not frame.backgroundPixmap.isNull():
+                painter = QPainter(obj)
+                frame.drawGlobalBackground(painter, obj)
+        return False
 
 class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
     hintSignal = pyqtSignal(str, str, str) # type(error, warning, info), title, msg
@@ -246,6 +316,8 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
                         }
                 })
         self.refreshSerialQuickPortStatuses()
+        if self.globalBackgroundEnabled():
+            self.applyGlobalBackgroundWidgetAttributes(True, polish=True)
         return item
 
     def tabAddItem(self, item):
@@ -358,8 +430,8 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         item = self.addItem(pluginClass, setCurrent=True, connsConfigs=connsConfigs, pluginConfig=pluginConfig)
         self.onItemNameChanged(item, port)
         if sourceItem is not None and hasattr(item, "copyPanelStateFrom"):
-            item.copyPanelStateFrom(sourceItem)
-            QTimer.singleShot(0, lambda: item.copyPanelStateFrom(sourceItem))
+            item.copyPanelStateFrom(sourceItem, forceVisible=True)
+            QTimer.singleShot(0, lambda: item.copyPanelStateFrom(sourceItem, forceVisible=True))
         return item
 
     def setSerialItemOpen(self, item, openNow):
@@ -1001,11 +1073,12 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         if not path or not os.path.exists(path):
             return ""
         dark = self.configGet("skin", "light") == "dark"
-        panel = "rgba(33,33,33,150)" if dark else "rgba(245,245,245,155)"
-        groupPanel = "rgba(33,33,33,115)" if dark else "rgba(245,245,245,115)"
-        edit = "rgba(58,58,58,175)" if dark else "rgba(255,255,255,180)"
-        buttonPanel = "rgba(45,45,45,170)" if dark else "rgba(255,255,255,190)"
+        groupPanel = "rgba(33,33,33,86)" if dark else "rgba(245,245,245,92)"
+        edit = "rgba(58,58,58,116)" if dark else "rgba(255,255,255,132)"
+        inputPanel = "rgba(58,58,58,138)" if dark else "rgba(255,255,255,156)"
+        tabPanel = "rgba(58,58,58,96)" if dark else "rgba(230,230,230,112)"
         return """
+*[globalBackgroundContainer="true"],
 QWidget#backgroundFrame,
 QWidget#contentWidget,
 QWidget#tabConerWidget,
@@ -1016,21 +1089,24 @@ QWidget[class="pageWrapper"] {
 .TitleBar {
     background-color: transparent;
 }
+QFrame,
 QSplitter,
 QTabWidget::pane,
+QStackedWidget,
 QScrollArea,
+QScrollArea > QWidget,
 QScrollArea > QWidget > QWidget,
 QWidget[class="contentWrapper"],
 QWidget[class="settingWidget"],
 QWidget[class="functionalWidget"] {
-    background-color: %s;
+    background-color: transparent;
 }
 QGroupBox {
     background-color: %s;
 }
+QAbstractScrollArea,
 QTextEdit,
 QPlainTextEdit,
-QLineEdit,
 QListView,
 QTreeWidget,
 QTableWidget,
@@ -1039,22 +1115,78 @@ QListWidget,
 QTextBrowser {
     background-color: %s;
 }
-QPushButton,
+QAbstractScrollArea::viewport {
+    background-color: transparent;
+}
+QLineEdit,
 QComboBox,
 QSpinBox,
-QDoubleSpinBox {
+QDoubleSpinBox,
+QFontComboBox {
     background-color: %s;
 }
-""" % (panel, groupPanel, edit, buttonPanel)
+QTabBar::tab:!selected {
+    background-color: %s;
+}
+""" % (groupPanel, edit, inputPanel, tabPanel)
+
+    def globalBackgroundEnabled(self):
+        path = self.configGet("backgroundImage", "")
+        return bool(path and os.path.exists(path))
+
+    def applyGlobalBackgroundWidgetAttributes(self, enabled, polish=False):
+        if not hasattr(self, "frameWidget"):
+            return
+        if enabled and not hasattr(self, "backgroundPaintFilter"):
+            self.backgroundPaintFilter = BackgroundPaintFilter(self)
+        controls = (
+            QPushButton, QLineEdit, QTextEdit, QPlainTextEdit, QCheckBox, QRadioButton,
+            QComboBox, ComboBox, QSpinBox, QDoubleSpinBox, QFontComboBox, QScrollBar
+        )
+        widgets = [self.frameWidget]
+        widgets.extend(self.frameWidget.findChildren(QWidget))
+        for widget in widgets:
+            isContainer = not isinstance(widget, controls)
+            widget.setProperty("globalBackgroundContainer", "true" if enabled and isContainer else "")
+            if isContainer:
+                widget.setAutoFillBackground(False)
+                widget.setAttribute(Qt.WA_TranslucentBackground, enabled)
+                installed = bool(widget.property("globalBackgroundPaintFilterInstalled"))
+                if enabled and not installed and widget is not self.frameWidget:
+                    widget.installEventFilter(self.backgroundPaintFilter)
+                    widget.setProperty("globalBackgroundPaintFilterInstalled", True)
+                elif (not enabled) and installed and hasattr(self, "backgroundPaintFilter"):
+                    widget.removeEventFilter(self.backgroundPaintFilter)
+                    widget.setProperty("globalBackgroundPaintFilterInstalled", False)
+            if polish:
+                widget.style().unpolish(widget)
+                widget.style().polish(widget)
+                widget.update()
+
+    def updateGlobalBackgroundContainers(self):
+        if not hasattr(self, "frameWidget"):
+            return
+        widgets = [self.frameWidget]
+        widgets.extend(self.frameWidget.findChildren(QWidget))
+        for widget in widgets:
+            if widget.property("globalBackgroundContainer") == "true" or widget.property("globalBackgroundPaintFilterInstalled"):
+                widget.update()
 
     def applyAppStyle(self):
         skin = self.configGet("skin", "light")
+        self.applyGlobalBackgroundWidgetAttributes(self.globalBackgroundEnabled())
         with open(self.DataPath + '/assets/qss/style-{}.qss'.format(skin), "r", encoding="utf-8") as file:
             qss = file.read().replace("$DataPath", self.DataPath) + self.backgroundPanelQss()
         self.app.setStyleSheet(qss)
         if hasattr(self, "frameWidget") and hasattr(self.frameWidget, "setGlobalBackground"):
             self.frameWidget.setGlobalBackground(self.configGet("backgroundImage", ""),
                                                  self.configGet("backgroundOpacity", 35))
+            self.updateGlobalBackgroundContainers()
+        if hasattr(self, "items"):
+            for item in self.items:
+                hook = getattr(item.plugin, "onGlobalStyleChanged", None)
+                if hook:
+                    hook()
 
     def selectGlobalBackgroundImage(self):
         oldPath = self.configGet("backgroundImage", "") or os.getcwd()
@@ -1070,6 +1202,7 @@ QDoubleSpinBox {
         self.config["backgroundImage"] = fileName_choose
         if hadBackground and hasattr(self, "frameWidget") and hasattr(self.frameWidget, "setGlobalBackground"):
             self.frameWidget.setGlobalBackground(fileName_choose, self.configGet("backgroundOpacity", 35))
+            self.updateGlobalBackgroundContainers()
         else:
             self.applyAppStyle()
 
@@ -1083,6 +1216,7 @@ QDoubleSpinBox {
         self.config["backgroundOpacity"] = value
         if hasattr(self, "frameWidget") and hasattr(self.frameWidget, "setGlobalBackground"):
             self.frameWidget.setGlobalBackground(self.configGet("backgroundImage", ""), value)
+            self.updateGlobalBackgroundContainers()
 
     def clearGlobalBackgroundImage(self):
         self.config["backgroundImage"] = ""

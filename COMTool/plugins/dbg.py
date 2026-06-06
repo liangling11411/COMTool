@@ -1370,8 +1370,10 @@ class Plugin(Plugin_Base):
             "QTextEdit#receiveLineNumberArea {background:rgba(127,127,127,28); color:#888; border:0; padding-right:4px;}"
         )
         self.sendArea = FontSizeTextEdit(self.adjustSendFontSize)
+        self.sendArea.setObjectName("sendArea")
         self.sendArea.setToolTip(_("Input data to send"))
         self.sendArea.setAcceptRichText(False)
+        self.applyReceiveAreaStyle()
         self.ensureMainActionButtons()
         self.receiveFindButton = QPushButton("")
         self.receiveFindButton.setToolTip(_("Find and highlight receive text"))
@@ -2590,11 +2592,24 @@ class Plugin(Plugin_Base):
     def applyReceiveAreaStyle(self):
         if not hasattr(self, "receiveArea"):
             return
+        backgroundEnabled = bool(self.globalConfigValue("backgroundImage", ""))
+        dark = self.globalConfigValue("skin", "light") == "dark"
+        editBg = "rgba(58,58,58,116)" if dark else "rgba(255,255,255,132)"
         rules = [
             "QTextEdit#receiveArea QScrollBar::handle:vertical { min-height: 48px; }",
             "QTextEdit#receiveArea QScrollBar::handle:horizontal { min-width: 48px; }"
         ]
+        if backgroundEnabled:
+            rules.append("QTextEdit#receiveArea { background-color: %s; }" % editBg)
         self.receiveArea.setStyleSheet("".join(rules))
+        if hasattr(self, "sendArea"):
+            if backgroundEnabled:
+                self.sendArea.setStyleSheet("QTextEdit#sendArea { background-color: %s; }" % editBg)
+            else:
+                self.sendArea.setStyleSheet("")
+
+    def onGlobalStyleChanged(self):
+        self.applyReceiveAreaStyle()
 
     def onReceiveLineNumbersClicked(self):
         self.config["receiveLineNumbers"] = self.receiveLineNumbers.isChecked()
