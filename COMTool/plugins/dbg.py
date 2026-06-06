@@ -1459,13 +1459,6 @@ class Plugin(Plugin_Base):
         self.receiveShowNonPrintableHex.setToolTip(_("In ASCII receive mode, show bytes without printable ASCII characters as \\xNN"))
         self.receiveLineNumbers = QCheckBox(_("Line numbers"))
         self.receiveLineNumbers.setToolTip(_("Show line numbers in the receive area, only editable while the connection is closed"))
-        self.receiveBackgroundPath = QLineEdit()
-        self.receiveBackgroundPath.setReadOnly(True)
-        self.receiveBackgroundPath.setToolTip(_("Receive area background image path"))
-        self.receiveBackgroundButton = QPushButton(_("Background"))
-        self.receiveBackgroundButton.setToolTip(_("Select a background image for the receive area"))
-        self.receiveBackgroundClearButton = QPushButton(_("Clear BG"))
-        self.receiveBackgroundClearButton.setToolTip(_("Remove receive area background image"))
         self.receiveSettingsWrap.setToolTip(_("When content in a line is too long, always auto wrap to show, and no scroll bar"))
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsAscii,1,0,1,1)
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsHex,1,1,1,1)
@@ -1475,9 +1468,6 @@ class Plugin(Plugin_Base):
         serialReceiveSettingsLayout.addWidget(self.receiveEscape, 3, 1, 1, 1)
         serialReceiveSettingsLayout.addWidget(self.receiveShowNonPrintableHex, 4, 0, 1, 2)
         serialReceiveSettingsLayout.addWidget(self.receiveLineNumbers, 5, 0, 1, 2)
-        serialReceiveSettingsLayout.addWidget(self.receiveBackgroundPath, 6, 0, 1, 2)
-        serialReceiveSettingsLayout.addWidget(self.receiveBackgroundButton, 7, 0, 1, 1)
-        serialReceiveSettingsLayout.addWidget(self.receiveBackgroundClearButton, 7, 1, 1, 1)
         serialReceiveSettingsGroupBox.setLayout(serialReceiveSettingsLayout)
         serialReceiveSettingsGroupBox.setAlignment(Qt.AlignHCenter)
         layout.addWidget(serialReceiveSettingsGroupBox)
@@ -1545,8 +1535,6 @@ class Plugin(Plugin_Base):
         self.receiveSettingsHex.clicked.connect(lambda : self.switchRxMode(False))
         self.receiveShowNonPrintableHex.clicked.connect(lambda: self.bindVar(self.receiveShowNonPrintableHex, self.config, "receiveShowNonPrintableHex"))
         self.receiveLineNumbers.clicked.connect(self.onReceiveLineNumbersClicked)
-        self.receiveBackgroundButton.clicked.connect(self.selectReceiveBackgroundImage)
-        self.receiveBackgroundClearButton.clicked.connect(self.clearReceiveBackgroundImage)
         self.sendSettingsHex.clicked.connect(self.onSendSettingsHexClicked)
         self.sendSettingsAscii.clicked.connect(self.onSendSettingsAsciiClicked)
         self.sendSettingsRecord.clicked.connect(self.onRecordSendClicked)
@@ -1895,13 +1883,8 @@ class Plugin(Plugin_Base):
         if not sequenceObj:
             return ""
         sequence = sequenceObj.get("items", [])
-        names = []
-        for item in sequence[:3]:
-            names.append(item.get("remark") or item.get("text") or _("Command"))
-        if len(sequence) > 3:
-            names.append("...")
         loopText = _("Loop") if sequenceObj.get("loop", False) else _("Once")
-        return "{} [{}]: {} ({})".format(sequenceObj.get("name", _("Combo command")), loopText, " -> ".join(names), len(sequence))
+        return "{} [{}] ({})".format(sequenceObj.get("name", _("Combo command")), loopText, len(sequence))
 
     def updateCommandSequenceBar(self):
         if not hasattr(self, "commandSequenceBar"):
@@ -2120,8 +2103,6 @@ class Plugin(Plugin_Base):
         self.updateDefaultFontColorButton(self.timestampColorButton, paramObj["timestampColor"])
         self.receiveSettingsWrap.setChecked(paramObj["wrap"])
         self.receiveLineNumbers.setChecked(bool(paramObj.get("receiveLineNumbers", False)))
-        self.receiveBackgroundPath.setText(paramObj.get("receiveBackgroundImage", ""))
-        self.receiveBackgroundPath.setToolTip(paramObj.get("receiveBackgroundImage", ""))
         self.sendSettingsHex.setChecked(not paramObj["sendAscii"])
         self.sendSettingsScheduledCheckBox.setChecked(paramObj["sendScheduled"])
         try:
@@ -2613,12 +2594,6 @@ class Plugin(Plugin_Base):
             "QTextEdit#receiveArea QScrollBar::handle:vertical { min-height: 48px; }",
             "QTextEdit#receiveArea QScrollBar::handle:horizontal { min-width: 48px; }"
         ]
-        path = self.config.get("receiveBackgroundImage", "")
-        if path and os.path.exists(path):
-            url = path.replace("\\", "/").replace('"', '\\"')
-            rules.append(
-                'QTextEdit#receiveArea {{ background-image: url("{}"); background-repeat: no-repeat; background-position: center; }}'.format(url)
-            )
         self.receiveArea.setStyleSheet("".join(rules))
 
     def onReceiveLineNumbersClicked(self):
@@ -2645,28 +2620,6 @@ class Plugin(Plugin_Base):
     def syncReceiveLineNumberScroll(self, value):
         if hasattr(self, "receiveLineNumberArea") and self.config.get("receiveLineNumbers", False):
             self.receiveLineNumberArea.verticalScrollBar().setValue(value)
-
-    def selectReceiveBackgroundImage(self):
-        oldPath = self.config.get("receiveBackgroundImage", "") or os.getcwd()
-        fileName_choose, filetype = QFileDialog.getOpenFileName(
-            self.mainWidget,
-            _("Select background image"),
-            oldPath,
-            _("Images (*.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)")
-        )
-        if not fileName_choose:
-            return
-        self.config["receiveBackgroundImage"] = fileName_choose
-        self.receiveBackgroundPath.setText(fileName_choose)
-        self.receiveBackgroundPath.setToolTip(fileName_choose)
-        self.applyReceiveAreaStyle()
-
-    def clearReceiveBackgroundImage(self):
-        self.config["receiveBackgroundImage"] = ""
-        if hasattr(self, "receiveBackgroundPath"):
-            self.receiveBackgroundPath.clear()
-            self.receiveBackgroundPath.setToolTip("")
-        self.applyReceiveAreaStyle()
 
     def copyAllReceiveText(self):
         QApplication.clipboard().setText(self.receiveArea.toPlainText())

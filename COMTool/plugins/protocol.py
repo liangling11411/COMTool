@@ -973,13 +973,8 @@ def parse(line, ctx):
         if not sequenceObj:
             return ""
         sequence = sequenceObj.get("items", [])
-        names = []
-        for item in sequence[:3]:
-            names.append(item.get("remark") or item.get("text") or _("Command"))
-        if len(sequence) > 3:
-            names.append("...")
         loopText = _("Loop") if sequenceObj.get("loop", False) else _("Once")
-        return "{} [{}]: {} ({})".format(sequenceObj.get("name", _("Combo command")), loopText, " -> ".join(names), len(sequence))
+        return "{} [{}] ({})".format(sequenceObj.get("name", _("Combo command")), loopText, len(sequence))
 
     def updateCommandSequenceBar(self):
         if not hasattr(self, "commandSequenceBar"):

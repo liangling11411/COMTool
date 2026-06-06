@@ -2787,3 +2787,12 @@ msgstr "循環"
 
 msgid "Once"
 msgstr "單次"
+
+msgid "Background opacity"
+msgstr "背景透明度"
+
+msgid "Clear background image"
+msgstr "清除背景圖"
+
+msgid "Opacity 0-100"
+msgstr "透明度 0-100"

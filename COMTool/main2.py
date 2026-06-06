@@ -48,7 +48,7 @@ from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesk
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QTabWidget, QMenu, QSplashScreen,
                              QInputDialog)
-from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QCloseEvent
+from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QCloseEvent, QPainter
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
 import threading
 import time
@@ -59,6 +59,35 @@ if sys.platform == "win32":
     import ctypes
 
 g_all_windows = []
+
+class BackgroundFrameWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.backgroundPixmap = QPixmap()
+        self.backgroundOpacity = 0.35
+
+    def setGlobalBackground(self, path, opacity):
+        if path and os.path.exists(path):
+            self.backgroundPixmap = QPixmap(path)
+        else:
+            self.backgroundPixmap = QPixmap()
+        try:
+            opacity = int(opacity)
+        except Exception:
+            opacity = 35
+        self.backgroundOpacity = max(0, min(100, opacity)) / 100
+        self.update()
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        if self.backgroundPixmap.isNull():
+            return
+        painter = QPainter(self)
+        painter.setOpacity(self.backgroundOpacity)
+        scaled = self.backgroundPixmap.scaled(self.size(), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        x = max(0, int((scaled.width() - self.width()) / 2))
+        y = max(0, int((scaled.height() - self.height()) / 2))
+        painter.drawPixmap(0, 0, scaled.copy(x, y, self.width(), self.height()))
 
 class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
     hintSignal = pyqtSignal(str, str, str) # type(error, warning, info), title, msg
@@ -95,6 +124,17 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         self.items = []
         self.pluginClasses = []
         self.helpWindow = None
+        self.configDefaults()
+
+    def configDefaults(self):
+        if "backgroundImage" not in self.config:
+            self.config["backgroundImage"] = ""
+        if "backgroundOpacity" not in self.config:
+            self.config["backgroundOpacity"] = 35
+        try:
+            self.config["backgroundOpacity"] = max(0, min(100, int(self.config["backgroundOpacity"])))
+        except Exception:
+            self.config["backgroundOpacity"] = 35
 
 
     def loadPluginsInfoList(self):
@@ -332,16 +372,23 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
     def onSerialPortPageRequest(self, sourceItem, port, action):
         if not port:
             return
-        item = None if action == "open" else self.findSerialReceiveItem(port, preferConnected=(action == "disconnect"))
+        if action == "disconnect":
+            item = self.findSerialReceiveItem(port, preferConnected=True)
+            if item is not None:
+                self.setSerialItemOpen(item, False)
+            self.refreshSerialQuickPortStatuses()
+            return
+
+        item = self.findSerialReceiveItem(port)
         if item is None:
             item = self.createSerialReceiveItem(sourceItem, port)
         if item is None:
             return
-        self.tabWidget.setCurrentWidget(item.widget)
         if action == "connect":
+            self.tabWidget.setCurrentWidget(item.widget)
             self.setSerialItemOpen(item, True)
-        elif action == "disconnect":
-            self.setSerialItemOpen(item, False)
+        elif action in ("focus", "open"):
+            self.tabWidget.setCurrentWidget(item.widget)
         self.refreshSerialQuickPortStatuses()
 
     def serialPortStatusMap(self):
@@ -474,8 +521,16 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         self.languages = i18n.get_languages()
         for locale in self.languages:
             self.languageCombobox.addItem(self.languages[locale])
-        for skin_name in utils_ui.get_skins():
+        self.skinNames = utils_ui.get_skins()
+        self.skinActionSelectBackground = len(self.skinNames)
+        self.skinActionOpacity = self.skinActionSelectBackground + 1
+        self.skinActionClearBackground = self.skinActionSelectBackground + 2
+        self.ignoreSkinChange = False
+        for skin_name in self.skinNames:
             self.skinButton.addItem(_(skin_name))
+        self.skinButton.addItem(_("Select background image"))
+        self.skinButton.addItem(_("Background opacity"))
+        self.skinButton.addItem(_("Clear background image"))
         self.aboutButton = QPushButton()
         self.functionalButton = QPushButton()
         self.encodingCombobox = ComboBox()
@@ -508,10 +563,12 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         CustomTitleBarWindowMixin.__init__(self, titleBar=self.titleBar, init = True)
 
         # root layout
-        self.frameWidget = QWidget()
+        self.frameWidget = BackgroundFrameWidget()
+        self.frameWidget.setObjectName("backgroundFrame")
         self.frameWidget.setMouseTracking(True)
         self.frameWidget.setLayout(self.rootLayout)
         self.setCentralWidget(self.frameWidget)
+        self.contentWidget.setObjectName("contentWidget")
         # tab widgets
         self.tabWidget = QTabWidget()
         self.tabWidget.setTabsClosable(True)
@@ -822,7 +879,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         self.languageCombobox.setCurrentIndex(idx)
         # skin
         try:
-            idx = utils_ui.get_skins().index(self.config["skin"])
+            idx = self.skinNames.index(self.config["skin"])
         except Exception:
             idx = 0
         self.skinButton.setCurrentIndex(idx)
@@ -897,14 +954,100 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
                 parameters.strStyleShowHideButtonLeft.replace("$DataPath", self.DataPath))
 
     def skinChange(self):
+        if self.ignoreSkinChange:
+            return
         idx = self.skinButton.currentIndex()
-        skin = utils_ui.get_skins()[idx]
-        file = open(self.DataPath + '/assets/qss/style-{}.qss'.format(skin), "r", encoding="utf-8")
-        self.app.setStyleSheet(file.read().replace("$DataPath", self.DataPath))
+        if idx == self.skinActionSelectBackground:
+            self.selectGlobalBackgroundImage()
+            self.restoreSkinButtonIndex()
+            return
+        if idx == self.skinActionOpacity:
+            self.changeGlobalBackgroundOpacity()
+            self.restoreSkinButtonIndex()
+            return
+        if idx == self.skinActionClearBackground:
+            self.clearGlobalBackgroundImage()
+            self.restoreSkinButtonIndex()
+            return
+        if idx < 0 or idx >= len(self.skinNames):
+            self.restoreSkinButtonIndex()
+            return
+        skin = self.skinNames[idx]
         utils_ui.setSkin(skin)
         self.config["skin"] = skin
+        self.applyAppStyle()
         for item in self.items:
             item.plugin.onSkinChanged(skin)
+
+    def restoreSkinButtonIndex(self):
+        try:
+            idx = self.skinNames.index(self.config["skin"])
+        except Exception:
+            idx = 0
+        self.ignoreSkinChange = True
+        self.skinButton.setCurrentIndex(idx)
+        self.ignoreSkinChange = False
+
+    def configGet(self, key, default=None):
+        return self.config[key] if key in self.config else default
+
+    def backgroundPanelQss(self):
+        path = self.configGet("backgroundImage", "")
+        if not path or not os.path.exists(path):
+            return ""
+        dark = self.configGet("skin", "light") == "dark"
+        panel = "rgba(33,33,33,215)" if dark else "rgba(245,245,245,215)"
+        edit = "rgba(58,58,58,228)" if dark else "rgba(245,245,245,228)"
+        return """
+QWidget#backgroundFrame, QWidget#contentWidget {
+    background: transparent;
+}
+.TitleBar {
+    background-color: transparent;
+}
+.contentWrapper, .settingWidget, .functionalWidget, QTabWidget::pane {
+    background-color: %s;
+}
+QTextEdit, QPlainTextEdit, QListView {
+    background-color: %s;
+}
+""" % (panel, edit)
+
+    def applyAppStyle(self):
+        skin = self.configGet("skin", "light")
+        with open(self.DataPath + '/assets/qss/style-{}.qss'.format(skin), "r", encoding="utf-8") as file:
+            qss = file.read().replace("$DataPath", self.DataPath) + self.backgroundPanelQss()
+        self.app.setStyleSheet(qss)
+        if hasattr(self, "frameWidget") and hasattr(self.frameWidget, "setGlobalBackground"):
+            self.frameWidget.setGlobalBackground(self.configGet("backgroundImage", ""),
+                                                 self.configGet("backgroundOpacity", 35))
+
+    def selectGlobalBackgroundImage(self):
+        oldPath = self.configGet("backgroundImage", "") or os.getcwd()
+        fileName_choose, filetype = QFileDialog.getOpenFileName(
+            self,
+            _("Select background image"),
+            oldPath,
+            _("Images (*.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)")
+        )
+        if not fileName_choose:
+            return
+        self.config["backgroundImage"] = fileName_choose
+        self.applyAppStyle()
+
+    def changeGlobalBackgroundOpacity(self):
+        value, ok = QInputDialog.getInt(self, _("Background opacity"),
+                                        _("Opacity 0-100"),
+                                        int(self.configGet("backgroundOpacity", 35)),
+                                        0, 100, 5)
+        if not ok:
+            return
+        self.config["backgroundOpacity"] = value
+        self.applyAppStyle()
+
+    def clearGlobalBackgroundImage(self):
+        self.config["backgroundImage"] = ""
+        self.applyAppStyle()
 
     def showAbout(self):
         help = helpAbout.HelpInfo()
@@ -1006,9 +1149,7 @@ def main():
         # path = os.path.join(mainWindow.DataPath, "assets", "fonts", "JosefinSans-Regular.ttf")
         # load_fonts([path])
         log.i("data path:"+mainWindow.DataPath)
-        file = open(mainWindow.DataPath+'/assets/qss/style-{}.qss'.format(mainWindow.config["skin"]),"r", encoding="utf-8")
-        qss = file.read().replace("$DataPath",mainWindow.DataPath)
-        app.setStyleSheet(qss)
+        mainWindow.applyAppStyle()
         t = threading.Thread(target=mainWindow.autoUpdateDetect)
         t.setDaemon(True)
         t.start()

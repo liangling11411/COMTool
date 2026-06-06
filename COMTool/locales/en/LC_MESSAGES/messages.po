@@ -2813,3 +2813,12 @@ msgstr "Loop"
 
 msgid "Once"
 msgstr "Once"
+
+msgid "Background opacity"
+msgstr "Background opacity"
+
+msgid "Clear background image"
+msgstr "Clear background image"
+
+msgid "Opacity 0-100"
+msgstr "Opacity 0-100"

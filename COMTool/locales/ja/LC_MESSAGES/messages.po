@@ -2808,3 +2808,12 @@ msgstr "ループ"
 
 msgid "Once"
 msgstr "一回"
+
+msgid "Background opacity"
+msgstr "背景の透明度"
+
+msgid "Clear background image"
+msgstr "背景画像をクリア"
+
+msgid "Opacity 0-100"
+msgstr "透明度 0-100"

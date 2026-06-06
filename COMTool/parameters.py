@@ -63,6 +63,8 @@ class Parameters:
         "locale": "en",
         "encoding": "UTF-8",
         "skipVersion": None,
+        "backgroundImage": "",
+        "backgroundOpacity": 35,
         "windowSize": {
             "width": 850,
             "height": 500

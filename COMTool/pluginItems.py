@@ -143,6 +143,7 @@ class PluginItem:
         self.mainWidget = self.plugin.onWidgetMain(widget)
         # widgets functional
         self.functionalWidget = QWidget()
+        self.functionalWidget.setProperty("class", "functionalWidget")
         layout3 = QVBoxLayout()
         self.functionalWidget.setLayout(layout3)
         loadConfigBtn = QPushButton(_("Import page"))

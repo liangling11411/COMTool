@@ -44,31 +44,45 @@ class SerialPortRowWidget(QWidget):
         self.setCursor(Qt.PointingHandCursor)
         self.indicator = QLabel("")
         self.indicator.setFixedSize(10, 10)
-        self.indicator.setStyleSheet("background:#1aa332;border-radius:5px;")
+        self.indicator.setStyleSheet("background:#d32f2f;border-radius:5px;")
+        detail = text[len(port):].strip(" -") if text.startswith(port) else text
+        detail = detail or text
+        textWidget = QWidget()
+        textWidget.setStyleSheet("background:transparent;")
+        textLayout = QVBoxLayout()
+        textLayout.setContentsMargins(0, 0, 0, 0)
+        textLayout.setSpacing(0)
+        textWidget.setLayout(textLayout)
         self.nameButton = QPushButton(port)
         self.nameButton.setFlat(True)
         self.nameButton.setToolTip(text)
-        self.nameButton.setStyleSheet("text-align:left;")
+        self.nameButton.setStyleSheet("text-align:left;background:#d32f2f;color:#ffffff;border-radius:4px;padding:2px 6px;")
         self.nameButton.installEventFilter(self)
+        self.detailLabel = QLabel(detail)
+        self.detailLabel.setToolTip(text)
+        self.detailLabel.setWordWrap(True)
+        self.detailLabel.setStyleSheet("font-size:10px;color:#8a8a8a;background:transparent;padding-left:4px;")
         self.actionButton = QPushButton(_("Connect"))
         self.actionButton.setToolTip(_("Open this port in a receive page"))
         self.actionButton.setMinimumWidth(72)
+        textLayout.addWidget(self.nameButton)
+        textLayout.addWidget(self.detailLabel)
         layout.addWidget(self.indicator)
-        layout.addWidget(self.nameButton, 1)
+        layout.addWidget(textWidget, 1)
         layout.addWidget(self.actionButton)
-        self.nameButton.clicked.connect(lambda: self.owner.selectSerialPort(self.port))
+        self.nameButton.clicked.connect(lambda: self.owner.requestSerialPortPage(self.port, "focus"))
         self.actionButton.clicked.connect(self.onActionClicked)
 
     def eventFilter(self, obj, event):
         if obj is self.nameButton and event.type() == QEvent.MouseButtonDblClick:
-            self.owner.requestSerialPortPage(self.port, "open")
+            self.owner.requestSerialPortPage(self.port, "focus")
             event.accept()
             return True
         return super().eventFilter(obj, event)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            self.owner.selectSerialPort(self.port)
+            self.owner.requestSerialPortPage(self.port, "focus")
         super().mousePressEvent(event)
 
     def onActionClicked(self):
@@ -80,19 +94,21 @@ class SerialPortRowWidget(QWidget):
 
     def mouseDoubleClickEvent(self, event):
         if event.button() == Qt.LeftButton:
-            self.owner.requestSerialPortPage(self.port, "open")
+            self.owner.requestSerialPortPage(self.port, "focus")
             event.accept()
             return
         super().mouseDoubleClickEvent(event)
 
     def setStatus(self, status):
         if status in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE):
-            self.indicator.setStyleSheet("background:#d32f2f;border-radius:5px;")
+            self.indicator.setStyleSheet("background:#1aa332;border-radius:5px;")
+            self.nameButton.setStyleSheet("text-align:left;background:#2e7d32;color:#ffffff;border-radius:4px;padding:2px 6px;")
             self.actionButton.setText(_("Disconnect"))
             self.actionButton.setToolTip(_("Close this port but keep the receive page"))
             self.actionButton.setStyleSheet("background:#d32f2f;color:#ffffff;")
         else:
-            self.indicator.setStyleSheet("background:#1aa332;border-radius:5px;")
+            self.indicator.setStyleSheet("background:#d32f2f;border-radius:5px;")
+            self.nameButton.setStyleSheet("text-align:left;background:#d32f2f;color:#ffffff;border-radius:4px;padding:2px 6px;")
             self.actionButton.setText(_("Connect"))
             self.actionButton.setToolTip(_("Open this port in a receive page"))
             self.actionButton.setStyleSheet("background:#2e7d32;color:#ffffff;")
@@ -226,6 +242,7 @@ class Serial(COMM):
         self.checkBoxRTS.setToolTip(_("Check to enable(usually output low level)"))
         self.checkBoxDTR.setToolTip(_("Check to enable(usually output low level)"))
         self.serialOpenCloseButton = QPushButton(_("OPEN"))
+        self.serialOpenCloseButton.hide()
         self.serialRefreshButton = QPushButton(_("Refresh ports"))
         self.serialRefreshButton.setToolTip(_("Refresh available serial ports"))
         self.serialPortListScroll = QScrollArea()
@@ -255,7 +272,6 @@ class Serial(COMM):
         serialSettingsLayout.addWidget(self.serialFlowControlCombobox, 6, 1)
         serialSettingsLayout.addWidget(self.checkBoxRTS, 7, 0,1,1)
         serialSettingsLayout.addWidget(self.checkBoxDTR, 7, 1,1,1)
-        serialSettingsLayout.addWidget(self.serialOpenCloseButton, 8, 0,1,2)
         self.widget.setLayout(serialSettingsLayout)
         self.widgetConfMap["port"]       = self.serialPortCombobox
         self.widgetConfMap["baudrate"]    = self.serailBaudrateCombobox
@@ -300,10 +316,13 @@ class Serial(COMM):
         self.highlightSelectedSerialPort()
 
     def requestSerialPortPage(self, port, action):
-        self.selectSerialPort(port)
         if self.serialPageRequestCallback is not None:
             self.serialPageRequestCallback(port, action)
             return
+        if action == "focus":
+            self.selectSerialPort(port)
+            return
+        self.selectSerialPort(port)
         if action == "connect" and not self.isConnected():
             self.openCloseSerial()
         elif action == "disconnect" and self.isConnected():
@@ -332,7 +351,7 @@ class Serial(COMM):
             row = SerialPortRowWidget(self, port, item)
             self.serialPortListLayout.addWidget(row)
             self.serialPortRowWidgets[port] = row
-        self.serialPortListScroll.setMinimumHeight(min(360, max(180, len(self.serialPortRowWidgets) * 42 + 12)))
+        self.serialPortListScroll.setMinimumHeight(min(520, max(220, len(self.serialPortRowWidgets) * 64 + 12)))
         self.serialPortListLayout.addStretch(1)
         self.refreshSerialPortRows()
         self.highlightSelectedSerialPort()
