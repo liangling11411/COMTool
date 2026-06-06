@@ -214,6 +214,12 @@ QGroupBox::title {
 }
 
 
+
+QSplitter::handle {
+    background-color: #2b2b2b;
+    border: 1px solid #2b2b2b;
+}
+
 QPushButton {
     font-family:Tahoma,Optima,"Trebuchet MS";
     border: 2px solid #0865b1;
@@ -402,7 +408,8 @@ QScrollArea {
 
 
 QTabWidget::pane { /* The tab widget frame */
-    /* border-top: 2px solid #e6e6e6; */
+    border: 2px solid #2b2b2b;
+    background-color: #212121;
 }
 
 QTabWidget::tab-bar {

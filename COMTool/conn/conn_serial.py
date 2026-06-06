@@ -304,7 +304,6 @@ class Serial(COMM):
         self.checkBoxRTS.setToolTip(_("Check to enable(usually output low level)"))
         self.checkBoxDTR.setToolTip(_("Check to enable(usually output low level)"))
         self.serialOpenCloseButton = QPushButton(_("OPEN"))
-        self.serialOpenCloseButton.hide()
         self.serialRefreshButton = QPushButton(_("Refresh ports"))
         self.serialRefreshButton.setToolTip(_("Refresh available serial ports"))
         self.serialPortListScroll = QScrollArea()
@@ -313,6 +312,7 @@ class Serial(COMM):
         self.serialPortListScroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.serialPortListScroll.setFixedHeight(84)
         self.serialPortListScroll.setToolTip(_("Available serial ports"))
+        self.serialPortListScroll.hide()
         self.serialPortListWidget = QWidget()
         self.serialPortListLayout = QVBoxLayout()
         self.serialPortListLayout.setContentsMargins(0, 0, 0, 0)
@@ -320,21 +320,21 @@ class Serial(COMM):
         self.serialPortListWidget.setLayout(self.serialPortListLayout)
         self.serialPortListScroll.setWidget(self.serialPortListWidget)
         serialSettingsLayout.addWidget(serialPortLabek,0,0)
-        self.serialPortCombobox.hide()
-        serialSettingsLayout.addWidget(self.serialRefreshButton, 0, 1)
-        serialSettingsLayout.addWidget(self.serialPortListScroll, 1, 0, 1, 2)
-        serialSettingsLayout.addWidget(serailBaudrateLabel, 2, 0)
-        serialSettingsLayout.addWidget(serailBytesLabel, 3, 0)
-        serialSettingsLayout.addWidget(serailParityLabel, 4, 0)
-        serialSettingsLayout.addWidget(serailStopbitsLabel, 5, 0)
-        serialSettingsLayout.addWidget(serialFlowControlLabel, 6, 0)
-        serialSettingsLayout.addWidget(self.serailBaudrateCombobox, 2, 1)
-        serialSettingsLayout.addWidget(self.serailBytesCombobox, 3, 1)
-        serialSettingsLayout.addWidget(self.serailParityCombobox, 4, 1)
-        serialSettingsLayout.addWidget(self.serailStopbitsCombobox, 5, 1)
-        serialSettingsLayout.addWidget(self.serialFlowControlCombobox, 6, 1)
-        serialSettingsLayout.addWidget(self.checkBoxRTS, 7, 0,1,1)
-        serialSettingsLayout.addWidget(self.checkBoxDTR, 7, 1,1,1)
+        serialSettingsLayout.addWidget(self.serialPortCombobox, 0, 1)
+        serialSettingsLayout.addWidget(self.serialRefreshButton, 0, 2)
+        serialSettingsLayout.addWidget(serailBaudrateLabel, 1, 0)
+        serialSettingsLayout.addWidget(self.serailBaudrateCombobox, 1, 1)
+        serialSettingsLayout.addWidget(serailBytesLabel, 2, 0)
+        serialSettingsLayout.addWidget(self.serailBytesCombobox, 2, 1)
+        serialSettingsLayout.addWidget(serailParityLabel, 3, 0)
+        serialSettingsLayout.addWidget(self.serailParityCombobox, 3, 1)
+        serialSettingsLayout.addWidget(serailStopbitsLabel, 4, 0)
+        serialSettingsLayout.addWidget(self.serailStopbitsCombobox, 4, 1)
+        serialSettingsLayout.addWidget(serialFlowControlLabel, 5, 0)
+        serialSettingsLayout.addWidget(self.serialFlowControlCombobox, 5, 1)
+        serialSettingsLayout.addWidget(self.checkBoxRTS, 6, 0, 1, 1)
+        serialSettingsLayout.addWidget(self.checkBoxDTR, 6, 1, 1, 1)
+        serialSettingsLayout.addWidget(self.serialOpenCloseButton, 7, 0, 1, 2)
         self.widget.setLayout(serialSettingsLayout)
         self.widgetConfMap["port"]       = self.serialPortCombobox
         self.widgetConfMap["baudrate"]    = self.serailBaudrateCombobox
@@ -394,6 +394,17 @@ class Serial(COMM):
     def setQuickPortStatuses(self, statuses):
         self.quickPortStatus = statuses.copy() if isinstance(statuses, dict) else {}
         self.refreshSerialPortRows()
+        port = self.config.get("port")
+        if not port or port not in self.quickPortStatus:
+            return
+        crossStatus = self.quickPortStatus[port]
+        currentText = self.serialOpenCloseButton.text()
+        if crossStatus in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE):
+            if currentText != _("CLOSE"):
+                self.showSwitchSignal.emit(crossStatus)
+        elif crossStatus == ConnectionStatus.CLOSED:
+            if currentText != _("OPEN"):
+                self.showSwitchSignal.emit(crossStatus)
 
     def refreshSerialPortRows(self):
         for port, row in self.serialPortRowWidgets.items():
@@ -616,7 +627,7 @@ class Serial(COMM):
                 index = self.serialPortCombobox.findText(self.config["port"], Qt.MatchContains)
                 if index>=0:
                     set = index
-        self.updateSerialPortRows(items)
+        self.serialPortCombobox.showPopup()
         self.isDetectSerialPort = False
         if set >= 0:
             self.serialPortCombobox.setCurrentIndex(set)
