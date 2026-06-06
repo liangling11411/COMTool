@@ -96,7 +96,7 @@ class PortInfoButton(QPushButton):
         self.setStyleSheet(
             "QPushButton{"
             "text-align:left;background-color:%s;color:#ffffff;border:2px solid %s;border-radius:5px;"
-            "padding:4px 8px;font-weight:bold;min-height:54px;"
+            "padding:4px 8px;font-weight:normal;font-size:12px;min-height:54px;"
             "}"
             "QPushButton:hover{background-color:%s;border-color:%s;color:#ffffff;}"
             "QPushButton:pressed{background-color:%s;border-color:%s;color:#ffffff;}"
@@ -114,6 +114,7 @@ class SerialPortRowWidget(QWidget):
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(6)
         self.setLayout(layout)
+        self._locked = False
         self.setCursor(Qt.PointingHandCursor)
         detail = text[len(port):].strip() if text.startswith(port) else text
         if detail.startswith(port):
@@ -138,6 +139,8 @@ class SerialPortRowWidget(QWidget):
         return super().eventFilter(obj, event)
 
     def mousePressEvent(self, event):
+        if self._locked:
+            return
         if event.button() == Qt.LeftButton:
             self.owner.requestSerialPortPage(self.port, "focus")
         super().mousePressEvent(event)
@@ -150,6 +153,8 @@ class SerialPortRowWidget(QWidget):
             self.owner.requestSerialPortPage(self.port, "connect")
 
     def mouseDoubleClickEvent(self, event):
+        if self._locked:
+            return
         if event.button() == Qt.LeftButton:
             self.owner.requestSerialPortPage(self.port, "focus")
             event.accept()
@@ -180,6 +185,26 @@ class SerialPortRowWidget(QWidget):
             self.setStyleSheet("SerialPortRowWidget{background:rgba(33,150,243,55);border:1px solid #2196f3;border-radius:5px;}")
         else:
             self.setStyleSheet("SerialPortRowWidget{background:transparent;border:1px solid transparent;border-radius:5px;}")
+    
+    def setLocked(self, locked):
+        self._locked = locked
+        self.nameButton.setEnabled(not locked)
+        self.actionButton.setEnabled(not locked)
+        if locked:
+            self.setCursor(Qt.ArrowCursor)
+            self.nameButton.setStyleSheet(
+                "QPushButton{"
+                "text-align:left;background-color:#555555;color:#888888;border:2px solid #555555;border-radius:5px;"
+                "padding:4px 8px;font-weight:normal;font-size:12px;min-height:54px;"
+                "}"
+            )
+            self.actionButton.setText(_("Locked"))
+            self.actionButton.setStyleSheet("background:#555555;color:#888888;")
+        else:
+            self.setCursor(Qt.PointingHandCursor)
+            self.nameButton.setEnabled(True)
+            self.actionButton.setEnabled(True)
+            self.setStatus(self.owner.quickPortStatus.get(self.port, ConnectionStatus.CLOSED), self.owner.config.get("port"))
 
 
 class Serial(COMM):
@@ -232,6 +257,7 @@ class Serial(COMM):
         self.quickPortStatus = {}
         self.serialPortRowWidgets = {}
         self.usePortRows = False  # True for dbg page (port rows), False for dropdown
+        self.lockedPorts = set()  # ports locked by non-dbg pages
 
     def disconnect(self):
         if self.isConnected():
@@ -310,7 +336,7 @@ class Serial(COMM):
         self.serialPortListScroll = QScrollArea()
         self.serialPortListScroll.setWidgetResizable(True)
         self.serialPortListScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.serialPortListScroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.serialPortListScroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.serialPortListScroll.setFixedHeight(84)
         self.serialPortListScroll.setToolTip(_("Available serial ports"))
         self.serialPortListWidget = QWidget()
@@ -325,7 +351,7 @@ class Serial(COMM):
             # Port rows mode (dbg page): show port list, hide dropdown and open/close
             self.serialPortCombobox.hide()
             self.serialOpenCloseButton.hide()
-            self.serialPortListScroll.setFixedHeight(84)
+            self.serialPortListScroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             serialSettingsLayout.addWidget(self.serialPortListScroll, 1, 0, 1, 2)
             serialSettingsLayout.addWidget(serailBaudrateLabel, 2, 0)
             serialSettingsLayout.addWidget(self.serailBaudrateCombobox, 2, 1)
@@ -428,9 +454,14 @@ class Serial(COMM):
             if currentText != _("OPEN"):
                 self.showSwitchSignal.emit(crossStatus)
 
+    def setLockedSerialPorts(self, lockedPorts):
+        self.lockedPorts = set(lockedPorts) if lockedPorts else set()
+        self.refreshSerialPortRows()
+
     def refreshSerialPortRows(self):
         for port, row in self.serialPortRowWidgets.items():
             row.setStatus(self.quickPortStatus.get(port, ConnectionStatus.CLOSED), self.config.get("port"))
+            row.setLocked(port in self.lockedPorts)
 
     def updateSerialPortRows(self, items):
         while self.serialPortListLayout.count():
@@ -448,8 +479,6 @@ class Serial(COMM):
             self.serialPortListLayout.addWidget(row)
             self.serialPortRowWidgets[port] = row
         rowHeight = 72
-        visibleHeight = min(520, max(84, len(self.serialPortRowWidgets) * rowHeight + 8))
-        self.serialPortListScroll.setFixedHeight(visibleHeight)
         self.refreshSerialPortRows()
         self.highlightSelectedSerialPort()
 
@@ -651,8 +680,6 @@ class Serial(COMM):
                     set = index
         if self.usePortRows:
             self.updateSerialPortRows(items)
-        else:
-            self.serialPortCombobox.showItems()
         self.isDetectSerialPort = False
         if set >= 0:
             self.serialPortCombobox.setCurrentIndex(set)

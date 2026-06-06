@@ -325,8 +325,14 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         self.setTabDisplay(self.tabWidget.count() - 1, item)
 
     def setTabDisplay(self, idx, item):
-        self.tabWidget.setTabText(idx, item.name)
         self.tabWidget.setTabToolTip(idx, item.name + _(", Double click to detach as a window, right click to rename"))
+        isDbg = getattr(item.plugin, "id", "") == "dbg"
+        if isDbg:
+            portName = self.serialPortForItem(item) or ""
+            remark = item.plugin.config.get("portRemark", "") if hasattr(item.plugin, "config") else ""
+            self.tabWidget.setTabText(idx, "{}  {}".format(portName, remark) if portName and remark else item.name)
+        else:
+            self.tabWidget.setTabText(idx, item.name)
 
     def uniqueItemName(self, name, currentItem=None):
         baseName = name.strip() if name else _("Page")
@@ -342,7 +348,28 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
 
     def onItemNameChanged(self, item, name):
         oldName = item.name
-        newName = self.uniqueItemName(name, item)
+        isDbg = getattr(item.plugin, "id", "") == "dbg"
+        if isDbg:
+            # For dbg pages: parse port part and remark part
+            # name format: "COM1 STM32调试" or just "COM1"
+            parts = name.split(" ", 1)
+            portPart = parts[0].strip()
+            remarkPart = parts[1].strip() if len(parts) > 1 else ""
+            # Update the port in serial config if it changed
+            conn = self.serialConnForItem(item)
+            if conn and portPart:
+                oldPort = conn.config.get("port", "")
+                if portPart != oldPort:
+                    conn.config["port"] = portPart
+                    conn.selectSerialPort(portPart)
+            # Store remark in plugin config
+            if hasattr(item.plugin, "config"):
+                item.plugin.config["portRemark"] = remarkPart
+            # Ensure unique name by port only (allow same port with different remarks?)
+            # Match by port prefix for uniqueness
+            newName = self.uniqueDbgItemName(portPart, remarkPart, item)
+        else:
+            newName = self.uniqueItemName(name, item)
         item.name = newName
         for itemConfig in self.config["items"]:
             if itemConfig["name"] == oldName:
@@ -359,6 +386,24 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             item.plugin.pageName = newName
         item.widget.setWindowTitle(newName)
         return newName
+
+    def uniqueDbgItemName(self, portPart, remarkPart, currentItem=None):
+        """Ensure unique dbg page name. Same port with different remarks allowed."""
+        candidate = portPart
+        if remarkPart:
+            candidate = "{} {}".format(portPart, remarkPart)
+        existing = set()
+        for item in self.items:
+            if item is not currentItem and getattr(item.plugin, "id", "") == "dbg":
+                existing.add(item.name)
+        if candidate not in existing:
+            return candidate
+        # If duplicate, append number
+        number = 1
+        base = candidate
+        while "{} ({})".format(base, number) in existing:
+            number += 1
+        return "{} ({})".format(base, number)
 
     def updateImportPageButtons(self):
         for item in self.items:
@@ -395,17 +440,27 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
 
     def findSerialReceiveItem(self, port, preferConnected=False):
         fallback = None
+        # Also check item name prefix for port match (e.g. "COM1 STM32调试")
         for item in self.items:
             if getattr(item.plugin, "id", "") != "dbg":
                 continue
-            if self.serialPortForItem(item) == port:
-                if not preferConnected:
-                    return item
-                conn = self.serialConnForItem(item)
-                if conn is not None and conn.getConnStatus() in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE):
-                    return item
-                if fallback is None:
-                    fallback = item
+            itemPort = self.serialPortForItem(item)
+            # Match by serial config port, or by item name prefix
+            if itemPort == port:
+                pass
+            elif item.name.startswith(port + " "):
+                pass
+            elif item.name == port:
+                pass
+            else:
+                continue
+            if not preferConnected:
+                return item
+            conn = self.serialConnForItem(item)
+            if conn is not None and conn.getConnStatus() in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE):
+                return item
+            if fallback is None:
+                fallback = item
         return fallback
 
     def cloneSerialPageConfigs(self, sourceItem, port):
@@ -422,13 +477,62 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             pluginConfig["saveLog"] = False
         return connsConfigs, pluginConfig
 
-    def createSerialReceiveItem(self, sourceItem, port):
+    def showNewDbgPageDialog(self):
+        """Show dialog to pick serial port and enter remark for new dbg page."""
+        from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QComboBox, QDialogButtonBox, QMessageBox
+        # Gather available serial ports
+        import serial.tools.list_ports
+        ports = list(serial.tools.list_ports.comports())
+        if not ports:
+            QMessageBox.warning(self, _("Warning"), _("No serial ports detected. Please connect a device first."))
+            return None
+        portItems = []
+        for p in ports:
+            showStr = "{} {} - {}".format(p.device, p.name, p.description)
+            if p.manufacturer:
+                showStr += " - {}".format(p.manufacturer)
+            portItems.append((p.device, showStr))
+        dialog = QDialog(self)
+        dialog.setWindowTitle(_("New Receive Page"))
+        dialog.setMinimumWidth(420)
+        layout = QVBoxLayout(dialog)
+        # Port selector
+        portLabel = QLabel(_("Select serial port:"))
+        layout.addWidget(portLabel)
+        portCombo = QComboBox()
+        for device, showStr in portItems:
+            portCombo.addItem(showStr, device)
+        layout.addWidget(portCombo)
+        # Remark
+        remarkLabel = QLabel(_("Remark (optional):"))
+        layout.addWidget(remarkLabel)
+        remarkInput = QLineEdit()
+        remarkInput.setPlaceholderText(_("e.g. STM32 debug"))
+        layout.addWidget(remarkInput)
+        # Buttons
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        layout.addWidget(buttons)
+        if dialog.exec_() != QDialog.Accepted:
+            return None
+        port = portCombo.currentData()
+        remark = remarkInput.text().strip()
+        return port, remark
+
+    def createSerialReceiveItem(self, sourceItem, port, remark=None):
         pluginClass = self.getPluginClassById("dbg")
         if pluginClass is None:
             return None
         connsConfigs, pluginConfig = self.cloneSerialPageConfigs(sourceItem, port)
+        # Store remark in plugin config
+        if remark:
+            pluginConfig["portRemark"] = remark
         item = self.addItem(pluginClass, setCurrent=True, connsConfigs=connsConfigs, pluginConfig=pluginConfig)
-        self.onItemNameChanged(item, port)
+        name = port
+        if remark:
+            name = "{} {}".format(port, remark)
+        self.onItemNameChanged(item, name)
         if sourceItem is not None and hasattr(item, "copyPanelStateFrom"):
             item.copyPanelStateFrom(sourceItem, forceVisible=True)
             QTimer.singleShot(0, lambda: item.copyPanelStateFrom(sourceItem, forceVisible=True))
@@ -468,6 +572,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
 
     def serialPortStatusMap(self):
         statuses = {}
+        lockedPorts = set()
         priority = {
             ConnectionStatus.CLOSED: 0,
             ConnectionStatus.CONNECTING: 1,
@@ -485,13 +590,22 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             old = statuses.get(port, ConnectionStatus.CLOSED)
             if priority.get(status, 0) >= priority.get(old, 0):
                 statuses[port] = status
-        return statuses
+            # Track ports locked by non-dbg pages
+            isDbg = getattr(item.plugin, "id", "") == "dbg"
+            if not isDbg and status in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE):
+                lockedPorts.add(port)
+        return statuses, lockedPorts
 
     def refreshSerialQuickPortStatuses(self):
-        statuses = self.serialPortStatusMap()
+        statuses, lockedPorts = self.serialPortStatusMap()
         for item in self.items:
             if hasattr(item, "setSerialQuickPortStatuses"):
                 item.setSerialQuickPortStatuses(statuses)
+            # Pass locked ports to serial connections
+            if getattr(item, "isAddConn", False):
+                for conn in item.conns:
+                    if hasattr(conn, "setLockedSerialPorts"):
+                        conn.setLockedSerialPorts(lockedPorts)
 
     def onConnChnaged(self, plugin, status:ConnectionStatus, msg):
         for item in self.items:
@@ -583,7 +697,21 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             loadID = text.split("-")[-1].strip()
             for pluginClass in self.pluginClasses:
                 if loadID == pluginClass.id:
-                    self.addItem(pluginClass, setCurrent = True)
+                    if pluginClass.id == "dbg":
+                        # Show dialog for dbg pages
+                        result = self.showNewDbgPageDialog()
+                        if result is None:
+                            break
+                        port, remark = result
+                        connsConfigs = {"currConn": "serial", "serial": {"port": port}}
+                        pluginConfig = {"portRemark": remark}
+                        item = self.addItem(pluginClass, setCurrent=True, connsConfigs=connsConfigs, pluginConfig=pluginConfig)
+                        name = port
+                        if remark:
+                            name = "{} {}".format(port, remark)
+                        self.onItemNameChanged(item, name)
+                    else:
+                        self.addItem(pluginClass, setCurrent = True)
                     break
 
     def initWindow(self):
@@ -786,15 +914,30 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         item = self.itemByTabIndex(idx)
         if item is None:
             return
-        newName, ok = QInputDialog.getText(self, _("Rename"), _("Page name"), text=item.name)
-        if not ok:
-            return
-        newName = newName.strip()
-        if not newName or newName == item.name:
-            return
-        if self.uniqueItemName(newName, item) != newName:
-            QMessageBox.warning(self, _("Warning"), _("Page name already exists"))
-            return
+        isDbg = getattr(item.plugin, "id", "") == "dbg"
+        if isDbg:
+            # For dbg pages: only allow editing the remark part
+            portPart = self.serialPortForItem(item) or item.name.split(" ")[0]
+            oldRemark = item.plugin.config.get("portRemark", "") if hasattr(item.plugin, "config") else ""
+            remark, ok = QInputDialog.getText(self, _("Rename remark"), _("Remark for") + " " + portPart, text=oldRemark)
+            if not ok:
+                return
+            remark = remark.strip()
+            newName = portPart
+            if remark:
+                newName = "{} {}".format(portPart, remark)
+            if newName == item.name:
+                return
+        else:
+            newName, ok = QInputDialog.getText(self, _("Rename"), _("Page name"), text=item.name)
+            if not ok:
+                return
+            newName = newName.strip()
+            if not newName or newName == item.name:
+                return
+            if self.uniqueItemName(newName, item) != newName:
+                QMessageBox.warning(self, _("Warning"), _("Page name already exists"))
+                return
         self.onItemNameChanged(item, newName)
 
     def closeTab(self, idx):
