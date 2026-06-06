@@ -197,6 +197,10 @@ QComboBox QAbstractItemView {
 QComboBox QAbstractItemView::item{
     min-height:3em;
 }
+QComboBox QAbstractItemView::item:hover{
+    background-color: #d0e8ff;
+    color: #0f88eb;
+}
 
 
 

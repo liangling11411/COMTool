@@ -1364,7 +1364,8 @@ class Plugin(Plugin_Base):
         self.receiveLineNumberArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.receiveLineNumberArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.receiveLineNumberArea.setTextInteractionFlags(Qt.NoTextInteraction)
-        self.receiveLineNumberArea.setFixedWidth(54)
+        self.receiveLineNumberArea.setMinimumWidth(28)
+        self.receiveLineNumberArea.setFixedWidth(54)  # will be updated by updateReceiveLineNumbers
         self.receiveLineNumberArea.setFont(font)
         self.receiveLineNumberArea.setStyleSheet(
             "QTextEdit#receiveLineNumberArea {background:rgba(127,127,127,28); color:#888; border:0; padding-right:4px;}"
@@ -2630,6 +2631,13 @@ class Plugin(Plugin_Base):
         text = "\n".join(str(i) for i in range(1, count + 1))
         if self.receiveLineNumberArea.toPlainText() != text:
             self.receiveLineNumberArea.setPlainText(text)
+        # Dynamic width based on digit count
+        digits = len(str(count))
+        fm = self.receiveLineNumberArea.fontMetrics()
+        charWidth = fm.horizontalAdvance("0") if hasattr(fm, "horizontalAdvance") else fm.width("0")
+        width = max(28, charWidth * digits + 14)
+        if self.receiveLineNumberArea.width() != width:
+            self.receiveLineNumberArea.setFixedWidth(width)
         self.syncReceiveLineNumberScroll(self.receiveArea.verticalScrollBar().value())
 
     def syncReceiveLineNumberScroll(self, value):

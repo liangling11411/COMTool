@@ -6,7 +6,7 @@ if __name__ == "__main__":
     sys.path.insert(0, os.path.join(path, ".."))
 
 from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QObject, pyqtSlot, QEvent
-from PyQt5.QtWidgets import (QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
+from PyQt5.QtWidgets import (QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,QLabel,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QSizePolicy)
 from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor,QFontMetrics
@@ -32,7 +32,8 @@ import serial.tools.list_ports
 import serial.tools.list_ports_common
 
 
-class PortInfoButton(QPushButton):
+class PortInfoButton(QWidget):
+    clicked = pyqtSignal()
     def __init__(self, port, detail, tooltip, parent=None):
         super().__init__(parent)
         self.port = port
@@ -41,6 +42,26 @@ class PortInfoButton(QPushButton):
         self.setToolTip(tooltip)
         self.setMinimumHeight(54)
         self.setCursor(Qt.PointingHandCursor)
+        layout = QVBoxLayout()
+        layout.setContentsMargins(8, 4, 8, 4)
+        layout.setSpacing(1)
+        self.setLayout(layout)
+        self.portLabel = QLabel(port)
+        self.portLabel.setStyleSheet("font-weight:bold;font-size:15px;color:#ffffff;background:transparent;")
+        self.detailLabel = QLabel()
+        self.detailLabel.setStyleSheet("font-size:10px;color:#cccccc;background:transparent;")
+        self.detailLabel.setWordWrap(True)
+        layout.addWidget(self.portLabel)
+        layout.addWidget(self.detailLabel)
+        self.updateText()
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.clicked.emit()
+        super().mousePressEvent(event)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
         self.updateText()
 
     def resizeEvent(self, event):
@@ -84,27 +105,20 @@ class PortInfoButton(QPushButton):
         return lines
 
     def updateText(self):
+        self.portLabel.setText(self.port)
         detailLines = self._wrapDetail(self.width())
         if detailLines:
-            detailText = "<br>".join(detailLines)
-            text = self.port + "\n" + "\n".join(detailLines)
+            self.detailLabel.setText("\n".join(detailLines))
+            self.detailLabel.show()
         else:
-            text = self.port
-        if text != self._lastText:
-            self._lastText = text
-            self.setText(text)
+            self.detailLabel.hide()
 
     def setColor(self, color, hoverColor=None, pressedColor=None):
         hoverColor = hoverColor or color
         pressedColor = pressedColor or color
         self.setStyleSheet(
-            "QPushButton{"
-            "text-align:left;background-color:%s;color:#ffffff;border:2px solid %s;border-radius:5px;"
-            "padding:4px 8px;font-weight:normal;font-size:12px;min-height:54px;"
-            "}"
-            "QPushButton:hover{background-color:%s;border-color:%s;color:#ffffff;}"
-            "QPushButton:pressed{background-color:%s;border-color:%s;color:#ffffff;}"
-            % (color, color, hoverColor, hoverColor, pressedColor, pressedColor)
+            "background-color:%s;border:2px solid %s;border-radius:5px;"
+            % (color, color)
         )
 
 
@@ -197,17 +211,18 @@ class SerialPortRowWidget(QWidget):
         if locked:
             self.setCursor(Qt.ArrowCursor)
             self.nameButton.setStyleSheet(
-                "QPushButton{"
-                "text-align:left;background-color:#555555;color:#888888;border:2px solid #555555;border-radius:5px;"
-                "padding:4px 8px;font-weight:bold;min-height:54px;"
-                "}"
+                "background-color:#555555;border:2px solid #555555;border-radius:5px;"
             )
+            self.nameButton.portLabel.setStyleSheet("font-weight:bold;font-size:15px;color:#888888;background:transparent;")
+            self.nameButton.detailLabel.setStyleSheet("font-size:10px;color:#666666;background:transparent;")
             self.actionButton.setText(_("Locked"))
             self.actionButton.setStyleSheet("background:#555555;color:#888888;")
         else:
             self.setCursor(Qt.PointingHandCursor)
             self.nameButton.setEnabled(True)
             self.actionButton.setEnabled(True)
+            self.nameButton.portLabel.setStyleSheet("font-weight:bold;font-size:15px;color:#ffffff;background:transparent;")
+            self.nameButton.detailLabel.setStyleSheet("font-size:10px;color:#cccccc;background:transparent;")
             self.setStatus(self.owner.quickPortStatus.get(self.port, ConnectionStatus.CLOSED), self.owner.config.get("port"))
 
 
@@ -337,26 +352,23 @@ class Serial(COMM):
         self.serialOpenCloseButton = QPushButton(_("OPEN"))
         self.serialRefreshButton = QPushButton(_("Refresh ports"))
         self.serialRefreshButton.setToolTip(_("Refresh available serial ports"))
-        self.serialPortListScroll = QScrollArea()
-        self.serialPortListScroll.setWidgetResizable(True)
-        self.serialPortListScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.serialPortListScroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.serialPortListScroll.setToolTip(_("Available serial ports"))
-        self.serialPortListWidget = QWidget()
+        self.serialPortListContainer = QWidget()
+        self.serialPortListContainer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.serialPortListContainer.setToolTip(_("Available serial ports"))
         self.serialPortListLayout = QVBoxLayout()
         self.serialPortListLayout.setContentsMargins(0, 0, 0, 0)
         self.serialPortListLayout.setSpacing(4)
-        self.serialPortListWidget.setLayout(self.serialPortListLayout)
-        self.serialPortListScroll.setWidget(self.serialPortListWidget)
+        self.serialPortListContainer.setLayout(self.serialPortListLayout)
+        # Keep old attribute names for backward compatibility
+        self.serialPortListWidget = self.serialPortListContainer
+        self.serialPortListScroll = self.serialPortListContainer
         # row 0: refresh button above port selection
         serialSettingsLayout.addWidget(self.serialRefreshButton, 0, 0, 1, 2)
         if self.usePortRows:
             # Port rows mode (dbg page): show port list, hide dropdown and open/close
             self.serialPortCombobox.hide()
             self.serialOpenCloseButton.hide()
-            self.serialPortListScroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-            self.serialPortListScroll.setFixedHeight(84)
-            serialSettingsLayout.addWidget(self.serialPortListScroll, 1, 0, 1, 2)
+            serialSettingsLayout.addWidget(self.serialPortListContainer, 1, 0, 1, 2)
             serialSettingsLayout.addWidget(serailBaudrateLabel, 2, 0)
             serialSettingsLayout.addWidget(self.serailBaudrateCombobox, 2, 1)
             serialSettingsLayout.addWidget(serailBytesLabel, 3, 0)
@@ -373,8 +385,7 @@ class Serial(COMM):
             # Dropdown mode (other pages): show dropdown and open/close, hide port rows
             serialSettingsLayout.addWidget(serialPortLabek, 1, 0)
             serialSettingsLayout.addWidget(self.serialPortCombobox, 1, 1)
-            self.serialPortListScroll.hide()
-            self.serialPortListScroll.setFixedHeight(84)
+            self.serialPortListContainer.hide()
             serialSettingsLayout.addWidget(serailBaudrateLabel, 2, 0)
             serialSettingsLayout.addWidget(self.serailBaudrateCombobox, 2, 1)
             serialSettingsLayout.addWidget(serailBytesLabel, 3, 0)
@@ -484,8 +495,6 @@ class Serial(COMM):
             self.serialPortListLayout.addWidget(row)
             self.serialPortRowWidgets[port] = row
         rowHeight = 72
-        visibleHeight = max(84, len(self.serialPortRowWidgets) * rowHeight + 8)
-        self.serialPortListScroll.setFixedHeight(visibleHeight)
         self.refreshSerialPortRows()
         self.highlightSelectedSerialPort()
 
@@ -701,6 +710,19 @@ class Serial(COMM):
         if self.com.port:
             self.quickPortStatus[self.com.port] = status
             self.refreshSerialPortRows()
+        isOpen = status in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE)
+        # Lock serial settings when port is open
+        settingsWidgets = [
+            self.serailBaudrateCombobox,
+            self.serailBytesCombobox,
+            self.serailParityCombobox,
+            self.serailStopbitsCombobox,
+            self.serialFlowControlCombobox,
+            self.checkBoxRTS,
+            self.checkBoxDTR,
+        ]
+        for w in settingsWidgets:
+            w.setEnabled(not isOpen)
         if status == ConnectionStatus.CLOSED:
             self.serialOpenCloseButton.setText(_("OPEN"))
             self.serialOpenCloseButton.setProperty("class", "")
