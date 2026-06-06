@@ -32,7 +32,7 @@ try:
     import crc
     from protocols import defaultProtocols
     from protocol_capture import DataCaptureWidget, defaultCaptureConfig
-    from dbg import (AsyncTextFileWriter, CustomSendColorButton, CustomSendDragHandle, CustomSendItemWidget,
+    from dbg import (AsyncTextFileWriter, CommandSequenceDialog, CustomSendColorButton, CustomSendDragHandle, CustomSendItemWidget,
                      FindMarkerScrollBar, LogSettingsDialog, NoWheelFontComboBox,
                      NoWheelSpinBox, ReceiveFindDialog, WrapRemarkButton, DEFAULT_TEXT_FONT)
 except Exception:
@@ -40,7 +40,7 @@ except Exception:
     from . import crc
     from .protocols import defaultProtocols
     from .protocol_capture import DataCaptureWidget, defaultCaptureConfig
-    from .dbg import (AsyncTextFileWriter, CustomSendColorButton, CustomSendDragHandle, CustomSendItemWidget,
+    from .dbg import (AsyncTextFileWriter, CommandSequenceDialog, CustomSendColorButton, CustomSendDragHandle, CustomSendItemWidget,
                       FindMarkerScrollBar, LogSettingsDialog, NoWheelFontComboBox,
                       NoWheelSpinBox, ReceiveFindDialog, WrapRemarkButton, DEFAULT_TEXT_FONT)
 
@@ -123,6 +123,7 @@ def parse(line, ctx):
             "recordSend" : False,
             "sendEscape" : True,
             "receiveEscape" : False,
+            "receiveShowNonPrintableHex": False,
             "showTimestamp" : False,
             "timestampColor": "#6d6d6d",
             "timestampNewline": False,
@@ -149,7 +150,8 @@ def parse(line, ctx):
             "currCode": "default",
             "dataCapture": defaultCaptureConfig(),
             "receiveFindRules": [],
-            "customSendItems": []
+            "customSendItems": [],
+            "commandSequenceItems": []
         }
         self.config = config
         for k in default:
@@ -204,6 +206,8 @@ def parse(line, ctx):
         self.saveLogStopTimer = None
         self.saveLogStatusTimer = None
         self.sendRecord = []
+        self.commandSequenceSending = False
+        self.commandSequenceStop = False
 
     def print(self, *args, **kw_args):
         end = "\n"
@@ -235,6 +239,7 @@ def parse(line, ctx):
         self.receiveWidget = TextEdit()
         self.receiveArea = self.receiveWidget
         self.receiveWidget.setReadOnly(True)
+        self.receiveWidget.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.TextSelectableByKeyboard)
         font = QFont('Menlo,Consolas,Bitstream Vera Sans Mono,Courier New,monospace, Microsoft YaHei', 10)
         self.receiveWidget.setFont(font)
         self.receiveWidget.setLineWrapMode(TextEdit.NoWrap)
@@ -307,6 +312,8 @@ def parse(line, ctx):
         self.receiveSettingsWrap = QCheckBox(_("Display wrap"))
         self.receiveEscape = QCheckBox(_("Escape"))
         self.receiveEscape.setToolTip(_("Enable escape characters support like \\t \\r \\n \\x01 \\001"))
+        self.receiveShowNonPrintableHex = QCheckBox(_("HEX for non-ASCII"))
+        self.receiveShowNonPrintableHex.setToolTip(_("In ASCII receive mode, show bytes without printable ASCII characters as \\xNN"))
         self.receiveSettingsWrap.setToolTip(_("When content in a line is too long, always auto wrap to show, and no scroll bar"))
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsAscii,1,0,1,1)
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsHex,1,1,1,1)
@@ -314,6 +321,7 @@ def parse(line, ctx):
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsAutoLinefeedTime, 2, 1, 1, 1)
         serialReceiveSettingsLayout.addWidget(self.receiveSettingsWrap, 3, 0, 1, 1)
         serialReceiveSettingsLayout.addWidget(self.receiveEscape, 3, 1, 1, 1)
+        serialReceiveSettingsLayout.addWidget(self.receiveShowNonPrintableHex, 4, 0, 1, 2)
         serialReceiveSettingsGroupBox.setLayout(serialReceiveSettingsLayout)
         serialReceiveSettingsGroupBox.setAlignment(Qt.AlignHCenter)
         rootLayout.addWidget(serialReceiveSettingsGroupBox)
@@ -375,6 +383,7 @@ def parse(line, ctx):
         self.sendArea.setAcceptRichText(False)
         self.sendArea.setToolTip(_("Input data to send"))
         self.sendArea.setMinimumHeight(120)
+        self.commandSequenceBar = self.createCommandSequenceBar()
         self.sendButton = QPushButton(_("Send"))
         self.sendButton.setToolTip(_("Send"))
         self.clearSendButton = QPushButton(_("Clear"))
@@ -382,8 +391,9 @@ def parse(line, ctx):
         sendButtonLayout = QHBoxLayout()
         sendButtonLayout.addWidget(self.clearSendButton)
         sendButtonLayout.addWidget(self.sendButton)
-        sendContentLayout.addWidget(self.sendArea, 0, 0, 1, 1)
-        sendContentLayout.addLayout(sendButtonLayout, 1, 0, 1, 1)
+        sendContentLayout.addWidget(self.commandSequenceBar, 0, 0, 1, 1)
+        sendContentLayout.addWidget(self.sendArea, 1, 0, 1, 1)
+        sendContentLayout.addLayout(sendButtonLayout, 2, 0, 1, 1)
         rootLayout.addWidget(sendContentGroup)
 
         root = QWidget()
@@ -396,6 +406,7 @@ def parse(line, ctx):
         self.receiveSettingsAutoLinefeed.clicked.connect(self.onAutoLinefeedClicked)
         self.receiveSettingsAscii.clicked.connect(lambda : self.switchRxMode(True))
         self.receiveSettingsHex.clicked.connect(lambda : self.switchRxMode(False))
+        self.receiveShowNonPrintableHex.clicked.connect(lambda: self.bindVar(self.receiveShowNonPrintableHex, self.config, "receiveShowNonPrintableHex"))
         self.sendSettingsHex.clicked.connect(self.onSendSettingsHexClicked)
         self.sendSettingsAscii.clicked.connect(self.onSendSettingsAsciiClicked)
         self.sendSettingsRecord.clicked.connect(self.onRecordSendClicked)
@@ -528,12 +539,15 @@ def parse(line, ctx):
         self.batchCustomSendColorButton = QPushButton(_("Color"))
         self.batchCustomSendIconButton = QPushButton(_("Icon"))
         self.batchCustomSendDeleteButton = QPushButton(_("Delete"))
+        self.customSendComboButton = QPushButton(_("Combo"))
         self.batchCustomSendColorButton.setToolTip(_("Set color for selected custom send items"))
         self.batchCustomSendIconButton.setToolTip(_("Set icon for selected custom send items"))
         self.batchCustomSendDeleteButton.setToolTip(_("Delete selected custom send items"))
+        self.customSendComboButton.setToolTip(_("Build a combo command from selected custom send items"))
         utils_ui.setButtonIcon(self.batchCustomSendColorButton, "fa.paint-brush")
         utils_ui.setButtonIcon(self.batchCustomSendIconButton, "fa.send")
         utils_ui.setButtonIcon(self.batchCustomSendDeleteButton, "fa.trash")
+        utils_ui.setButtonIcon(self.customSendComboButton, "fa.list")
         self.batchCustomSendDeleteButton.setProperty("class", "deleteBtn")
         customSendGroupBox = QGroupBox(_("Cutom send"))
         customSendItemsLayout0 = QVBoxLayout()
@@ -551,6 +565,7 @@ def parse(line, ctx):
         customSendBatchLayout.addWidget(self.batchCustomSendColorButton)
         customSendBatchLayout.addWidget(self.batchCustomSendIconButton)
         customSendBatchLayout.addWidget(self.batchCustomSendDeleteButton)
+        customSendBatchLayout.addWidget(self.customSendComboButton)
         customSendItemsLayout0.addLayout(customSendBatchLayout)
         customSendItemsLayout0.addWidget(self.customSendScroll)
 
@@ -587,6 +602,7 @@ def parse(line, ctx):
         self.batchCustomSendColorButton.clicked.connect(self.batchSetCustomSendColor)
         self.batchCustomSendIconButton.clicked.connect(self.batchSetCustomSendIcon)
         self.batchCustomSendDeleteButton.clicked.connect(self.batchDeleteCustomSendItems)
+        self.customSendComboButton.clicked.connect(self.openCommandSequenceDialog)
         self.funcParent = parent
         return self.funcWidget
 
@@ -611,8 +627,10 @@ def parse(line, ctx):
         paramObj = self.config
         self.receiveSettingsHex.setChecked(not paramObj["receiveAscii"])
         self.receiveEscape.setDisabled(not paramObj["receiveAscii"])
+        self.receiveShowNonPrintableHex.setDisabled(not paramObj["receiveAscii"])
         self.receiveSettingsAutoLinefeed.setChecked(paramObj["receiveAutoLinefeed"])
         self.receiveEscape.setChecked(paramObj["receiveEscape"])
+        self.receiveShowNonPrintableHex.setChecked(paramObj.get("receiveShowNonPrintableHex", False))
         try:
             interval = int(paramObj["receiveAutoLindefeedTime"])
             paramObj["receiveAutoLindefeedTime"] = interval
@@ -656,6 +674,7 @@ def parse(line, ctx):
             newItems.append(item)
         self.config["customSendItems"] = newItems
         self.filterCustomSendItems()
+        self.setCommandSequence(paramObj.get("commandSequenceItems", []))
         self.receiveFontFamilyInput.setCurrentFont(QFont(paramObj["receiveFontFamily"]))
         self.sendFontFamilyInput.setCurrentFont(QFont(paramObj["sendFontFamily"]))
         self.receiveFontSizeInput.setValue(paramObj["receiveFontSize"])
@@ -746,10 +765,148 @@ def parse(line, ctx):
             self.receiveSettingsAscii.setChecked(True)
             self.config["receiveAscii"] = True
             self.receiveEscape.setDisabled(False)
+            self.receiveShowNonPrintableHex.setDisabled(False)
         else:
             self.receiveSettingsHex.setChecked(True)
             self.config["receiveAscii"] = False
             self.receiveEscape.setDisabled(True)
+            self.receiveShowNonPrintableHex.setDisabled(True)
+
+    def createCommandSequenceBar(self):
+        bar = QWidget()
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 4)
+        bar.setLayout(layout)
+        self.commandSequenceLabel = QLabel("")
+        self.commandSequenceLabel.setToolTip(_("Current combo command"))
+        self.commandSequenceEditButton = QPushButton(_("Edit combo"))
+        self.commandSequenceSendButton = QPushButton(_("Send combo"))
+        self.commandSequenceClearButton = QPushButton(_("Clear combo"))
+        self.commandSequenceEditButton.setToolTip(_("Edit combo command order and delays"))
+        self.commandSequenceSendButton.setToolTip(_("Send combo command in order"))
+        self.commandSequenceClearButton.setToolTip(_("Clear current combo command"))
+        utils_ui.setButtonIcon(self.commandSequenceEditButton, "ei.pencil")
+        utils_ui.setButtonIcon(self.commandSequenceSendButton, "fa.play")
+        utils_ui.setButtonIcon(self.commandSequenceClearButton, "fa.close")
+        layout.addWidget(QLabel(_("Combo command")))
+        layout.addWidget(self.commandSequenceLabel, 1)
+        layout.addWidget(self.commandSequenceEditButton)
+        layout.addWidget(self.commandSequenceSendButton)
+        layout.addWidget(self.commandSequenceClearButton)
+        self.commandSequenceEditButton.clicked.connect(self.openCommandSequenceDialog)
+        self.commandSequenceSendButton.clicked.connect(self.startCommandSequence)
+        self.commandSequenceClearButton.clicked.connect(self.clearCommandSequence)
+        bar.hide()
+        return bar
+
+    def normalizeCommandSequenceItem(self, item=None):
+        if item is None:
+            item = {}
+        if isinstance(item, dict):
+            text = item.get("text", "")
+            remark = item.get("remark", "")
+            delay = item.get("delay", 0)
+        else:
+            text = str(item)
+            remark = ""
+            delay = 0
+        try:
+            delay = max(0, int(delay))
+        except Exception:
+            delay = 0
+        return {
+            "text": "" if text is None else str(text),
+            "remark": "" if remark is None else str(remark),
+            "delay": delay
+        }
+
+    def commandSequenceFromSelectedItems(self):
+        sequence = []
+        for idx in self.selectedCustomSendIndexes():
+            if idx < 0 or idx >= len(self.config["customSendItems"]):
+                continue
+            item = self.normalizeCustomSendItem(self.config["customSendItems"][idx])
+            sequence.append(self.normalizeCommandSequenceItem({
+                "text": item.get("text", ""),
+                "remark": item.get("remark", ""),
+                "delay": 0
+            }))
+        return sequence
+
+    def setCommandSequence(self, sequence):
+        normalized = []
+        for item in sequence:
+            normalizedItem = self.normalizeCommandSequenceItem(item)
+            if normalizedItem.get("text"):
+                normalized.append(normalizedItem)
+        self.config["commandSequenceItems"] = normalized
+        self.updateCommandSequenceBar()
+
+    def commandSequenceSummary(self):
+        sequence = self.config.get("commandSequenceItems", [])
+        if not sequence:
+            return ""
+        names = []
+        for item in sequence[:3]:
+            names.append(item.get("remark") or item.get("text") or _("Command"))
+        if len(sequence) > 3:
+            names.append("...")
+        return "{} ({})".format(" -> ".join(names), len(sequence))
+
+    def updateCommandSequenceBar(self):
+        if not hasattr(self, "commandSequenceBar"):
+            return
+        summary = self.commandSequenceSummary()
+        if summary:
+            self.commandSequenceLabel.setText(summary)
+            self.commandSequenceLabel.setToolTip(summary)
+            self.commandSequenceBar.show()
+        else:
+            self.commandSequenceLabel.setText("")
+            self.commandSequenceBar.hide()
+
+    def openCommandSequenceDialog(self):
+        selected = self.commandSequenceFromSelectedItems()
+        sequence = selected or self.config.get("commandSequenceItems", [])
+        if not sequence:
+            self.hintSignal.emit("warning", _("Warning"), _("Select custom send items first"))
+            return
+        dialog = CommandSequenceDialog(self, sequence, self.mainWidget)
+        dialog.exec()
+
+    def clearCommandSequence(self):
+        self.config["commandSequenceItems"] = []
+        self.updateCommandSequenceBar()
+
+    def startCommandSequence(self):
+        sequence = []
+        for item in self.config.get("commandSequenceItems", []):
+            normalizedItem = self.normalizeCommandSequenceItem(item)
+            if normalizedItem.get("text"):
+                sequence.append(normalizedItem)
+        if not sequence:
+            self.hintSignal.emit("warning", _("Warning"), _("No command in combo"))
+            return
+        if self.commandSequenceSending:
+            self.hintSignal.emit("warning", _("Warning"), _("Combo command is sending"))
+            return
+        self.commandSequenceSending = True
+        self.commandSequenceStop = False
+        t = threading.Thread(target=self.commandSequenceSendProcess, args=(sequence,))
+        t.setDaemon(True)
+        t.start()
+
+    def commandSequenceSendProcess(self, sequence):
+        try:
+            for item in sequence:
+                if self.commandSequenceStop:
+                    break
+                self.onSendData(data=item.get("text", ""))
+                delay = int(item.get("delay", 0))
+                if delay > 0:
+                    time.sleep(delay / 1000)
+        finally:
+            self.commandSequenceSending = False
 
     def onSendSettingsHexClicked(self):
         if not self.config.get("sendAscii", True):
@@ -876,6 +1033,7 @@ def parse(line, ctx):
             "receiveSettingsAutoLinefeedTime",
             "receiveSettingsWrap",
             "receiveEscape",
+            "receiveShowNonPrintableHex",
             "receiveSettingsTimestamp",
             "timestampNewlineCheckbox",
             "sendSettingsAscii",
@@ -1187,6 +1345,8 @@ def parse(line, ctx):
         self.batchCustomSendColorButton.setEnabled(enabled)
         self.batchCustomSendIconButton.setEnabled(enabled)
         self.batchCustomSendDeleteButton.setEnabled(enabled)
+        if hasattr(self, "customSendComboButton"):
+            self.customSendComboButton.setEnabled(enabled)
         if hasattr(self, "customSendSelectAll"):
             visibleWidgets = [widget for _idx, widget in self.iterCustomSendWidgets() if widget.isVisible()]
             checkedWidgets = [widget for widget in visibleWidgets if hasattr(widget, "selectCheckBox") and widget.selectCheckBox.isChecked()]
@@ -1862,11 +2022,15 @@ def parse(line, ctx):
     def appendReceiveText(self, text, preserveScroll=True):
         if not text:
             return
+        userCursor = self.receiveWidget.textCursor()
+        preserveSelection = userCursor.hasSelection()
         curScrollValue = self.receiveWidget.verticalScrollBar().value()
         curHorizontalValue = self.receiveWidget.horizontalScrollBar().value()
-        self.receiveWidget.moveCursor(QTextCursor.End)
+        if not preserveSelection:
+            self.receiveWidget.moveCursor(QTextCursor.End)
         endScrollValue = self.receiveWidget.verticalScrollBar().value()
-        cursor = self.receiveWidget.textCursor()
+        cursor = QTextCursor(self.receiveWidget.document())
+        cursor.movePosition(QTextCursor.End)
         fmt = cursor.charFormat()
         if not self.defaultColor:
             qcolor = QColor(self.config.get("receiveFontColor", ""))
@@ -1878,7 +2042,10 @@ def parse(line, ctx):
             fmt.setBackground(QColor(bg) if bg else self.defaultBg)
             cursor.setCharFormat(fmt)
             cursor.insertText(segment)
-        if preserveScroll and curScrollValue < endScrollValue:
+        if preserveSelection:
+            self.receiveWidget.setTextCursor(userCursor)
+            self.receiveWidget.verticalScrollBar().setValue(curScrollValue)
+        elif preserveScroll and curScrollValue < endScrollValue:
             self.receiveWidget.verticalScrollBar().setValue(curScrollValue)
         else:
             self.receiveWidget.moveCursor(QTextCursor.End)
@@ -2222,7 +2389,13 @@ def parse(line, ctx):
         captureData = data
         if type(data) != str:
             captureData = data.decode(encoding=self.configGlobal["encoding"], errors="ignore")
-            data = self.decodeReceivedData(data, self.configGlobal["encoding"], not self.config["receiveAscii"], self.config["receiveEscape"])
+            data = self.decodeReceivedData(
+                data,
+                self.configGlobal["encoding"],
+                not self.config["receiveAscii"],
+                self.config["receiveEscape"],
+                self.config.get("receiveShowNonPrintableHex", False)
+            )
         if self.dataCaptureWidget:
             self.dataCaptureWidget.onData(captureData)
         head = ""
@@ -2282,6 +2455,7 @@ def parse(line, ctx):
             self.hintSignal.emit("error", _("Error"), _("Send data failed!") + " " + msg)
 
     def onDel(self):
+        self.commandSequenceStop = True
         if self.dataCaptureWidget is not None:
             self.dataCaptureWidget.stopCapture()
         if self.logSessionActive:

@@ -2717,3 +2717,90 @@ msgstr "当前捕获状态"
 
 msgid "Capture input queue is full; capture stopped to protect memory"
 msgstr "捕获输入队列已满，已停止捕获以保护内存"
+
+msgid "Connect"
+msgstr "连接"
+
+msgid "Open this port in a receive page"
+msgstr "在收发页面中打开该端口"
+
+msgid "Close this port but keep the receive page"
+msgstr "关闭该端口但保留收发页面"
+
+msgid "Refresh ports"
+msgstr "刷新端口"
+
+msgid "Refresh available serial ports"
+msgstr "刷新可用串口"
+
+msgid "HEX for non-ASCII"
+msgstr "非 ASCII 显示为 HEX"
+
+msgid "In ASCII receive mode, show bytes without printable ASCII characters as \\xNN"
+msgstr "在 ASCII 接收模式下，将无可打印 ASCII 字符的字节显示为 \\xNN"
+
+msgid "Combo command"
+msgstr "组合命令"
+
+msgid "Drag commands to change send order, then set delay after each command."
+msgstr "拖拽命令调整发送顺序，并设置每条命令发送后的延时。"
+
+msgid "Reload selected"
+msgstr "重新载入已选"
+
+msgid "Save combo"
+msgstr "保存组合"
+
+msgid "Send combo"
+msgstr "发送组合"
+
+msgid "Close combo command window"
+msgstr "关闭组合命令窗口"
+
+msgid "Reload combo commands from currently selected custom send items"
+msgstr "从当前选中的自定义发送项重新载入组合命令"
+
+msgid "Save this combo command to the send bar"
+msgstr "将该组合命令保存到发送栏"
+
+msgid "Send this combo command now"
+msgstr "立即发送该组合命令"
+
+msgid "Drag this row to reorder"
+msgstr "拖拽该行调整顺序"
+
+msgid "Delay"
+msgstr "延时"
+
+msgid "Delay after this command, unit: ms"
+msgstr "该命令发送后的延时，单位 ms"
+
+msgid "Current combo command"
+msgstr "当前组合命令"
+
+msgid "Edit combo"
+msgstr "编辑组合"
+
+msgid "Clear combo"
+msgstr "清除组合"
+
+msgid "Edit combo command order and delays"
+msgstr "编辑组合命令顺序和延时"
+
+msgid "Send combo command in order"
+msgstr "按顺序发送组合命令"
+
+msgid "Clear current combo command"
+msgstr "清除当前组合命令"
+
+msgid "Build a combo command from selected custom send items"
+msgstr "使用选中的自定义发送项生成组合命令"
+
+msgid "Select custom send items first"
+msgstr "请先选择自定义发送项"
+
+msgid "No command in combo"
+msgstr "组合命令中没有命令"
+
+msgid "Combo command is sending"
+msgstr "组合命令正在发送"

@@ -52,6 +52,7 @@ from PyQt5.QtGui import QIcon,QFont,QTextCursor,QPixmap,QColor, QCloseEvent
 import qtawesome as qta # https://github.com/spyder-ide/qtawesome
 import threading
 import time
+import copy
 from datetime import datetime
 import binascii,re
 if sys.platform == "win32":
@@ -188,7 +189,8 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
                         conns, connsConfigs,
                         self.config, pluginConfig,
                         self.hintSignal, self.reloadWindowSignal,
-                        self.onConnChnaged, self.onItemNameChanged)
+                        self.onConnChnaged, self.onItemNameChanged,
+                        self.onSerialPortPageRequest)
         self.tabAddItem(item)
         self.items.append(item)
         self.updateImportPageButtons()
@@ -203,6 +205,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
                         "plugin": pluginConfig
                         }
                 })
+        self.refreshSerialQuickPortStatuses()
         return item
 
     def tabAddItem(self, item):
@@ -249,6 +252,125 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
         for item in self.items:
             item.setImportPageEnabled(item.canImportPage())
 
+    def serialConnForItem(self, item):
+        if not item or not getattr(item, "isAddConn", False):
+            return None
+        for conn in item.conns:
+            if getattr(conn, "id", "") == "serial":
+                return conn
+        return None
+
+    def ensureSerialConnSelected(self, item):
+        if not item or not getattr(item, "isAddConn", False):
+            return None
+        for idx, conn in enumerate(item.conns):
+            if getattr(conn, "id", "") == "serial":
+                if item.currConnIdx != idx and hasattr(item, "connSelectCommbox"):
+                    item.connSelectCommbox.setCurrentIndex(idx)
+                return conn
+        return None
+
+    def serialPortForItem(self, item):
+        conn = self.serialConnForItem(item)
+        if conn is not None:
+            port = conn.config.get("port")
+            if port:
+                return port
+        try:
+            return item.connsConfigs.get("serial", {}).get("port")
+        except Exception:
+            return None
+
+    def findSerialReceiveItem(self, port, preferConnected=False):
+        fallback = None
+        for item in self.items:
+            if getattr(item.plugin, "id", "") != "dbg":
+                continue
+            if self.serialPortForItem(item) == port:
+                if not preferConnected:
+                    return item
+                conn = self.serialConnForItem(item)
+                if conn is not None and conn.getConnStatus() in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE):
+                    return item
+                if fallback is None:
+                    fallback = item
+        return fallback
+
+    def cloneSerialPageConfigs(self, sourceItem, port):
+        connsConfigs = copy.deepcopy(getattr(sourceItem, "connsConfigs", {}) or {})
+        connsConfigs["currConn"] = "serial"
+        serialConfig = connsConfigs.get("serial", {})
+        if not isinstance(serialConfig, dict):
+            serialConfig = {}
+        serialConfig["port"] = port
+        connsConfigs["serial"] = serialConfig
+        pluginConfig = {}
+        if getattr(sourceItem.plugin, "id", "") == "dbg":
+            pluginConfig = copy.deepcopy(sourceItem.plugin.config)
+            pluginConfig["saveLog"] = False
+        return connsConfigs, pluginConfig
+
+    def createSerialReceiveItem(self, sourceItem, port):
+        pluginClass = self.getPluginClassById("dbg")
+        if pluginClass is None:
+            return None
+        connsConfigs, pluginConfig = self.cloneSerialPageConfigs(sourceItem, port)
+        item = self.addItem(pluginClass, setCurrent=True, connsConfigs=connsConfigs, pluginConfig=pluginConfig)
+        self.onItemNameChanged(item, port)
+        return item
+
+    def setSerialItemOpen(self, item, openNow):
+        conn = self.ensureSerialConnSelected(item) if openNow else self.serialConnForItem(item)
+        if conn is None:
+            return
+        connected = conn.getConnStatus() in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE)
+        if openNow and not connected:
+            conn.openCloseSerial()
+        elif (not openNow) and connected:
+            conn.openCloseSerial()
+
+    def onSerialPortPageRequest(self, sourceItem, port, action):
+        if not port:
+            return
+        item = None if action == "open" else self.findSerialReceiveItem(port, preferConnected=(action == "disconnect"))
+        if item is None:
+            item = self.createSerialReceiveItem(sourceItem, port)
+        if item is None:
+            return
+        self.tabWidget.setCurrentWidget(item.widget)
+        if action == "connect":
+            self.setSerialItemOpen(item, True)
+        elif action == "disconnect":
+            self.setSerialItemOpen(item, False)
+        self.refreshSerialQuickPortStatuses()
+
+    def serialPortStatusMap(self):
+        statuses = {}
+        priority = {
+            ConnectionStatus.CLOSED: 0,
+            ConnectionStatus.CONNECTING: 1,
+            ConnectionStatus.LOSE: 2,
+            ConnectionStatus.CONNECTED: 3,
+        }
+        for item in self.items:
+            conn = self.serialConnForItem(item)
+            if conn is None:
+                continue
+            port = conn.config.get("port")
+            if not port:
+                continue
+            status = conn.getConnStatus()
+            old = statuses.get(port, ConnectionStatus.CLOSED)
+            if priority.get(status, 0) >= priority.get(old, 0):
+                statuses[port] = status
+        return statuses
+
+    def refreshSerialQuickPortStatuses(self):
+        statuses = self.serialPortStatusMap()
+        for item in self.items:
+            if hasattr(item, "setSerialQuickPortStatuses"):
+                item.setSerialQuickPortStatuses(statuses)
+
     def onConnChnaged(self, plugin, status:ConnectionStatus, msg):
         for item in self.items:
             if item.plugin == plugin:
@@ -258,6 +380,7 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
                         break
                 item.widget.setWindowTitle(item.name + " - {}".format(_("Connected" if status == ConnectionStatus.CONNECTED else _("Connection lose") if status == ConnectionStatus.LOSE else _("Disconnected"))))
         self.updateImportPageButtons()
+        self.refreshSerialQuickPortStatuses()
 
     def setTabIcon(self, status:ConnectionStatus, i:int):
         if status == ConnectionStatus.CONNECTED:

@@ -5,7 +5,7 @@ if __name__ == "__main__":
     sys.path.insert(0, path)
     sys.path.insert(0, os.path.join(path, ".."))
 
-from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QObject, pyqtSlot
+from PyQt5.QtCore import pyqtSignal,Qt, QRect, QMargins, QObject, pyqtSlot, QEvent
 from PyQt5.QtWidgets import (QWidget,QPushButton,QMessageBox,QDesktopWidget,QMainWindow,
                              QVBoxLayout,QHBoxLayout,QGridLayout,QTextEdit,QLabel,QRadioButton,QCheckBox,
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea)
@@ -32,6 +32,60 @@ import serial.tools.list_ports
 import serial.tools.list_ports_common
 
 
+class SerialPortRowWidget(QWidget):
+    def __init__(self, owner, port, text, parent=None):
+        super().__init__(parent)
+        self.owner = owner
+        self.port = port
+        self.text = text
+        layout = QHBoxLayout()
+        layout.setContentsMargins(4, 2, 4, 2)
+        self.setLayout(layout)
+        self.indicator = QLabel("*")
+        self.indicator.setStyleSheet("color:#1aa332;font-weight:bold;")
+        self.nameButton = QPushButton(port)
+        self.nameButton.setFlat(True)
+        self.nameButton.setToolTip(text)
+        self.nameButton.setStyleSheet("text-align:left;")
+        self.nameButton.installEventFilter(self)
+        self.actionButton = QPushButton(_("Connect"))
+        self.actionButton.setToolTip(_("Open this port in a receive page"))
+        layout.addWidget(self.indicator)
+        layout.addWidget(self.nameButton, 1)
+        layout.addWidget(self.actionButton)
+        self.nameButton.clicked.connect(lambda: self.owner.selectSerialPort(self.port))
+        self.actionButton.clicked.connect(self.onActionClicked)
+
+    def eventFilter(self, obj, event):
+        if obj is self.nameButton and event.type() == QEvent.MouseButtonDblClick:
+            self.owner.requestSerialPortPage(self.port, "open")
+            event.accept()
+            return True
+        return super().eventFilter(obj, event)
+
+    def onActionClicked(self):
+        status = self.owner.quickPortStatus.get(self.port, ConnectionStatus.CLOSED)
+        if status in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE):
+            self.owner.requestSerialPortPage(self.port, "disconnect")
+        else:
+            self.owner.requestSerialPortPage(self.port, "connect")
+
+    def mouseDoubleClickEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.owner.requestSerialPortPage(self.port, "open")
+            event.accept()
+            return
+        super().mouseDoubleClickEvent(event)
+
+    def setStatus(self, status):
+        if status in (ConnectionStatus.CONNECTED, ConnectionStatus.CONNECTING, ConnectionStatus.LOSE):
+            self.actionButton.setText(_("Disconnect"))
+            self.actionButton.setToolTip(_("Close this port but keep the receive page"))
+            self.actionButton.setStyleSheet("background:#d32f2f;color:#ffffff;")
+        else:
+            self.actionButton.setText(_("Connect"))
+            self.actionButton.setToolTip(_("Open this port in a receive page"))
+            self.actionButton.setStyleSheet("background:#2e7d32;color:#ffffff;")
 
 
 class Serial(COMM):
@@ -80,6 +134,9 @@ class Serial(COMM):
         self.isDetectSerialPort = False
         self.widget = None
         self.baudrateCustomStr = _("Custom, input baudrate")
+        self.serialPageRequestCallback = None
+        self.quickPortStatus = {}
+        self.serialPortRowWidgets = {}
 
     def disconnect(self):
         if self.isConnected():
@@ -153,6 +210,18 @@ class Serial(COMM):
         self.checkBoxRTS.setToolTip(_("Check to enable(usually output low level)"))
         self.checkBoxDTR.setToolTip(_("Check to enable(usually output low level)"))
         self.serialOpenCloseButton = QPushButton(_("OPEN"))
+        self.serialRefreshButton = QPushButton(_("Refresh ports"))
+        self.serialRefreshButton.setToolTip(_("Refresh available serial ports"))
+        self.serialPortListScroll = QScrollArea()
+        self.serialPortListScroll.setWidgetResizable(True)
+        self.serialPortListScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.serialPortListScroll.setMinimumHeight(96)
+        self.serialPortListWidget = QWidget()
+        self.serialPortListLayout = QVBoxLayout()
+        self.serialPortListLayout.setContentsMargins(0, 0, 0, 0)
+        self.serialPortListLayout.setSpacing(4)
+        self.serialPortListWidget.setLayout(self.serialPortListLayout)
+        self.serialPortListScroll.setWidget(self.serialPortListWidget)
         serialSettingsLayout.addWidget(serialPortLabek,0,0)
         serialSettingsLayout.addWidget(serailBaudrateLabel, 1, 0)
         serialSettingsLayout.addWidget(serailBytesLabel, 2, 0)
@@ -168,6 +237,8 @@ class Serial(COMM):
         serialSettingsLayout.addWidget(self.checkBoxRTS, 6, 0,1,1)
         serialSettingsLayout.addWidget(self.checkBoxDTR, 6, 1,1,1)
         serialSettingsLayout.addWidget(self.serialOpenCloseButton, 7, 0,1,2)
+        serialSettingsLayout.addWidget(self.serialRefreshButton, 8, 0, 1, 2)
+        serialSettingsLayout.addWidget(self.serialPortListScroll, 9, 0, 1, 2)
         self.widget.setLayout(serialSettingsLayout)
         self.widgetConfMap["port"]       = self.serialPortCombobox
         self.widgetConfMap["baudrate"]    = self.serailBaudrateCombobox
@@ -182,6 +253,7 @@ class Serial(COMM):
 
     def initEvet(self):
         self.serialPortCombobox.clicked.connect(self.detectSerialPort)
+        self.serialRefreshButton.clicked.connect(self.detectSerialPort)
         self.showSerialComboboxSignal.connect(self.showCombobox)
         self.serialPortCombobox.currentIndexChanged.connect(lambda: self.onSerialConfigChanged("port", self.serialPortCombobox, str))
         self.serailBaudrateCombobox.currentIndexChanged.connect(lambda: self.onSerialConfigChanged("baudrate", self.serailBaudrateCombobox, int, caller="index change"))
@@ -194,6 +266,55 @@ class Serial(COMM):
         self.checkBoxDTR.clicked.connect(lambda: self.onSerialConfigChanged("dtr", self.checkBoxDTR, bool))
         self.serialOpenCloseButton.clicked.connect(self.openCloseSerial)
         self.showSwitchSignal.connect(self.showSwitch)
+
+    def setSerialPageRequestCallback(self, callback):
+        self.serialPageRequestCallback = callback
+
+    def selectSerialPort(self, port):
+        if not port:
+            return
+        for idx in range(self.serialPortCombobox.count()):
+            if self.serialPortCombobox.itemText(idx).split(" ")[0] == port:
+                self.serialPortCombobox.setCurrentIndex(idx)
+                return
+        self.serialPortCombobox.addItem(port)
+        self.serialPortCombobox.setCurrentIndex(self.serialPortCombobox.count() - 1)
+
+    def requestSerialPortPage(self, port, action):
+        self.selectSerialPort(port)
+        if self.serialPageRequestCallback is not None:
+            self.serialPageRequestCallback(port, action)
+            return
+        if action == "connect" and not self.isConnected():
+            self.openCloseSerial()
+        elif action == "disconnect" and self.isConnected():
+            self.openCloseSerial()
+
+    def setQuickPortStatuses(self, statuses):
+        self.quickPortStatus = statuses.copy() if isinstance(statuses, dict) else {}
+        self.refreshSerialPortRows()
+
+    def refreshSerialPortRows(self):
+        for port, row in self.serialPortRowWidgets.items():
+            row.setStatus(self.quickPortStatus.get(port, ConnectionStatus.CLOSED))
+
+    def updateSerialPortRows(self, items):
+        while self.serialPortListLayout.count():
+            layoutItem = self.serialPortListLayout.takeAt(0)
+            widget = layoutItem.widget()
+            if widget:
+                widget.setParent(None)
+                widget.deleteLater()
+        self.serialPortRowWidgets = {}
+        for item in items:
+            port = item.split(" ")[0].strip()
+            if not port:
+                continue
+            row = SerialPortRowWidget(self, port, item)
+            self.serialPortListLayout.addWidget(row)
+            self.serialPortRowWidgets[port] = row
+        self.serialPortListLayout.addStretch(1)
+        self.refreshSerialPortRows()
 
     def onSerialConfigChanged(self, conf_type, obj, value_type, caller=""):
         if conf_type == "port":
@@ -255,7 +376,11 @@ class Serial(COMM):
             except Exception:
                 # print(f"-- set {obj} index {idx} error, value {value}, items {values}")
                 pass
-            obj.setCurrentIndex(idx)
+            if values:
+                obj.setCurrentIndex(idx)
+            if value:
+                self.config["port"] = str(value).split(" ")[0]
+                self.com.port = self.config["port"]
         elif conf_type in ["baudrate", "bytesize", "parity", "stopbits"]:
             values = getCommboboxItems(obj)
             idx = 0
@@ -380,6 +505,7 @@ class Serial(COMM):
                 index = self.serialPortCombobox.findText(self.config["port"], Qt.MatchContains)
                 if index>=0:
                     set = index
+        self.updateSerialPortRows(items)
         self.serialPortCombobox.showPopup()
         self.isDetectSerialPort = False
         if set <= 0:
@@ -390,6 +516,9 @@ class Serial(COMM):
 
     # @pyqtSlot(ConnectionStatus)
     def showSwitch(self, status):
+        if self.com.port:
+            self.quickPortStatus[self.com.port] = status
+            self.refreshSerialPortRows()
         if status == ConnectionStatus.CLOSED:
             self.serialOpenCloseButton.setText(_("OPEN"))
             self.serialOpenCloseButton.setProperty("class", "")

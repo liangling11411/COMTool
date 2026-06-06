@@ -27,7 +27,8 @@ class PluginItem:
                     connClasses, connsConfigs,
                     globalConfig, itemConfig,
                     hintSignal, reloadWindowSignal,
-                    connCallback, itemNameChanged=None):
+                    connCallback, itemNameChanged=None,
+                    serialPageCallback=None):
         '''
             item show name, e.g. dbg-1
         '''
@@ -35,6 +36,7 @@ class PluginItem:
         self.hintSignal = hintSignal
         self.name = name
         self.itemNameChanged = itemNameChanged
+        self.serialPageCallback = serialPageCallback
         self.connClasses = connClasses
         self.connsConfigs = connsConfigs
         self.currConnWidget = None
@@ -81,6 +83,8 @@ class PluginItem:
                 self.connsConfigs[conn.id] = connConfig
             conn.onInit(connConfig)
             widget = conn.onWidget()
+            if hasattr(conn, "setSerialPageRequestCallback"):
+                conn.setSerialPageRequestCallback(lambda port, action, owner=self: owner.onSerialPortPageRequest(port, action))
             conn.onUiInitDone()
             connsWidgets.append(widget)
         return conns, connsWidgets
@@ -288,6 +292,27 @@ class PluginItem:
     def ctrlConn(self, k, v):
         if self.isAddConn:
             self.conns[self.currConnIdx].ctrl(k, v)
+
+    def onSerialPortPageRequest(self, port, action):
+        if self.serialPageCallback is not None:
+            self.serialPageCallback(self, port, action)
+            return
+        if not self.isAddConn:
+            return
+        conn = self.conns[self.currConnIdx]
+        if getattr(conn, "id", "") != "serial":
+            return
+        if action == "disconnect" and conn.isConnected():
+            conn.openCloseSerial()
+        elif action == "connect" and not conn.isConnected():
+            conn.openCloseSerial()
+
+    def setSerialQuickPortStatuses(self, statuses):
+        if not self.isAddConn:
+            return
+        for conn in self.conns:
+            if hasattr(conn, "setQuickPortStatuses"):
+                conn.setQuickPortStatuses(statuses)
 
     def onConnStatus(self, status:ConnectionStatus, msg):
         self.plugin.onConnChanged(status, msg)

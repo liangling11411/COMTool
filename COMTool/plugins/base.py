@@ -231,11 +231,24 @@ class Plugin_Base(QObject):
                     return b''
         return data
 
-    def decodeReceivedData(self, data:bytes, encoding, isHexStr = False, escape=False):
+    def formatBytesWithNonPrintableHex(self, data: bytes):
+        text = []
+        for value in data:
+            if value in (0x09, 0x0A, 0x0D):
+                text.append(chr(value))
+            elif 0x20 <= value <= 0x7E:
+                text.append(chr(value))
+            else:
+                text.append("\\x{:02X}".format(value))
+        return "".join(text)
+
+    def decodeReceivedData(self, data:bytes, encoding, isHexStr = False, escape=False, showNonPrintableHex=False):
         if isHexStr:
             data = utils.bytes_to_hex_str(data)
         elif escape:
             data = str(data)[2:-1] # b'1234\x01' => "b'1234\\x01'" =>"1234\\x01"
+        elif showNonPrintableHex:
+            data = self.formatBytesWithNonPrintableHex(data)
         else:
             data = data.decode(encoding=encoding, errors="ignore")
         return data
