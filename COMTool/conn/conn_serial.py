@@ -549,6 +549,23 @@ class Serial(COMM):
             for i in range(len(obj)):
                 values.append(obj.itemText(i))
             return values
+        def selectComboboxValue(obj, value, allowCustom=False):
+            values = getCommboboxItems(obj)
+            idx = 0
+            text = str(value) if value is not None else ""
+            if values:
+                try:
+                    idx = values.index(text)
+                except Exception:
+                    if allowCustom and text:
+                        obj.setEditText(text)
+                        return text, values
+                    else:
+                        idx = 0
+                        text = values[idx]
+                if idx >= 0:
+                    obj.setCurrentIndex(idx)
+            return text, values
         if conf_type == "port":
             values = getCommboboxItems(obj)
             idx = 0
@@ -563,28 +580,29 @@ class Serial(COMM):
                 self.config["port"] = str(value).split(" ")[0]
                 self.com.port = self.config["port"]
         elif conf_type in ["baudrate", "bytesize", "parity", "stopbits"]:
-            values = getCommboboxItems(obj)
-            idx = 0
-            try:
-                idx = values.index(str(value))
-            except Exception:
-                print(f"-- set {obj} index {idx} error, value {value}, items {values}")
-            obj.setCurrentIndex(idx)
+            if conf_type == "parity":
+                parityMap = {"N": "None", "O": "Odd", "E": "Even", "M": "Mark", "S": "Space"}
+                value = parityMap.get(str(value), value)
+            value, values = selectComboboxValue(obj, value, allowCustom=(conf_type == "baudrate"))
+            if conf_type == "baudrate":
+                try:
+                    if int(value) <= 0:
+                        raise ValueError()
+                except Exception:
+                    value, values = selectComboboxValue(obj, parameters.defaultBaudrates[0])
+            self.config[conf_type] = value
             if conf_type == "parity":
                 value = value[0]
             elif conf_type == "stopbits":
                 value = float(value)
+            elif conf_type in ["baudrate", "bytesize"]:
+                value = int(value)
             self.com.__setattr__(conf_type, value)
             if conf_type == "baudrate":
                 self.oneByteTime = 1 / (self.com.baudrate / (self.com.bytesize + 2 + self.com.stopbits)) # 1 byte use time
         elif conf_type == "flowcontrol":
-            values = getCommboboxItems(obj)
-            idx = 0
-            try:
-                idx = values.index(str(value))
-            except Exception:
-                print(f"-- set {obj} index {idx} error, value {value}, items {values}")
-            obj.setCurrentIndex(idx)
+            value, values = selectComboboxValue(obj, value)
+            self.config[conf_type] = value
             if value == "XON/XOFF":
                 self.com.xonxoff = True
             else:

@@ -1190,7 +1190,12 @@ class MainWindow(CustomTitleBarWindowMixin, QMainWindow):
             idx = 0
         self.skinButton.setCurrentIndex(idx)
         # encoding
-        self.encodingCombobox.setCurrentIndex(self.supportedEncoding.index(self.config["encoding"]))
+        try:
+            idx = self.supportedEncoding.index(self.config["encoding"])
+        except Exception:
+            idx = self.supportedEncoding.index("UTF-8") if "UTF-8" in self.supportedEncoding else 0
+            self.config["encoding"] = self.supportedEncoding[idx]
+        self.encodingCombobox.setCurrentIndex(idx)
 
     def keyPressEvent(self, event):
         CustomTitleBarWindowMixin.keyPressEvent(self, event)
