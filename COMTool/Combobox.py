@@ -50,7 +50,7 @@ class ComboBox(QComboBox):
             view.selectionModel().clearSelection()
 
     def eventFilter(self, obj, event):
-        if obj is self.view().viewport() and event.type() in (QEvent.Leave, QEvent.Hide):
+        if obj is self.view().viewport() and event.type() == QEvent.Leave:
             self.clearPopupHover()
         return super().eventFilter(obj, event)
 
